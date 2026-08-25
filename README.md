@@ -53,6 +53,10 @@ apps/
 
 ## 실행
 
+**인증키는 필요 없다.** 클론해서 바로 띄우면 된다. σ·요인분해·시장 교차검증 결과가
+모두 `data/crops.json` 에 실측값으로 들어가 있어서, 서비스는 외부 API 를 호출하지
+않는다. 아무 키도 없는 환경에서 전 엔드포인트가 정상 동작하는 것을 확인했다.
+
 ### 백엔드
 
 ```bash
@@ -68,19 +72,40 @@ uvicorn main:app --reload --port 8000
 ```bash
 cd apps/web
 npm install
+echo 'NEXT_PUBLIC_API_BASE=http://localhost:8000' > .env.local
 npm run dev
 ```
 
-`apps/web/.env.local` 에 백엔드 주소를 넣는다.
-
-```
-NEXT_PUBLIC_API_BASE=http://localhost:8000
-```
+`http://localhost:3000` — 값 세 개(작목·면적·생활비)를 넣으면 바로 리포트로 간다.
 
 ### 테스트
 
 ```bash
-cd apps/api && python -m pytest -q
+cd apps/api && python -m pytest -q     # 170건
+```
+
+## 키가 필요한 경우
+
+세 가지 모두 **선택**이다. 없으면 자동으로 대체 경로로 내려간다.
+
+| 키 | 없으면 | 있으면 |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | 규칙기반 슬롯 추출 · 템플릿 해설 | LLM 추출 · LLM 해설 (수치는 어느 쪽이든 엔진이 계산) |
+| `KOSIS_API_KEY` | 커밋된 실측 σ 를 그대로 사용 | 소득조사를 다시 받아 σ 재측정 |
+| `DATA_GO_KR_SERVICE_KEY` | 커밋된 교차검증 결과 사용 | KAMIS 도매가로 재검증 |
+
+```bash
+cp apps/api/.env.example apps/api/.env   # 필요한 것만 채우면 된다
+```
+
+데이터를 갱신하려면 (연 1회 소득조사 공표 이후):
+
+```bash
+cd apps/api
+python -m stats.expand_crops        # 새로 조사된 작목 추가
+python -m stats.calibrate_kosis     # σ 실측 + 계층 축소 + 요인분해
+python -m stats.calibrate_market    # KAMIS 교차검증 + 시장 국면
+python -m pytest -q                 # 골든 케이스가 여전히 통과하는지 확인
 ```
 
 ## 세 가지 한도
