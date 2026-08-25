@@ -42,12 +42,12 @@ export default function RegulationAsk({ context }: { context: Record<string, unk
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="제도 요건을 물어보세요"
-          className="flex-1 rounded-lg border border-ink-700 bg-ink-900 px-4 py-2.5 text-sm outline-none placeholder:text-slate-600 focus:border-signal-calm"
+          className="flex-1 rounded-lg border border-paper-rule bg-paper-panel px-4 py-2.5 text-sm outline-none placeholder:text-paper-ink3 focus:border-paper-accent"
         />
         <button
           type="submit"
           disabled={busy}
-          className="rounded-lg border border-ink-700 px-4 text-sm text-slate-300 transition hover:border-ink-600 disabled:opacity-40"
+          className="rounded-lg border border-paper-rule px-4 text-sm text-paper-ink2 transition hover:border-paper-ink3 disabled:opacity-40"
         >
           질의
         </button>
@@ -61,23 +61,23 @@ export default function RegulationAsk({ context }: { context: Record<string, unk
               setQuestion(p);
               ask(p);
             }}
-            className="rounded-full border border-ink-800 px-3 py-1 text-xs text-slate-500 transition hover:border-ink-600 hover:text-slate-300"
+            className="rounded-full border border-paper-rule px-3 py-1 text-xs text-paper-ink3 transition hover:border-paper-ink3 hover:text-paper-ink2"
           >
             {p}
           </button>
         ))}
       </div>
 
-      {error && <p className="mt-4 text-sm text-signal-danger">{error}</p>}
+      {error && <p className="mt-4 text-sm text-paper-danger">{error}</p>}
 
       {result && (
         <div className="mt-5">
-          <p className="text-sm leading-relaxed text-slate-200">{result.answer}</p>
+          <p className="text-sm leading-relaxed text-paper-ink">{result.answer}</p>
           <div className="mt-4">
             <CitationBlock citations={result.citations} />
           </div>
           {result.citations.length > 0 && (
-            <p className="mt-2 text-[11px] text-slate-600">
+            <p className="mt-2 text-[11px] text-paper-ink3">
               근거 확신도: {result.confidence} · 인용 원문은 요약하지 않고 그대로 표시합니다.
             </p>
           )}

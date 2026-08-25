@@ -14,12 +14,42 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* 리포트는 인쇄·PDF 저장을 전제로 한다. 화면용 장치는 빼고 잉크를 아낀다. */
+/* ── 리포트 시트 ─────────────────────────────────────────────
+   결과 화면은 앱 화면이 아니라 받아 가는 문서다. 어두운 바탕 위에 종이 한 장을
+   올려 두고, 그 안은 종이의 색계·타이포로 완전히 갈아탄다. 인쇄하면 그대로 나온다. */
+.sheet {
+  background: theme("colors.paper.bg");
+  color: theme("colors.paper.ink");
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.4),
+    0 24px 60px -20px rgb(0 0 0 / 0.55);
+}
+.sheet ::selection { background: theme("colors.paper.accentbg"); }
+
+.sheet h1,
+.sheet h2,
+.sheet h3 {
+  font-family: theme("fontFamily.serif");
+  letter-spacing: -0.01em;
+}
+
+/* 본문은 읽기 폭을 지킨다 */
+.sheet .prose-w { max-width: 34rem; }
+
 @media print {
   :root { color-scheme: light; }
-  body { background: #fff; color: #111; }
-  header nav, footer, .no-print { display: none !important; }
+  body { background: #fff; }
+  body > header,
+  body > footer,
+  .no-print { display: none !important; }
+  .sheet {
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    max-width: none;
+  }
   .report-section { break-inside: avoid; page-break-inside: avoid; }
   .report-cover { break-after: avoid; }
-  a[href]::after { content: ""; }
 }
+
+

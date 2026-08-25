@@ -51,17 +51,17 @@ export default function CliffChart({
     <div style={{ height }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 24, right: 8, left: 8, bottom: 4 }}>
-          <CartesianGrid stroke="#252f44" vertical={false} />
+          <CartesianGrid stroke="#e4dfd5" vertical={false} />
           <XAxis
             dataKey="year"
-            tick={{ fill: "#7c8aa3", fontSize: 11 }}
+            tick={{ fill: "#8a8f99", fontSize: 11 }}
             tickLine={false}
-            axisLine={{ stroke: "#252f44" }}
+            axisLine={{ stroke: "#e4dfd5" }}
             interval={1}
             tickFormatter={(y) => `${y}`}
           />
           <YAxis
-            tick={{ fill: "#7c8aa3", fontSize: 11 }}
+            tick={{ fill: "#8a8f99", fontSize: 11 }}
             tickLine={false}
             axisLine={false}
             width={64}
@@ -70,10 +70,10 @@ export default function CliffChart({
             tickFormatter={(v) => (v === 0 ? "0" : manwon(Number(v)))}
           />
           <Tooltip
-            cursor={{ fill: "#1a2233" }}
+            cursor={{ fill: "#f2efe8" }}
             contentStyle={{
-              background: "#111726",
-              border: "1px solid #252f44",
+              background: "#ffffff",
+              border: "1px solid #e4dfd5",
               borderRadius: 8,
               fontSize: 12,
             }}
@@ -82,24 +82,24 @@ export default function CliffChart({
           />
           <ReferenceLine
             y={capacity}
-            stroke="#5b8def"
+            stroke="#525a68"
             strokeDasharray="4 4"
             label={{
               value: `상환여력 ${manwon(capacity)}`,
               position: "insideTopLeft",
-              fill: "#5b8def",
+              fill: "#525a68",
               fontSize: 11,
             }}
           />
           {firstRiskYear && (
             <ReferenceLine
               x={firstRiskYear}
-              stroke="#e2564d"
+              stroke="#a8442b"
               strokeDasharray="2 4"
               label={{
                 value: `${firstRiskYear}년차 위험`,
                 position: "top",
-                fill: "#e2564d",
+                fill: "#a8442b",
                 fontSize: 11,
                 dy: -6,
               }}
@@ -111,10 +111,10 @@ export default function CliffChart({
                 key={d.year}
                 fill={
                   d.phase === "grace"
-                    ? "#3a465f"
+                    ? "#c9c3b7"
                     : d.due > capacity
-                      ? "#e2564d"
-                      : "#5b8def"
+                      ? "#c0563f"
+                      : "#6f7b8f"
                 }
               />
             ))}

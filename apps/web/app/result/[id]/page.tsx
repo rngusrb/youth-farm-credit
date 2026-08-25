@@ -85,10 +85,11 @@ export default function ResultPage() {
   const next = () => String(++counter).padStart(2, "0");
 
   return (
-    <main className="mx-auto max-w-3xl px-5 py-12">
-      <ReportCover data={data} />
+    <main className="px-4 py-8 sm:px-6 sm:py-12">
+      <article className="sheet mx-auto max-w-[46rem] px-6 py-10 sm:px-14 sm:py-16">
+        <ReportCover data={data} />
 
-      <div className="mt-12 space-y-12">
+        <div className="mt-14 space-y-14">
         {/* ── 01 결론 ─────────────────────────────────── */}
         {ok && (
           <ReportSection
@@ -118,7 +119,7 @@ export default function ResultPage() {
             title={`왜 ${data.product.grace_years + 1}년차인가`}
             lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치기간이 끝나면 원금이 함께 붙어 연 상환액이 뛰어오르는데, 소득은 그대로입니다.`}
             aside={
-              <div className="inline-flex rounded-lg border border-ink-700 p-0.5">
+              <div className="inline-flex rounded-lg border border-paper-rule p-0.5">
                 {(
                   [
                     ["at_available", "한도"],
@@ -131,8 +132,8 @@ export default function ResultPage() {
                     onClick={() => setScenarioKey(key)}
                     className={`rounded-md px-2.5 py-1 transition ${
                       scenarioKey === key
-                        ? "bg-slate-100 font-semibold text-ink-950"
-                        : "text-slate-400 hover:text-slate-200"
+                        ? "bg-paper-ink font-semibold text-paper-panel"
+                        : "text-paper-ink2 hover:text-paper-ink"
                     }`}
                   >
                     {label}
@@ -141,25 +142,25 @@ export default function ResultPage() {
               </div>
             }
           >
-            <div className="rounded-xl border border-ink-800 bg-ink-900 p-4">
+            <div className="rounded-xl border border-paper-rule bg-paper-panel p-4">
               <CliffChart
                 schedule={schedule}
                 capacity={data.income.capacity}
                 graceYears={data.product.grace_years}
                 firstRiskYear={scenario.first_risk_year}
               />
-              <p className="mt-3 text-xs text-slate-500">
+              <p className="mt-3 text-xs text-paper-ink3">
                 거치 {data.product.grace_years}년 연 이자{" "}
-                <span className="tabular text-slate-300">{manwon(scenario.grace_payment)}</span> →
+                <span className="tabular text-paper-ink2">{manwon(scenario.grace_payment)}</span> →
                 상환기 연 원리금{" "}
-                <span className="tabular text-slate-300">{manwon(scenario.amort_payment)}</span>{" "}
+                <span className="tabular text-paper-ink2">{manwon(scenario.amort_payment)}</span>{" "}
                 ({scenario.cliff_multiple.toFixed(1)}배) · 연리{" "}
                 {(data.product.rate * 100).toFixed(1)}% · {data.product.amort_years}년 균분
               </p>
             </div>
 
-            <div className="mt-4 rounded-xl border border-ink-800 bg-ink-900 p-5">
-              <h3 className="mb-4 flex items-center text-sm font-semibold text-slate-200">
+            <div className="mt-4 rounded-xl border border-paper-rule bg-paper-panel p-5">
+              <h3 className="mb-4 flex items-center text-sm font-semibold text-paper-ink">
                 상환능력비율 (DSCR)
                 <AssumedBadge
                   source={data.sigma_source}
@@ -212,11 +213,11 @@ export default function ResultPage() {
           }
         >
           {note && (
-            <div className="mb-4 rounded-xl border border-ink-800 bg-ink-900 p-5">
-              <h3 className="text-sm font-semibold text-slate-200">{note.headline}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-400">{note.body}</p>
+            <div className="mb-4 rounded-xl border border-paper-rule bg-paper-panel p-5">
+              <h3 className="text-sm font-semibold text-paper-ink">{note.headline}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-paper-ink2">{note.body}</p>
               {note.actions.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-slate-300">
+                <ul className="mt-3 space-y-1 text-sm text-paper-ink2">
                   {note.actions.map((a, i) => (
                     <li key={i}>· {a}</li>
                   ))}
@@ -225,26 +226,26 @@ export default function ResultPage() {
             </div>
           )}
 
-          <dl className="grid gap-4 rounded-xl border border-ink-800 bg-ink-900 p-5 sm:grid-cols-2">
+          <dl className="grid gap-4 rounded-xl border border-paper-rule bg-paper-panel p-5 sm:grid-cols-2">
             <div>
-              <dt className="text-xs text-slate-500">
+              <dt className="text-xs text-paper-ink3">
                 한도({won(data.limits.available)}) 차입 시 최소 필요면적
               </dt>
-              <dd className="tabular mt-1 text-xl font-semibold text-slate-100">
+              <dd className="tabular mt-1 text-xl font-semibold text-paper-ink">
                 {fmtPyeong(data.min_area_pyeong)}
               </dd>
-              <p className="mt-1 text-[11px] text-slate-600">
+              <p className="mt-1 text-[11px] text-paper-ink3">
                 현재 {fmtPyeong(data.input.pyeong)} 대비{" "}
                 {shortfall > 0 ? `${fmtPyeong(shortfall)} 부족` : "충족"}
               </p>
             </div>
             <div>
-              <dt className="text-xs text-slate-500">재해 시 상환유예</dt>
-              <dd className="mt-1 text-sm leading-relaxed text-slate-300">
+              <dt className="text-xs text-paper-ink3">재해 시 상환유예</dt>
+              <dd className="mt-1 text-sm leading-relaxed text-paper-ink2">
                 피해율 30~50% 1년, 50% 이상 2년 연기. 할부유예는 최대{" "}
                 {data.assumptions.installment_defer_max_count}회.
               </dd>
-              <p className="mt-1 text-[11px] text-slate-600">
+              <p className="mt-1 text-[11px] text-paper-ink3">
                 농업자금이차보전 사업시행지침 — 농가단위 피해율 기준
               </p>
             </div>
@@ -274,9 +275,9 @@ export default function ResultPage() {
               />
             )}
 
-            <div className="rounded-xl border border-ink-800 bg-ink-900 p-5">
-              <h3 className="text-sm font-semibold text-slate-200">계산 전제</h3>
-              <dl className="mt-3 space-y-2 text-xs leading-relaxed text-slate-400">
+            <div className="rounded-xl border border-paper-rule bg-paper-panel p-5">
+              <h3 className="text-sm font-semibold text-paper-ink">계산 전제</h3>
+              <dl className="mt-3 space-y-2 text-xs leading-relaxed text-paper-ink2">
                 <Assumption k="소득 기준">
                   농촌진흥청 2023년 농산물 소득조사 10a당 소득에 면적을 비례 적용.
                   규모의 경제는 반영되어 있지 않습니다.
@@ -314,15 +315,16 @@ export default function ResultPage() {
 
         {/* ── 08 면책 ─────────────────────────────────── */}
         <ReportSection n={next()} title="면책">
-          <p className="text-xs leading-relaxed text-slate-500">
+          <p className="text-xs leading-relaxed text-paper-ink3">
             {data.disclaimer} 이 리포트는 공개 통계와 제도 파라미터로 계산한 참고자료이며,
             개별 농가의 실제 소득·비용 구조와 다를 수 있습니다. 실제 대출 가능 여부와
             조건은 사업 시행기관과 취급 금융기관의 심사로 결정됩니다.
           </p>
         </ReportSection>
-      </div>
+        </div>
+      </article>
 
-      <div className="no-print mt-10 flex flex-wrap gap-3 border-t border-ink-800 pt-6">
+      <div className="no-print mx-auto mt-6 flex max-w-[46rem] flex-wrap gap-3">
         <a
           href="/diagnose"
           className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"

@@ -39,11 +39,11 @@ export default function RiskSummary({
   return (
     <div className="grid gap-3 sm:grid-cols-3">
       {items.map((it) => (
-        <div key={it.label} className="rounded-xl border border-ink-800 bg-ink-900 p-4">
-          <div className="text-xs text-slate-500">{it.label}</div>
+        <div key={it.label} className="rounded-xl border border-paper-rule bg-paper-panel p-4">
+          <div className="text-xs text-paper-ink3">{it.label}</div>
           <div
             className={`tabular mt-1 text-2xl font-semibold ${
-              it.danger ? "text-signal-danger" : "text-slate-100"
+              it.danger ? "text-paper-danger" : "text-paper-ink"
             }`}
           >
             {it.value}
@@ -51,7 +51,7 @@ export default function RiskSummary({
               <AssumedBadge source={sigmaSource} personalized={personalized} />
             )}
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-slate-600">{it.hint}</p>
+          <p className="mt-2 text-[11px] leading-relaxed text-paper-ink3">{it.hint}</p>
         </div>
       ))}
     </div>

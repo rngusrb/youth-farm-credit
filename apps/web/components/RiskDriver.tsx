@@ -45,15 +45,15 @@ export default function RiskDriver({
 }) {
   const p = PRESCRIPTION[factors.driver] ?? PRESCRIPTION.price;
   const bars = [
-    { key: "가격", value: factors.share_price, color: "bg-signal-danger" },
-    { key: "수확량", value: factors.share_quantity, color: "bg-signal-warn" },
-    { key: "경영비", value: factors.share_cost, color: "bg-signal-calm" },
+    { key: "가격", value: factors.share_price, color: "bg-paper-danger" },
+    { key: "수확량", value: factors.share_quantity, color: "bg-paper-accent" },
+    { key: "경영비", value: factors.share_cost, color: "bg-paper-ink3" },
   ];
   const scale = Math.max(1, ...bars.map((b) => Math.abs(b.value)));
 
   return (
-    <section className="rounded-xl border border-ink-800 bg-ink-900 p-5">
-      <p className="text-xs leading-relaxed text-slate-500">
+    <section className="rounded-xl border border-paper-rule bg-paper-panel p-5">
+      <p className="text-xs leading-relaxed text-paper-ink3">
         {cropName}의 {factors.years[0]}~{factors.years[1]}년 {factors.n}개년 실적을
         가격·수확량·경영비로 분해했습니다.
       </p>
@@ -64,8 +64,8 @@ export default function RiskDriver({
           const negative = b.value < 0;
           return (
             <div key={b.key} className="grid grid-cols-[3.5rem_1fr_3.5rem] items-center gap-3">
-              <span className="text-xs text-slate-400">{b.key}</span>
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-ink-800">
+              <span className="text-xs text-paper-ink2">{b.key}</span>
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-paper-soft">
                 <div
                   className={`h-full rounded-full ${b.color} ${negative ? "opacity-40" : ""}`}
                   style={{ width: `${width}%` }}
@@ -73,7 +73,7 @@ export default function RiskDriver({
               </div>
               <span
                 className={`tabular text-right text-xs ${
-                  negative ? "text-slate-500" : "text-slate-300"
+                  negative ? "text-paper-ink3" : "text-paper-ink2"
                 }`}
               >
                 {(b.value * 100).toFixed(0)}%
@@ -82,18 +82,18 @@ export default function RiskDriver({
           );
         })}
       </div>
-      <p className="mt-2 text-[11px] leading-relaxed text-slate-600">
+      <p className="mt-2 text-[11px] leading-relaxed text-paper-ink3">
         음수는 그 요인이 소득 변동을 <b>완충</b>했다는 뜻입니다 — 나쁜 해에 비용도 함께
         줄어드는 경우입니다. 합계가 100%를 넘는 것은 영업레버리지 때문입니다: 매출이
         1% 흔들리면 소득은 그보다 크게 흔들립니다.
       </p>
 
-      <div className="mt-4 rounded-lg border border-ink-700 bg-ink-950/50 p-4">
-        <div className="text-xs font-semibold text-signal-warn">
+      <div className="mt-4 rounded-lg border border-paper-rule bg-paper-sunk p-4">
+        <div className="text-xs font-semibold text-paper-accent">
           주원인: {p.label}
         </div>
-        <p className="mt-1 text-sm leading-relaxed text-slate-300">{p.what}</p>
-        <ul className="mt-2 space-y-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm leading-relaxed text-paper-ink2">{p.what}</p>
+        <ul className="mt-2 space-y-1 text-sm text-paper-ink2">
           {p.moves.map((m) => (
             <li key={m}>· {m}</li>
           ))}
@@ -101,7 +101,7 @@ export default function RiskDriver({
       </div>
 
       {factors.correlation < -0.15 && (
-        <p className="mt-3 text-[11px] leading-relaxed text-slate-600">
+        <p className="mt-3 text-[11px] leading-relaxed text-paper-ink3">
           가격과 수확량의 상관은 {factors.correlation.toFixed(2)}입니다. 풍년이면 값이
           떨어져 서로 일부 상쇄되는데, 그만큼 소득 변동은 가격 변동보다 작아집니다.
         </p>

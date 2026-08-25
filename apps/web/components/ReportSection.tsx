@@ -13,16 +13,16 @@ export default function ReportSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="report-section border-t border-ink-800 pt-8">
-      <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-        <span className="tabular text-xs font-semibold tracking-widest text-signal-warn">
+    <section className="report-section">
+      <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b border-paper-rule pb-2">
+        <span className="tabular text-[11px] font-semibold tracking-[0.18em] text-paper-accent">
           {n}
         </span>
-        <h2 className="text-lg font-semibold tracking-tight text-slate-100">{title}</h2>
-        {aside && <div className="ml-auto text-xs text-slate-500">{aside}</div>}
+        <h2 className="text-[1.35rem] font-bold text-paper-ink">{title}</h2>
+        {aside && <div className="ml-auto text-xs text-paper-ink3">{aside}</div>}
       </div>
       {lead && (
-        <p className="mb-5 max-w-2xl text-sm leading-relaxed text-slate-400">{lead}</p>
+        <p className="prose-w mb-6 text-[0.95rem] leading-[1.85] text-paper-ink2">{lead}</p>
       )}
       {children}
     </section>

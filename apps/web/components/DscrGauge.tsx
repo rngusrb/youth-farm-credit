@@ -19,56 +19,63 @@ export default function DscrGauge({ median, p10, target }: Props) {
     <div>
       <div className="mb-3 flex items-baseline gap-6">
         <div>
-          <div className="text-xs text-slate-500">DSCR 중앙값</div>
+          <div className="text-xs text-paper-ink3">DSCR 중앙값</div>
           <div
             className={`tabular text-3xl font-semibold ${
-              danger ? "text-signal-danger" : "text-slate-100"
+              danger ? "text-paper-danger" : "text-paper-ink"
             }`}
           >
             {ratio(median)}
           </div>
         </div>
         <div>
-          <div className="text-xs text-slate-500">하위 10%</div>
-          <div className="tabular text-xl font-medium text-slate-400">{ratio(p10)}</div>
+          <div className="text-xs text-paper-ink3">하위 10%</div>
+          <div className="tabular text-xl font-medium text-paper-ink2">{ratio(p10)}</div>
         </div>
       </div>
 
-      <div className="relative h-3 w-full overflow-hidden rounded-full bg-ink-800">
+      <div className="relative h-3 w-full overflow-hidden rounded-full bg-paper-soft">
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-slate-600"
+          className="absolute inset-y-0 left-0 rounded-full bg-paper-ink3"
           style={{ width: `${toPct(p10)}%` }}
         />
         <div
-          className={`absolute inset-y-0 w-1 ${danger ? "bg-signal-danger" : "bg-signal-calm"}`}
+          className={`absolute inset-y-0 w-1 ${danger ? "bg-paper-danger" : "bg-paper-ink3"}`}
           style={{ left: `calc(${toPct(median)}% - 2px)` }}
         />
         <div
-          className="absolute inset-y-0 w-px bg-slate-300"
+          className="absolute inset-y-0 w-px bg-paper-ink"
           style={{ left: `${toPct(1)}%` }}
         />
         <div
-          className="absolute inset-y-0 w-px bg-signal-warn"
+          className="absolute inset-y-0 w-px bg-paper-accent"
           style={{ left: `${toPct(target)}%` }}
         />
       </div>
-      {/* 눈금 설명은 실제 마커 위치에 맞춰 세운다 */}
-      <div className="relative mt-2 h-8 text-[11px] text-slate-500">
+      {/* 눈금 숫자는 마커 바로 아래, 설명은 겹치지 않게 한 줄 내려서 */}
+      <div className="relative mt-1.5 h-4 text-[11px] text-paper-ink3">
         <span className="absolute left-0">0</span>
         <span
-          className="absolute -translate-x-1/2 whitespace-nowrap text-slate-300"
+          className="tabular absolute -translate-x-1/2 font-medium text-paper-ink"
           style={{ left: `${toPct(1)}%` }}
         >
           1.0
-          <span className="block text-slate-500">상환 가능선</span>
         </span>
         <span
-          className="absolute -translate-x-1/2 whitespace-nowrap text-signal-warn"
-          style={{ left: `${toPct(target)}%`, top: "1.15rem" }}
+          className="tabular absolute -translate-x-1/2 font-medium text-paper-accent"
+          style={{ left: `${toPct(target)}%` }}
         >
-          {target.toFixed(2)} 권장
+          {target.toFixed(2)}
         </span>
         <span className="absolute right-0">{MAX.toFixed(1)}+</span>
+      </div>
+      <div className="mt-1 flex gap-4 text-[11px] text-paper-ink3">
+        <span>
+          <b className="font-medium text-paper-ink">1.0</b> 상환 가능선
+        </span>
+        <span>
+          <b className="font-medium text-paper-accent">{target.toFixed(2)}</b> 은행 권장
+        </span>
       </div>
     </div>
   );
