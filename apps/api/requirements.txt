@@ -1,0 +1,15 @@
+# 로컬에서 테스트한 조합. numpy 는 엔진의 유일한 필수 의존성이다.
+fastapi==0.136.1
+uvicorn[standard]==0.46.0
+pydantic==2.12.5
+numpy==2.2.6
+scipy==1.15.3        # GARCH 최대우도 추정 (stats/garch.py)
+
+# LLM 경로(/extract 해설·/explain·/regulation/ask)에만 필요.
+# 키가 없으면 규칙기반·템플릿으로 동작하므로 없어도 서비스는 뜬다.
+anthropic==0.120.2
+python-dotenv==1.0.1
+
+# 개발용
+pytest==9.0.2
+httpx==0.28.1

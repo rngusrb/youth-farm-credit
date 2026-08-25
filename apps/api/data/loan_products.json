@@ -1,0 +1,12 @@
+[
+  {
+    "id": "successor_farmer",
+    "name": "후계농업경영인 육성자금",
+    "limit": 500000000,
+    "rate": 0.015,
+    "rate_type": "fixed",
+    "grace_years": 5,
+    "amort_years": 20,
+    "source": "농림축산식품부 후계농 육성사업 시행지침"
+  }
+]

@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: youth-farm-credit-api
+    runtime: python
+    plan: free
+    region: singapore
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: CORS_ORIGINS
+        sync: false          # 배포 후 Vercel 도메인으로 채운다
+      - key: ANTHROPIC_API_KEY
+        sync: false          # 없으면 규칙기반·템플릿 경로로 동작

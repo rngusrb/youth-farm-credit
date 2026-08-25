@@ -1,0 +1,374 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { useParams } from "next/navigation";
+import {
+  explain,
+  fetchDiagnosis,
+  type Diagnosis,
+  type Explanation,
+} from "@/lib/api";
+import { manwon, pct, pyeong as fmtPyeong, won } from "@/lib/format";
+import AssumedBadge from "@/components/AssumedBadge";
+import CliffChart from "@/components/CliffChart";
+import DscrGauge from "@/components/DscrGauge";
+import LimitLadder from "@/components/LimitLadder";
+import MarketRegime from "@/components/MarketRegime";
+import RegulationAsk from "@/components/RegulationAsk";
+import ReportCover from "@/components/ReportCover";
+import ReportSection from "@/components/ReportSection";
+import RiskDriver from "@/components/RiskDriver";
+import RiskSummary from "@/components/RiskSummary";
+import SigmaBand from "@/components/SigmaBand";
+
+type Key = "at_available" | "at_recommended" | "at_risk_based";
+
+/**
+ * 결과 화면은 대시보드가 아니라 **리포트**다. 읽는 사람은 지표를 훑으러 온 게
+ * 아니라 답을 받으러 왔다. 그래서 순서가 결론 → 이유 → 위험 → 대응 → 근거다.
+ * 분석 자료(요인분해·교차검증·불확실성)는 결론을 떠받치는 자리인 뒤쪽에 둔다.
+ */
+export default function ResultPage() {
+  const { id } = useParams<{ id: string }>();
+  const [data, setData] = useState<Diagnosis | null>(null);
+  const [note, setNote] = useState<Explanation | null>(null);
+  const [scenarioKey, setScenarioKey] = useState<Key>("at_available");
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetchDiagnosis(id)
+      .then((d) => {
+        if (!alive) return;
+        setData(d);
+        return explain(d).then((e) => alive && setNote(e));
+      })
+      .catch((e) => alive && setError(e instanceof Error ? e.message : "불러오기 실패"));
+    return () => {
+      alive = false;
+    };
+  }, [id]);
+
+  const scenario = useMemo(() => data?.scenarios?.[scenarioKey] ?? null, [data, scenarioKey]);
+  const schedule = useMemo(() => {
+    if (!data) return [];
+    return data.schedules?.[scenarioKey] ?? data.schedule;
+  }, [data, scenarioKey]);
+
+  if (error) {
+    return (
+      <main className="mx-auto max-w-3xl px-5 py-16">
+        <p className="rounded-lg border border-signal-danger/40 bg-signal-danger/10 p-4 text-sm text-signal-danger">
+          {error}
+        </p>
+        <a href="/diagnose" className="mt-4 inline-block text-sm text-signal-calm hover:underline">
+          다시 진단하기 →
+        </a>
+      </main>
+    );
+  }
+
+  if (!data) {
+    return (
+      <main className="mx-auto max-w-3xl px-5 py-16 text-sm text-slate-500">
+        리포트를 준비하는 중입니다…
+      </main>
+    );
+  }
+
+  const ok = data.status === "ok";
+  const shortfall = data.min_area_pyeong - data.input.pyeong;
+
+  // 절 번호는 실제로 실린 절에만, 렌더 순서대로 매긴다. 상환여력이 없으면 01~03 이
+  // 통째로 빠지는데, 그때 04 부터 시작하면 앞이 잘려 나간 문서처럼 보인다.
+  let counter = 0;
+  const next = () => String(++counter).padStart(2, "0");
+
+  return (
+    <main className="mx-auto max-w-3xl px-5 py-12">
+      <ReportCover data={data} />
+
+      <div className="mt-12 space-y-12">
+        {/* ── 01 결론 ─────────────────────────────────── */}
+        {ok && (
+          <ReportSection
+            n={next()}
+            title="세 가지 한도"
+            lead="무엇을 기준으로 삼느냐에 따라 빌려도 되는 금액이 달라집니다. 어느 하나가 정답은 아니지만, 셋이 벌어지는 폭이 이 리포트의 요점입니다."
+          >
+            <LimitLadder
+              available={data.limits.available}
+              recommended={data.limits.recommended}
+              riskBased={data.limits.risk_based}
+              targetDscr={data.target_dscr}
+              maxCrisisProb={data.limits.max_crisis_prob}
+              crisisAtAvailable={data.scenarios.at_available.crisis_prob}
+              crisisAtRecommended={data.scenarios.at_recommended.crisis_prob}
+              crisisAtRiskBased={data.scenarios.at_risk_based?.crisis_prob ?? null}
+              binding={data.limits.binding_constraint}
+              livelihoodFloorProb={data.limits.livelihood_floor_prob}
+            />
+          </ReportSection>
+        )}
+
+        {/* ── 02 왜 그런가 ────────────────────────────── */}
+        {ok && scenario && (
+          <ReportSection
+            n={next()}
+            title={`왜 ${data.product.grace_years + 1}년차인가`}
+            lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치기간이 끝나면 원금이 함께 붙어 연 상환액이 뛰어오르는데, 소득은 그대로입니다.`}
+            aside={
+              <div className="inline-flex rounded-lg border border-ink-700 p-0.5">
+                {(
+                  [
+                    ["at_available", "한도"],
+                    ["at_recommended", "DSCR"],
+                    ["at_risk_based", "위험기준"],
+                  ] as [Key, string][]
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    onClick={() => setScenarioKey(key)}
+                    className={`rounded-md px-2.5 py-1 transition ${
+                      scenarioKey === key
+                        ? "bg-slate-100 font-semibold text-ink-950"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            }
+          >
+            <div className="rounded-xl border border-ink-800 bg-ink-900 p-4">
+              <CliffChart
+                schedule={schedule}
+                capacity={data.income.capacity}
+                graceYears={data.product.grace_years}
+                firstRiskYear={scenario.first_risk_year}
+              />
+              <p className="mt-3 text-xs text-slate-500">
+                거치 {data.product.grace_years}년 연 이자{" "}
+                <span className="tabular text-slate-300">{manwon(scenario.grace_payment)}</span> →
+                상환기 연 원리금{" "}
+                <span className="tabular text-slate-300">{manwon(scenario.amort_payment)}</span>{" "}
+                ({scenario.cliff_multiple.toFixed(1)}배) · 연리{" "}
+                {(data.product.rate * 100).toFixed(1)}% · {data.product.amort_years}년 균분
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-ink-800 bg-ink-900 p-5">
+              <h3 className="mb-4 flex items-center text-sm font-semibold text-slate-200">
+                상환능력비율 (DSCR)
+                <AssumedBadge
+                  source={data.sigma_source}
+                  personalized={data.sigma_personalized}
+                />
+              </h3>
+              <DscrGauge
+                median={scenario.dscr_median}
+                p10={scenario.dscr_p10}
+                target={data.target_dscr}
+              />
+            </div>
+          </ReportSection>
+        )}
+
+        {/* ── 03 얼마나 위험한가 ──────────────────────── */}
+        {ok && scenario && (
+          <ReportSection
+            n={next()}
+            title="얼마나 위험한가"
+            lead="소득이 흔들리는 25년을 3만 번 시뮬레이션해 센 결과입니다. 1년 부족은 저축으로 버티지만, 2년 연속은 돌려막기의 시작입니다."
+          >
+            <RiskSummary
+              scenario={scenario}
+              sigmaSource={data.sigma_source}
+              personalized={data.sigma_personalized}
+            />
+          </ReportSection>
+        )}
+
+        {/* ── 04 작목의 성격 ──────────────────────────── */}
+        {data.factors && (
+          <ReportSection
+            n={next()}
+            title="이 작목은 왜 흔들리나"
+            lead="원인이 가격인지 수확량인지에 따라 대응이 완전히 달라집니다."
+          >
+            <RiskDriver factors={data.factors} cropName={data.input.crop_name} />
+          </ReportSection>
+        )}
+
+        {/* ── 05 선택지 ───────────────────────────────── */}
+        <ReportSection
+          n={next()}
+          title="무엇을 할 수 있나"
+          lead={
+            note?.actions.length
+              ? undefined
+              : "차입 규모를 줄이거나, 재배 규모를 키우거나, 제도의 유예 장치를 미리 확인해 두는 세 갈래가 있습니다."
+          }
+        >
+          {note && (
+            <div className="mb-4 rounded-xl border border-ink-800 bg-ink-900 p-5">
+              <h3 className="text-sm font-semibold text-slate-200">{note.headline}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-400">{note.body}</p>
+              {note.actions.length > 0 && (
+                <ul className="mt-3 space-y-1 text-sm text-slate-300">
+                  {note.actions.map((a, i) => (
+                    <li key={i}>· {a}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          <dl className="grid gap-4 rounded-xl border border-ink-800 bg-ink-900 p-5 sm:grid-cols-2">
+            <div>
+              <dt className="text-xs text-slate-500">
+                한도({won(data.limits.available)}) 차입 시 최소 필요면적
+              </dt>
+              <dd className="tabular mt-1 text-xl font-semibold text-slate-100">
+                {fmtPyeong(data.min_area_pyeong)}
+              </dd>
+              <p className="mt-1 text-[11px] text-slate-600">
+                현재 {fmtPyeong(data.input.pyeong)} 대비{" "}
+                {shortfall > 0 ? `${fmtPyeong(shortfall)} 부족` : "충족"}
+              </p>
+            </div>
+            <div>
+              <dt className="text-xs text-slate-500">재해 시 상환유예</dt>
+              <dd className="mt-1 text-sm leading-relaxed text-slate-300">
+                피해율 30~50% 1년, 50% 이상 2년 연기. 할부유예는 최대{" "}
+                {data.assumptions.installment_defer_max_count}회.
+              </dd>
+              <p className="mt-1 text-[11px] text-slate-600">
+                농업자금이차보전 사업시행지침 — 농가단위 피해율 기준
+              </p>
+            </div>
+          </dl>
+        </ReportSection>
+
+        {/* ── 06 이 계산의 근거 ───────────────────────── */}
+        <ReportSection
+          n={next()}
+          title="이 계산을 믿어도 되나"
+          lead="여기부터는 위 결론이 어디서 나왔는지에 대한 자료입니다. 결론만 필요하시면 건너뛰셔도 됩니다."
+        >
+          <div className="space-y-4">
+            {data.market && <MarketRegime market={data.market} />}
+            {data.uncertainty && (
+              <SigmaBand
+                uncertainty={data.uncertainty}
+                sigma={data.sigma}
+                sigmaSource={data.sigma_source}
+                personalized={data.sigma_personalized}
+                sigmaNote={data.sigma_note}
+                sigmaCi={data.sigma_ci}
+                sigmaCommon={data.sigma_common}
+                sigmaReference={data.sigma_reference}
+                maxCrisisProb={data.limits.max_crisis_prob}
+                recommended={data.limits.recommended}
+              />
+            )}
+
+            <div className="rounded-xl border border-ink-800 bg-ink-900 p-5">
+              <h3 className="text-sm font-semibold text-slate-200">계산 전제</h3>
+              <dl className="mt-3 space-y-2 text-xs leading-relaxed text-slate-400">
+                <Assumption k="소득 기준">
+                  농촌진흥청 2023년 농산물 소득조사 10a당 소득에 면적을 비례 적용.
+                  규모의 경제는 반영되어 있지 않습니다.
+                </Assumption>
+                <Assumption k="소득 변동성">
+                  σ={data.sigma.toFixed(2)} ({data.sigma_source}
+                  {data.sigma_ci &&
+                    `, 95% 구간 ${data.sigma_ci[0].toFixed(2)}~${data.sigma_ci[1].toFixed(2)}`}
+                  ). {data.sigma_reference}
+                </Assumption>
+                <Assumption k="재해">
+                  연간 발생확률 {pct(data.assumptions.p_disaster)}, 피해율 30~80% 균등
+                  가정. 지역·작목별 실측값이 아닙니다.
+                </Assumption>
+                <Assumption k="시뮬레이션">
+                  {data.assumptions.n_sim.toLocaleString("ko-KR")}회 반복, seed{" "}
+                  {data.assumptions.seed}. 같은 입력이면 항상 같은 결과가 나옵니다.
+                </Assumption>
+                <Assumption k="제도 조건">{data.product.source}</Assumption>
+              </dl>
+            </div>
+          </div>
+        </ReportSection>
+
+        {/* ── 07 제도 근거 ────────────────────────────── */}
+        <ReportSection
+          n={next()}
+          title="제도 요건 확인"
+          lead="근거 조항을 찾지 못하면 답변을 만들어내지 않습니다."
+        >
+          <RegulationAsk
+            context={{ crop_id: data.input.crop_id, product_id: data.product.id }}
+          />
+        </ReportSection>
+
+        {/* ── 08 면책 ─────────────────────────────────── */}
+        <ReportSection n={next()} title="면책">
+          <p className="text-xs leading-relaxed text-slate-500">
+            {data.disclaimer} 이 리포트는 공개 통계와 제도 파라미터로 계산한 참고자료이며,
+            개별 농가의 실제 소득·비용 구조와 다를 수 있습니다. 실제 대출 가능 여부와
+            조건은 사업 시행기관과 취급 금융기관의 심사로 결정됩니다.
+          </p>
+        </ReportSection>
+      </div>
+
+      <div className="no-print mt-10 flex flex-wrap gap-3 border-t border-ink-800 pt-6">
+        <a
+          href="/diagnose"
+          className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+        >
+          조건 바꿔 다시 계산
+        </a>
+        <ShareButton />
+        <PrintButton />
+      </div>
+    </main>
+  );
+}
+
+function Assumption({ k, children }: { k: string; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[6rem_1fr] gap-3 border-b border-ink-800/60 pb-2 last:border-0">
+      <dt className="text-slate-500">{k}</dt>
+      <dd>{children}</dd>
+    </div>
+  );
+}
+
+function ShareButton() {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard?.writeText(window.location.href).then(() => {
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        });
+      }}
+      className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+    >
+      {copied ? "링크를 복사했습니다" : "리포트 링크 복사"}
+    </button>
+  );
+}
+
+function PrintButton() {
+  return (
+    <button
+      onClick={() => window.print()}
+      className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+    >
+      인쇄 · PDF 저장
+    </button>
+  );
+}

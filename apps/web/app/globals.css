@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-ink-950 text-slate-100 antialiased;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 리포트는 인쇄·PDF 저장을 전제로 한다. 화면용 장치는 빼고 잉크를 아낀다. */
+@media print {
+  :root { color-scheme: light; }
+  body { background: #fff; color: #111; }
+  header nav, footer, .no-print { display: none !important; }
+  .report-section { break-inside: avoid; page-break-inside: avoid; }
+  .report-cover { break-after: avoid; }
+  a[href]::after { content: ""; }
+}

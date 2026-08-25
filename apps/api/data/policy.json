@@ -1,0 +1,37 @@
+{
+  "disaster_relief": [
+    {
+      "damage_min": 0.3,
+      "damage_max": 0.5,
+      "defer_years": 1
+    },
+    {
+      "damage_min": 0.5,
+      "damage_max": 1.0,
+      "defer_years": 2
+    }
+  ],
+  "source": "농업자금이차보전 사업시행지침 — 농가단위 피해율 기준",
+  "installment_defer_max_count": 3,
+  "simulation": {
+    "p_disaster": 0.08,
+    "damage_min": 0.3,
+    "damage_max": 0.8,
+    "n_sim": 30000,
+    "seed": 42,
+    "target_dscr": 1.25,
+    "risk_year_threshold": 0.2
+  },
+  "sigma_decomposition": {
+    "idiosyncratic_sigma": 0.17,
+    "source": "ASSUMED",
+    "note": "σ_개별² = σ_공통² + σ_고유². σ_공통은 KOSIS 농산물소득조사 전국평균 시계열에서 실측한다(작목별로 다름). σ_고유는 농가별 특이 변동으로, 전국평균에서는 상쇄돼 보이지 않아 여전히 가정값이다. 농가가 소득 이력을 입력하면 이 가정 대신 실측 개인 σ 를 쓴다.",
+    "crop_population_sigma": 0.1798,
+    "crop_population_tau": 0.1922
+  },
+  "price_quantity_elasticity": {
+    "median": -0.166,
+    "source": "MEASURED",
+    "note": "KOSIS 농산물소득조사 17작목의 가격-수량 회귀 기울기 중앙값. KAMIS 가격 σ 를 소득 σ 로 환산할 때 쓰던 가정값(-0.5)을 대체한다."
+  }
+}

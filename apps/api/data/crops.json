@@ -1,0 +1,461 @@
+{
+  "schema_version": "1.0",
+  "source": "농촌진흥청 2023년 농산물 소득조사",
+  "unit_area_pyeong": 302.5,
+  "crops": [
+    {
+      "id": "strawberry_hydro",
+      "name": "딸기(시설,수경)",
+      "aliases": [
+        "딸기",
+        "수경딸기",
+        "시설딸기",
+        "딸기 수경재배"
+      ],
+      "income_per_10a": 14670000,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2235,
+      "sigma_source": "MEASURED",
+      "harvest_months": [
+        12,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "226",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": "품목 '딸기' — 재배방식 구분 없음",
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설딸기(수경)",
+        "series_name": "시설딸기",
+        "note": "수경 구분은 2023년부터(2개년). 장기 σ 는 관행 계열(12개년)에서 재고 레버리지 비율로 이전",
+        "ratio_base": "시설딸기"
+      },
+      "sigma_common": 0.1451,
+      "sigma_ci": [
+        0.1882,
+        0.2541
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설딸기' 2013~2024 12개년 σ=0.111 → 20작목 분포로 축소 0.146 → '시설딸기(수경)' 레버리지 0.99배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.257,
+        "share_quantity": 0.016,
+        "share_cost": -0.276,
+        "residual": 0.003,
+        "elasticity": -0.282,
+        "correlation": -0.466,
+        "sigma_price": 0.0827,
+        "sigma_quantity": 0.0501,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      },
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2015-08-28",
+          "2026-08-25"
+        ],
+        "trading_days": 1147,
+        "annual_price_sigma": 0.0912,
+        "kosis_price_sigma": 0.0827,
+        "garch": {
+          "alpha": 0.1787,
+          "beta": 0.5266,
+          "persistence": 0.7054,
+          "half_life_days": 2.0,
+          "regime": "calm",
+          "current_over_longrun": 0.794
+        },
+        "ewma_check": 0.25,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+      }
+    },
+    {
+      "id": "strawberry_soil",
+      "name": "딸기(시설,토경)",
+      "aliases": [
+        "토경딸기",
+        "딸기 토경재배"
+      ],
+      "income_per_10a": 11500000,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2242,
+      "sigma_source": "MEASURED",
+      "harvest_months": [
+        12,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "226",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": "품목 '딸기' — 재배방식 구분 없음",
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설딸기",
+        "series_name": "시설딸기",
+        "note": null,
+        "ratio_base": "시설딸기"
+      },
+      "sigma_common": 0.1462,
+      "sigma_ci": [
+        0.1884,
+        0.2552
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설딸기' 2013~2024 12개년 σ=0.111 → 20작목 분포로 축소 0.146, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.257,
+        "share_quantity": 0.016,
+        "share_cost": -0.276,
+        "residual": 0.003,
+        "elasticity": -0.282,
+        "correlation": -0.466,
+        "sigma_price": 0.0827,
+        "sigma_quantity": 0.0501,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      },
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2015-08-28",
+          "2026-08-25"
+        ],
+        "trading_days": 1147,
+        "annual_price_sigma": 0.0912,
+        "kosis_price_sigma": 0.0827,
+        "garch": {
+          "alpha": 0.1787,
+          "beta": 0.5266,
+          "persistence": 0.7054,
+          "half_life_days": 2.0,
+          "regime": "calm",
+          "current_over_longrun": 0.794
+        },
+        "ewma_check": 0.25,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+      }
+    },
+    {
+      "id": "tomato_hydro",
+      "name": "토마토(시설,수경)",
+      "aliases": [
+        "토마토",
+        "수경토마토",
+        "시설토마토"
+      ],
+      "income_per_10a": 12150000,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.292,
+      "sigma_source": "MEASURED",
+      "harvest_months": [
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "225",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": "품목 '토마토' — 방울토마토(422)는 별도 품목",
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설토마토(수경)",
+        "series_name": "시설토마토(촉성)",
+        "note": "수경 구분은 2023년부터(2개년). 구표는 촉성/반촉성으로 나뉘어 촉성 계열(10개년)을 씀",
+        "ratio_base": "시설토마토"
+      },
+      "sigma_common": 0.2375,
+      "sigma_ci": [
+        0.1939,
+        0.3564
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 10,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설토마토(촉성)' 2013~2022 10개년 σ=0.178 → 20작목 분포로 축소 0.179 → '시설토마토(수경)' 레버리지 1.33배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.709,
+        "share_quantity": 0.259,
+        "share_cost": 0.082,
+        "residual": -0.05,
+        "elasticity": -0.142,
+        "correlation": -0.182,
+        "sigma_price": 0.0997,
+        "sigma_quantity": 0.0775,
+        "n": 10,
+        "years": [
+          2013,
+          2022
+        ]
+      },
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2015-08-28",
+          "2026-08-25"
+        ],
+        "trading_days": 2695,
+        "annual_price_sigma": 0.1948,
+        "kosis_price_sigma": 0.0997,
+        "garch": {
+          "alpha": 0.1061,
+          "beta": 0.8492,
+          "persistence": 0.9553,
+          "half_life_days": 15.2,
+          "regime": "turbulent",
+          "current_over_longrun": 2.276
+        },
+        "ewma_check": 1.2599,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+      }
+    },
+    {
+      "id": "eggplant",
+      "name": "가지(시설)",
+      "aliases": [
+        "가지",
+        "시설가지"
+      ],
+      "income_per_10a": 13060000,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2407,
+      "sigma_source": "MEASURED",
+      "harvest_months": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "251",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": "KAMIS 중도매(02) 시세 없음 — 친환경농산물 구분에만 존재. 도매가 교차검증 불가",
+        "available": false
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설가지",
+        "series_name": "시설가지",
+        "note": null,
+        "ratio_base": "시설가지"
+      },
+      "sigma_common": 0.1704,
+      "sigma_ci": [
+        0.1859,
+        0.2844
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설가지' 2013~2024 12개년 σ=0.158 → 20작목 분포로 축소 0.170, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.946,
+        "share_quantity": 0.05,
+        "share_cost": 0.006,
+        "residual": -0.002,
+        "elasticity": -0.157,
+        "correlation": -0.32,
+        "sigma_price": 0.0868,
+        "sigma_quantity": 0.0426,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "rose",
+      "name": "장미(시설)",
+      "aliases": [
+        "장미",
+        "시설장미"
+      ],
+      "income_per_10a": 12840000,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2778,
+      "sigma_source": "MEASURED",
+      "harvest_months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "300",
+        "item_cd": "353",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": "화훼는 KAMIS 농산물 가격 API 미수록. 도매가 교차검증 불가",
+        "available": false
+      },
+      "kosis": {
+        "group": "화훼",
+        "name": "시설장미",
+        "series_name": "시설장미",
+        "note": null,
+        "ratio_base": "시설장미"
+      },
+      "sigma_common": 0.2197,
+      "sigma_ci": [
+        0.2028,
+        0.3331
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설장미' 2013~2024 12개년 σ=0.288 → 20작목 분포로 축소 0.220, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.92,
+        "share_quantity": 0.401,
+        "share_cost": -0.351,
+        "residual": 0.03,
+        "elasticity": -0.027,
+        "correlation": -0.04,
+        "sigma_price": 0.1001,
+        "sigma_quantity": 0.0692,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "spinach",
+      "name": "시금치(시설)",
+      "aliases": [
+        "시금치",
+        "시설시금치"
+      ],
+      "income_per_10a": 1730000,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2724,
+      "sigma_source": "MEASURED",
+      "harvest_months": [
+        11,
+        12,
+        1,
+        2,
+        3
+      ],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "213",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설시금치",
+        "series_name": "시설시금치",
+        "note": null,
+        "ratio_base": "시설시금치"
+      },
+      "sigma_common": 0.2128,
+      "sigma_ci": [
+        0.1974,
+        0.3313
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설시금치' 2013~2024 12개년 σ=0.267 → 20작목 분포로 축소 0.213, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.456,
+        "share_quantity": 0.595,
+        "share_cost": 0.007,
+        "residual": -0.058,
+        "elasticity": 0.019,
+        "correlation": 0.022,
+        "sigma_price": 0.1041,
+        "sigma_quantity": 0.0904,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      },
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2015-08-28",
+          "2026-08-25"
+        ],
+        "trading_days": 2694,
+        "annual_price_sigma": 0.2375,
+        "kosis_price_sigma": 0.1041,
+        "garch": {
+          "alpha": 0.1724,
+          "beta": 0.7904,
+          "persistence": 0.9627,
+          "half_life_days": 18.3,
+          "regime": "calm",
+          "current_over_longrun": 0.56
+        },
+        "ewma_check": 0.7023,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+      }
+    }
+  ]
+}

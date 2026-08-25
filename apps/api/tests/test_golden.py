@@ -1,0 +1,240 @@
+"""§9 골든 테스트 케이스.
+
+명세의 기대값은 검증된 파라미터로 산출한 기준값이다. 이 파일이 통과하지 않으면
+엔진 변경은 되돌린다.
+"""
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+from engine import (
+    TARGET_DSCR,
+    annual_income,
+    annuity_factor,
+    capacity,
+    get_crop,
+    get_product,
+    limit_by_dscr,
+    min_area,
+    simulate,
+)
+from engine.diagnose import DiagnoseInput, diagnose
+
+PRODUCT = get_product("successor_farmer")
+LIVING = 24_000_000
+
+# 명세 §9 는 'sigma=0.20' 을 공통 파라미터로 못박는다. crops.json 의 σ 는 실측으로
+# 갱신되므로(KOSIS), 골든 케이스는 σ 를 명시적으로 고정해 엔진 회귀만 검증한다.
+GOLDEN_SIGMA = 0.20
+
+
+def approx_pct(expected: float, pct: float):
+    return pytest.approx(expected, rel=pct)
+
+
+def run(crop_id: str, pyeong: float, living: float = LIVING, other: float = 0.0):
+    return diagnose(
+        DiagnoseInput(
+            crop_id=crop_id,
+            pyeong=pyeong,
+            living_cost=living,
+            other_debt_service=other,
+            requested_principal=PRODUCT.limit,
+        ),
+        sigma_override=GOLDEN_SIGMA,
+    )
+
+
+# ── 공통 파라미터 확인 ────────────────────────────────────────
+def test_product_params():
+    assert PRODUCT.limit == 500_000_000
+    assert PRODUCT.rate == 0.015
+    assert PRODUCT.grace_years == 5
+    assert PRODUCT.amort_years == 20
+
+
+def test_sim_defaults():
+    from engine import sim_defaults
+
+    d = sim_defaults()
+    assert d["p_disaster"] == 0.08
+    assert d["seed"] == 42
+    assert d["n_sim"] == 30000
+    assert d["target_dscr"] == 1.25
+
+
+# ── 케이스 A ─────────────────────────────────────────────────
+class TestCaseA:
+    """딸기(시설,수경) 1,000평 / 생활비 2,400만 / 기존부채 0"""
+
+    d = run("strawberry_hydro", 1000)
+    s = d["scenarios"]["at_available"]
+
+    def test_annual_income(self):
+        assert self.d["income"]["annual"] == approx_pct(48_500_000, 0.01)
+
+    def test_capacity(self):
+        assert self.d["income"]["capacity"] == approx_pct(24_500_000, 0.01)
+
+    def test_recommended_limit(self):
+        assert self.d["limits"]["recommended"] == approx_pct(336_450_000, 0.01)
+
+    def test_grace_payment(self):
+        assert self.s["grace_payment"] == pytest.approx(7_500_000, abs=1.0)
+
+    def test_amort_payment(self):
+        assert self.s["amort_payment"] == approx_pct(29_120_000, 0.005)
+
+    def test_cliff_multiple(self):
+        assert self.s["cliff_multiple"] == pytest.approx(3.9, abs=0.1)
+
+    def test_dscr_median(self):
+        assert self.s["dscr_median"] == pytest.approx(0.77, abs=0.03)
+
+    def test_crisis_prob(self):
+        assert self.s["crisis_prob"] == pytest.approx(0.999, abs=0.01)
+
+    def test_first_risk_year(self):
+        assert self.s["first_risk_year"] == 6
+
+    def test_min_area(self):
+        assert self.d["min_area_pyeong"] == approx_pct(1246, 0.02)
+
+    def test_status(self):
+        assert self.d["status"] == "ok"
+
+
+# ── 케이스 B ─────────────────────────────────────────────────
+class TestCaseB:
+    """딸기(시설,수경) 2,500평 / 동일 조건 — 한도 상한 적용"""
+
+    d = run("strawberry_hydro", 2500)
+    s = d["scenarios"]["at_available"]
+
+    def test_annual_income(self):
+        assert self.d["income"]["annual"] == approx_pct(121_240_000, 0.01)
+
+    def test_recommended_is_capped(self):
+        assert self.d["limits"]["recommended"] == 500_000_000
+        assert self.d["limits"]["gap"] == 0
+
+    def test_dscr_median(self):
+        assert self.s["dscr_median"] == pytest.approx(3.17, abs=0.05)
+
+    def test_crisis_prob(self):
+        assert self.s["crisis_prob"] == pytest.approx(0.000, abs=0.01)
+
+
+# ── 케이스 C ─────────────────────────────────────────────────
+class TestCaseC:
+    """토마토(시설,수경) 2,000평 / 생활비 2,400만 / 기존부채 300만"""
+
+    d = run("tomato_hydro", 2000, other=3_000_000)
+    s = d["scenarios"]["at_available"]
+
+    def test_annual_income(self):
+        assert self.d["income"]["annual"] == approx_pct(80_330_000, 0.01)
+
+    def test_capacity(self):
+        assert self.d["income"]["capacity"] == approx_pct(53_330_000, 0.01)
+
+    def test_dscr_median(self):
+        assert self.s["dscr_median"] == pytest.approx(1.72, abs=0.05)
+
+    def test_crisis_prob(self):
+        assert self.s["crisis_prob"] == pytest.approx(0.031, abs=0.01)
+
+
+# ── 케이스 D ─────────────────────────────────────────────────
+class TestCaseD:
+    """시금치(시설) 3,000평 / 생활비 2,400만 — 상환여력 없음"""
+
+    d = run("spinach", 3000)
+
+    def test_annual_income(self):
+        assert self.d["income"]["annual"] == approx_pct(17_160_000, 0.01)
+
+    def test_no_capacity(self):
+        assert self.d["income"]["capacity"] < 0
+        assert self.d["status"] == "no_capacity"
+        assert self.d["scenarios"] == {}
+
+    def test_min_area(self):
+        assert self.d["min_area_pyeong"] == approx_pct(10_562, 0.02)
+
+
+# ── 불변식 ───────────────────────────────────────────────────
+def test_invariant_recommended_meets_target():
+    """1. 권장 한도로 차입 시 기대 DSCR은 target 이상"""
+    for crop_id, pyeong, other in [
+        ("strawberry_hydro", 1000, 0),
+        ("tomato_hydro", 2000, 3_000_000),
+        ("eggplant", 1500, 0),
+        ("rose", 900, 1_000_000),
+    ]:
+        d = run(crop_id, pyeong, other=other)
+        rec = d["limits"]["recommended"]
+        cap = d["income"]["capacity"]
+        due = rec * annuity_factor(PRODUCT.rate, PRODUCT.amort_years)
+        assert cap / due >= TARGET_DSCR - 1e-9
+
+
+def test_invariant_limit_monotonic_in_area():
+    """2. 면적 증가 → 권장 한도 단조 증가"""
+    prev = -1.0
+    for pyeong in range(400, 2600, 100):
+        rec = run("strawberry_hydro", pyeong)["limits"]["recommended"]
+        assert rec >= prev - 1e-9
+        prev = rec
+
+
+def test_invariant_sigma_does_not_move_deterministic_values():
+    """3. sigma 변화가 결정론적 값(원리금·최소면적)에 영향 없음"""
+    income = annual_income("strawberry_hydro", 1000)
+    cap = capacity(income, LIVING, 0)
+    base_limit = limit_by_dscr(cap, PRODUCT)
+    base_area = min_area("strawberry_hydro", PRODUCT.limit, LIVING, 0, PRODUCT)
+
+    results = [
+        simulate(PRODUCT.limit, income, LIVING, sigma=s, product=PRODUCT)
+        for s in (0.10, 0.20, 0.30)
+    ]
+    for r in results:
+        assert r.amort_payment == pytest.approx(results[0].amort_payment)
+        assert r.grace_payment == pytest.approx(results[0].grace_payment)
+    assert base_limit == limit_by_dscr(cap, PRODUCT)
+    assert base_area == min_area("strawberry_hydro", PRODUCT.limit, LIVING, 0, PRODUCT)
+
+
+def test_invariant_seed_reproducibility():
+    """4. seed 고정 시 재현성"""
+    income = annual_income("strawberry_hydro", 1000)
+    a = simulate(PRODUCT.limit, income, LIVING, sigma=0.2, product=PRODUCT)
+    b = simulate(PRODUCT.limit, income, LIVING, sigma=0.2, product=PRODUCT)
+    assert a == b
+    c = simulate(PRODUCT.limit, income, LIVING, sigma=0.2, product=PRODUCT, seed=7)
+    assert c.dscr_median != a.dscr_median
+
+
+def test_invariant_diagnosis_id_roundtrip():
+    inp = DiagnoseInput("strawberry_hydro", 1000, 24_000_000, 0, 500_000_000)
+    assert DiagnoseInput.decode(inp.encode()) == inp
+
+
+def test_schedule_shape():
+    d = run("strawberry_hydro", 1000)
+    sched = d["schedule"]
+    assert len(sched) == PRODUCT.grace_years + PRODUCT.amort_years
+    assert all(np.isclose(x, 7_500_000) for x in sched[: PRODUCT.grace_years])
+    assert all(
+        np.isclose(x, sched[PRODUCT.grace_years]) for x in sched[PRODUCT.grace_years :]
+    )
+
+
+def test_higher_principal_is_never_safer():
+    income = annual_income("strawberry_hydro", 1200)
+    lo = simulate(200_000_000, income, LIVING, sigma=0.2, product=PRODUCT)
+    hi = simulate(400_000_000, income, LIVING, sigma=0.2, product=PRODUCT)
+    assert hi.dscr_median < lo.dscr_median
+    assert hi.crisis_prob >= lo.crisis_prob

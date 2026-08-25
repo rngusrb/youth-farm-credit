@@ -1,0 +1,8818 @@
+{
+ "source": "공공데이터포털 한국농수산식품유통공사_일별 도,소매 가격정보 (데이터 15156057) 첨부 코드표",
+ "spec": {
+  "url": "https://apis.data.go.kr/B552845/perDay/price",
+  "method": "GET",
+  "date_format": "YYYYMMDD",
+  "max_rows_per_page": 1000
+ },
+ "se": [
+  {
+   "code": "01",
+   "name": "소매"
+  },
+  {
+   "code": "02",
+   "name": "중도매"
+  },
+  {
+   "code": "03",
+   "name": "친환경농산물"
+  },
+  {
+   "code": "07",
+   "name": "친환경농산물(신규)"
+  }
+ ],
+ "ctgry": [
+  {
+   "code": "100",
+   "name": "식량작물"
+  },
+  {
+   "code": "200",
+   "name": "채소류"
+  },
+  {
+   "code": "300",
+   "name": "특용작물"
+  },
+  {
+   "code": "400",
+   "name": "과일류"
+  },
+  {
+   "code": "500",
+   "name": "축산물"
+  },
+  {
+   "code": "600",
+   "name": "수산물"
+  }
+ ],
+ "item": [
+  {
+   "ctgry_cd": "100",
+   "code": "111",
+   "name": "쌀"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "112",
+   "name": "찹쌀"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "113",
+   "name": "혼합곡"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "114",
+   "name": "기장"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "121",
+   "name": "보리쌀"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "141",
+   "name": "콩"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "142",
+   "name": "팥"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "143",
+   "name": "녹두"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "144",
+   "name": "메밀"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "151",
+   "name": "고구마"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "152",
+   "name": "감자"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "161",
+   "name": "귀리"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "162",
+   "name": "보리"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "163",
+   "name": "수수"
+  },
+  {
+   "ctgry_cd": "100",
+   "code": "164",
+   "name": "율무"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "211",
+   "name": "배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "212",
+   "name": "양배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "213",
+   "name": "시금치"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "214",
+   "name": "상추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "215",
+   "name": "얼갈이배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "216",
+   "name": "갓"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "217",
+   "name": "연근"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "218",
+   "name": "우엉"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "221",
+   "name": "수박"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "222",
+   "name": "참외"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "223",
+   "name": "오이"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "224",
+   "name": "호박"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "225",
+   "name": "토마토"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "226",
+   "name": "딸기"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "231",
+   "name": "무"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "232",
+   "name": "당근"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "233",
+   "name": "열무"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "241",
+   "name": "건고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "242",
+   "name": "풋고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "243",
+   "name": "붉은고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "244",
+   "name": "피마늘"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "245",
+   "name": "양파"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "246",
+   "name": "파"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "247",
+   "name": "생강"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "248",
+   "name": "고춧가루"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "251",
+   "name": "가지"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "252",
+   "name": "미나리"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "253",
+   "name": "깻잎"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "254",
+   "name": "부추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "255",
+   "name": "피망"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "256",
+   "name": "파프리카"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "257",
+   "name": "멜론"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "258",
+   "name": "깐마늘(국산)"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "259",
+   "name": "깐마늘(수입)"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "261",
+   "name": "브로콜리"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "262",
+   "name": "양상추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "263",
+   "name": "청경채"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "264",
+   "name": "케일"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "265",
+   "name": "콩나물"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "266",
+   "name": "절임배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "279",
+   "name": "알배기배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "280",
+   "name": "브로콜리"
+  },
+  {
+   "ctgry_cd": "200",
+   "code": "422",
+   "name": "방울토마토"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "312",
+   "name": "참깨"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "313",
+   "name": "들깨"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "314",
+   "name": "땅콩"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "315",
+   "name": "느타리버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "316",
+   "name": "팽이버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "317",
+   "name": "새송이버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "318",
+   "name": "호두"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "319",
+   "name": "아몬드"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "321",
+   "name": "양송이버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "322",
+   "name": "표고버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "351",
+   "name": "국화"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "352",
+   "name": "카네이션"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "353",
+   "name": "장미"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "354",
+   "name": "백합"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "355",
+   "name": "글라디올러스"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "356",
+   "name": "튜울립"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "357",
+   "name": "거베라"
+  },
+  {
+   "ctgry_cd": "300",
+   "code": "358",
+   "name": "안개꽃"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "411",
+   "name": "사과"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "412",
+   "name": "배"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "413",
+   "name": "복숭아"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "414",
+   "name": "포도"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "415",
+   "name": "감귤"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "416",
+   "name": "단감"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "418",
+   "name": "바나나"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "419",
+   "name": "참다래"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "420",
+   "name": "파인애플"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "421",
+   "name": "오렌지"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "423",
+   "name": "자몽"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "424",
+   "name": "레몬"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "425",
+   "name": "체리"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "426",
+   "name": "건포도"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "427",
+   "name": "건블루베리"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "428",
+   "name": "망고"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "429",
+   "name": "블루베리"
+  },
+  {
+   "ctgry_cd": "400",
+   "code": "430",
+   "name": "아보카도"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "4301",
+   "name": "소"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "4304",
+   "name": "돼지"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "4401",
+   "name": "수입 소고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "4402",
+   "name": "수입 돼지고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "512",
+   "name": "쇠고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "514",
+   "name": "돼지고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "515",
+   "name": "닭고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "516",
+   "name": "계란"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "520",
+   "name": "오리고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "535",
+   "name": "우유"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "9901",
+   "name": "닭"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "9903",
+   "name": "계란"
+  },
+  {
+   "ctgry_cd": "500",
+   "code": "9908",
+   "name": "우유"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "611",
+   "name": "고등어"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "612",
+   "name": "꽁치"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "613",
+   "name": "갈치"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "614",
+   "name": "조기"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "615",
+   "name": "명태"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "616",
+   "name": "삼치"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "619",
+   "name": "물오징어"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "638",
+   "name": "마른멸치"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "639",
+   "name": "북어"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "640",
+   "name": "마른오징어"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "641",
+   "name": "김"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "642",
+   "name": "마른미역"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "643",
+   "name": "염장미역"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "644",
+   "name": "굴"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "647",
+   "name": "넙치"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "648",
+   "name": "우럭"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "649",
+   "name": "수입조기"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "650",
+   "name": "새우젓"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "651",
+   "name": "멸치액젓"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "652",
+   "name": "천일염"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "653",
+   "name": "전복"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "654",
+   "name": "새우"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "656",
+   "name": "꽃게"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "658",
+   "name": "홍합"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "659",
+   "name": "가리비"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "660",
+   "name": "건다시마"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "661",
+   "name": "바지락"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "662",
+   "name": "고등어필렛"
+  },
+  {
+   "ctgry_cd": "600",
+   "code": "663",
+   "name": "전어"
+  }
+ ],
+ "vrty": [
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "code": "01",
+   "name": "20kg"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "code": "02",
+   "name": "백미"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "code": "03",
+   "name": "현미"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "code": "05",
+   "name": "20kg(햅쌀)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "code": "10",
+   "name": "10kg"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "code": "11",
+   "name": "10kg(햅쌀)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "112",
+   "code": "01",
+   "name": "일반계"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "113",
+   "code": "00",
+   "name": "혼합곡"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "114",
+   "code": "01",
+   "name": "기장"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "121",
+   "code": "02",
+   "name": "과맥"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "code": "01",
+   "name": "흰 콩(국산)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "code": "02",
+   "name": "콩나물콩"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "code": "03",
+   "name": "흰 콩(수입)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "142",
+   "code": "00",
+   "name": "붉은 팥(국산)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "142",
+   "code": "01",
+   "name": "붉은 팥(수입)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "143",
+   "code": "00",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "143",
+   "code": "01",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "144",
+   "code": "01",
+   "name": "메밀(수입)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "151",
+   "code": "00",
+   "name": "밤"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "00",
+   "name": "감자"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "01",
+   "name": "수미(노지)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "02",
+   "name": "대지마"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "03",
+   "name": "노지"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "04",
+   "name": "수미(시설)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "05",
+   "name": "기타(시설)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "code": "06",
+   "name": "기타(노지)"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "161",
+   "code": "01",
+   "name": "귀리"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "162",
+   "code": "01",
+   "name": "보리"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "163",
+   "code": "01",
+   "name": "수수"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "164",
+   "code": "01",
+   "name": "율무"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "code": "01",
+   "name": "봄"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "code": "02",
+   "name": "여름(고랭지)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "code": "03",
+   "name": "가을"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "code": "06",
+   "name": "월동"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "212",
+   "code": "00",
+   "name": "양배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "213",
+   "code": "00",
+   "name": "시금치"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "code": "01",
+   "name": "적"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "code": "02",
+   "name": "청"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "215",
+   "code": "00",
+   "name": "얼갈이배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "216",
+   "code": "00",
+   "name": "갓"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "217",
+   "code": "01",
+   "name": "연근"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "218",
+   "code": "01",
+   "name": "우엉"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "221",
+   "code": "00",
+   "name": "수박"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "222",
+   "code": "00",
+   "name": "참외"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "code": "01",
+   "name": "가시계통"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "code": "02",
+   "name": "다다기계통"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "code": "03",
+   "name": "취청"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "code": "01",
+   "name": "애호박"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "code": "02",
+   "name": "쥬키니"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "code": "03",
+   "name": "단호박"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "225",
+   "code": "00",
+   "name": "토마토"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "226",
+   "code": "00",
+   "name": "딸기"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "code": "01",
+   "name": "봄"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "code": "02",
+   "name": "고랭지"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "code": "03",
+   "name": "가을"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "code": "06",
+   "name": "월동"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "code": "00",
+   "name": "당근"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "code": "01",
+   "name": "무세척"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "code": "02",
+   "name": "세척"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "code": "10",
+   "name": "세척(수입)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "233",
+   "code": "00",
+   "name": "열무"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "code": "00",
+   "name": "화건"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "code": "01",
+   "name": "햇산화건"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "code": "02",
+   "name": "양건(~23.5)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "code": "03",
+   "name": "햇산양건(~23.5)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "code": "10",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "code": "00",
+   "name": "풋고추(녹광 등)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "code": "02",
+   "name": "꽈리고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "code": "03",
+   "name": "청양고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "code": "04",
+   "name": "오이맛고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "243",
+   "code": "00",
+   "name": "붉은고추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "01",
+   "name": "한지1접"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "02",
+   "name": "난지1접"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "03",
+   "name": "한지"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "04",
+   "name": "난지"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "06",
+   "name": "햇한지1접"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "07",
+   "name": "햇난지1접"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "08",
+   "name": "쪽마늘"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "11",
+   "name": "햇한지"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "12",
+   "name": "햇난지"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "21",
+   "name": "햇난지(대서)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "22",
+   "name": "난지(대서)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "23",
+   "name": "햇난지(남도)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "code": "24",
+   "name": "난지(남도)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "code": "00",
+   "name": "양파"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "code": "02",
+   "name": "햇양파"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "code": "10",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "code": "00",
+   "name": "대파"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "code": "02",
+   "name": "쪽파"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "code": "00",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "code": "01",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "248",
+   "code": "00",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "248",
+   "code": "01",
+   "name": "중국"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "251",
+   "code": "00",
+   "name": "가지"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "252",
+   "code": "00",
+   "name": "미나리"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "253",
+   "code": "00",
+   "name": "깻잎"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "254",
+   "code": "00",
+   "name": "부추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "255",
+   "code": "00",
+   "name": "청"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "256",
+   "code": "00",
+   "name": "파프리카"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "257",
+   "code": "00",
+   "name": "멜론"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "code": "01",
+   "name": "깐마늘(국산)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "code": "03",
+   "name": "깐마늘(대서)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "code": "04",
+   "name": "햇깐마늘(대서)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "code": "05",
+   "name": "깐마늘(남도)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "code": "06",
+   "name": "햇깐마늘(남도)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "259",
+   "code": "01",
+   "name": "깐마늘(수입)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "259",
+   "code": "03",
+   "name": "깐마늘(수입산)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "261",
+   "code": "01",
+   "name": "브로콜리"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "262",
+   "code": "01",
+   "name": "양상추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "263",
+   "code": "01",
+   "name": "청경채"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "264",
+   "code": "01",
+   "name": "케일"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "265",
+   "code": "01",
+   "name": "콩나물"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "code": "01",
+   "name": "봄"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "code": "02",
+   "name": "여름(고랭지)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "code": "03",
+   "name": "가을"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "code": "04",
+   "name": "월동"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "279",
+   "code": "00",
+   "name": "알배기배추"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "280",
+   "code": "00",
+   "name": "브로콜리(국산)"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "code": "01",
+   "name": "방울토마토"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "code": "02",
+   "name": "대추방울토마토"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "code": "01",
+   "name": "백색(국산)"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "code": "02",
+   "name": "중국"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "code": "03",
+   "name": "인도"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "313",
+   "code": "01",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "313",
+   "code": "02",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "314",
+   "code": "01",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "314",
+   "code": "02",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "code": "00",
+   "name": "느타리버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "code": "01",
+   "name": "애느타리버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "316",
+   "code": "00",
+   "name": "팽이버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "317",
+   "code": "00",
+   "name": "새송이버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "318",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "319",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "321",
+   "code": "01",
+   "name": "양송이버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "322",
+   "code": "01",
+   "name": "표고버섯"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "code": "01",
+   "name": "중.대륜"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "code": "02",
+   "name": "소륜"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "code": "03",
+   "name": "스프레이"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "code": "04",
+   "name": "스프레이소국"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "352",
+   "code": "01",
+   "name": "중.대륜"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "352",
+   "code": "02",
+   "name": "스프레이"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "01",
+   "name": "쏘니아"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "02",
+   "name": "마르데보아"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "06",
+   "name": "달라스"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "07",
+   "name": "마리나"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "08",
+   "name": "산드라"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "11",
+   "name": "노블레스"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "12",
+   "name": "레드칼립소"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "13",
+   "name": "비탈"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "14",
+   "name": "환희"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "15",
+   "name": "사피아"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "code": "16",
+   "name": "아쿠아"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "code": "01",
+   "name": "나팔합외대"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "code": "02",
+   "name": "나팔합쌍대"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "code": "03",
+   "name": "틈나리외대"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "code": "04",
+   "name": "틈나리쌍대"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "355",
+   "code": "01",
+   "name": "헌팅송"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "355",
+   "code": "02",
+   "name": "스픽앤드스판"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "355",
+   "code": "03",
+   "name": "화이트"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "code": "01",
+   "name": "레드마타온"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "code": "02",
+   "name": "골든옥스포드"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "code": "03",
+   "name": "골든아펠둔"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "code": "04",
+   "name": "스트롱홀드"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "code": "05",
+   "name": "홀랜디아"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "code": "06",
+   "name": "미스홀랜드"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "code": "00",
+   "name": "거베라"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "code": "01",
+   "name": "포모사"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "code": "02",
+   "name": "볼가"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "code": "03",
+   "name": "호프"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "code": "01",
+   "name": "브리스톨F"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "code": "03",
+   "name": "길보아"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "code": "04",
+   "name": "미라벨라"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "code": "05",
+   "name": "인발"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "code": "01",
+   "name": "홍옥"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "code": "05",
+   "name": "후지"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "code": "06",
+   "name": "쓰가루(아오리)"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "code": "07",
+   "name": "홍로"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "code": "01",
+   "name": "신고"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "code": "02",
+   "name": "만삼길"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "code": "03",
+   "name": "장십랑"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "code": "04",
+   "name": "원황"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "code": "01",
+   "name": "백도"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "code": "04",
+   "name": "창방조생"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "code": "05",
+   "name": "유명"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "01",
+   "name": "캠벨얼리"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "02",
+   "name": "거봉"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "03",
+   "name": "델라웨어"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "06",
+   "name": "MBA"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "07",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "08",
+   "name": "레드글로브 칠레(~23.5)"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "09",
+   "name": "레드글로브 페루(~23.5)"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "10",
+   "name": "톰슨 미국(~23.5)"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "11",
+   "name": "톰슨 호주(~23.5)"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "code": "12",
+   "name": "샤인머스켓"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "code": "00",
+   "name": "감귤"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "code": "01",
+   "name": "노지"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "code": "02",
+   "name": "시설"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "416",
+   "code": "00",
+   "name": "단감"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "418",
+   "code": "02",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "419",
+   "code": "01",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "419",
+   "code": "02",
+   "name": "그린 뉴질랜드"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "420",
+   "code": "02",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "code": "02",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "code": "03",
+   "name": "네이블 미국"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "code": "04",
+   "name": "발렌시아 미국"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "code": "05",
+   "name": "네이블 EU"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "code": "06",
+   "name": "네이블 호주"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "423",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "424",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "425",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "426",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "427",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "428",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "429",
+   "code": "01",
+   "name": "블루베리"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "430",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "code": "21",
+   "name": "안심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "code": "22",
+   "name": "등심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "code": "36",
+   "name": "설도"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "code": "40",
+   "name": "양지"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "code": "50",
+   "name": "갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "code": "25",
+   "name": "앞다리"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "code": "27",
+   "name": "삼겹살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "code": "28",
+   "name": "갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "code": "68",
+   "name": "목심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4401",
+   "code": "31",
+   "name": "갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4401",
+   "code": "37",
+   "name": "갈비살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4402",
+   "code": "27",
+   "name": "삼겹살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "11",
+   "name": "한우갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "12",
+   "name": "한우등심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "13",
+   "name": "한우불고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "14",
+   "name": "한우양지"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "15",
+   "name": "한우안심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "16",
+   "name": "한우설도"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "21",
+   "name": "미국산갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "22",
+   "name": "미국산갈비살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "23",
+   "name": "미국산불고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "24",
+   "name": "미국산설도"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "31",
+   "name": "호주산갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "32",
+   "name": "호주산등심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "33",
+   "name": "호주산불고기"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "code": "34",
+   "name": "호주산설도"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "code": "00",
+   "name": "삼겹살(국산냉장)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "code": "01",
+   "name": "삼겹살(수입냉동)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "code": "02",
+   "name": "목살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "code": "03",
+   "name": "돼지갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "code": "04",
+   "name": "앞다리살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "515",
+   "code": "02",
+   "name": "도계"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "00",
+   "name": "특란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "01",
+   "name": "특란(소비쿠폰 적용)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "02",
+   "name": "동물복지란(10구)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "03",
+   "name": "동물복지란(15구)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "04",
+   "name": "유정란(10구)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "05",
+   "name": "유정란(15구)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "06",
+   "name": "수입란(미국)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "code": "07",
+   "name": "계란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "520",
+   "code": "01",
+   "name": "통오리"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "520",
+   "code": "02",
+   "name": "훈제육"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "535",
+   "code": "00",
+   "name": "우유"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "01",
+   "name": "토종닭17호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "02",
+   "name": "육계9호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "03",
+   "name": "육계10호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "04",
+   "name": "육계11호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "05",
+   "name": "육계12호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "24",
+   "name": "절단육"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "code": "99",
+   "name": "육계(kg)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9903",
+   "code": "21",
+   "name": "특란10구"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9903",
+   "code": "23",
+   "name": "특란30구"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9908",
+   "code": "01",
+   "name": "흰우유"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "01",
+   "name": "생선"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "02",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "03",
+   "name": "국산(염장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "04",
+   "name": "냉동(수입)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "05",
+   "name": "국산(신선 냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "06",
+   "name": "국산(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "07",
+   "name": "수입산(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "code": "08",
+   "name": "수입산(염장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "612",
+   "code": "01",
+   "name": "냉동(수입)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "code": "01",
+   "name": "생선"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "code": "02",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "code": "03",
+   "name": "국산(냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "code": "04",
+   "name": "국산(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "code": "05",
+   "name": "수입산(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "code": "01",
+   "name": "생선"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "code": "04",
+   "name": "참조기(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "code": "05",
+   "name": "참조기(신선 냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "code": "06",
+   "name": "참조기(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "code": "07",
+   "name": "굴비"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "code": "01",
+   "name": "생선"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "code": "02",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "code": "03",
+   "name": "원양산(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "code": "04",
+   "name": "냉동(원양수입통합)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "code": "05",
+   "name": "냉동가공"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "code": "01",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "code": "02",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "code": "03",
+   "name": "생물"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "code": "01",
+   "name": "생선"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "code": "02",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "code": "03",
+   "name": "연근해(신선 냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "code": "04",
+   "name": "연근해(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "code": "05",
+   "name": "원양(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "638",
+   "code": "00",
+   "name": "마른멸치"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "639",
+   "code": "01",
+   "name": "황태"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "639",
+   "code": "02",
+   "name": "먹태"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "640",
+   "code": "00",
+   "name": "마른오징어"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "641",
+   "code": "00",
+   "name": "마른김"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "641",
+   "code": "01",
+   "name": "얼구운김"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "642",
+   "code": "00",
+   "name": "마른미역"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "643",
+   "code": "00",
+   "name": "염장미역"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "644",
+   "code": "00",
+   "name": "굴"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "647",
+   "code": "00",
+   "name": "넙치활어"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "648",
+   "code": "00",
+   "name": "우럭"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "649",
+   "code": "01",
+   "name": "부세수입(생선)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "649",
+   "code": "04",
+   "name": "부세수입(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "650",
+   "code": "00",
+   "name": "새우젓"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "651",
+   "code": "00",
+   "name": "멸치액젓"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "652",
+   "code": "00",
+   "name": "천일염"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "653",
+   "code": "00",
+   "name": "전복"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "654",
+   "code": "01",
+   "name": "흰다리(수입)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "code": "00",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "code": "01",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "code": "02",
+   "name": "암꽃게(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "code": "03",
+   "name": "수꽃게(냉동)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "code": "04",
+   "name": "암꽃게(냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "code": "05",
+   "name": "수꽃게(냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "658",
+   "code": "01",
+   "name": "깐홍합(냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "658",
+   "code": "02",
+   "name": "안깐홍합(냉장)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "659",
+   "code": "01",
+   "name": "해만가리비(홍가리비)"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "660",
+   "code": "01",
+   "name": "완도산"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "661",
+   "code": "00",
+   "name": "바지락"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "662",
+   "code": "00",
+   "name": "수입"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "662",
+   "code": "01",
+   "name": "국산"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "663",
+   "code": "01",
+   "name": "냉장"
+  }
+ ],
+ "grd": [
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "03",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "03",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "10",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "111",
+   "vrty_cd": "11",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "112",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "112",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "112",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "112",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "113",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "113",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "114",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "114",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "121",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "141",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "142",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "142",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "142",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "143",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "143",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "143",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "144",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "151",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "151",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "151",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "151",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "151",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "152",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "161",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "161",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "162",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "162",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "163",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "163",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "164",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "100",
+   "item_cd": "164",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "211",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "212",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "212",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "212",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "212",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "212",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "213",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "213",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "213",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "213",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "213",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "214",
+   "vrty_cd": "02",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "215",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "215",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "216",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "217",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "217",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "218",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "218",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "221",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "221",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "221",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "221",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "222",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "222",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "222",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "222",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "222",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "02",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "03",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "03",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "223",
+   "vrty_cd": "03",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "03",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "224",
+   "vrty_cd": "03",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "225",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "225",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "225",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "225",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "225",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "226",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "226",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "226",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "226",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "226",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "231",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "02",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "232",
+   "vrty_cd": "10",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "233",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "233",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "241",
+   "vrty_cd": "10",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "02",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "03",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "03",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "04",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "242",
+   "vrty_cd": "04",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "243",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "243",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "07",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "07",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "08",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "08",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "11",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "11",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "12",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "12",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "21",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "21",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "22",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "22",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "23",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "23",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "24",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "244",
+   "vrty_cd": "24",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "02",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "245",
+   "vrty_cd": "10",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "02",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "246",
+   "vrty_cd": "02",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "247",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "248",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "248",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "251",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "251",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "251",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "251",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "251",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "252",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "252",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "252",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "252",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "252",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "253",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "253",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "253",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "253",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "253",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "254",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "254",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "254",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "254",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "254",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "255",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "255",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "255",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "255",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "255",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "256",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "256",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "256",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "256",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "256",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "257",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "257",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "257",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "257",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "258",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "259",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "259",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "259",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "261",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "261",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "262",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "262",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "263",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "263",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "264",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "264",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "265",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "265",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "266",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "279",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "279",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "280",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "280",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "200",
+   "item_cd": "422",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "312",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "313",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "313",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "313",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "314",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "314",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "314",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "315",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "316",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "316",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "316",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "316",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "316",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "317",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "317",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "317",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "317",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "318",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "319",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "321",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "321",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "322",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "322",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "351",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "352",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "352",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "07",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "08",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "11",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "12",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "13",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "14",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "15",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "353",
+   "vrty_cd": "16",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "354",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "355",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "355",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "355",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "356",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "357",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "300",
+   "item_cd": "358",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "05",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "05",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "05",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "06",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "06",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "06",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "07",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "411",
+   "vrty_cd": "07",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "412",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "413",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "01",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "01",
+   "code": "24",
+   "name": "L과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "01",
+   "code": "25",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "02",
+   "code": "24",
+   "name": "L과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "02",
+   "code": "25",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "06",
+   "code": "24",
+   "name": "L과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "06",
+   "code": "25",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "07",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "07",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "08",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "08",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "09",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "09",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "10",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "10",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "11",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "11",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "12",
+   "code": "24",
+   "name": "L과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "414",
+   "vrty_cd": "12",
+   "code": "25",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "00",
+   "code": "09",
+   "name": "저농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "01",
+   "code": "13",
+   "name": "S과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "01",
+   "code": "14",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "01",
+   "code": "15",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "01",
+   "code": "16",
+   "name": "S과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "02",
+   "code": "13",
+   "name": "S과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "02",
+   "code": "14",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "02",
+   "code": "15",
+   "name": "M과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "415",
+   "vrty_cd": "02",
+   "code": "16",
+   "name": "S과"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "416",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "416",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "416",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "416",
+   "vrty_cd": "00",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "418",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "418",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "419",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "419",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "419",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "419",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "420",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "420",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "06",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "421",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "423",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "423",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "424",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "424",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "425",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "425",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "426",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "427",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "428",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "428",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "429",
+   "vrty_cd": "01",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "429",
+   "vrty_cd": "01",
+   "code": "08",
+   "name": "무농약"
+  },
+  {
+   "ctgry_cd": "400",
+   "item_cd": "430",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "21",
+   "code": "1",
+   "name": "1++등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "21",
+   "code": "2",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "21",
+   "code": "3",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "22",
+   "code": "1",
+   "name": "1++등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "22",
+   "code": "2",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "22",
+   "code": "3",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "36",
+   "code": "1",
+   "name": "1++등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "36",
+   "code": "2",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "36",
+   "code": "3",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "40",
+   "code": "1",
+   "name": "1++등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "40",
+   "code": "2",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "40",
+   "code": "3",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "50",
+   "code": "1",
+   "name": "1++등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "50",
+   "code": "2",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4301",
+   "vrty_cd": "50",
+   "code": "3",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "vrty_cd": "25",
+   "code": "1",
+   "name": "앞다리"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "vrty_cd": "27",
+   "code": "1",
+   "name": "삼겹살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "vrty_cd": "28",
+   "code": "1",
+   "name": "갈비"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4304",
+   "vrty_cd": "68",
+   "code": "1",
+   "name": "목심"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4401",
+   "vrty_cd": "31",
+   "code": "1",
+   "name": "미국산"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4401",
+   "vrty_cd": "31",
+   "code": "2",
+   "name": "호주산"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4401",
+   "vrty_cd": "37",
+   "code": "1",
+   "name": "미국산"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4401",
+   "vrty_cd": "37",
+   "code": "2",
+   "name": "호주산"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "4402",
+   "vrty_cd": "27",
+   "code": "1",
+   "name": "삼겹살"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "11",
+   "code": "01",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "11",
+   "code": "03",
+   "name": "3등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "11",
+   "code": "17",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "12",
+   "code": "01",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "12",
+   "code": "03",
+   "name": "3등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "12",
+   "code": "17",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "13",
+   "code": "01",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "13",
+   "code": "03",
+   "name": "3등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "14",
+   "code": "01",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "14",
+   "code": "17",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "15",
+   "code": "01",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "15",
+   "code": "17",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "16",
+   "code": "01",
+   "name": "1등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "16",
+   "code": "03",
+   "name": "3등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "16",
+   "code": "17",
+   "name": "1+등급"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "21",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "21",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "22",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "22",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "23",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "23",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "24",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "31",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "31",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "32",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "32",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "33",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "33",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "34",
+   "code": "10",
+   "name": "냉장"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "512",
+   "vrty_cd": "34",
+   "code": "11",
+   "name": "냉동"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "514",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "515",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "515",
+   "vrty_cd": "02",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "515",
+   "vrty_cd": "02",
+   "code": "12",
+   "name": "무항생제"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "00",
+   "code": "07",
+   "name": "유기농"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "00",
+   "code": "12",
+   "name": "무항생제"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "04",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "05",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "06",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "516",
+   "vrty_cd": "07",
+   "code": "18",
+   "name": "동물복지란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "520",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "520",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "535",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "01",
+   "code": "1",
+   "name": "토종닭17호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "02",
+   "code": "1",
+   "name": "육계9호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "03",
+   "code": "1",
+   "name": "육계10호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "04",
+   "code": "1",
+   "name": "육계11호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "05",
+   "code": "1",
+   "name": "육계12호"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "24",
+   "code": "1",
+   "name": "절단육"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9901",
+   "vrty_cd": "99",
+   "code": "1",
+   "name": "육계(kg)"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9903",
+   "vrty_cd": "21",
+   "code": "1",
+   "name": "일반란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9903",
+   "vrty_cd": "21",
+   "code": "2",
+   "name": "등급란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9903",
+   "vrty_cd": "23",
+   "code": "1",
+   "name": "일반란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9903",
+   "vrty_cd": "23",
+   "code": "2",
+   "name": "등급란"
+  },
+  {
+   "ctgry_cd": "500",
+   "item_cd": "9908",
+   "vrty_cd": "01",
+   "code": "1",
+   "name": "흰우유"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "05",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "05",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "05",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "06",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "06",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "06",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "07",
+   "code": "19",
+   "name": "특大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "07",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "07",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "611",
+   "vrty_cd": "08",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "612",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "01",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "01",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "02",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "02",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "03",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "03",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "03",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "04",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "04",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "04",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "05",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "613",
+   "vrty_cd": "05",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "05",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "05",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "06",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "06",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "614",
+   "vrty_cd": "07",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "02",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "02",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "03",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "03",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "04",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "04",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "615",
+   "vrty_cd": "05",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "01",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "01",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "01",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "02",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "03",
+   "code": "20",
+   "name": "大"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "03",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "616",
+   "vrty_cd": "03",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "03",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "03",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "04",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "04",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "05",
+   "code": "21",
+   "name": "中"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "619",
+   "vrty_cd": "05",
+   "code": "22",
+   "name": "小"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "638",
+   "vrty_cd": "00",
+   "code": "27",
+   "name": "대멸"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "638",
+   "vrty_cd": "00",
+   "code": "28",
+   "name": "중멸"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "638",
+   "vrty_cd": "00",
+   "code": "29",
+   "name": "세멸"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "639",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "639",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "640",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "641",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "641",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "642",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "643",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "644",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "647",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "648",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "649",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "649",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "650",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "651",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "652",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "653",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "654",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "02",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "03",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "03",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "04",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "656",
+   "vrty_cd": "05",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "658",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "658",
+   "vrty_cd": "02",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "659",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "660",
+   "vrty_cd": "01",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "661",
+   "vrty_cd": "00",
+   "code": "04",
+   "name": "상품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "661",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "662",
+   "vrty_cd": "00",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "662",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  },
+  {
+   "ctgry_cd": "600",
+   "item_cd": "663",
+   "vrty_cd": "01",
+   "code": "05",
+   "name": "중품"
+  }
+ ],
+ "sgg": [
+  {
+   "code": "1101",
+   "name": "서울"
+  },
+  {
+   "code": "2100",
+   "name": "부산"
+  },
+  {
+   "code": "2200",
+   "name": "대구"
+  },
+  {
+   "code": "2300",
+   "name": "인천"
+  },
+  {
+   "code": "2401",
+   "name": "광주"
+  },
+  {
+   "code": "2501",
+   "name": "대전"
+  },
+  {
+   "code": "2601",
+   "name": "울산"
+  },
+  {
+   "code": "2701",
+   "name": "세종"
+  },
+  {
+   "code": "3100",
+   "name": "경기"
+  },
+  {
+   "code": "3111",
+   "name": "수원"
+  },
+  {
+   "code": "3112",
+   "name": "성남"
+  },
+  {
+   "code": "3113",
+   "name": "의정부"
+  },
+  {
+   "code": "3138",
+   "name": "고양"
+  },
+  {
+   "code": "3145",
+   "name": "용인"
+  },
+  {
+   "code": "3201",
+   "name": "강원"
+  },
+  {
+   "code": "3211",
+   "name": "춘천"
+  },
+  {
+   "code": "3214",
+   "name": "강릉"
+  },
+  {
+   "code": "3300",
+   "name": "충북"
+  },
+  {
+   "code": "3311",
+   "name": "청주"
+  },
+  {
+   "code": "3312",
+   "name": "충주"
+  },
+  {
+   "code": "3400",
+   "name": "충남"
+  },
+  {
+   "code": "3411",
+   "name": "천안"
+  },
+  {
+   "code": "3500",
+   "name": "전북"
+  },
+  {
+   "code": "3511",
+   "name": "전주"
+  },
+  {
+   "code": "3512",
+   "name": "군산"
+  },
+  {
+   "code": "3600",
+   "name": "전남"
+  },
+  {
+   "code": "3611",
+   "name": "목포"
+  },
+  {
+   "code": "3613",
+   "name": "순천"
+  },
+  {
+   "code": "3700",
+   "name": "경북"
+  },
+  {
+   "code": "3711",
+   "name": "포항"
+  },
+  {
+   "code": "3714",
+   "name": "안동"
+  },
+  {
+   "code": "3800",
+   "name": "경남"
+  },
+  {
+   "code": "3811",
+   "name": "마산"
+  },
+  {
+   "code": "3814",
+   "name": "창원"
+  },
+  {
+   "code": "3818",
+   "name": "김해"
+  },
+  {
+   "code": "3911",
+   "name": "제주"
+  },
+  {
+   "code": "9998",
+   "name": "온라인"
+  },
+  {
+   "code": "1000",
+   "name": "전국(축산부류한정)"
+  }
+ ],
+ "mrkt": [
+  {
+   "sgg_cd": "1101",
+   "code": "0110200",
+   "name": "서울"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110211",
+   "name": "가락도매"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110212",
+   "name": "경동"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110213",
+   "name": "복조리"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110242",
+   "name": "터미날"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110251",
+   "name": "영등포"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110252",
+   "name": "동대문"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110253",
+   "name": "양곡도매"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110254",
+   "name": "중부"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110401",
+   "name": "F-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110402",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110403",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110404",
+   "name": "R-마트"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110405",
+   "name": "G-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110406",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110407",
+   "name": "K-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110408",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110409",
+   "name": "I-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110410",
+   "name": "L-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0110411",
+   "name": "B`-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400001",
+   "name": "A-SSM"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400002",
+   "name": "B-전문점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400003",
+   "name": "A-전문점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400004",
+   "name": "A-생협"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400005",
+   "name": "A-백화점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400006",
+   "name": "A-대형마트"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400007",
+   "name": "C-SSM"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400008",
+   "name": "B-백화점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400009",
+   "name": "B-생협"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400026",
+   "name": "C-대형마트"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400027",
+   "name": "C-전문점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400031",
+   "name": "C-생협"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400032",
+   "name": "D-생협"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400035",
+   "name": "D-전문점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400038",
+   "name": "D-백화점"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400045",
+   "name": "D-SSM"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0400046",
+   "name": "B-SSM"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0800001",
+   "name": "A-슈퍼마켓"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0800002",
+   "name": "B-SSM"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900001",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900002",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900003",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900004",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900005",
+   "name": "BB1-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900036",
+   "name": "EE1-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900039",
+   "name": "M-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "0900040",
+   "name": "M'-유통"
+  },
+  {
+   "sgg_cd": "1101",
+   "code": "1000006",
+   "name": "가락소매"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210000",
+   "name": "부산"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210022",
+   "name": "부전"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210031",
+   "name": "공동어"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210032",
+   "name": "남포동건어물"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210042",
+   "name": "엄궁도매"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210051",
+   "name": "수정"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210401",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210402",
+   "name": "D-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210403",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0210404",
+   "name": "H-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0400010",
+   "name": "B-전문점"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0400011",
+   "name": "A-대형마트"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0400012",
+   "name": "A-SSM"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0400013",
+   "name": "A-백화점"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0400036",
+   "name": "A-전문점"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0400039",
+   "name": "E-SSM"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0800003",
+   "name": "A-슈퍼마켓"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0800004",
+   "name": "D-SSM"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0900006",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0900007",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0900008",
+   "name": "DD-유통"
+  },
+  {
+   "sgg_cd": "2100",
+   "code": "0900009",
+   "name": "DD1-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220000",
+   "name": "대구"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220021",
+   "name": "북부도매"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220023",
+   "name": "서문"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220024",
+   "name": "칠성"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220061",
+   "name": "서남"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220062",
+   "name": "동구"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220063",
+   "name": "남문"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220401",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220402",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220403",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0220404",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400014",
+   "name": "B-전문점"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400015",
+   "name": "B-대형마트"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400016",
+   "name": "A-백화점"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400017",
+   "name": "A-SSM"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400028",
+   "name": "B-SSM"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400040",
+   "name": "A-직매장"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0400047",
+   "name": "B-생협"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0800005",
+   "name": "C-SSM"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0800006",
+   "name": "A-SSM"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0900010",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0900011",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0900012",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "2200",
+   "code": "0900013",
+   "name": "DD-유통"
+  },
+  {
+   "sgg_cd": "2300",
+   "code": "0230000",
+   "name": "인천"
+  },
+  {
+   "sgg_cd": "2300",
+   "code": "0230036",
+   "name": "현대"
+  },
+  {
+   "sgg_cd": "2300",
+   "code": "0230401",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "2300",
+   "code": "0900014",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240100",
+   "name": "광주"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240103",
+   "name": "광주원협"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240121",
+   "name": "양동"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240122",
+   "name": "각화도매"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240123",
+   "name": "서부도매"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240141",
+   "name": "대인"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240142",
+   "name": "서방"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240401",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240402",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0240403",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400018",
+   "name": "B-전문점"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400019",
+   "name": "A-백화점"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400020",
+   "name": "A-대형마트"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400021",
+   "name": "A-SSM"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400030",
+   "name": "B-SSM"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400033",
+   "name": "A-생협"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400037",
+   "name": "E-전문점"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0400041",
+   "name": "B-직매장"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0800007",
+   "name": "C-SSM"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0800008",
+   "name": "A-슈퍼마켓"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0900015",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0900016",
+   "name": "BB2-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0900017",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0900018",
+   "name": "BB3-유통"
+  },
+  {
+   "sgg_cd": "2401",
+   "code": "0900037",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250100",
+   "name": "대전"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250112",
+   "name": "역전"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250113",
+   "name": "오정도매"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250114",
+   "name": "인동"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250115",
+   "name": "중앙"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250116",
+   "name": "중부"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250401",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250402",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0250403",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400022",
+   "name": "C-백화점"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400023",
+   "name": "B-대형마트"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400024",
+   "name": "B-전문점"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400025",
+   "name": "B-SSM"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400029",
+   "name": "C-대형마트"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400034",
+   "name": "B-생협"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0400042",
+   "name": "C-직매장"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0800009",
+   "name": "A-SSM"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0800010",
+   "name": "B-SSM"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0900019",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0900020",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0900021",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0900022",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "2501",
+   "code": "0900038",
+   "name": "EE1-유통"
+  },
+  {
+   "sgg_cd": "2601",
+   "code": "0260001",
+   "name": "신정"
+  },
+  {
+   "sgg_cd": "2601",
+   "code": "0260100",
+   "name": "울산"
+  },
+  {
+   "sgg_cd": "2601",
+   "code": "0260401",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "2601",
+   "code": "0260402",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "2601",
+   "code": "0900023",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "2701",
+   "code": "0270101",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "2701",
+   "code": "0900024",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "2701",
+   "code": "0900025",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "3111",
+   "code": "0310001",
+   "name": "지동"
+  },
+  {
+   "sgg_cd": "3111",
+   "code": "0310402",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "3111",
+   "code": "0311100",
+   "name": "수원"
+  },
+  {
+   "sgg_cd": "3111",
+   "code": "0900026",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "3112",
+   "code": "0310407",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "3113",
+   "code": "0312401",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "3113",
+   "code": "0900031",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "3113",
+   "code": "0900032",
+   "name": "AA-유통"
+  },
+  {
+   "sgg_cd": "3138",
+   "code": "0310404",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "3138",
+   "code": "0310405",
+   "name": "J-유통"
+  },
+  {
+   "sgg_cd": "3145",
+   "code": "0310403",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "3145",
+   "code": "0310406",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "3211",
+   "code": "0320001",
+   "name": "중앙"
+  },
+  {
+   "sgg_cd": "3211",
+   "code": "0320401",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "3211",
+   "code": "0321100",
+   "name": "춘천"
+  },
+  {
+   "sgg_cd": "3211",
+   "code": "0900027",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "3214",
+   "code": "0321400",
+   "name": "강릉"
+  },
+  {
+   "sgg_cd": "3214",
+   "code": "0321401",
+   "name": "중앙"
+  },
+  {
+   "sgg_cd": "3214",
+   "code": "0321411",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "3214",
+   "code": "0900035",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "3311",
+   "code": "0330001",
+   "name": "육거리"
+  },
+  {
+   "sgg_cd": "3311",
+   "code": "0330401",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "3311",
+   "code": "0331100",
+   "name": "청주"
+  },
+  {
+   "sgg_cd": "3311",
+   "code": "0900028",
+   "name": "CC-유통"
+  },
+  {
+   "sgg_cd": "3312",
+   "code": "0331200",
+   "name": "충주"
+  },
+  {
+   "sgg_cd": "3411",
+   "code": "0340401",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "3511",
+   "code": "0350001",
+   "name": "남부"
+  },
+  {
+   "sgg_cd": "3511",
+   "code": "0350401",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "3511",
+   "code": "0351100",
+   "name": "전주"
+  },
+  {
+   "sgg_cd": "3512",
+   "code": "0351200",
+   "name": "군산"
+  },
+  {
+   "sgg_cd": "3611",
+   "code": "0361100",
+   "name": "목포"
+  },
+  {
+   "sgg_cd": "3613",
+   "code": "0360401",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "3613",
+   "code": "0360402",
+   "name": "역전"
+  },
+  {
+   "sgg_cd": "3613",
+   "code": "0900029",
+   "name": "EE-유통"
+  },
+  {
+   "sgg_cd": "3711",
+   "code": "0370001",
+   "name": "죽도"
+  },
+  {
+   "sgg_cd": "3711",
+   "code": "0370401",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "3711",
+   "code": "0900034",
+   "name": "DD-유통"
+  },
+  {
+   "sgg_cd": "3714",
+   "code": "0372401",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "3714",
+   "code": "0900030",
+   "name": "BB-유통"
+  },
+  {
+   "sgg_cd": "3811",
+   "code": "0381100",
+   "name": "마산"
+  },
+  {
+   "sgg_cd": "3814",
+   "code": "0380001",
+   "name": "상남"
+  },
+  {
+   "sgg_cd": "3814",
+   "code": "0380101",
+   "name": "공동어시장"
+  },
+  {
+   "sgg_cd": "3814",
+   "code": "0380401",
+   "name": "B-유통"
+  },
+  {
+   "sgg_cd": "3814",
+   "code": "0380402",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "3814",
+   "code": "0900033",
+   "name": "DD-유통"
+  },
+  {
+   "sgg_cd": "3818",
+   "code": "0380403",
+   "name": "A-유통"
+  },
+  {
+   "sgg_cd": "3911",
+   "code": "0390001",
+   "name": "동문"
+  },
+  {
+   "sgg_cd": "3911",
+   "code": "0390401",
+   "name": "C-유통"
+  },
+  {
+   "sgg_cd": "3911",
+   "code": "0390403",
+   "name": "E-유통"
+  },
+  {
+   "sgg_cd": "3911",
+   "code": "0391100",
+   "name": "제주"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "0400043",
+   "name": "A-온라인"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "0400044",
+   "name": "B-온라인"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000001",
+   "name": "온라인몰A"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000002",
+   "name": "온라인몰I"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000003",
+   "name": "온라인몰E"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000004",
+   "name": "옥션"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000005",
+   "name": "온라인몰C"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000007",
+   "name": "온라인몰B"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000008",
+   "name": "온라인몰D"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000009",
+   "name": "온라인몰F"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000010",
+   "name": "온라인몰G"
+  },
+  {
+   "sgg_cd": "9998",
+   "code": "1000011",
+   "name": "온라인몰H"
+  }
+ ]
+}
