@@ -298,6 +298,14 @@ export default function ResultPage() {
                 </Assumption>
                 <Assumption k="제도 조건">{data.product.source}</Assumption>
               </dl>
+              <a
+                href="/methodology.html"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-block border-b border-paper-accent/40 text-xs font-medium text-paper-accent transition hover:border-paper-accent"
+              >
+                데이터가 어떤 분석을 거쳐 이 숫자가 됐는지 — 전체 계보 보기 →
+              </a>
             </div>
           </div>
         </ReportSection>

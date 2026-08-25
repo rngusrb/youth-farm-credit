@@ -225,6 +225,16 @@ export default function InputPage() {
       </div>
 
       <p className="mt-8 text-xs leading-relaxed text-slate-600">
+        <a
+          href="/methodology.html"
+          target="_blank"
+          rel="noreferrer"
+          className="border-b border-slate-700 text-slate-400 transition hover:border-slate-500 hover:text-slate-200"
+        >
+          이 계산이 어떤 데이터에서 나오는지 →
+        </a>
+        <br />
+        <br />
         입력값은 서버에 저장되지 않습니다. 결과는 주소에만 담겨 공유됩니다.
         부도 예측·신용평가·대출 알선을 하지 않으며, 계산 결과는 대출 심사 결과가
         아닙니다.

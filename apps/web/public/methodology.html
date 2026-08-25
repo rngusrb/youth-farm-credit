@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="청년농 여신 설계 서비스가 쓰는 데이터가 어떤 분석을 거쳐 차입 한도로 이어지는지에 대한 계보.">
+<title>숫자의 계보</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;700&display=swap">
+
+<style>
+:root {
+  --paper:      #f6f4ef;
+  --panel:      #fffefb;
+  --ink:        #1b2029;
+  --ink-2:      #59616f;
+  --ink-3:      #8b8f98;
+  --rule:       #d9d4c9;
+  --rule-soft:  #e8e4db;
+  --accent:     #9a6216;
+  --accent-bg:  #f0e6d5;
+  --measured:   #29685a;
+  --measured-bg:#dfeae5;
+  --assumed:    #a8442b;
+  --assumed-bg: #f2e2dc;
+
+  --serif: "Noto Serif KR", "Apple SD Gothic Neo", serif;
+  --sans:  "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:      #12151a;
+    --panel:      #191d24;
+    --ink:        #e9e7e1;
+    --ink-2:      #a2a8b4;
+    --ink-3:      #6f7683;
+    --rule:       #2a303a;
+    --rule-soft:  #222831;
+    --accent:     #c9924a;
+    --accent-bg:  #2b2318;
+    --measured:   #4fa890;
+    --measured-bg:#16261f;
+    --assumed:    #d4735a;
+    --assumed-bg: #2b1a16;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:      #12151a;
+  --panel:      #191d24;
+  --ink:        #e9e7e1;
+  --ink-2:      #a2a8b4;
+  --ink-3:      #6f7683;
+  --rule:       #2a303a;
+  --rule-soft:  #222831;
+  --accent:     #c9924a;
+  --accent-bg:  #2b2318;
+  --measured:   #4fa890;
+  --measured-bg:#16261f;
+  --assumed:    #d4735a;
+  --assumed-bg: #2b1a16;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 5rem) clamp(1.1rem, 4vw, 2.5rem) 6rem;
+}
+
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+/* ── 머리 ───────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+h1 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  line-height: 1.25;
+  text-wrap: balance;
+  margin: .6rem 0 0;
+  letter-spacing: -.01em;
+}
+.lede {
+  max-width: 44rem;
+  color: var(--ink-2);
+  font-size: 1.02rem;
+  margin: 1.1rem 0 0;
+}
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 2rem;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem 1.6rem;
+  margin-top: 1.6rem;
+  font-family: var(--mono);
+  font-size: .74rem;
+  color: var(--ink-3);
+}
+
+/* ── 섹션 ───────────────────────────────────────── */
+section { margin-top: clamp(3rem, 7vw, 4.5rem); }
+
+.sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: .9rem;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: .6rem;
+  margin-bottom: 1.8rem;
+}
+.sec-head h2 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.3rem;
+  margin: 0;
+  letter-spacing: -.01em;
+}
+.sec-head .tag {
+  font-family: var(--mono);
+  font-size: .7rem;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+  margin-left: auto;
+  text-align: right;
+}
+
+/* ── 데이터 원천 ────────────────────────────────── */
+.sources { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+.source {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 1.1rem 1.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.source .who {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.source h3 {
+  font-family: var(--serif);
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.45;
+}
+.source p { margin: 0; font-size: .86rem; color: var(--ink-2); line-height: 1.65; }
+.source .gives {
+  margin-top: auto;
+  padding-top: .7rem;
+  border-top: 1px dashed var(--rule);
+  font-size: .8rem;
+  color: var(--ink);
+}
+.source .gives b { font-weight: 700; }
+
+/* ── 분석 단계 ──────────────────────────────────── */
+.stage {
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0 1.2rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.stage:first-of-type { border-top: 1px solid var(--rule-soft); }
+.stage-n {
+  font-family: var(--mono);
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding-top: .15rem;
+}
+.stage-body { min-width: 0; }
+.stage h3 {
+  font-family: var(--serif);
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 0 0 .1rem;
+}
+.stage .why { color: var(--ink-2); font-size: .9rem; margin: 0 0 .9rem; }
+
+.flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  align-items: stretch;
+  gap: .55rem;
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: .85rem .95rem;
+  overflow-x: auto;
+}
+.flow .cell { min-width: 0; }
+.flow .lab {
+  font-family: var(--mono);
+  font-size: .62rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: .3rem;
+}
+.flow .val { font-size: .87rem; line-height: 1.55; }
+.flow .val .num { font-weight: 600; }
+.flow .arw {
+  align-self: center;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: .95rem;
+}
+@media (max-width: 40rem) {
+  .flow { grid-template-columns: 1fr; }
+  .flow .arw { justify-self: start; transform: rotate(90deg); }
+}
+
+.formula {
+  font-family: var(--mono);
+  font-size: .82rem;
+  background: var(--accent-bg);
+  color: var(--ink);
+  padding: .45rem .6rem;
+  margin-top: .55rem;
+  display: block;
+  overflow-x: auto;
+  white-space: pre;
+}
+.finding {
+  margin-top: .8rem;
+  padding-left: .85rem;
+  border-left: 3px solid var(--accent);
+  font-size: .91rem;
+}
+.finding b { color: var(--ink); }
+
+/* ── 표 ─────────────────────────────────────────── */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--rule); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: .87rem; }
+th, td { padding: .55rem .8rem; text-align: left; border-bottom: 1px solid var(--rule-soft); }
+thead th {
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule);
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+tr.hi td { background: var(--accent-bg); }
+
+.pill {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: .64rem;
+  letter-spacing: .06em;
+  padding: .1rem .42rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.pill.m { background: var(--measured-bg); color: var(--measured); }
+.pill.a { background: var(--assumed-bg); color: var(--assumed); }
+
+/* ── 추적 스트립 ────────────────────────────────── */
+.trace { display: grid; gap: 0; border: 1px solid var(--rule); background: var(--panel); }
+.trace-row {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr 11rem;
+  gap: .8rem;
+  align-items: baseline;
+  padding: .7rem .95rem;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.trace-row:last-child { border-bottom: 0; }
+.trace-row.out { background: var(--accent-bg); }
+.trace-k { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; }
+.trace-d { font-size: .88rem; color: var(--ink-2); min-width: 0; }
+.trace-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; font-size: .95rem; }
+@media (max-width: 40rem) {
+  .trace-row { grid-template-columns: 1fr auto; }
+  .trace-k { grid-column: 1 / -1; }
+}
+
+/* ── 마무리 ─────────────────────────────────────── */
+.split { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.note {
+  border: 1px solid var(--rule);
+  background: var(--panel);
+  padding: 1rem 1.1rem;
+}
+.note h4 {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin: 0 0 .5rem;
+}
+.note.m h4 { color: var(--measured); }
+.note.a h4 { color: var(--assumed); }
+.note ul { margin: 0; padding-left: 1.05rem; font-size: .87rem; color: var(--ink-2); line-height: 1.7; }
+.note li { margin-bottom: .3rem; }
+.note li b { color: var(--ink); font-weight: 600; }
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--rule);
+  font-size: .78rem;
+  color: var(--ink-3);
+  line-height: 1.7;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">데이터 계보 · Data lineage</div>
+    <h1>숫자의 계보</h1>
+    <p class="lede">
+      청년농 여신 설계 서비스가 화면에 띄우는 모든 금액과 확률이 어떤 통계에서 출발해
+      어떤 계산을 거쳐 만들어지는지, 사슬 전체를 한 장에 폈습니다. 예측 모델은 없습니다 —
+      전부 공개 통계에 대한 결정론적 계산과 시뮬레이션입니다.
+    </p>
+    <div class="meta">
+      <span>데이터 원천 5종</span>
+      <span>분석 9단계</span>
+      <span>작목 38종</span>
+      <span>테스트 170건</span>
+      <span>최종 갱신 2026-08-25</span>
+    </div>
+  </header>
+
+  <!-- ─────────────────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <h2>1. 어떤 데이터를 썼나</h2>
+      <span class="tag">모두 공개 자료</span>
+    </div>
+
+    <div class="sources">
+      <article class="source">
+        <span class="who">농촌진흥청 · KOSIS</span>
+        <h3>농산물소득조사</h3>
+        <p>작목별 10a당 총수입·경영비·소득을 매년 조사해 공표합니다. 시설채소·노지채소·식량특용·화훼 2013~2024년, 19,106행을 API로 받아 <b>38작목</b>을 구성했습니다.</p>
+        <div class="gives">→ <b>소득 시계열</b> · <b>비용 구조</b></div>
+      </article>
+
+      <article class="source">
+        <span class="who">농촌진흥청 2023</span>
+        <h3>작목별 소득 수준</h3>
+        <p>딸기(수경) 10a당 1,467만원 같은 기준 소득값. 최신 조사연도(2024) 기준이며, 면적을 곱해 그 농가의 연 소득을 냅니다.</p>
+        <div class="gives">→ <b>소득 수준</b></div>
+      </article>
+
+      <article class="source">
+        <span class="who">농림축산식품부</span>
+        <h3>후계농 육성자금 지침</h3>
+        <p>5억 한도, 연 1.5% 고정, 5년 거치 20년 상환. 제도 사실이라 추정할 것이 없습니다.</p>
+        <div class="gives">→ <b>상환 조건</b></div>
+      </article>
+
+      <article class="source">
+        <span class="who">aT · 공공데이터포털</span>
+        <h3>KAMIS 도매가격</h3>
+        <p>전국 도매시장 일별 실거래가. 딸기·토마토·시금치 11년치, 최대 2,695 거래일을 받아 교차검증에 썼다.</p>
+        <div class="gives">→ <b>독립 검증</b> · <b>시장 국면</b></div>
+      </article>
+
+      <article class="source">
+        <span class="who">농가 입력 · 선택</span>
+        <h3>본인 소득 이력</h3>
+        <p>지난 3개년 이상의 실제 농업소득. 있으면 통계 대신 이 농가의 실제 변동성을 씁니다.</p>
+        <div class="gives">→ <b>개인 변동성</b></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <h2>2. 어떤 분석을 했나</h2>
+      <span class="tag">입력 → 계산 → 출력</span>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">01</div>
+      <div class="stage-body">
+        <h3>소득 변동성 실측</h3>
+        <p class="why">농사는 해마다 소득이 다릅니다. 얼마나 다른지를 12년치 실적에서 직접 잽니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">시설딸기 10a당 소득<br>2013~2024 <span class="num">12</span>개년</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">해마다의 증감률을 로그로 바꿔 표준편차</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">σ<sub>공통</sub> = <span class="num">0.110</span><br><span style="color:var(--ink-3)">95% 구간 <span class="num">0.061~0.144</span></span></span></div>
+        </div>
+        <code class="formula">σ = sd( ln(소득ₜ / 소득ₜ₋₁) )   ·   구간은 부트스트랩 2,000회</code>
+        <p class="finding"><b>발견 —</b> 작목마다 다릅니다. 딸기 0.111, 시금치 0.267, 노지당근 0.706 — 원추정치로는 6배 넘게 벌어집니다. <b>다만 이 격차를 그대로 믿으면 안 됩니다.</b> 12년은 짧고, 그 안에는 우연이 섞여 있습니다(다음 단계).</p>
+      </div>
+    </div>
+
+<div class="stage">
+      <div class="stage-n">02</div>
+      <div class="stage-body">
+        <h3>계층 축소 — 12년을 얼마나 믿을 것인가</h3>
+        <p class="why">시즌 초 10타수 5안타인 타자를 5할 타자로 보지 않는 것과 같습니다. 관측이 적으면 극단값이 나옵니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">작목 <span class="num">37</span>종의 σ 원추정치<br>각 <span class="num">11</span>개 수익률</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">작목 전체의 σ 분포를 추정해 신호와 표본오차를 분리, 관측 수에 비례해 축소</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">딸기 <span class="num">0.111 → 0.131</span><br>시금치 <span class="num">0.267 → 0.259</span></span></div>
+        </div>
+        <code class="formula">작목 차이 중 실제 신호 76%   ·   표본오차 24%   (경험적 베이즈 부분 풀링)</code>
+        <p class="finding"><b>축소 강도는 표본이 늘수록 약해집니다.</b> 작목 20종일 때는 차이의 42%만 신호로 잡혀 크게 당겼지만, 38종으로 늘리자 모집단 추정이 좋아져 76%가 신호로 남았습니다. 같은 원리로, 계열이 짧은 작목일수록 더 많이 당겨집니다. 계열이 2개년뿐인 수경 작목도 이 구조에서 자연스럽게 처리됩니다 — 같은 품목의 관행 계열에서 빌려옵니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">03</div>
+      <div class="stage-body">
+        <h3>재배방식 차이 복원</h3>
+        <p class="why">수경 구분은 2023년부터라 2개년뿐입니다. 시계열이 없어 σ를 직접 못 잽니다. 그래서 비용 구조로 돌아갑니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">2023·2024년<br>총수입 · 경영비</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">영업레버리지(총수입÷소득)를 수경 대 관행으로 <b>같은 해끼리</b> 비교</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">딸기 <span class="num">×0.99</span><br>토마토 <span class="num">×1.33</span></span></div>
+        </div>
+        <code class="formula">σ_수경 = σ_관행 × (DOL_수경 ÷ DOL_관행)</code>
+        <p class="finding"><b>왜 되나 —</b> 도매시장에서 수경 딸기와 토경 딸기가 다른 값에 팔리지 않습니다. 가격은 품목의 성질이지 재배방식의 성질이 아닙니다. 갈리는 건 <b>고정비 비중</b>이고, 그건 2개년만 있어도 계산됩니다. 토마토 수경은 관행보다 소득이 <b>33% 더 민감</b>했습니다.</p>
+      </div>
+    </div>
+
+<div class="stage">
+      <div class="stage-n">04</div>
+      <div class="stage-body">
+        <h3>요인분해 — 왜 흔들리나</h3>
+        <p class="why">σ 는 "얼마나"만 말합니다. 원인이 가격인지 수확량인지에 따라 처방이 완전히 달라집니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">작목-연도 <span class="num">400</span>건 이상<br>가격 · 수량 · 비용 각각</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">소득 변동에 대한 각 요인의 공분산 기여도</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">딸기 = 가격 <span class="num">126</span>%<br>시금치 = 수량 <span class="num">60</span>%</span></div>
+        </div>
+        <code class="formula">Δlog소득 ≈ (총수입/소득)·(Δlog가격 + Δlog수량) − (경영비/소득)·Δlog경영비</code>
+        <p class="finding"><b>처방이 갈립니다 —</b> 가격 주도형(딸기)이면 계약재배·출하 분산, 수량 주도형(시금치)이면 재해보험·시설 보강. 합이 100%를 넘는 것은 영업레버리지 때문이고, 음수는 그 요인이 변동을 <b>완충</b>했다는 뜻입니다(나쁜 해엔 비용도 줄어듦). 덤으로 가격-수량 탄력성이 실측돼(<span class="num">−0.24</span>), 찍어뒀던 가정값 −0.5 를 대체했습니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">05</div>
+      <div class="stage-body">
+        <h3>평균의 함정 보정</h3>
+        <p class="why">공표값은 전국 평균입니다. 농가별 부침이 평균에서 상쇄되므로, 그대로 쓰면 위험을 과소평가합니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">σ<sub>공통</sub> <span class="num">0.131</span> <span class="pill m">실측</span><br>σ<sub>고유</sub> <span class="num">0.17</span> <span class="pill a">가정</span></span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">두 성분을 독립으로 보고 제곱합</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">σ = <span class="num">0.215</span><br><span style="color:var(--ink-3)">딸기 최종값</span></span></div>
+        </div>
+        <code class="formula">σ_개별 = √(σ_공통² + σ_고유²)   ·   전국이 함께 겪는 몫 + 농가 고유의 몫</code>
+        <p class="finding"><b>남은 가정 —</b> σ에서 가정으로 남은 것은 σ<sub>고유</sub> 하나뿐입니다. "σ는 0.20"이라는 통짜 추측보다 훨씬 좁은 가정이고, 농가가 소득 이력을 넣으면 이마저 사라집니다.</p>
+      </div>
+    </div>
+
+<div class="stage">
+      <div class="stage-n">06</div>
+      <div class="stage-body">
+        <h3>독립 검증</h3>
+        <p class="why">지금까지 σ 의 근거는 소득조사 하나뿐이었습니다. 그게 틀렸으면 알 방법이 없습니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">KAMIS 도매 실거래<br><span class="num">1,147~2,695</span> 거래일</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">연평균으로 접은 뒤 변동성. GARCH 로 시간 구조까지</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">딸기 <span class="num">0.091</span><br>vs 소득조사 <span class="num">0.083</span></span></div>
+        </div>
+        <code class="formula">일별 σ 를 √250 배 하면 0.395 — 실측의 4.3배. 농가는 시즌 평균값을 받는다.</code>
+        <p class="finding"><b>서로 다른 두 기관의 조사가 같은 답을 냅니다.</b> 체중계 두 개로 잰 셈입니다. 시장 국면(딸기는 충격 반감기 2일, 토마토 15일)도 함께 쟀지만 <b>한도에는 반영하지 않습니다</b> — 25년 상환에 본질적인 것은 장기 평균이고, 지금 조용하다고 더 빌리라고 하면 이 서비스가 막으려던 일을 하게 됩니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">07</div>
+      <div class="stage-body">
+        <h3>상환 스케줄</h3>
+        <p class="why">제도 조건만으로 정해지는 부분입니다. 추정이 개입하지 않습니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">연 <span class="num">1.5</span>% · 거치 <span class="num">5</span>년 · 상환 <span class="num">20</span>년</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">연금계수 — 원금 1원당 매년 갚을 금액</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">AF = <span class="num">0.0582</span><br><span style="color:var(--ink-3)">1억당 연 <span class="num">582</span>만원</span></span></div>
+        </div>
+        <code class="formula">AF = r(1+r)ⁿ / ((1+r)ⁿ − 1)   ·   r=0.015, n=20</code>
+        <p class="finding"><b>절벽의 정체 —</b> 거치 중엔 이자만 냅니다. 5억이면 연 750만원. 6년차에 원금이 붙는 순간 연 2,912만원으로 <b>3.9배</b>가 됩니다. 소득은 그대로인데 상환액만 뜁니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">08</div>
+      <div class="stage-body">
+        <h3>시뮬레이션</h3>
+        <p class="why">여기까지는 "소득이 매년 똑같다면"의 계산입니다. 실제로는 흔들리니, 흔들리는 25년을 3만 번 살아봅니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">σ <span class="num">0.215</span> · 재해 연 <span class="num">8</span>%<br>상환 스케줄</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val"><span class="num">30,000</span>회 × <span class="num">25</span>년. 매년 소득을 뽑아 상환액과 비교</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">연간 부족확률<br>2년연속 위기확률<br>최초 위험연차</span></div>
+        </div>
+        <code class="formula">부족 = (소득 − 생활비) &lt; 상환액   ·   단, 재해로 상환유예를 받은 해는 제외</code>
+        <p class="finding"><b>왜 2년 연속인가 —</b> "25년 중 한 번이라도 부족"은 어떤 시나리오든 100%가 나와 쓸모가 없습니다. 1년 부족은 저축으로 버티지만 <b>2년 연속은 돌려막기의 시작</b>입니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">09</div>
+      <div class="stage-body">
+        <h3>한도 역산</h3>
+        <p class="why">"이 금액이면 위험한가"를 뒤집어 "위험하지 않으려면 얼마까지인가"를 묻습니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">목표: 2년연속 위기확률 <span class="num">10</span>% 이하</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">원금을 0~5억에서 이분탐색, 매번 3만 회 평가</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">상환위험 기준 한도</span></div>
+        </div>
+        <code class="formula">소득 경로를 한 번만 뽑아 모든 원금에 재사용 — 표본오차 없이 단조성이 성립해야 탐색이 유효</code>
+        <p class="finding"><b>부수 효과 —</b> 같은 난수를 재사용하니 평가가 35ms에서 1.8ms로 빨라졌습니다. 속도가 목적이 아니라, <b>"많이 빌릴수록 위험하다"가 흔들리지 않게</b> 하려던 것이었습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────────────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <h2>3. 한 농가를 끝까지 따라가면</h2>
+      <span class="tag">딸기 수경 1,000평 · 생활비 연 2,400만</span>
+    </div>
+
+    <div class="trace">
+      <div class="trace-row">
+        <span class="trace-k">원자료</span>
+        <span class="trace-d">농진청 2023 조사 — 딸기(수경) 10a당 소득</span>
+        <span class="trace-v">14,670,000원</span>
+      </div>
+      <div class="trace-row">
+        <span class="trace-k">× 면적</span>
+        <span class="trace-d">1,000평 ÷ 302.5평(=10a) = 3.31배</span>
+        <span class="trace-v">48,495,868원</span>
+      </div>
+      <div class="trace-row">
+        <span class="trace-k">− 생활비</span>
+        <span class="trace-d">상환에 실제로 쓸 수 있는 돈</span>
+        <span class="trace-v">24,495,868원</span>
+      </div>
+      <div class="trace-row">
+        <span class="trace-k">÷ 1.25 × AF</span>
+        <span class="trace-d">은행 관행 DSCR 1.25를 충족하는 최대 원금</span>
+        <span class="trace-v">336,448,564원</span>
+      </div>
+      <div class="trace-row">
+        <span class="trace-k">시뮬레이션</span>
+        <span class="trace-d">그 금액에서 2년 연속 상환이 밀릴 확률</span>
+        <span class="trace-v">79.4%</span>
+      </div>
+      <div class="trace-row out">
+        <span class="trace-k">역산</span>
+        <span class="trace-d">그 확률을 10% 이하로 두는 최대 원금</span>
+        <span class="trace-v">193,481,445원</span>
+      </div>
+    </div>
+
+    <p class="finding" style="margin-top:1.1rem">
+      <b>결론 —</b> 제도는 5억을 빌려줄 수 있고, 은행 기준은 3억 3,645만을 통과시키지만,
+      소득이 흔들리는 것까지 감안하면 <b>1억 9,348만</b>이 이 농가의 선입니다.
+      같은 농가에 대해 세 개의 숫자가 나오고, 그 격차가 이 서비스의 결론입니다.
+    </p>
+  </section>
+
+  <!-- ─────────────────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <h2>4. 그래서 무엇이 바뀌었나</h2>
+      <span class="tag">가정 → 실측</span>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>작목</th>
+            <th>측정한 계열</th>
+            <th style="text-align:right">관측</th>
+            <th style="text-align:right">σ 원값</th>
+            <th style="text-align:right">축소 후</th>
+            <th style="text-align:right">최종 σ</th>
+            <th>주원인</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>딸기(시설,수경)</td><td>시설딸기 2013~2024</td><td class="n">12</td><td class="n">0.111</td><td class="n">0.131</td><td class="n">0.215</td><td>가격</td></tr>
+          <tr><td>딸기(시설,토경)</td><td>시설딸기 2013~2024</td><td class="n">12</td><td class="n">0.111</td><td class="n">0.132</td><td class="n">0.215</td><td>가격</td></tr>
+          <tr><td>가지(시설)</td><td>시설가지 2013~2024</td><td class="n">12</td><td class="n">0.158</td><td class="n">0.174</td><td class="n">0.243</td><td>가격</td></tr>
+          <tr class="hi"><td>토마토(시설,수경)</td><td>시설토마토(촉성) 2013~2022</td><td class="n">10</td><td class="n">0.178</td><td class="n">0.192</td><td class="n">0.307</td><td>가격</td></tr>
+          <tr class="hi"><td>시금치(시설)</td><td>시설시금치 2013~2024</td><td class="n">12</td><td class="n">0.267</td><td class="n">0.259</td><td class="n">0.310</td><td><b>수확량</b></td></tr>
+          <tr class="hi"><td>장미(시설)</td><td>시설장미 2013~2024</td><td class="n">12</td><td class="n">0.288</td><td class="n">0.275</td><td class="n">0.323</td><td>가격</td></tr>
+          <tr><td colspan="7" style="color:var(--ink-3);font-size:.82rem">
+            … 그 밖에 시설채소 · 노지채소 · 식량특용 · 화훼 <b>32종</b>이 같은 방식으로 실측돼 있습니다.
+            σ<sub>공통</sub> 은 딸기 0.131 에서 노지당근 0.544 까지 <b>4.1배</b> 벌어집니다.
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="finding" style="margin-top:1.1rem">
+      <b>실질 영향 —</b> 예전 가정(전 작목 0.20)은 대부분의 작목에서 낙관적이었습니다.
+      노지채소·식량특용으로 넓히자 차이가 더 벌어집니다 — 노지당근 0.544,
+      노지생강 0.520, 밀 0.552 는 가정값의 2.7배입니다. 이런 작목에서 0.20 을 쓰면
+      감당 가능한 차입을 크게 부풀려 말하게 됩니다. 그리고 장미 800평은
+      <b>차입 규모로는 해결이 안 되는 조건</b>으로 판정이 바뀌었습니다 — 대출을 한 푼도
+      받지 않아도 2년 연속 적자가 날 확률이 22.8%이기 때문입니다. 이 경우 리포트는
+      "얼마를 빌리느냐"가 아니라 "이 규모로 생계가 되느냐"를 묻습니다.
+    </p>
+  </section>
+
+  <!-- ─────────────────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <h2>5. 잰 것과 아직 가정인 것</h2>
+      <span class="tag">숨기지 않는다</span>
+    </div>
+
+    <div class="split">
+      <div class="note m">
+        <h4>실측 — 통계에서 직접</h4>
+        <ul>
+          <li><b>작목별 소득 변동성</b> — 12년 실적, 부트스트랩 신뢰구간 + 20작목 계층 축소</li>
+          <li><b>변동의 원인</b> — 가격·수확량·비용 기여도 분해 (204 작목-연도)</li>
+          <li><b>가격-수량 탄력성</b> — 37작목 실측 중앙값 −0.24</li>
+          <li><b>재배방식별 비용 구조</b> — 동일연도 총수입·경영비 대조</li>
+          <li><b>도매가 교차검증</b> — KAMIS 11년치로 독립 재측정</li>
+          <li><b>작목별 소득 수준</b> — 농진청 2023 조사</li>
+          <li><b>상환 조건</b> — 시행지침 그대로</li>
+          <li><b>재해 시 상환유예</b> — 이차보전 지침의 피해율 구간</li>
+        </ul>
+      </div>
+      <div class="note a">
+        <h4>가정 — 아직 근거가 없는 것</h4>
+        <ul>
+          <li><b>농가 고유 변동성 0.17</b> — 전국 평균에서는 상쇄돼 보이지 않음. 소득 이력을 입력하면 대체됨</li>
+          <li><b>연간 재해확률 8%</b> — 지역·작목별 실측으로 대체 가능</li>
+          <li><b>가지·장미의 도매가 검증 불가</b> — KAMIS 중도매 시세 미제공(가지), 화훼 미수록(장미)</li>
+          <li><b>면적과 소득이 정비례</b> — 규모의 경제가 반영되어 있지 않음</li>
+          <li><b>목표 DSCR 1.25</b> — 은행 통상 관행값</li>
+          <li><b>과수·축산 미지원</b> — 다년생은 식재 후 무수익 기간이 있어 '면적 → 매년 같은 소득' 전제가 깨진다</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="finding" style="margin-top:1.1rem">
+      <b>하지 않은 것 —</b> 부도 예측 모델은 만들지 않았습니다. 차주별 연체 이력이라는
+      학습 라벨을 구할 수 없기 때문입니다. 라벨 없이 만든 예측은 모델이 아니라 지어낸
+      숫자입니다. 이 서비스는 <b>예측하지 않고 계산합니다.</b>
+    </p>
+  </section>
+
+  <footer>
+    출처 · 농촌진흥청 농산물소득조사(KOSIS orgId 143, 통계표 DT_143002_A003 / E003) · 한국농수산식품유통공사 KAMIS 일별 도·소매 가격정보(공공데이터포털 15156057) ·
+    농촌진흥청 2023년 농산물 소득조사 · 농림축산식품부 후계농업경영인 육성사업 시행지침 ·
+    농업자금이차보전 사업시행지침 · KREI 『농업경영체의 부채 실태와 정책 과제』 R2025-09<br>
+    이 문서의 모든 수치는 결정론적 코드가 산출하며 170건의 테스트로 검증됩니다.
+    참고자료이며 대출 심사 결과나 신용평가가 아닙니다.
+  </footer>
+
+</div>
+
+</body>
+</html>
