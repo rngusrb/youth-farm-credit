@@ -353,6 +353,7 @@ footer {
     <div class="meta">
       <span>데이터 원천 5종</span>
       <span>분석 9단계</span>
+      <span>지침 원문 대조 6건</span>
       <span>작목 38종</span>
       <span>테스트 170건</span>
       <span>최종 갱신 2026-08-25</span>
@@ -492,7 +493,8 @@ footer {
           <div class="cell"><span class="lab">출력</span><span class="val">σ = <span class="num">0.215</span><br><span style="color:var(--ink-3)">딸기 최종값</span></span></div>
         </div>
         <code class="formula">σ_개별 = √(σ_공통² + σ_고유²)   ·   전국이 함께 겪는 몫 + 농가 고유의 몫</code>
-        <p class="finding"><b>남은 가정 —</b> σ에서 가정으로 남은 것은 σ<sub>고유</sub> 하나뿐입니다. "σ는 0.20"이라는 통짜 추측보다 훨씬 좁은 가정이고, 농가가 소득 이력을 넣으면 이마저 사라집니다.</p>
+        <p class="finding"><b>남은 가정 —</b> σ에서 가정으로 남은 것은 σ<sub>고유</sub> 하나뿐입니다. 다만 딸기는 σ<sub>공통</sub>이 작아 <b>분산 기준으로 63%가 가정</b>입니다. 그래서 이 σ를 "실측값"이라 부르지 않고 <span class="pill a">부분 실측</span>으로 표시합니다 — 가정 몫이 25% 미만인 작목(노지당근 9%)만 실측으로 부릅니다. 농가가 소득 이력을 넣으면 가정이 0이 됩니다.</p>
+        <p class="finding" style="border-left-color:var(--assumed)"><b>신뢰구간의 범위 —</b> 화면의 95% 구간은 <b>σ<sub>공통</sub>의 표본오차만</b> 담습니다. σ<sub>고유</sub>는 가정값이라 애초에 구간이 없습니다. 그리고 12개년으로 σ를 재면 상대 표준오차가 <span class="num">1/√(2(n−1))</span> ≈ <b>21%</b>입니다 — 구간이 넓은 것은 계산이 허술해서가 아니라 표본이 짧아서입니다.</p>
       </div>
     </div>
 
@@ -521,12 +523,12 @@ footer {
         <div class="flow">
           <div class="cell"><span class="lab">입력</span><span class="val">연 <span class="num">1.5</span>% · 거치 <span class="num">5</span>년 · 상환 <span class="num">20</span>년</span></div>
           <div class="arw">→</div>
-          <div class="cell"><span class="lab">계산</span><span class="val">연금계수 — 원금 1원당 매년 갚을 금액</span></div>
+          <div class="cell"><span class="lab">계산</span><span class="val">원금 몫은 고정, 이자는 잔액에 붙는다. 첫해가 가장 무겁다</span></div>
           <div class="arw">→</div>
-          <div class="cell"><span class="lab">출력</span><span class="val">AF = <span class="num">0.0582</span><br><span style="color:var(--ink-3)">1억당 연 <span class="num">582</span>만원</span></span></div>
+          <div class="cell"><span class="lab">출력</span><span class="val">최대계수 <span class="num">0.065</span><br><span style="color:var(--ink-3)">1억당 첫해 <span class="num">650</span>만원</span></span></div>
         </div>
-        <code class="formula">AF = r(1+r)ⁿ / ((1+r)ⁿ − 1)   ·   r=0.015, n=20</code>
-        <p class="finding"><b>절벽의 정체 —</b> 거치 중엔 이자만 냅니다. 5억이면 연 750만원. 6년차에 원금이 붙는 순간 연 2,912만원으로 <b>3.9배</b>가 됩니다. 소득은 그대로인데 상환액만 뜁니다.</p>
+        <code class="formula">최대 연 상환액 = 원금 × (1/n + r) = 원금 × 0.065   ·   r=0.015, n=20</code>
+        <p class="finding"><b>절벽의 정체 —</b> 거치 중엔 이자만 냅니다. 5억이면 연 750만원. 6년차에 원금이 붙는 순간 연 <b>3,250만원</b>으로 <b>4.33배</b>가 됩니다. 이후 원금 몫이 고정이라 이자분만큼 매년 줄어 25년차에는 2,538만원이 됩니다. <b>즉 6년차는 우연이 아니라 구조적으로 가장 무거운 해입니다.</b></p>
       </div>
     </div>
 
@@ -589,25 +591,25 @@ footer {
         <span class="trace-v">24,495,868원</span>
       </div>
       <div class="trace-row">
-        <span class="trace-k">÷ 1.25 × AF</span>
-        <span class="trace-d">은행 관행 DSCR 1.25를 충족하는 최대 원금</span>
-        <span class="trace-v">336,448,564원</span>
+        <span class="trace-k">÷ 1.25 × 0.065</span>
+        <span class="trace-d">DSCR 1.25를 <b>가장 무거운 해에도</b> 충족하는 최대 원금</span>
+        <span class="trace-v">301,487,603원</span>
       </div>
       <div class="trace-row">
         <span class="trace-k">시뮬레이션</span>
         <span class="trace-d">그 금액에서 2년 연속 상환이 밀릴 확률</span>
-        <span class="trace-v">79.4%</span>
+        <span class="trace-v">62.4%</span>
       </div>
       <div class="trace-row out">
         <span class="trace-k">역산</span>
         <span class="trace-d">그 확률을 10% 이하로 두는 최대 원금</span>
-        <span class="trace-v">193,481,445원</span>
+        <span class="trace-v">192,565,918원</span>
       </div>
     </div>
 
     <p class="finding" style="margin-top:1.1rem">
-      <b>결론 —</b> 제도는 5억을 빌려줄 수 있고, 은행 기준은 3억 3,645만을 통과시키지만,
-      소득이 흔들리는 것까지 감안하면 <b>1억 9,348만</b>이 이 농가의 선입니다.
+      <b>결론 —</b> 제도는 5억을 빌려줄 수 있고, 은행 기준은 3억 149만을 통과시키지만,
+      소득이 흔들리는 것까지 감안하면 <b>1억 9,257만</b>이 이 농가의 선입니다.
       같은 농가에 대해 세 개의 숫자가 나오고, 그 격차가 이 서비스의 결론입니다.
     </p>
   </section>
@@ -675,14 +677,15 @@ footer {
           <li><b>재배방식별 비용 구조</b> — 동일연도 총수입·경영비 대조</li>
           <li><b>도매가 교차검증</b> — KAMIS 11년치로 독립 재측정</li>
           <li><b>작목별 소득 수준</b> — 농진청 2023 조사</li>
-          <li><b>상환 조건</b> — 시행지침 그대로</li>
+          <li><b>상환 조건</b> — 시행지침 원문 대조 (원금 균등분할·연 1회 후취)</li>
           <li><b>재해 시 상환유예</b> — 이차보전 지침의 피해율 구간</li>
         </ul>
       </div>
       <div class="note a">
         <h4>가정 — 아직 근거가 없는 것</h4>
         <ul>
-          <li><b>농가 고유 변동성 0.17</b> — 전국 평균에서는 상쇄돼 보이지 않음. 소득 이력을 입력하면 대체됨</li>
+          <li><b>농가 고유 변동성 0.17</b> — 전국 평균에서는 상쇄돼 보이지 않음. 딸기 기준 분산의 63%. 소득 이력을 입력하면 대체됨</li>
+          <li><b>농신보 보증료</b> — 지침에 요율이 없어 미반영. 실제로는 상환여력에서 차감된다</li>
           <li><b>연간 재해확률 8%</b> — 지역·작목별 실측으로 대체 가능</li>
           <li><b>가지·장미의 도매가 검증 불가</b> — KAMIS 중도매 시세 미제공(가지), 화훼 미수록(장미)</li>
           <li><b>면적과 소득이 정비례</b> — 규모의 경제가 반영되어 있지 않음</li>
@@ -691,6 +694,26 @@ footer {
         </ul>
       </div>
     </div>
+
+    <div class="tbl-wrap" style="margin-top:1.4rem">
+      <table>
+        <thead><tr><th>지침 원문 대조</th><th>쪽</th><th>판정</th></tr></thead>
+        <tbody>
+          <tr class="hi"><td><b>상환 방식</b> — "5년 거치 20년 원금 균등분할 상환"</td><td class="n">12</td><td><b>명세가 틀렸다</b>. 원리금균등으로 적혀 있던 것을 정정</td></tr>
+          <tr><td>거치기간 이자 — "이자는 연 1회 후취(대출일 기준 만 1년 후 납부)"</td><td class="n">31</td><td>모델과 일치</td></tr>
+          <tr><td>상환 주기 — 연 1회</td><td class="n">31</td><td>모델과 일치</td></tr>
+          <tr><td>재해 상환연기 — 피해율 30~50% 1년, 50% 이상 2년</td><td class="n">21</td><td>일치. 지침의 <b>이자 감면</b>은 반영하지 않아 보수적</td></tr>
+          <tr><td>농신보 보증료 — "5억 이하 대출에 최대 90% 보증"</td><td class="n">32</td><td><b>미반영</b>. 지침에 요율이 없어 지어내지 않았다 — 그만큼 낙관적</td></tr>
+          <tr><td>거치기간 — "최대 5년 이내에서 선택 가능"</td><td class="n">12</td><td><b>미반영</b>. 5년 고정. 3년을 고르면 절벽이 3년차로 당겨진다</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="finding" style="margin-top:1.1rem">
+      <b>원문을 직접 봤습니다 —</b> 위 표는 농림축산식품부 시행지침 PDF 79쪽을 받아 대조한
+      결과입니다. 가장 큰 소득은 <b>상환 방식이 틀려 있었다는 것</b>을 잡아낸 것입니다.
+      원리금균등으로 계산하면 6년차 상환액이 2,912만원인데, 실제 원금균등은 3,250만원입니다.
+      한도가 3억 3,645만 → 3억 149만으로 줄어듭니다.
+    </p>
 
     <p class="finding" style="margin-top:1.1rem">
       <b>하지 않은 것 —</b> 부도 예측 모델은 만들지 않았습니다. 차주별 연체 이력이라는

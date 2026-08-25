@@ -243,6 +243,8 @@ def diagnose(
             "n_sim": cfg["n_sim"],
             "seed": cfg["seed"],
             "installment_defer_max_count": policy()["installment_defer_max_count"],
+            # 지침 원문 대조 결과. 반영한 것과 반영하지 않은 것을 화면에 그대로 낸다.
+            "guideline_check": policy().get("verified_against_guideline"),
         },
     }
 
