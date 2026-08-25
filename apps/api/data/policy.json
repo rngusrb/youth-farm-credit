@@ -26,12 +26,12 @@
     "idiosyncratic_sigma": 0.17,
     "source": "ASSUMED",
     "note": "σ_개별² = σ_공통² + σ_고유². σ_공통은 KOSIS 농산물소득조사 전국평균 시계열에서 실측한다(작목별로 다름). σ_고유는 농가별 특이 변동으로, 전국평균에서는 상쇄돼 보이지 않아 여전히 가정값이다. 농가가 소득 이력을 입력하면 이 가정 대신 실측 개인 σ 를 쓴다.",
-    "crop_population_sigma": 0.1798,
-    "crop_population_tau": 0.1922
+    "crop_population_sigma": 0.2354,
+    "crop_population_tau": 0.4006
   },
   "price_quantity_elasticity": {
-    "median": -0.166,
+    "median": -0.2439,
     "source": "MEASURED",
-    "note": "KOSIS 농산물소득조사 17작목의 가격-수량 회귀 기울기 중앙값. KAMIS 가격 σ 를 소득 σ 로 환산할 때 쓰던 가정값(-0.5)을 대체한다."
+    "note": "KOSIS 농산물소득조사 37작목의 가격-수량 회귀 기울기 중앙값. KAMIS 가격 σ 를 소득 σ 로 환산할 때 쓰던 가정값(-0.5)을 대체한다."
   }
 }

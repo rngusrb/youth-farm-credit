@@ -80,15 +80,24 @@ def test_code_tables_loaded():
     assert len(c["item"]) > 100
 
 
-def test_every_crop_maps_to_a_real_item_code():
-    """crops.json 의 kamis 매핑이 코드표에 실제로 존재해야 한다."""
+def test_kamis_mappings_point_at_real_item_codes():
+    """매핑이 있는 작목은 코드표에 실제로 존재해야 한다.
+
+    없는 작목도 있다 — KAMIS 에 중도매 시세가 없거나(가지) 품목 자체가 없다(장미,
+    엽채류 일부). 확실하지 않을 때 매핑을 지어내면 엉뚱한 시세를 가져오므로,
+    비워 두는 것이 맞다.
+    """
     from engine.params import crops
 
     table = {(i["ctgry_cd"], i["code"]): i["name"] for i in kamis.codes()["item"]}
+    mapped = 0
     for crop in crops().values():
-        assert crop.kamis, f"{crop.id} 에 kamis 매핑 없음"
+        if not crop.kamis:
+            continue
         pair = (crop.kamis["ctgry_cd"], crop.kamis["item_cd"])
         assert pair in table, f"{crop.id} → {pair} 가 코드표에 없음"
+        mapped += 1
+    assert mapped >= len(crops()) * 0.5, "절반 이상은 매핑돼야 교차검증이 의미 있다"
 
 
 def test_strawberry_maps_to_item_226():

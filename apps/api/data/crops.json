@@ -15,7 +15,7 @@
       "income_per_10a": 14670000,
       "gross_per_10a": null,
       "cost_per_10a": null,
-      "sigma": 0.2235,
+      "sigma": 0.2148,
       "sigma_source": "MEASURED",
       "harvest_months": [
         12,
@@ -41,14 +41,14 @@
         "note": "수경 구분은 2023년부터(2개년). 장기 σ 는 관행 계열(12개년)에서 재고 레버리지 비율로 이전",
         "ratio_base": "시설딸기"
       },
-      "sigma_common": 0.1451,
+      "sigma_common": 0.1312,
       "sigma_ci": [
-        0.1882,
-        0.2541
+        0.185,
+        0.241
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 12,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설딸기' 2013~2024 12개년 σ=0.111 → 20작목 분포로 축소 0.146 → '시설딸기(수경)' 레버리지 0.99배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설딸기' 2013~2024 12개년 σ=0.111 → 46작목 분포로 축소 0.132 → '시설딸기(수경)' 레버리지 0.99배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
       "factors": {
         "driver": "price",
         "share_price": 1.257,
@@ -96,7 +96,7 @@
       "income_per_10a": 11500000,
       "gross_per_10a": null,
       "cost_per_10a": null,
-      "sigma": 0.2242,
+      "sigma": 0.2154,
       "sigma_source": "MEASURED",
       "harvest_months": [
         12,
@@ -122,14 +122,14 @@
         "note": null,
         "ratio_base": "시설딸기"
       },
-      "sigma_common": 0.1462,
+      "sigma_common": 0.1323,
       "sigma_ci": [
-        0.1884,
-        0.2552
+        0.1852,
+        0.242
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 12,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설딸기' 2013~2024 12개년 σ=0.111 → 20작목 분포로 축소 0.146, 농가 고유 σ=0.17 가정 합성",
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설딸기' 2013~2024 12개년 σ=0.111 → 46작목 분포로 축소 0.132, 농가 고유 σ=0.17 가정 합성",
       "factors": {
         "driver": "price",
         "share_price": 1.257,
@@ -178,7 +178,7 @@
       "income_per_10a": 12150000,
       "gross_per_10a": null,
       "cost_per_10a": null,
-      "sigma": 0.292,
+      "sigma": 0.3066,
       "sigma_source": "MEASURED",
       "harvest_months": [
         3,
@@ -203,14 +203,14 @@
         "note": "수경 구분은 2023년부터(2개년). 구표는 촉성/반촉성으로 나뉘어 촉성 계열(10개년)을 씀",
         "ratio_base": "시설토마토"
       },
-      "sigma_common": 0.2375,
+      "sigma_common": 0.2551,
       "sigma_ci": [
-        0.1939,
-        0.3564
+        0.1973,
+        0.3771
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 10,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설토마토(촉성)' 2013~2022 10개년 σ=0.178 → 20작목 분포로 축소 0.179 → '시설토마토(수경)' 레버리지 1.33배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설토마토(촉성)' 2013~2022 10개년 σ=0.178 → 46작목 분포로 축소 0.192 → '시설토마토(수경)' 레버리지 1.33배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
       "factors": {
         "driver": "price",
         "share_price": 0.709,
@@ -258,7 +258,7 @@
       "income_per_10a": 13060000,
       "gross_per_10a": null,
       "cost_per_10a": null,
-      "sigma": 0.2407,
+      "sigma": 0.2433,
       "sigma_source": "MEASURED",
       "harvest_months": [
         4,
@@ -285,14 +285,14 @@
         "note": null,
         "ratio_base": "시설가지"
       },
-      "sigma_common": 0.1704,
+      "sigma_common": 0.174,
       "sigma_ci": [
-        0.1859,
-        0.2844
+        0.1865,
+        0.2883
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 12,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설가지' 2013~2024 12개년 σ=0.158 → 20작목 분포로 축소 0.170, 농가 고유 σ=0.17 가정 합성",
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설가지' 2013~2024 12개년 σ=0.158 → 46작목 분포로 축소 0.174, 농가 고유 σ=0.17 가정 합성",
       "factors": {
         "driver": "price",
         "share_price": 0.946,
@@ -320,7 +320,7 @@
       "income_per_10a": 12840000,
       "gross_per_10a": null,
       "cost_per_10a": null,
-      "sigma": 0.2778,
+      "sigma": 0.3229,
       "sigma_source": "MEASURED",
       "harvest_months": [
         1,
@@ -352,14 +352,14 @@
         "note": null,
         "ratio_base": "시설장미"
       },
-      "sigma_common": 0.2197,
+      "sigma_common": 0.2746,
       "sigma_ci": [
-        0.2028,
-        0.3331
+        0.2192,
+        0.3963
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 12,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설장미' 2013~2024 12개년 σ=0.288 → 20작목 분포로 축소 0.220, 농가 고유 σ=0.17 가정 합성",
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설장미' 2013~2024 12개년 σ=0.288 → 46작목 분포로 축소 0.275, 농가 고유 σ=0.17 가정 합성",
       "factors": {
         "driver": "price",
         "share_price": 0.92,
@@ -387,7 +387,7 @@
       "income_per_10a": 1730000,
       "gross_per_10a": null,
       "cost_per_10a": null,
-      "sigma": 0.2724,
+      "sigma": 0.3101,
       "sigma_source": "MEASURED",
       "harvest_months": [
         11,
@@ -412,14 +412,14 @@
         "note": null,
         "ratio_base": "시설시금치"
       },
-      "sigma_common": 0.2128,
+      "sigma_common": 0.2594,
       "sigma_ci": [
-        0.1974,
-        0.3313
+        0.2094,
+        0.386
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 12,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설시금치' 2013~2024 12개년 σ=0.267 → 20작목 분포로 축소 0.213, 농가 고유 σ=0.17 가정 합성",
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설시금치' 2013~2024 12개년 σ=0.267 → 46작목 분포로 축소 0.259, 농가 고유 σ=0.17 가정 합성",
       "factors": {
         "driver": "quantity",
         "share_price": 0.456,
@@ -455,6 +455,1607 @@
         },
         "ewma_check": 0.7023,
         "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+      }
+    },
+    {
+      "id": "greenhouse_pepper",
+      "name": "시설고추",
+      "aliases": [
+        "시설고추",
+        "고추"
+      ],
+      "income_per_10a": 12594942,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3009,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설고추",
+        "series_name": "시설고추",
+        "ratio_base": "시설고추",
+        "note": null
+      },
+      "sigma_common": 0.2482,
+      "sigma_ci": [
+        0.2049,
+        0.3771
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설고추' 2013~2024 12개년 σ=0.252 → 46작목 분포로 축소 0.248, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.849,
+        "share_quantity": 0.11,
+        "share_cost": -0.035,
+        "residual": 0.076,
+        "elasticity": -0.324,
+        "correlation": -0.507,
+        "sigma_price": 0.1494,
+        "sigma_quantity": 0.0957,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_cherrytomato",
+      "name": "시설방울토마토",
+      "aliases": [
+        "시설방울토마토",
+        "방울토마토"
+      ],
+      "income_per_10a": 10690553,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3157,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "422",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설방울토마토",
+        "series_name": "시설방울토마토",
+        "ratio_base": "시설방울토마토",
+        "note": null
+      },
+      "sigma_common": 0.266,
+      "sigma_ci": [
+        0.2165,
+        0.3902
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설방울토마토' 2013~2024 12개년 σ=0.276 → 46작목 분포로 축소 0.266, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.943,
+        "share_quantity": 0.361,
+        "share_cost": -0.273,
+        "residual": -0.031,
+        "elasticity": 0.033,
+        "correlation": 0.046,
+        "sigma_price": 0.124,
+        "sigma_quantity": 0.0868,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_cherrytomato_hydro",
+      "name": "시설방울토마토(수경)",
+      "aliases": [
+        "시설방울토마토(수경)",
+        "시설방울토마토",
+        "방울토마토"
+      ],
+      "income_per_10a": 12082117,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3898,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "422",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설방울토마토(수경)",
+        "series_name": "시설방울토마토",
+        "ratio_base": "시설방울토마토",
+        "note": null
+      },
+      "sigma_common": 0.3508,
+      "sigma_ci": [
+        0.2453,
+        0.4933
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설방울토마토' 2013~2024 12개년 σ=0.276 → 46작목 분포로 축소 0.266 → '시설방울토마토(수경)' 레버리지 1.32배 이전(2023/2024 동일연도), 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.943,
+        "share_quantity": 0.361,
+        "share_cost": -0.273,
+        "residual": -0.031,
+        "elasticity": 0.033,
+        "correlation": 0.046,
+        "sigma_price": 0.124,
+        "sigma_quantity": 0.0868,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_chive",
+      "name": "시설부추",
+      "aliases": [
+        "시설부추",
+        "부추"
+      ],
+      "income_per_10a": 5248793,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.246,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "254",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설부추",
+        "series_name": "시설부추",
+        "ratio_base": "시설부추",
+        "note": null
+      },
+      "sigma_common": 0.1778,
+      "sigma_ci": [
+        0.1943,
+        0.2928
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설부추' 2013~2024 12개년 σ=0.163 → 46작목 분포로 축소 0.178, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.167,
+        "share_quantity": 0.188,
+        "share_cost": -0.354,
+        "residual": -0.002,
+        "elasticity": -0.245,
+        "correlation": -0.349,
+        "sigma_price": 0.1049,
+        "sigma_quantity": 0.0737,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_lettuce",
+      "name": "시설상추",
+      "aliases": [
+        "시설상추",
+        "상추"
+      ],
+      "income_per_10a": 5020401,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2867,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "214",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설상추",
+        "series_name": "시설상추",
+        "ratio_base": "시설상추",
+        "note": null
+      },
+      "sigma_common": 0.2308,
+      "sigma_ci": [
+        0.2129,
+        0.3278
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설상추' 2013~2024 12개년 σ=0.229 → 46작목 분포로 축소 0.231, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.356,
+        "share_quantity": 0.809,
+        "share_cost": -0.161,
+        "residual": -0.004,
+        "elasticity": -0.113,
+        "correlation": -0.093,
+        "sigma_price": 0.0951,
+        "sigma_quantity": 0.1157,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_watermelon",
+      "name": "시설수박",
+      "aliases": [
+        "시설수박",
+        "수박"
+      ],
+      "income_per_10a": 3634855,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2345,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "221",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설수박",
+        "series_name": "시설수박(반촉성)",
+        "ratio_base": "시설수박(반촉성)",
+        "note": null
+      },
+      "sigma_common": 0.1616,
+      "sigma_ci": [
+        0.1961,
+        0.2586
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 10,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설수박(반촉성)' 2013~2022 10개년 σ=0.140 → 46작목 분포로 축소 0.162, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.082,
+        "share_quantity": 0.089,
+        "share_cost": -0.172,
+        "residual": 0.0,
+        "elasticity": 0.009,
+        "correlation": 0.03,
+        "sigma_price": 0.0893,
+        "sigma_quantity": 0.0264,
+        "n": 10,
+        "years": [
+          2013,
+          2022
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_cucumber",
+      "name": "시설오이",
+      "aliases": [
+        "시설오이",
+        "오이"
+      ],
+      "income_per_10a": 12883641,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2383,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "223",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설오이",
+        "series_name": "시설오이(촉성)",
+        "ratio_base": "시설오이(촉성)",
+        "note": null
+      },
+      "sigma_common": 0.167,
+      "sigma_ci": [
+        0.1733,
+        0.2919
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 10,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설오이(촉성)' 2013~2022 10개년 σ=0.146 → 46작목 분포로 축소 0.167, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.863,
+        "share_quantity": 0.583,
+        "share_cost": -0.443,
+        "residual": -0.002,
+        "elasticity": -0.166,
+        "correlation": -0.222,
+        "sigma_price": 0.0926,
+        "sigma_quantity": 0.0692,
+        "n": 10,
+        "years": [
+          2013,
+          2022
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_koreanmelon",
+      "name": "시설참외",
+      "aliases": [
+        "시설참외",
+        "참외"
+      ],
+      "income_per_10a": 7022018,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2303,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "222",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설참외",
+        "series_name": "시설참외",
+        "ratio_base": "시설참외",
+        "note": null
+      },
+      "sigma_common": 0.1554,
+      "sigma_ci": [
+        0.1913,
+        0.2562
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설참외' 2013~2024 12개년 σ=0.136 → 46작목 분포로 축소 0.155, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.203,
+        "share_quantity": 0.791,
+        "share_cost": -0.013,
+        "residual": 0.018,
+        "elasticity": -0.368,
+        "correlation": -0.182,
+        "sigma_price": 0.0404,
+        "sigma_quantity": 0.0816,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_tomato",
+      "name": "시설토마토",
+      "aliases": [
+        "시설토마토",
+        "토마토"
+      ],
+      "income_per_10a": 10741353,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2568,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "225",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설토마토",
+        "series_name": "시설토마토(촉성)",
+        "ratio_base": "시설토마토(촉성)",
+        "note": null
+      },
+      "sigma_common": 0.1925,
+      "sigma_ci": [
+        0.186,
+        0.3056
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 10,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설토마토(촉성)' 2013~2022 10개년 σ=0.178 → 46작목 분포로 축소 0.192, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.709,
+        "share_quantity": 0.259,
+        "share_cost": 0.082,
+        "residual": -0.05,
+        "elasticity": -0.142,
+        "correlation": -0.182,
+        "sigma_price": 0.0997,
+        "sigma_quantity": 0.0775,
+        "n": 10,
+        "years": [
+          2013,
+          2022
+        ]
+      }
+    },
+    {
+      "id": "greenhouse_squash",
+      "name": "시설호박",
+      "aliases": [
+        "시설호박",
+        "호박"
+      ],
+      "income_per_10a": 10791514,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3412,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "224",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "시설채소",
+        "name": "시설호박",
+        "series_name": "시설호박",
+        "ratio_base": "시설호박",
+        "note": null
+      },
+      "sigma_common": 0.2959,
+      "sigma_ci": [
+        0.2307,
+        0.429
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '시설호박' 2013~2024 12개년 σ=0.318 → 46작목 분포로 축소 0.296, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.003,
+        "share_quantity": 0.075,
+        "share_cost": -0.132,
+        "residual": 0.054,
+        "elasticity": -0.013,
+        "correlation": -0.042,
+        "sigma_price": 0.1688,
+        "sigma_quantity": 0.0537,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_autumn_radish",
+      "name": "노지가을무",
+      "aliases": [
+        "노지가을무",
+        "가을무"
+      ],
+      "income_per_10a": 1531514,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3269,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지가을무",
+        "series_name": "노지가을무",
+        "ratio_base": "노지가을무",
+        "note": null
+      },
+      "sigma_common": 0.2793,
+      "sigma_ci": [
+        0.2097,
+        0.4248
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지가을무' 2013~2024 12개년 σ=0.295 → 46작목 분포로 축소 0.279, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.207,
+        "share_quantity": -0.108,
+        "share_cost": -0.091,
+        "residual": -0.008,
+        "elasticity": -0.247,
+        "correlation": -0.546,
+        "sigma_price": 0.2287,
+        "sigma_quantity": 0.1036,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_autumn_napacabbage",
+      "name": "노지가을배추",
+      "aliases": [
+        "노지가을배추",
+        "가을배추"
+      ],
+      "income_per_10a": 2603067,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3154,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지가을배추",
+        "series_name": "노지가을배추",
+        "ratio_base": "노지가을배추",
+        "note": null
+      },
+      "sigma_common": 0.2657,
+      "sigma_ci": [
+        0.2182,
+        0.3743
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지가을배추' 2013~2024 12개년 σ=0.276 → 46작목 분포로 축소 0.266, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.081,
+        "share_quantity": -0.001,
+        "share_cost": -0.025,
+        "residual": -0.055,
+        "elasticity": -0.192,
+        "correlation": -0.441,
+        "sigma_price": 0.2027,
+        "sigma_quantity": 0.0886,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_highland_radish",
+      "name": "노지고랭지무",
+      "aliases": [
+        "노지고랭지무",
+        "고랭지무"
+      ],
+      "income_per_10a": 1974717,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3853,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지고랭지무",
+        "series_name": "노지고랭지무",
+        "ratio_base": "노지고랭지무",
+        "note": null
+      },
+      "sigma_common": 0.3457,
+      "sigma_ci": [
+        0.2588,
+        0.45
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지고랭지무' 2013~2024 12개년 σ=0.390 → 46작목 분포로 축소 0.346, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.461,
+        "share_quantity": -0.209,
+        "share_cost": -0.258,
+        "residual": 0.006,
+        "elasticity": -0.228,
+        "correlation": -0.64,
+        "sigma_price": 0.3125,
+        "sigma_quantity": 0.1114,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_highland_napacabbage",
+      "name": "노지고랭지배추",
+      "aliases": [
+        "노지고랭지배추",
+        "고랭지배추"
+      ],
+      "income_per_10a": 1213278,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3457,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지고랭지배추",
+        "series_name": "노지고랭지배추",
+        "ratio_base": "노지고랭지배추",
+        "note": null
+      },
+      "sigma_common": 0.3011,
+      "sigma_ci": [
+        0.2292,
+        0.4215
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지고랭지배추' 2013~2024 12개년 σ=0.325 → 46작목 분포로 축소 0.301, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.785,
+        "share_quantity": 0.345,
+        "share_cost": -0.108,
+        "residual": -0.021,
+        "elasticity": -0.084,
+        "correlation": -0.126,
+        "sigma_price": 0.159,
+        "sigma_quantity": 0.1065,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_carrot",
+      "name": "노지당근",
+      "aliases": [
+        "노지당근",
+        "당근"
+      ],
+      "income_per_10a": 3813332,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.5695,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "232",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지당근",
+        "series_name": "노지당근",
+        "ratio_base": "노지당근",
+        "note": null
+      },
+      "sigma_common": 0.5436,
+      "sigma_ci": [
+        0.3421,
+        0.7325
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지당근' 2013~2024 12개년 σ=0.706 → 46작목 분포로 축소 0.544, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.259,
+        "share_quantity": -0.234,
+        "share_cost": -0.041,
+        "residual": 0.016,
+        "elasticity": -0.244,
+        "correlation": -0.736,
+        "sigma_price": 0.4077,
+        "sigma_quantity": 0.1352,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_greenonion",
+      "name": "노지대파",
+      "aliases": [
+        "노지대파",
+        "대파"
+      ],
+      "income_per_10a": 2654782,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3366,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지대파",
+        "series_name": "노지대파",
+        "ratio_base": "노지대파",
+        "note": null
+      },
+      "sigma_common": 0.2905,
+      "sigma_ci": [
+        0.2551,
+        0.3855
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지대파' 2013~2024 12개년 σ=0.310 → 46작목 분포로 축소 0.290, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.175,
+        "share_quantity": -0.067,
+        "share_cost": -0.122,
+        "residual": 0.014,
+        "elasticity": -0.181,
+        "correlation": -0.452,
+        "sigma_price": 0.2171,
+        "sigma_quantity": 0.0871,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_spring_napacabbage",
+      "name": "노지봄배추",
+      "aliases": [
+        "노지봄배추",
+        "봄배추"
+      ],
+      "income_per_10a": 1158419,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2774,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지봄배추",
+        "series_name": "노지봄배추",
+        "ratio_base": "노지봄배추",
+        "note": null
+      },
+      "sigma_common": 0.2193,
+      "sigma_ci": [
+        0.2115,
+        0.3329
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지봄배추' 2013~2024 12개년 σ=0.214 → 46작목 분포로 축소 0.219, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.921,
+        "share_quantity": 0.066,
+        "share_cost": -0.015,
+        "residual": 0.028,
+        "elasticity": -0.042,
+        "correlation": -0.142,
+        "sigma_price": 0.1184,
+        "sigma_quantity": 0.0349,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_ginger",
+      "name": "노지생강",
+      "aliases": [
+        "노지생강",
+        "생강"
+      ],
+      "income_per_10a": 4170854,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.5201,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "247",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지생강",
+        "series_name": "노지생강",
+        "ratio_base": "노지생강",
+        "note": null
+      },
+      "sigma_common": 0.4915,
+      "sigma_ci": [
+        0.3226,
+        0.6559
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지생강' 2013~2024 12개년 σ=0.618 → 46작목 분포로 축소 0.492, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.397,
+        "share_quantity": -0.295,
+        "share_cost": -0.154,
+        "residual": 0.052,
+        "elasticity": -0.373,
+        "correlation": -0.761,
+        "sigma_price": 0.4861,
+        "sigma_quantity": 0.2381,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_watermelon",
+      "name": "노지수박",
+      "aliases": [
+        "노지수박",
+        "수박"
+      ],
+      "income_per_10a": 2526242,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2468,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "221",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지수박",
+        "series_name": "노지수박",
+        "ratio_base": "노지수박",
+        "note": null
+      },
+      "sigma_common": 0.1789,
+      "sigma_ci": [
+        0.1854,
+        0.3019
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지수박' 2013~2024 12개년 σ=0.164 → 46작목 분포로 축소 0.179, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.39,
+        "share_quantity": 0.753,
+        "share_cost": -0.148,
+        "residual": 0.005,
+        "elasticity": -0.393,
+        "correlation": -0.291,
+        "sigma_price": 0.0793,
+        "sigma_quantity": 0.1072,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_spinach",
+      "name": "노지시금치",
+      "aliases": [
+        "노지시금치",
+        "시금치"
+      ],
+      "income_per_10a": 2581259,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2599,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "213",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지시금치",
+        "series_name": "노지시금치",
+        "ratio_base": "노지시금치",
+        "note": null
+      },
+      "sigma_common": 0.1966,
+      "sigma_ci": [
+        0.1914,
+        0.3192
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지시금치' 2013~2024 12개년 σ=0.186 → 46작목 분포로 축소 0.197, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.375,
+        "share_quantity": -0.613,
+        "share_cost": 0.208,
+        "residual": 0.03,
+        "elasticity": -0.557,
+        "correlation": -0.862,
+        "sigma_price": 0.1916,
+        "sigma_quantity": 0.1239,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_cabbage",
+      "name": "노지양배추",
+      "aliases": [
+        "노지양배추",
+        "양배추"
+      ],
+      "income_per_10a": 1139035,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3117,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "200",
+        "item_cd": "212",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지양배추",
+        "series_name": "노지양배추",
+        "ratio_base": "노지양배추",
+        "note": null
+      },
+      "sigma_common": 0.2613,
+      "sigma_ci": [
+        0.2201,
+        0.3625
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지양배추' 2013~2024 12개년 σ=0.270 → 46작목 분포로 축소 0.261, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.875,
+        "share_quantity": 0.172,
+        "share_cost": -0.008,
+        "residual": -0.04,
+        "elasticity": -0.364,
+        "correlation": -0.654,
+        "sigma_price": 0.1916,
+        "sigma_quantity": 0.1066,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_scallion",
+      "name": "노지쪽파",
+      "aliases": [
+        "노지쪽파",
+        "쪽파"
+      ],
+      "income_per_10a": 3081534,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3577,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "노지채소",
+        "name": "노지쪽파",
+        "series_name": "노지쪽파",
+        "ratio_base": "노지쪽파",
+        "note": null
+      },
+      "sigma_common": 0.3147,
+      "sigma_ci": [
+        0.2281,
+        0.4616
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지쪽파' 2013~2024 12개년 σ=0.344 → 46작목 분포로 축소 0.315, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.161,
+        "share_quantity": -0.012,
+        "share_cost": -0.09,
+        "residual": -0.059,
+        "elasticity": -0.143,
+        "correlation": -0.377,
+        "sigma_price": 0.2585,
+        "sigma_quantity": 0.0984,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "autumn_potato",
+      "name": "가을감자",
+      "aliases": [
+        "가을감자"
+      ],
+      "income_per_10a": 945902,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.4383,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "가을감자",
+        "series_name": "가을감자",
+        "ratio_base": "가을감자",
+        "note": null
+      },
+      "sigma_common": 0.404,
+      "sigma_ci": [
+        0.2367,
+        0.5877
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '가을감자' 2013~2024 12개년 σ=0.478 → 46작목 분포로 축소 0.404, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.382,
+        "share_quantity": 0.566,
+        "share_cost": -0.004,
+        "residual": 0.056,
+        "elasticity": -0.262,
+        "correlation": -0.225,
+        "sigma_price": 0.1387,
+        "sigma_quantity": 0.1615,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "barley",
+      "name": "겉보리",
+      "aliases": [
+        "겉보리"
+      ],
+      "income_per_10a": 120432,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3589,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "겉보리",
+        "series_name": "겉보리",
+        "ratio_base": "겉보리",
+        "note": null
+      },
+      "sigma_common": 0.3161,
+      "sigma_ci": [
+        0.2455,
+        0.4359
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '겉보리' 2013~2024 12개년 σ=0.347 → 46작목 분포로 축소 0.316, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.731,
+        "share_quantity": 0.24,
+        "share_cost": -0.052,
+        "residual": 0.081,
+        "elasticity": -0.34,
+        "correlation": -0.445,
+        "sigma_price": 0.1442,
+        "sigma_quantity": 0.1103,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "sweetpotato",
+      "name": "고구마",
+      "aliases": [
+        "고구마"
+      ],
+      "income_per_10a": 1710559,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2892,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "100",
+        "item_cd": "151",
+        "vrty_cd": "00",
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "식량특용",
+        "name": "고구마",
+        "series_name": "고구마",
+        "ratio_base": "고구마",
+        "note": null
+      },
+      "sigma_common": 0.2339,
+      "sigma_ci": [
+        0.2095,
+        0.3507
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '고구마' 2013~2024 12개년 σ=0.233 → 46작목 분포로 축소 0.234, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 0.657,
+        "share_quantity": 0.412,
+        "share_cost": -0.139,
+        "residual": 0.07,
+        "elasticity": -0.069,
+        "correlation": -0.103,
+        "sigma_price": 0.1214,
+        "sigma_quantity": 0.0811,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "field_sweetcorn",
+      "name": "노지풋옥수수",
+      "aliases": [
+        "노지풋옥수수",
+        "풋옥수수"
+      ],
+      "income_per_10a": 1135449,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2432,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "노지풋옥수수",
+        "series_name": "노지풋옥수수",
+        "ratio_base": "노지풋옥수수",
+        "note": null
+      },
+      "sigma_common": 0.1739,
+      "sigma_ci": [
+        0.2022,
+        0.2683
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '노지풋옥수수' 2013~2024 12개년 σ=0.158 → 46작목 분포로 축소 0.174, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.108,
+        "share_quantity": -0.199,
+        "share_cost": 0.124,
+        "residual": -0.033,
+        "elasticity": -0.643,
+        "correlation": -0.811,
+        "sigma_price": 0.1575,
+        "sigma_quantity": 0.1249,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "perilla",
+      "name": "들깨",
+      "aliases": [
+        "들깨"
+      ],
+      "income_per_10a": 596862,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2867,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "300",
+        "item_cd": "313",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "식량특용",
+        "name": "들깨",
+        "series_name": "들깨",
+        "ratio_base": "들깨",
+        "note": null
+      },
+      "sigma_common": 0.2308,
+      "sigma_ci": [
+        0.1965,
+        0.3298
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 7,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '들깨' 2018~2024 7개년 σ=0.228 → 46작목 분포로 축소 0.231, 농가 고유 σ=0.17 가정 합성"
+    },
+    {
+      "id": "wheat",
+      "name": "밀",
+      "aliases": [
+        "밀"
+      ],
+      "income_per_10a": 50148,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.5524,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "밀",
+        "series_name": "밀",
+        "ratio_base": "밀",
+        "note": null
+      },
+      "sigma_common": 0.5256,
+      "sigma_ci": [
+        0.2425,
+        0.7274
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 7,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '밀' 2018~2024 7개년 σ=0.867 → 46작목 분포로 축소 0.526, 농가 고유 σ=0.17 가정 합성"
+    },
+    {
+      "id": "spring_potato",
+      "name": "봄감자",
+      "aliases": [
+        "봄감자"
+      ],
+      "income_per_10a": 1249665,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.3079,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "봄감자",
+        "series_name": "봄감자",
+        "ratio_base": "봄감자",
+        "note": null
+      },
+      "sigma_common": 0.2568,
+      "sigma_ci": [
+        0.2362,
+        0.3494
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '봄감자' 2013~2024 12개년 σ=0.264 → 46작목 분포로 축소 0.257, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "price",
+        "share_price": 1.1,
+        "share_quantity": -0.064,
+        "share_cost": 0.017,
+        "residual": -0.052,
+        "elasticity": -0.181,
+        "correlation": -0.569,
+        "sigma_price": 0.1455,
+        "sigma_quantity": 0.0464,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "naked_barley",
+      "name": "쌀보리",
+      "aliases": [
+        "쌀보리"
+      ],
+      "income_per_10a": 78918,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.4236,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "쌀보리",
+        "series_name": "쌀보리",
+        "ratio_base": "쌀보리",
+        "note": null
+      },
+      "sigma_common": 0.388,
+      "sigma_ci": [
+        0.2762,
+        0.5423
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '쌀보리' 2013~2024 12개년 σ=0.453 → 46작목 분포로 축소 0.388, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.093,
+        "share_quantity": 0.912,
+        "share_cost": -0.089,
+        "residual": 0.084,
+        "elasticity": -0.288,
+        "correlation": -0.154,
+        "sigma_price": 0.0966,
+        "sigma_quantity": 0.1811,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "ginseng_4_yr",
+      "name": "인삼(4년근)",
+      "aliases": [
+        "인삼(4년근)",
+        "인삼"
+      ],
+      "income_per_10a": 5634777,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.277,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": null,
+      "kosis": {
+        "group": "식량특용",
+        "name": "인삼(4년근)",
+        "series_name": "인삼(4년근)",
+        "ratio_base": "인삼(4년근)",
+        "note": null
+      },
+      "sigma_common": 0.2187,
+      "sigma_ci": [
+        0.2041,
+        0.3268
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '인삼(4년근)' 2013~2024 12개년 σ=0.214 → 46작목 분포로 축소 0.219, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": 0.338,
+        "share_quantity": 0.539,
+        "share_cost": 0.072,
+        "residual": 0.051,
+        "elasticity": -0.02,
+        "correlation": -0.025,
+        "sigma_price": 0.103,
+        "sigma_quantity": 0.0815,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
+      }
+    },
+    {
+      "id": "sesame",
+      "name": "참깨",
+      "aliases": [
+        "참깨"
+      ],
+      "income_per_10a": 1045564,
+      "income_year": 2024,
+      "gross_per_10a": null,
+      "cost_per_10a": null,
+      "sigma": 0.2803,
+      "sigma_source": "MEASURED",
+      "harvest_months": [],
+      "kamis": {
+        "se_cd": "02",
+        "ctgry_cd": "300",
+        "item_cd": "312",
+        "vrty_cd": null,
+        "grd_cd": "04",
+        "note": null,
+        "available": true
+      },
+      "kosis": {
+        "group": "식량특용",
+        "name": "참깨",
+        "series_name": "참깨",
+        "ratio_base": "참깨",
+        "note": null
+      },
+      "sigma_common": 0.2228,
+      "sigma_ci": [
+        0.197,
+        0.3503
+      ],
+      "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
+      "sigma_n": 12,
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '참깨' 2013~2024 12개년 σ=0.219 → 46작목 분포로 축소 0.223, 농가 고유 σ=0.17 가정 합성",
+      "factors": {
+        "driver": "quantity",
+        "share_price": -0.222,
+        "share_quantity": 1.373,
+        "share_cost": -0.163,
+        "residual": 0.012,
+        "elasticity": -1.461,
+        "correlation": -0.713,
+        "sigma_price": 0.104,
+        "sigma_quantity": 0.2131,
+        "n": 12,
+        "years": [
+          2013,
+          2024
+        ]
       }
     }
   ]

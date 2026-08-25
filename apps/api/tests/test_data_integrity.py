@@ -42,8 +42,9 @@ def test_measured_sigma_differs_across_crops():
     작목 차이의 42%만 실제 신호이기 때문이며, 그게 정직한 폭이다.
     """
     values = {round(c.sigma_common, 3) for c in crops().values()}
-    assert len(values) > 3
-    assert 1.3 < max(values) / min(values) < 2.2
+    assert len(values) > 10
+    # 딸기 0.13 ~ 노지당근 0.54. 작목군이 넓어질수록 격차도 커진다.
+    assert 2.0 < max(values) / min(values) < 8.0
 
 
 def test_sigma_went_through_hierarchical_pooling():
@@ -52,19 +53,48 @@ def test_sigma_went_through_hierarchical_pooling():
         assert "축소" in (crop.sigma_reference or "")
 
 
-def test_every_crop_has_a_factor_decomposition():
-    """소득 변동의 원인(가격/수량/비용)이 작목마다 기록돼 있어야 한다."""
+def test_factor_decomposition_present_or_explained():
+    """요인분해는 관측 9개년 이상에서만 낸다. 없는 작목은 계열이 짧아서여야 한다."""
+    import json
+
+    from engine.params import DATA_DIR
+    from stats.factors import MIN_YEARS
+
+    data = json.loads((DATA_DIR / "crops.json").read_text(encoding="utf-8"))
+    missing = [c["id"] for c in data["crops"] if not c.get("factors")]
+    assert len(missing) / len(data["crops"]) < 0.15, f"너무 많이 빠짐: {missing}"
+    for c in data["crops"]:
+        if not c.get("factors"):
+            assert c["sigma_n"] < MIN_YEARS, f"{c['id']} 는 계열이 긴데 요인분해가 없다"
+            continue
+        f = c["factors"]
+        assert f["driver"] in ("price", "quantity", "cost")
+        total = f["share_price"] + f["share_quantity"] + f["share_cost"] + f["residual"]
+        assert total == pytest.approx(1.0, abs=0.02), (c["id"], total)
+
+
+def test_crop_catalog_is_broad_and_current():
+    """명세의 6종을 넘어 실제 조사 작목을 폭넓게 담고 있는지."""
+    from engine.params import crops as _crops
+
+    all_crops = _crops().values()
+    assert len(all_crops) >= 30
+    # 소득은 최신 조사 연도 기준이어야 한다 (단종된 계열의 옛 값이 아니라)
     import json
 
     from engine.params import DATA_DIR
 
     data = json.loads((DATA_DIR / "crops.json").read_text(encoding="utf-8"))
-    for c in data["crops"]:
-        f = c.get("factors")
-        assert f, f"{c['id']} 요인분해 없음"
-        assert f["driver"] in ("price", "quantity", "cost")
-        total = f["share_price"] + f["share_quantity"] + f["share_cost"] + f["residual"]
-        assert total == pytest.approx(1.0, abs=0.02), (c["id"], total)
+    years = [c["income_year"] for c in data["crops"] if "income_year" in c]
+    assert years and min(years) >= 2023
+
+
+def test_no_perennial_fruit_crops():
+    """명세 §11 — 과수는 범위 밖. 식재 후 무수익 기간을 엔진이 다루지 못한다."""
+    from engine.params import crops as _crops
+
+    for crop in _crops().values():
+        assert (crop.kosis or {}).get("group") != "과수", crop.id
 
 
 def test_elasticity_is_measured_not_assumed():
