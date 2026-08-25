@@ -1,88 +1,284 @@
-import LandingCliff from "@/components/LandingCliff";
+"use client";
 
-const STATS = [
-  { label: "청년농 평균 부채", value: "2억 3,900만원" },
-  { label: "상환이 어렵다고 답한 비율", value: "55.3%" },
-  { label: "회생자금을 이용한 비율", value: "2.6%" },
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { extractSlots, fetchCrops, runDiagnose } from "@/lib/api";
+
+type Crop = { id: string; name: string };
+
+/** 만원 단위로 받는다. 원 단위는 자릿수가 많아 입력이 느리다. */
+const MAN = 10_000;
+
+const PRESETS = [
+  { label: "딸기 수경 1,000평", crop: "strawberry_hydro", pyeong: 1000 },
+  { label: "토마토 수경 2,000평", crop: "tomato_hydro", pyeong: 2000 },
+  { label: "시금치 3,000평", crop: "spinach", pyeong: 3000 },
 ];
 
-export default function Home() {
+export default function InputPage() {
+  const router = useRouter();
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [cropId, setCropId] = useState("");
+  const [pyeong, setPyeong] = useState("");
+  const [living, setLiving] = useState("2400");
+  const [debt, setDebt] = useState("");
+  const [want, setWant] = useState("");
+  const [history, setHistory] = useState("");
+  const [sentence, setSentence] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [reading, setReading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const pyeongRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetchCrops()
+      .then((d) => {
+        setCrops(d.crops.map((c) => ({ id: c.id, name: c.name })));
+        setCropId((prev) => prev || d.crops[0]?.id || "");
+      })
+      .catch(() => setError("서버에 연결하지 못했습니다. 백엔드가 실행 중인지 확인해 주세요."));
+  }, []);
+
+  const ready = cropId && Number(pyeong) > 0 && living !== "" && Number(living) >= 0;
+
+  const parsedHistory = history
+    .split(/[,\s]+/)
+    .map((t) => Number(t.replace(/[^0-9.]/g, "")))
+    .filter((n) => Number.isFinite(n) && n > 0)
+    .map((n) => n * MAN);
+
+  async function submit(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (!ready || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const d = await runDiagnose({
+        crop_id: cropId,
+        pyeong: Number(pyeong),
+        living_cost: Number(living) * MAN,
+        other_debt_service: debt ? Number(debt) * MAN : 0,
+        requested_principal: want ? Number(want) * MAN : null,
+        income_history: parsedHistory.length >= 3 ? parsedHistory : [],
+      });
+      router.push(`/result/${d.diagnosis_id}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "계산에 실패했습니다.");
+      setBusy(false);
+    }
+  }
+
+  /** 문장을 붙여넣으면 칸을 채워 준다. 어디까지나 가속 장치이고, 폼이 본체다. */
+  async function readSentence() {
+    if (!sentence.trim() || reading) return;
+    setReading(true);
+    setError(null);
+    try {
+      const r = await extractSlots(sentence);
+      const s = r.slots;
+      if (s.crop_id) setCropId(s.crop_id);
+      if (s.pyeong) setPyeong(String(Math.round(s.pyeong)));
+      if (s.living_cost) setLiving(String(Math.round(s.living_cost / MAN)));
+      if (s.other_debt_service) setDebt(String(Math.round(s.other_debt_service / MAN)));
+      if (s.requested_principal) setWant(String(Math.round(s.requested_principal / MAN)));
+      if (!s.crop_id && !s.pyeong && !s.living_cost) {
+        setError("문장에서 읽어낼 값을 찾지 못했습니다. 아래 칸에 직접 넣어주세요.");
+      }
+    } catch {
+      setError("문장 해석에 실패했습니다. 아래 칸에 직접 넣어주세요.");
+    } finally {
+      setReading(false);
+    }
+  }
+
   return (
-    <main className="mx-auto max-w-5xl px-5 py-16 sm:py-24">
-      <p className="text-sm font-medium tracking-wide text-signal-warn">
-        정책자금 신청 전 상환여력 점검
-      </p>
-      <h1 className="mt-4 text-3xl font-bold leading-snug tracking-tight sm:text-5xl sm:leading-tight">
-        5억을 빌릴 수 있다는 말은,
-        <br />
-        <span className="text-signal-danger">5억을 갚을 수 있다는 뜻이 아닙니다</span>
+    <main className="mx-auto max-w-xl px-5 py-12 sm:py-16">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-50">
+        상환여력 진단
       </h1>
-      <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-400">
-        후계농 육성자금은 5년 거치 20년 상환입니다. 처음 5년은 이자만 냅니다. 문제는
-        6년차입니다. 원금이 붙는 순간 연 상환액이 몇 배로 뛰고, 그때 소득이 따라오지
-        못하면 돌려막기가 시작됩니다.
+      <p className="mt-2 text-sm leading-relaxed text-slate-400">
+        정책자금을 신청하기 전에, 감당할 수 있는 차입 규모를 계산합니다.
+        필요한 값은 <b className="text-slate-200">작목 · 면적 · 생활비</b> 세 개입니다.
       </p>
 
-      <section className="mt-12 rounded-2xl border border-ink-700 bg-ink-900 p-5 sm:p-7">
-        <div className="mb-4 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="text-sm font-semibold text-slate-200">
-            상환 절벽 — 딸기(시설,수경) 1,000평 · 한도 5억 차입
-          </h2>
-          <span className="text-xs text-slate-500">
-            농촌진흥청 2023년 소득조사 기준 · 생활비 연 2,400만원 가정
-          </span>
-        </div>
-        <LandingCliff />
-        <p className="mt-4 text-sm text-slate-400">
-          거치기간 연 이자 <span className="tabular text-slate-200">750만원</span> →
-          상환기 연 원리금{" "}
-          <span className="tabular text-signal-danger">2,912만원</span> (3.9배). 점선은
-          이 농가가 실제로 상환에 쓸 수 있는 금액입니다.
-        </p>
-      </section>
-
-      <section className="mt-12 grid gap-4 sm:grid-cols-3">
-        {STATS.map((s) => (
-          <div key={s.label} className="rounded-xl border border-ink-800 bg-ink-900 p-5">
-            <div className="tabular text-2xl font-semibold text-slate-100">{s.value}</div>
-            <div className="mt-1 text-xs leading-relaxed text-slate-500">{s.label}</div>
-          </div>
+      {/* 빠른 시작 */}
+      <div className="mt-6 flex flex-wrap gap-2">
+        {PRESETS.map((p) => (
+          <button
+            key={p.label}
+            type="button"
+            onClick={() => {
+              setCropId(p.crop);
+              setPyeong(String(p.pyeong));
+              pyeongRef.current?.focus();
+            }}
+            className="rounded-full border border-ink-700 px-3 py-1.5 text-xs text-slate-400 transition hover:border-ink-600 hover:text-slate-200"
+          >
+            {p.label}
+          </button>
         ))}
-      </section>
-      <p className="mt-3 text-xs text-slate-600">
-        출처: KREI 『농업경영체의 부채 실태와 정책 과제』 R2025-09
-      </p>
-
-      <div className="mt-12">
-        <a
-          href="/diagnose"
-          className="inline-flex items-center rounded-lg bg-slate-100 px-6 py-3.5 text-base font-semibold text-ink-950 transition hover:bg-white"
-        >
-          내 상환 여력 확인하기
-        </a>
-        <p className="mt-3 text-xs text-slate-500">
-          계정 없이 바로 계산합니다. 입력값은 저장되지 않고 결과는 링크로만 공유됩니다.
-        </p>
       </div>
 
-      <section className="mt-16 grid gap-6 border-t border-ink-800 pt-10 sm:grid-cols-2">
-        <div>
-          <h3 className="text-sm font-semibold text-slate-200">하는 것</h3>
-          <ul className="mt-2 space-y-1 text-sm text-slate-400">
-            <li>· 적정 차입 한도 산출 (DSCR 기준 역산)</li>
-            <li>· 상환 리스크 시뮬레이션 (소득 변동·재해 반영)</li>
-            <li>· 제도 요건에 대한 조항 인용 응답</li>
-          </ul>
+      <form onSubmit={submit} className="mt-8 space-y-5">
+        <Field label="작목" required>
+          <select
+            value={cropId}
+            onChange={(e) => setCropId(e.target.value)}
+            className="w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-slate-100 outline-none focus:border-signal-warn"
+          >
+            {crops.length === 0 && <option value="">불러오는 중…</option>}
+            {crops.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </Field>
+
+        <Field label="재배 면적" required unit="평">
+          <NumberInput
+            ref={pyeongRef}
+            value={pyeong}
+            onChange={setPyeong}
+            placeholder="1000"
+            autoFocus
+          />
+        </Field>
+
+        <Field label="연간 생활비" required unit="만원" hint="가구 전체 기준">
+          <NumberInput value={living} onChange={setLiving} placeholder="2400" />
+        </Field>
+
+        <details className="group rounded-lg border border-ink-800 bg-ink-900/40">
+          <summary className="cursor-pointer list-none px-4 py-3 text-sm text-slate-400 transition hover:text-slate-200">
+            <span className="mr-2 inline-block transition group-open:rotate-90">›</span>
+            선택 입력 — 기존 부채 · 희망 차입액 · 소득 이력
+          </summary>
+          <div className="space-y-5 border-t border-ink-800 px-4 py-5">
+            <Field label="기존 부채 연 상환액" unit="만원">
+              <NumberInput value={debt} onChange={setDebt} placeholder="0" />
+            </Field>
+            <Field label="희망 차입액" unit="만원" hint="비우면 제도 한도로 계산">
+              <NumberInput value={want} onChange={setWant} placeholder="50000" />
+            </Field>
+            <Field
+              label="지난 농업소득 이력"
+              unit="만원"
+              hint={
+                parsedHistory.length >= 3
+                  ? `${parsedHistory.length}개년 인식 — 변동성을 내 이력으로 계산합니다`
+                  : "3개년 이상, 연도순 쉼표 구분. 승계농은 부모님 이력도 됩니다"
+              }
+            >
+              <input
+                value={history}
+                onChange={(e) => setHistory(e.target.value)}
+                placeholder="4100, 5200, 4600, 5800"
+                className="tabular w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-slate-100 outline-none placeholder:text-slate-600 focus:border-signal-warn"
+              />
+            </Field>
+          </div>
+        </details>
+
+        <button
+          type="submit"
+          disabled={!ready || busy}
+          className="w-full rounded-lg bg-slate-100 py-3.5 text-sm font-semibold text-ink-950 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {busy ? "계산하는 중…" : "진단 리포트 보기"}
+        </button>
+      </form>
+
+      {error && (
+        <p className="mt-4 rounded-lg border border-signal-danger/40 bg-signal-danger/10 p-3 text-sm text-signal-danger">
+          {error}
+        </p>
+      )}
+
+      {/* 문장 붙여넣기 — 보조 수단 */}
+      <div className="mt-10 border-t border-ink-800 pt-6">
+        <label className="text-xs text-slate-500">
+          문장으로 붙여넣어 한 번에 채우기
+        </label>
+        <div className="mt-2 flex gap-2">
+          <input
+            value={sentence}
+            onChange={(e) => setSentence(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                readSentence();
+              }
+            }}
+            placeholder="딸기 수경 1000평, 생활비 연 2400만원"
+            className="flex-1 rounded-lg border border-ink-800 bg-ink-900/60 px-3 py-2 text-sm text-slate-200 outline-none placeholder:text-slate-600 focus:border-ink-600"
+          />
+          <button
+            type="button"
+            onClick={readSentence}
+            disabled={reading || !sentence.trim()}
+            className="rounded-lg border border-ink-700 px-4 text-sm text-slate-300 transition hover:border-ink-600 disabled:opacity-40"
+          >
+            {reading ? "읽는 중" : "읽기"}
+          </button>
         </div>
-        <div>
-          <h3 className="text-sm font-semibold text-slate-200">하지 않는 것</h3>
-          <ul className="mt-2 space-y-1 text-sm text-slate-500">
-            <li>· 부도 예측 · 신용평가</li>
-            <li>· 대출 알선 · 상품 추천</li>
-            <li>· 투자 조언</li>
-          </ul>
-        </div>
-      </section>
+      </div>
+
+      <p className="mt-8 text-xs leading-relaxed text-slate-600">
+        입력값은 서버에 저장되지 않습니다. 결과는 주소에만 담겨 공유됩니다.
+        부도 예측·신용평가·대출 알선을 하지 않으며, 계산 결과는 대출 심사 결과가
+        아닙니다.
+      </p>
     </main>
   );
 }
+
+function Field({
+  label,
+  unit,
+  hint,
+  required,
+  children,
+}: {
+  label: string;
+  unit?: string;
+  hint?: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="flex items-baseline gap-1.5 text-xs text-slate-400">
+        {label}
+        {required && <span className="text-signal-warn">*</span>}
+        {unit && <span className="ml-auto text-slate-600">{unit}</span>}
+      </span>
+      <div className="mt-1.5">{children}</div>
+      {hint && <span className="mt-1 block text-[11px] text-slate-600">{hint}</span>}
+    </label>
+  );
+}
+
+const NumberInput = ({
+  ref,
+  value,
+  onChange,
+  placeholder,
+  autoFocus,
+}: {
+  ref?: React.Ref<HTMLInputElement>;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  autoFocus?: boolean;
+}) => (
+  <input
+    ref={ref}
+    inputMode="numeric"
+    autoFocus={autoFocus}
+    value={value}
+    onChange={(e) => onChange(e.target.value.replace(/[^0-9.]/g, ""))}
+    placeholder={placeholder}
+    className="tabular w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-slate-100 outline-none placeholder:text-slate-600 focus:border-signal-warn"
+  />
+);

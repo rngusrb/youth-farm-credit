@@ -39,6 +39,7 @@ const config: Config = {
       },
       fontFamily: {
         serif: [
+          "var(--font-serif)",
           "Noto Serif KR",
           "Apple SD Gothic Neo",
           "serif",

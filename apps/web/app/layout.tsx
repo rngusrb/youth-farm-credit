@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
+import { Noto_Serif_KR } from "next/font/google";
 import "./globals.css";
+
+// 리포트 표제용 세리프. next/font 가 자체 호스팅하므로 외부 요청이 없다.
+const serif = Noto_Serif_KR({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+  variable: "--font-serif",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "청년농 여신 설계 | 내가 갚을 수 있는 만큼",
@@ -9,15 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap"
-        />
-      </head>
+    <html lang="ko" className={serif.variable}>
       <body className="min-h-screen">
         <header className="border-b border-ink-800">
           <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
@@ -25,10 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               청년농 여신 설계
             </a>
             <a
-              href="/diagnose"
+              href="/"
               className="text-sm text-slate-400 transition hover:text-slate-100"
             >
-              진단 시작
+              새 진단
             </a>
           </div>
         </header>

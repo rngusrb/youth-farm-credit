@@ -61,7 +61,7 @@ export default function ResultPage() {
         <p className="rounded-lg border border-signal-danger/40 bg-signal-danger/10 p-4 text-sm text-signal-danger">
           {error}
         </p>
-        <a href="/diagnose" className="mt-4 inline-block text-sm text-signal-calm hover:underline">
+        <a href="/" className="mt-4 inline-block text-sm text-signal-calm hover:underline">
           다시 진단하기 →
         </a>
       </main>
@@ -326,7 +326,7 @@ export default function ResultPage() {
 
       <div className="no-print mx-auto mt-6 flex max-w-[46rem] flex-wrap gap-3">
         <a
-          href="/diagnose"
+          href="/"
           className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
         >
           조건 바꿔 다시 계산
