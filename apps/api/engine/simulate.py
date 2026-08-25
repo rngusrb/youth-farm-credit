@@ -24,10 +24,12 @@ _D = sim_defaults()
 class SimResult:
     dscr_median: float          # 상환기 DSCR 중앙값
     dscr_p10: float             # 하위 10%
+    dscr_first_amort: float     # 상환 첫해 DSCR 중앙값 — 원금균등에서 가장 위험한 해
     annual_short_prob: float    # 연간 상환부족 확률
     crisis_prob: float          # 2년 연속 부족 확률
     grace_payment: float        # 거치 중 연 이자
-    amort_payment: float        # 상환기 연 원리금
+    amort_payment: float        # 상환기 최대 연 상환액 (원금균등은 첫해)
+    amort_payment_last: float   # 마지막 해 상환액. 원금균등은 여기까지 줄어든다
     cliff_multiple: float       # amort / grace
     first_risk_year: int | None  # 연간 부족확률 20% 최초 초과 연차
     schedule: list[float] = field(default_factory=list)  # 연도별 상환액 (차트용)
@@ -122,14 +124,18 @@ def evaluate(
     first_risk_year = int(risk_years[0]) + 1 if risk_years.size else None
 
     g = float(due[0])
-    a = float(due[-1])
+    # 원금균등은 상환액이 매년 줄어든다. 대표값은 마지막 해가 아니라
+    # 가장 무거운 상환 첫해다 — 절벽의 높이도 이 값으로 재야 한다.
+    a = float(due[grace:].max()) if len(due) > grace else 0.0
     return SimResult(
         dscr_median=float(np.median(dscr_amort)),
         dscr_p10=float(np.percentile(dscr_amort, 10)),
+        dscr_first_amort=float(np.median(dscr[:, grace])),
         annual_short_prob=float(short_amort.mean()),
         crisis_prob=float(consecutive.any(axis=1).mean()),
         grace_payment=g,
         amort_payment=a,
+        amort_payment_last=float(due[-1]),
         cliff_multiple=(a / g) if g else 0.0,
         first_risk_year=first_risk_year,
         schedule=[float(x) for x in due],

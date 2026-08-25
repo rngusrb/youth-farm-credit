@@ -74,7 +74,8 @@ def test_sigma_does_not_move_the_dscr_limit():
         sigma_grid=(0.10, 0.20, 0.30),
     )
     assert len({round(p.dscr_median, 6) for p in points}) > 1   # 확률 지표는 움직이고
-    assert a["limits"]["recommended"] == pytest.approx(336_448_564, rel=1e-6)  # 한도는 고정
+    # 원금균등 기준 (시행지침 p.12). 상환방식과 무관하게 σ 는 이 값을 못 건드린다.
+    assert a["limits"]["recommended"] == pytest.approx(301_487_603, rel=1e-6)
 
 
 def test_risk_limit_is_stricter_than_dscr_limit_when_income_is_thin():
@@ -171,3 +172,80 @@ def test_sigma_grid_scales_with_the_crop():
     from engine.risk_limit import sigma_grid_around
 
     assert max(sigma_grid_around(0.33)) > max(sigma_grid_around(0.11))
+
+
+# ── 목표 위험 기준 ───────────────────────────────────────────
+def test_crisis_threshold_is_adjustable():
+    """10% 는 외부 근거가 있는 값이 아니다. 사용자가 정할 수 있어야 한다."""
+    limits = {}
+    for target in (0.05, 0.10, 0.20):
+        d = diagnose(DiagnoseInput("strawberry_hydro", 1000, LIVING,
+                                   max_crisis_prob=target))
+        limits[target] = d["limits"]["risk_based"]
+        assert d["limits"]["max_crisis_prob"] == target
+    # 감내 수준을 높일수록 빌릴 수 있는 금액도 커진다
+    assert limits[0.05] < limits[0.10] < limits[0.20]
+
+
+def test_threshold_survives_the_share_link():
+    """공유 링크가 기준값을 잃으면 받는 사람이 다른 숫자를 보게 된다."""
+    inp = DiagnoseInput("strawberry_hydro", 1000, LIVING, max_crisis_prob=0.05)
+    d = diagnose(inp)
+    restored = DiagnoseInput.decode(d["diagnosis_id"])
+    assert restored.max_crisis_prob == 0.05
+    assert diagnose(restored)["limits"]["risk_based"] == d["limits"]["risk_based"]
+
+
+def test_default_threshold_is_flagged_as_ours():
+    d = diagnose(DiagnoseInput("strawberry_hydro", 1000, LIVING))
+    assert d["limits"]["max_crisis_prob_is_default"] is True
+    assert d["limits"]["max_crisis_prob_basis"] == "service_default"
+
+
+# ── σ 등급 ───────────────────────────────────────────────────
+def test_sigma_status_tracks_the_assumed_share():
+    """실측한 것은 시장 공통분뿐이다. 전체를 MEASURED 로 부르면 과대 주장이다."""
+    from engine.diagnose import sigma_status
+
+    assert sigma_status(0.30, 0.31)[0] == "MEASURED"    # 가정 몫 6%
+    assert sigma_status(0.13, 0.215)[0] == "PARTIAL"    # 가정 몫 63%
+    assert sigma_status(0.05, 0.18)[0] == "ASSUMED"     # 가정 몫 92%
+    assert sigma_status(None, 0.20) == ("ASSUMED", 1.0)
+
+
+def test_sigma_grade_matches_the_assumed_share_for_every_crop():
+    """등급이 임의 라벨이 아니라 계산 결과여야 한다.
+
+    σ_공통 이 큰 작목(노지당근 0.57)은 고정된 σ_고유 0.17 이 분산의 9% 밖에 안 돼
+    MEASURED 가 맞다. 반대로 딸기(σ_공통 0.13)는 63% 가 가정이라 PARTIAL 이다.
+    """
+    from engine.diagnose import (
+        SIGMA_MEASURED_MAX_ASSUMED_SHARE,
+        SIGMA_PARTIAL_MAX_ASSUMED_SHARE,
+        sigma_status,
+    )
+    from engine.params import crops
+
+    grades = set()
+    for crop in crops().values():
+        status, share = sigma_status(crop.sigma_common, crop.sigma)
+        grades.add(status)
+        if status == "MEASURED":
+            assert share < SIGMA_MEASURED_MAX_ASSUMED_SHARE, crop.id
+        elif status == "PARTIAL":
+            assert SIGMA_MEASURED_MAX_ASSUMED_SHARE <= share < SIGMA_PARTIAL_MAX_ASSUMED_SHARE
+        else:
+            assert share >= SIGMA_PARTIAL_MAX_ASSUMED_SHARE, crop.id
+    assert grades <= {"MEASURED", "PARTIAL"}
+
+
+def test_spec_crops_are_not_overclaimed_as_measured():
+    """명세의 6종은 σ_공통 이 작아 가정 비중이 크다 — 통짜 실측이라 부르면 안 된다."""
+    from engine.diagnose import sigma_status
+    from engine.params import get_crop
+
+    for cid in ("strawberry_hydro", "strawberry_soil", "eggplant",
+                "tomato_hydro", "spinach", "rose"):
+        crop = get_crop(cid)
+        status, share = sigma_status(crop.sigma_common, crop.sigma)
+        assert status == "PARTIAL", (cid, status, round(share, 2))

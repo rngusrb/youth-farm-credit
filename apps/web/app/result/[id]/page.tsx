@@ -117,7 +117,7 @@ export default function ResultPage() {
           <ReportSection
             n={next()}
             title={`왜 ${data.product.grace_years + 1}년차인가`}
-            lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치기간이 끝나면 원금이 함께 붙어 연 상환액이 뛰어오르는데, 소득은 그대로입니다.`}
+            lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치가 끝나는 ${data.product.grace_years + 1}년차에 원금이 붙으면서 연 상환액이 최댓값을 찍고, 이후 매년 줄어듭니다. 즉 ${data.product.grace_years + 1}년차는 우연히 위험한 해가 아니라 구조적으로 가장 무거운 해입니다.`}
             aside={
               <div className="inline-flex rounded-lg border border-paper-rule p-0.5">
                 {(
@@ -149,13 +149,23 @@ export default function ResultPage() {
                 graceYears={data.product.grace_years}
                 firstRiskYear={scenario.first_risk_year}
               />
-              <p className="mt-3 text-xs text-paper-ink3">
+              <p className="mt-3 text-xs leading-relaxed text-paper-ink3">
                 거치 {data.product.grace_years}년 연 이자{" "}
-                <span className="tabular text-paper-ink2">{manwon(scenario.grace_payment)}</span> →
-                상환기 연 원리금{" "}
-                <span className="tabular text-paper-ink2">{manwon(scenario.amort_payment)}</span>{" "}
-                ({scenario.cliff_multiple.toFixed(1)}배) · 연리{" "}
-                {(data.product.rate * 100).toFixed(1)}% · {data.product.amort_years}년 균분
+                <span className="tabular text-paper-ink2">
+                  {manwon(scenario.grace_payment)}
+                </span>{" "}
+                →{" "}
+                {data.product.grace_years + 1}년차{" "}
+                <span className="tabular font-semibold text-paper-ink">
+                  {manwon(scenario.amort_payment)}
+                </span>{" "}
+                ({scenario.cliff_multiple.toFixed(2)}배)로 뛴 뒤, 원금 몫이 고정이라
+                이자분만큼 매년 줄어 마지막 해{" "}
+                <span className="tabular text-paper-ink2">
+                  {manwon(scenario.amort_payment_last)}
+                </span>{" "}
+                가 됩니다. 연리 {(data.product.rate * 100).toFixed(1)}% ·{" "}
+                {data.product.amort_years}년 원금 균등분할.
               </p>
             </div>
 
@@ -164,12 +174,14 @@ export default function ResultPage() {
                 상환능력비율 (DSCR)
                 <AssumedBadge
                   source={data.sigma_source}
-                  personalized={data.sigma_personalized}
+                  assumedShare={data.sigma_assumed_share}
                 />
               </h3>
               <DscrGauge
                 median={scenario.dscr_median}
                 p10={scenario.dscr_p10}
+                worst={scenario.dscr_first_amort}
+                worstYear={data.product.grace_years + 1}
                 target={data.target_dscr}
               />
             </div>
@@ -186,7 +198,7 @@ export default function ResultPage() {
             <RiskSummary
               scenario={scenario}
               sigmaSource={data.sigma_source}
-              personalized={data.sigma_personalized}
+              assumedShare={data.sigma_assumed_share}
             />
           </ReportSection>
         )}
@@ -269,6 +281,9 @@ export default function ResultPage() {
                 sigmaNote={data.sigma_note}
                 sigmaCi={data.sigma_ci}
                 sigmaCommon={data.sigma_common}
+                assumedShare={data.sigma_assumed_share}
+                ciScope={data.sigma_ci_scope}
+                sigmaIdiosyncratic={data.sigma_idiosyncratic}
                 sigmaReference={data.sigma_reference}
                 maxCrisisProb={data.limits.max_crisis_prob}
                 recommended={data.limits.recommended}
@@ -283,11 +298,45 @@ export default function ResultPage() {
                   규모의 경제는 반영되어 있지 않습니다.
                 </Assumption>
                 <Assumption k="소득 변동성">
-                  σ={data.sigma.toFixed(2)} ({data.sigma_source}
-                  {data.sigma_ci &&
-                    `, 95% 구간 ${data.sigma_ci[0].toFixed(2)}~${data.sigma_ci[1].toFixed(2)}`}
-                  ). {data.sigma_reference}
+                  σ={data.sigma.toFixed(2)} —{" "}
+                  {data.sigma_source === "PERSONAL" ? (
+                    <>입력하신 소득 이력에서 직접 계산했습니다.</>
+                  ) : data.sigma_common ? (
+                    <>
+                      시장 공통 변동{" "}
+                      <b className="text-paper-ink">{data.sigma_common.toFixed(3)}</b>는
+                      실측, 농가 고유 변동{" "}
+                      <b className="text-paper-ink">
+                        {data.sigma_idiosyncratic.toFixed(2)}
+                      </b>
+                      는 가정값입니다. 둘을 제곱합해 σ 를 냅니다.{" "}
+                      <b className="text-paper-accent">
+                        분산 기준 {Math.round((data.sigma_assumed_share ?? 0) * 100)}%가
+                        가정
+                      </b>
+                      이므로 전체를 실측이라고 부르지 않습니다.
+                    </>
+                  ) : (
+                    <>실측되지 않은 가정값입니다.</>
+                  )}
                 </Assumption>
+                {data.sigma_ci && (
+                  <Assumption k="변동성 구간">
+                    95% {data.sigma_ci[0].toFixed(2)}~{data.sigma_ci[1].toFixed(2)}.{" "}
+                    {data.sigma_ci_scope === "own_history" ? (
+                      <>입력 이력의 부트스트랩 구간입니다.</>
+                    ) : (
+                      <>
+                        <b className="text-paper-ink">시장 공통 변동의 표본오차만</b>{" "}
+                        반영합니다 — 농가 고유 변동은 가정값이라 애초에 구간이 없습니다.
+                        관측 {data.factors?.n ?? "12"}개년으로 σ 를 재면 상대 표준오차가
+                        약 {Math.round(100 / Math.sqrt(2 * ((data.factors?.n ?? 12) - 1)))}
+                        % 입니다.
+                      </>
+                    )}
+                  </Assumption>
+                )}
+                <Assumption k="근거">{data.sigma_reference}</Assumption>
                 <Assumption k="재해">
                   연간 발생확률 {pct(data.assumptions.p_disaster)}, 피해율 30~80% 균등
                   가정. 지역·작목별 실측값이 아닙니다.

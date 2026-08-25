@@ -1,4 +1,4 @@
-import type { Scenario } from "@/lib/api";
+import type { Diagnosis, Scenario } from "@/lib/api";
 import { pct } from "@/lib/format";
 import AssumedBadge from "./AssumedBadge";
 
@@ -6,11 +6,11 @@ import AssumedBadge from "./AssumedBadge";
 export default function RiskSummary({
   scenario,
   sigmaSource,
-  personalized,
+  assumedShare,
 }: {
   scenario: Scenario;
-  sigmaSource: "ASSUMED" | "MEASURED";
-  personalized: boolean;
+  sigmaSource: Diagnosis["sigma_source"];
+  assumedShare: number | null;
 }) {
   const items = [
     {
@@ -48,7 +48,7 @@ export default function RiskSummary({
           >
             {it.value}
             {it.volatile && (
-              <AssumedBadge source={sigmaSource} personalized={personalized} />
+              <AssumedBadge source={sigmaSource} assumedShare={assumedShare} />
             )}
           </div>
           <p className="mt-2 text-[11px] leading-relaxed text-paper-ink3">{it.hint}</p>

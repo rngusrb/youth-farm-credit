@@ -5,6 +5,8 @@ import { ratio } from "@/lib/format";
 type Props = {
   median: number;
   p10: number;
+  worst: number;
+  worstYear: number;
   target: number;
 };
 
@@ -13,20 +15,26 @@ const clamp = (v: number) => Math.max(0, Math.min(v, MAX));
 const toPct = (v: number) => (clamp(v) / MAX) * 100;
 
 /** DSCR 게이지 — 중앙값·하위10%, 1.0 기준선. */
-export default function DscrGauge({ median, p10, target }: Props) {
-  const danger = median < 1;
+export default function DscrGauge({ median, p10, worst, worstYear, target }: Props) {
+  const danger = worst < 1;
   return (
     <div>
-      <div className="mb-3 flex items-baseline gap-6">
+      {/* 원금균등은 해마다 상환액이 달라 중앙값만 보면 최악 구간이 가려진다.
+          가장 무거운 해를 주 지표로 세우고 나머지는 보조로 둔다. */}
+      <div className="mb-3 flex flex-wrap items-baseline gap-x-7 gap-y-2">
         <div>
-          <div className="text-xs text-paper-ink3">DSCR 중앙값</div>
+          <div className="text-xs text-paper-ink3">{worstYear}년차 — 가장 무거운 해</div>
           <div
             className={`tabular text-3xl font-semibold ${
               danger ? "text-paper-danger" : "text-paper-ink"
             }`}
           >
-            {ratio(median)}
+            {ratio(worst)}
           </div>
+        </div>
+        <div>
+          <div className="text-xs text-paper-ink3">상환기 중앙값</div>
+          <div className="tabular text-xl font-medium text-paper-ink2">{ratio(median)}</div>
         </div>
         <div>
           <div className="text-xs text-paper-ink3">하위 10%</div>
@@ -41,7 +49,7 @@ export default function DscrGauge({ median, p10, target }: Props) {
         />
         <div
           className={`absolute inset-y-0 w-1 ${danger ? "bg-paper-danger" : "bg-paper-ink3"}`}
-          style={{ left: `calc(${toPct(median)}% - 2px)` }}
+          style={{ left: `calc(${toPct(worst)}% - 2px)` }}
         />
         <div
           className="absolute inset-y-0 w-px bg-paper-ink"

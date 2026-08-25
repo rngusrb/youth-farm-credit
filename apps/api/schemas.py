@@ -18,6 +18,8 @@ class DiagnoseRequest(BaseModel):
     product_id: str = DEFAULT_PRODUCT_ID
     # 연도순 농업소득 이력(원). 3개년 이상이면 σ 를 개인화한다.
     income_history: list[float] = Field(default_factory=list, max_length=40)
+    # 감내할 2년연속 위기확률. 외부 근거가 없는 우리 기준값이라 사용자가 정하게 둔다.
+    max_crisis_prob: float | None = Field(default=None, gt=0.005, le=0.5)
 
 
 # ── /extract ─────────────────────────────────────────────────

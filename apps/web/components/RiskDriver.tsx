@@ -50,6 +50,10 @@ export default function RiskDriver({
     { key: "경영비", value: factors.share_cost, color: "bg-paper-ink3" },
   ];
   const scale = Math.max(1, ...bars.map((b) => Math.abs(b.value)));
+  const sum = factors.share_price + factors.share_quantity + factors.share_cost;
+  const biggest = Math.max(...bars.map((b) => Math.abs(b.value)));
+  // 가장 큰 항의 크기가 곧 관측된 레버리지의 하한이다.
+  const leverage = biggest;
 
   return (
     <section className="rounded-xl border border-paper-rule bg-paper-panel p-5">
@@ -84,8 +88,26 @@ export default function RiskDriver({
       </div>
       <p className="mt-2 text-[11px] leading-relaxed text-paper-ink3">
         음수는 그 요인이 소득 변동을 <b>완충</b>했다는 뜻입니다 — 나쁜 해에 비용도 함께
-        줄어드는 경우입니다. 합계가 100%를 넘는 것은 영업레버리지 때문입니다: 매출이
-        1% 흔들리면 소득은 그보다 크게 흔들립니다.
+        줄어드는 경우입니다.{" "}
+        {biggest > 1 && (
+          <>
+            개별 항이 100%를 넘는 것은 영업레버리지 때문입니다: 매출이 1% 흔들리면
+            소득은 {leverage.toFixed(1)}% 가까이 흔들립니다.{" "}
+          </>
+        )}
+        세 항의 합은 {(sum * 100).toFixed(0)}%
+        {Math.abs(factors.residual) >= 0.005 && (
+          <>, 나머지 {(factors.residual * 100).toFixed(0)}%는 선형근사 오차와
+          부산물·품목구성 변화입니다</>
+        )}
+        .
+      </p>
+      <p className="mt-1.5 text-[11px] leading-relaxed text-paper-ink3">
+        분해 방식 — 각 요인의 기여도는{" "}
+        <span className="font-mono">w·Cov(Δlog소득, Δlog요인) / Var(Δlog소득)</span>{" "}
+        로 잽니다. 가격과 수확량의 공분산은 별도 항으로 떼지 않고 각 요인의 기여도에
+        이미 반영돼 있어(그래서 합이 1 로 닫힙니다), 상호작용을 어느 한쪽에 임의로
+        배분하지 않습니다.
       </p>
 
       <div className="mt-4 rounded-lg border border-paper-rule bg-paper-sunk p-4">

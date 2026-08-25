@@ -32,8 +32,8 @@ def test_diagnose_matches_spec_shape():
     assert d["limits"]["risk_based"] <= d["limits"]["available"]
     assert d["limits"]["available"] == 500_000_000
     assert d["income"]["annual"] == pytest.approx(48_500_000, rel=0.01)
-    assert d["sigma_source"] in ("ASSUMED", "MEASURED")
-    assert 0.05 < d["sigma"] < 0.6
+    assert d["sigma_source"] in ("MEASURED", "PARTIAL", "ASSUMED", "PERSONAL")
+    assert 0.05 < d["sigma"] < 0.8
     assert d["scenarios"]["at_available"]["first_risk_year"] == 6
     assert len(d["schedule"]) == 25
     assert "대출 심사 결과" in d["disclaimer"]

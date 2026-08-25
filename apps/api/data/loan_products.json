@@ -7,6 +7,7 @@
     "rate_type": "fixed",
     "grace_years": 5,
     "amort_years": 20,
-    "source": "농림축산식품부 후계농 육성사업 시행지침"
+    "source": "농림축산식품부 후계농업경영인 선발 및 지원사업 시행지침 — '대출(상환)기간 : 5년 거치 20년 원금 균등분할 상환'",
+    "amort_method": "equal_principal"
   }
 ]

@@ -81,13 +81,18 @@ def test_resolve_sigma_falls_back_without_history():
     sigma, meta = resolve_sigma(CROP, ())
     assert sigma == CROP.sigma
     assert meta["personalized"] is False
-    assert meta["source"] == CROP.sigma_source
+    # 시장 공통분만 실측이므로 통짜 MEASURED 가 아니라 부분 실측이어야 한다
+    assert meta["source"] == "PARTIAL"
+    assert 0.2 < meta["assumed_variance_share"] < 0.8
+    assert meta["ci_scope"] == "market_common_only"
 
 
 def test_resolve_sigma_personalizes_with_history():
     sigma, meta = resolve_sigma(CROP, tuple(VOLATILE))
     assert meta["personalized"] is True
-    assert meta["source"] == "MEASURED"     # 배지가 사라지는 조건
+    assert meta["source"] == "PERSONAL"          # 가정이 섞이지 않는다
+    assert meta["assumed_variance_share"] == 0.0
+    assert meta["ci_scope"] == "own_history"
     assert sigma > CROP.sigma
     assert meta["ci"] and meta["ci"][0] < sigma < meta["ci"][1]
 

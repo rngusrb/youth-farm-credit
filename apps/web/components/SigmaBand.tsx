@@ -17,7 +17,10 @@ import { pct, won } from "@/lib/format";
 type Props = {
   uncertainty: NonNullable<Diagnosis["uncertainty"]>;
   sigma: number;
-  sigmaSource: "ASSUMED" | "MEASURED";
+  sigmaSource: Diagnosis["sigma_source"];
+  assumedShare: number | null;
+  ciScope: Diagnosis["sigma_ci_scope"];
+  sigmaIdiosyncratic: number;
   personalized: boolean;
   sigmaNote: string | null;
   sigmaCi: [number, number] | null;
@@ -36,6 +39,9 @@ export default function SigmaBand({
   uncertainty,
   sigma,
   sigmaSource,
+  assumedShare,
+  ciScope,
+  sigmaIdiosyncratic,
   personalized,
   sigmaNote,
   sigmaCi,
@@ -64,7 +70,7 @@ export default function SigmaBand({
             {sigmaCi && ` (95% 구간 ${sigmaCi[0].toFixed(2)}~${sigmaCi[1].toFixed(2)})`}
           </span>
         ) : sigmaSource === "ASSUMED" ? (
-          <span className="text-paper-accent">
+          <span className="text-paper-danger">
             아직 실측되지 않은 가정값({sigma.toFixed(2)})
           </span>
         ) : (
@@ -77,9 +83,10 @@ export default function SigmaBand({
             <span className="text-paper-ok">{sigmaCommon.toFixed(2)}</span>은
             농촌진흥청 소득조사 시계열에서 실측했고, 농가 고유 변동{" "}
             <span className="text-paper-accent">
-              {Math.sqrt(Math.max(sigma ** 2 - sigmaCommon ** 2, 0)).toFixed(2)}
+              {sigmaIdiosyncratic.toFixed(2)}
             </span>
-            만 아직 가정값입니다.
+            은 가정값입니다 — <b className="text-paper-ink">분산 기준으로 보면
+            {" "}{Math.round((assumedShare ?? 0) * 100)}%가 가정</b>입니다.
           </>
         )}
         {" "}σ를 어떻게 잡느냐에 따라 권장 한도({won(recommended)})의 위험이 이만큼

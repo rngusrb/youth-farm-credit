@@ -8,6 +8,8 @@ export type Scenario = {
   crisis_prob: number;
   grace_payment: number;
   amort_payment: number;
+  amort_payment_last: number;
+  dscr_first_amort: number;
   cliff_multiple: number;
   first_risk_year: number | null;
   short_prob_by_year: number[];
@@ -15,6 +17,7 @@ export type Scenario = {
 
 export type Diagnosis = {
   diagnosis_id: string;
+  document_ref: string;
   status: "ok" | "no_capacity";
   input: {
     crop_id: string;
@@ -32,6 +35,7 @@ export type Diagnosis = {
     rate: number;
     grace_years: number;
     amort_years: number;
+    amort_method: string;
     source: string;
   };
   income: { annual: number; capacity: number };
@@ -41,6 +45,8 @@ export type Diagnosis = {
     gap: number;
     risk_based: number;
     max_crisis_prob: number;
+    max_crisis_prob_basis: string;
+    max_crisis_prob_is_default: boolean;
     binding_constraint: "loan" | "livelihood";
     livelihood_floor_prob: number;
   };
@@ -64,7 +70,10 @@ export type Diagnosis = {
   min_area_pyeong: number;
   target_dscr: number;
   sigma: number;
-  sigma_source: "ASSUMED" | "MEASURED";
+  sigma_source: "MEASURED" | "PARTIAL" | "ASSUMED" | "PERSONAL" | "OVERRIDE";
+  sigma_ci_scope: "market_common_only" | "own_history" | null;
+  sigma_assumed_share: number | null;
+  sigma_idiosyncratic: number;
   sigma_ci: [number, number] | null;
   sigma_method: string | null;
   sigma_reference: string | null;
@@ -173,6 +182,7 @@ export const runDiagnose = (payload: {
   requested_principal?: number | null;
   product_id?: string;
   income_history?: number[];
+  max_crisis_prob?: number | null;
 }) => post<Diagnosis>("/api/v1/diagnose", payload);
 
 export const explain = (diagnosis: Diagnosis) =>

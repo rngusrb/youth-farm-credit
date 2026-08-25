@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 from dataclasses import asdict, dataclass
 from typing import Any
@@ -32,6 +33,8 @@ class DiagnoseInput:
     product_id: str = DEFAULT_PRODUCT_ID
     # 농가 본인(또는 승계 전 부모)의 연도순 소득 이력. 있으면 σ 를 개인화한다.
     income_history: tuple[float, ...] = ()
+    # 감내할 2년연속 위기확률. 링크로 공유해도 같은 기준이 재현돼야 한다.
+    max_crisis_prob: float | None = None
 
     def encode(self) -> str:
         """입력을 그대로 담은 결정론적 id. 서버 저장 없이 결과 URL을 공유한다."""
@@ -45,8 +48,19 @@ class DiagnoseInput:
         }
         if self.income_history:
             payload["h"] = [round(v, 2) for v in self.income_history]
+        if self.max_crisis_prob is not None:
+            payload["m"] = round(self.max_crisis_prob, 4)
         raw = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
         return "dg_" + base64.urlsafe_b64encode(raw.encode()).decode().rstrip("=")
+
+    def short_ref(self) -> str:
+        """사람이 읽고 부를 수 있는 문서번호.
+
+        id 자체는 입력을 담은 base64 라 화면에 잘라 붙이면 뜻 모를 문자열이 샌다.
+        같은 입력이면 항상 같은 값이 나오는 짧은 해시를 따로 만든다.
+        """
+        digest = hashlib.sha256(self.encode().encode()).hexdigest().upper()
+        return f"{digest[:4]}-{digest[4:8]}"
 
     @classmethod
     def decode(cls, diagnosis_id: str) -> "DiagnoseInput":
@@ -66,7 +80,30 @@ class DiagnoseInput:
             requested_principal=None if d.get("r") is None else float(d["r"]),
             product_id=d.get("pr", DEFAULT_PRODUCT_ID),
             income_history=tuple(float(v) for v in d.get("h", ())),
+            max_crisis_prob=None if d.get("m") is None else float(d["m"]),
         )
+
+
+# σ 의 신뢰 등급. 값 자체가 아니라 **분산 중 가정이 차지하는 몫**으로 가른다.
+# σ = √(σ_공통² + σ_고유²) 에서 σ_고유 는 가정값이므로, 그 제곱이 전체 분산에서
+# 차지하는 비중이 곧 "이 숫자의 몇 %가 추측인가"다.
+SIGMA_MEASURED_MAX_ASSUMED_SHARE = 0.25
+SIGMA_PARTIAL_MAX_ASSUMED_SHARE = 0.75
+
+
+def sigma_status(sigma_common: float | None, sigma_total: float) -> tuple[str, float]:
+    """(등급, 가정이 차지하는 분산 비중).
+
+    실측한 것은 시장 공통분뿐이다. 전체를 MEASURED 로 표시하면 과대 주장이 된다.
+    """
+    if not sigma_common or sigma_total <= 0:
+        return "ASSUMED", 1.0
+    assumed_share = max(0.0, 1.0 - (sigma_common ** 2) / (sigma_total ** 2))
+    if assumed_share < SIGMA_MEASURED_MAX_ASSUMED_SHARE:
+        return "MEASURED", assumed_share
+    if assumed_share < SIGMA_PARTIAL_MAX_ASSUMED_SHARE:
+        return "PARTIAL", assumed_share
+    return "ASSUMED", assumed_share
 
 
 def resolve_sigma(crop, income_history: tuple[float, ...]) -> tuple[float, dict]:
@@ -75,12 +112,17 @@ def resolve_sigma(crop, income_history: tuple[float, ...]) -> tuple[float, dict]
     농가 소득 이력이 3개년 이상 있으면 작목 σ 를 사전분포로 두고 개인값으로
     갱신한다(계층적 축소추정). 없으면 작목 σ 를 그대로 쓴다.
     """
+    status, assumed_share = sigma_status(crop.sigma_common, crop.sigma)
     base = {
-        "source": crop.sigma_source,
+        "source": status,
         "ci": list(crop.sigma_ci) if crop.sigma_ci else None,
+        # 구간은 시장 공통분의 표본오차만 담는다. 농가 고유분은 가정값이라
+        # 애초에 구간이 없다. 이 사실을 라벨로 달아 보낸다.
+        "ci_scope": "market_common_only" if crop.sigma_ci else None,
         "method": crop.sigma_method,
         "reference": crop.sigma_reference,
         "personalized": False,
+        "assumed_variance_share": round(assumed_share, 3),
     }
     if len(income_history) < 3:
         return crop.sigma, base
@@ -93,11 +135,14 @@ def resolve_sigma(crop, income_history: tuple[float, ...]) -> tuple[float, dict]
         return crop.sigma, base
 
     return result.sigma, {
-        "source": "MEASURED",
+        # 농가 자신의 이력에서 나온 값이므로 가정이 섞이지 않는다.
+        "source": "PERSONAL",
         "ci": [result.ci_low, result.ci_high],
+        "ci_scope": "own_history",
         "method": result.method,
         "reference": result.as_crop_fields()["sigma_reference"],
         "personalized": True,
+        "assumed_variance_share": 0.0,
         "note": explain(result),
         "weight_individual": result.weight_individual,
         "sigma_raw": result.sigma_raw,
@@ -126,6 +171,9 @@ def diagnose(
     crop = get_crop(inp.crop_id)
     product = get_product(inp.product_id)
     cfg = sim_defaults()
+    # 입력에 실린 기준이 있으면 그것을 쓴다 (공유 링크 재현성)
+    if inp.max_crisis_prob is not None:
+        max_crisis_prob = inp.max_crisis_prob
 
     income = annual_income(inp.crop_id, inp.pyeong)
     fixed_outflow = inp.living_cost + inp.other_debt_service
@@ -133,8 +181,9 @@ def diagnose(
 
     if sigma_override is not None:
         sigma = sigma_override
-        sigma_meta = {"source": "OVERRIDE", "ci": None, "method": "sigma_override",
-                      "reference": None, "personalized": False}
+        sigma_meta = {"source": "OVERRIDE", "ci": None, "ci_scope": None,
+                      "method": "sigma_override", "reference": None,
+                      "personalized": False, "assumed_variance_share": 1.0}
     else:
         sigma, sigma_meta = resolve_sigma(crop, inp.income_history)
 
@@ -143,6 +192,7 @@ def diagnose(
 
     base: dict[str, Any] = {
         "diagnosis_id": inp.encode(),
+        "document_ref": inp.short_ref(),
         "input": {
             "crop_id": crop.id,
             "crop_name": crop.name,
@@ -159,6 +209,7 @@ def diagnose(
             "rate": product.rate,
             "grace_years": product.grace_years,
             "amort_years": product.amort_years,
+            "amort_method": product.amort_method,
             "source": product.source,
         },
         "income": {"annual": income, "capacity": cap},
@@ -174,6 +225,9 @@ def diagnose(
         "sigma": sigma,
         "sigma_source": sigma_meta["source"],
         "sigma_ci": sigma_meta["ci"],
+        "sigma_ci_scope": sigma_meta.get("ci_scope"),
+        "sigma_assumed_share": sigma_meta.get("assumed_variance_share"),
+        "sigma_idiosyncratic": policy()["sigma_decomposition"]["idiosyncratic_sigma"],
         "sigma_method": sigma_meta["method"],
         "sigma_reference": sigma_meta["reference"],
         "sigma_personalized": sigma_meta["personalized"],
@@ -234,6 +288,12 @@ def diagnose(
 
     base["limits"]["risk_based"] = risk_based
     base["limits"]["max_crisis_prob"] = max_crisis_prob
+    # DSCR 1.25 는 은행 관행이라는 외부 근거가 있지만, 이 기준은 우리가 정한 값이다.
+    # 근거 없는 숫자를 근거 있는 것처럼 두지 않고, 성격을 밝히고 조정 가능하게 한다.
+    base["limits"]["max_crisis_prob_basis"] = "service_default"
+    base["limits"]["max_crisis_prob_is_default"] = (
+        max_crisis_prob == DEFAULT_MAX_CRISIS_PROB
+    )
     base["limits"]["binding_constraint"] = binding
     base["limits"]["livelihood_floor_prob"] = floor_prob
 

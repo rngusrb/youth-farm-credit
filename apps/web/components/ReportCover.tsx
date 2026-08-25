@@ -21,7 +21,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
           상환여력 진단 리포트
         </span>
         <span className="tabular text-paper-ink3">
-          발행 {issued} · 문서 {data.diagnosis_id.slice(3, 15)}
+          발행 {issued} · 문서 {data.document_ref}
         </span>
       </div>
 
