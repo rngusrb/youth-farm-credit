@@ -32,19 +32,19 @@ export default function MarketRegime({ market }: { market: Market }) {
 
       <dl className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="rounded-lg border border-paper-rule bg-paper-sunk p-3">
-          <dt className="text-[11px] text-paper-ink3">도매가 연평균 변동성</dt>
+          <dt className="text-[12px] text-paper-ink3">도매가 연평균 변동성</dt>
           <dd className="tabular mt-0.5 text-lg font-semibold text-paper-ink">
             {market.annual_price_sigma?.toFixed(3) ?? "—"}
           </dd>
         </div>
         <div className="rounded-lg border border-paper-rule bg-paper-sunk p-3">
-          <dt className="text-[11px] text-paper-ink3">소득조사 농가수취가 변동성</dt>
+          <dt className="text-[12px] text-paper-ink3">소득조사 농가수취가 변동성</dt>
           <dd className="tabular mt-0.5 text-lg font-semibold text-paper-ink">
             {market.kosis_price_sigma?.toFixed(3) ?? "—"}
           </dd>
         </div>
         <div className="rounded-lg border border-paper-rule bg-paper-sunk p-3">
-          <dt className="text-[11px] text-paper-ink3">현재 시장 국면</dt>
+          <dt className="text-[12px] text-paper-ink3">현재 시장 국면</dt>
           <dd className={`mt-0.5 text-lg font-semibold ${r.tone}`}>{r.label}</dd>
         </div>
       </dl>
@@ -66,7 +66,7 @@ export default function MarketRegime({ market }: { market: Market }) {
         </p>
       )}
 
-      <p className="mt-3 text-[11px] leading-relaxed text-paper-ink3">
+      <p className="mt-3 text-[12px] leading-relaxed text-paper-ink3">
         가격 충격이 절반으로 잦아드는 데 약{" "}
         <span className="tabular">{g.half_life_days}</span>일 걸립니다 (지속성{" "}
         {g.persistence.toFixed(2)}). 현재 변동성은 장기 평균의{" "}

@@ -8,7 +8,7 @@ import { clearProfile, loadProfile, saveProfile } from "@/lib/profile";
 import { won } from "@/lib/format";
 
 const MAN = 10_000;
-const field = "w-full border border-gov-line px-3.5 py-2.5 text-[14px] outline-none focus:border-gov-link";
+const field = "w-full min-h-11 border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
 const label = "mb-1.5 block text-[13px] font-semibold text-gov-ink2";
 
 export default function FarmPage() {

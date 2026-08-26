@@ -86,7 +86,7 @@ export default function RiskDriver({
           );
         })}
       </div>
-      <p className="mt-2 text-[11px] leading-relaxed text-paper-ink3">
+      <p className="mt-2 text-[12px] leading-relaxed text-paper-ink3">
         음수는 그 요인이 소득 변동을 <b>완충</b>했다는 뜻입니다 — 나쁜 해에 비용도 함께
         줄어드는 경우입니다.{" "}
         {biggest > 1 && (
@@ -102,7 +102,7 @@ export default function RiskDriver({
         )}
         .
       </p>
-      <p className="mt-1.5 text-[11px] leading-relaxed text-paper-ink3">
+      <p className="mt-1.5 text-[12px] leading-relaxed text-paper-ink3">
         분해 방식 — 각 요인의 기여도는{" "}
         <span className="font-mono">w·Cov(Δlog소득, Δlog요인) / Var(Δlog소득)</span>{" "}
         로 잽니다. 가격과 수확량의 공분산은 별도 항으로 떼지 않고 각 요인의 기여도에
@@ -123,7 +123,7 @@ export default function RiskDriver({
       </div>
 
       {factors.correlation < -0.15 && (
-        <p className="mt-3 text-[11px] leading-relaxed text-paper-ink3">
+        <p className="mt-3 text-[12px] leading-relaxed text-paper-ink3">
           가격과 수확량의 상관은 {factors.correlation.toFixed(2)}입니다. 풍년이면 값이
           떨어져 서로 일부 상쇄되는데, 그만큼 소득 변동은 가격 변동보다 작아집니다.
         </p>

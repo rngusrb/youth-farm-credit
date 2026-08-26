@@ -61,7 +61,7 @@ export default function DscrGauge({ median, p10, worst, worstYear, target }: Pro
         />
       </div>
       {/* 눈금 숫자는 마커 바로 아래, 설명은 겹치지 않게 한 줄 내려서 */}
-      <div className="relative mt-1.5 h-4 text-[11px] text-paper-ink3">
+      <div className="relative mt-1.5 h-4 text-[12px] text-paper-ink3">
         <span className="absolute left-0">0</span>
         <span
           className="tabular absolute -translate-x-1/2 font-medium text-paper-ink"
@@ -77,7 +77,7 @@ export default function DscrGauge({ median, p10, worst, worstYear, target }: Pro
         </span>
         <span className="absolute right-0">{MAX.toFixed(1)}+</span>
       </div>
-      <div className="mt-1 flex gap-4 text-[11px] text-paper-ink3">
+      <div className="mt-1 flex gap-4 text-[12px] text-paper-ink3">
         <span>
           <b className="font-medium text-paper-ink">1.0</b> 상환 가능선
         </span>

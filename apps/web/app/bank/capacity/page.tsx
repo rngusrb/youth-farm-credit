@@ -76,11 +76,11 @@ export default function CapacityPage() {
                     {diag.sigma_personalized ? "차주 실적" : "작목 평균"}
                   </Badge></span>],
                 ["시장 공통 성분", <span key="b" className="tabular">
-                  {diag.sigma_common?.toFixed(3) ?? "—"} <span className="text-[11px] text-gov-ink3">실측</span>
+                  {diag.sigma_common?.toFixed(3) ?? "—"} <span className="text-[12px] text-gov-ink3">실측</span>
                 </span>],
                 ["농가 고유 성분", <span key="c" className="tabular">
                   {diag.sigma_idiosyncratic.toFixed(3)}{" "}
-                  <span className="text-[11px] text-gov-warn">
+                  <span className="text-[12px] text-gov-warn">
                     {diag.sigma_personalized ? "실측" : "가정"}
                   </span>
                 </span>],
@@ -125,7 +125,7 @@ export default function CapacityPage() {
                 </Notice>
               </div>
             )}
-            <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">{cf.note}</p>
+            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">{cf.note}</p>
           </Panel>
         </Section>
       )}

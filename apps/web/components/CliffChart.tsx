@@ -54,14 +54,14 @@ export default function CliffChart({
           <CartesianGrid stroke="#e4dfd5" vertical={false} />
           <XAxis
             dataKey="year"
-            tick={{ fill: "#8a8f99", fontSize: 11 }}
+            tick={{ fill: "#61666e", fontSize: 12 }}
             tickLine={false}
             axisLine={{ stroke: "#e4dfd5" }}
             interval={1}
             tickFormatter={(y) => `${y}`}
           />
           <YAxis
-            tick={{ fill: "#8a8f99", fontSize: 11 }}
+            tick={{ fill: "#61666e", fontSize: 12 }}
             tickLine={false}
             axisLine={false}
             width={64}
@@ -88,7 +88,7 @@ export default function CliffChart({
               value: `상환여력 ${manwon(capacity)}`,
               position: "insideTopLeft",
               fill: "#525a68",
-              fontSize: 11,
+              fontSize: 12,
             }}
           />
           {firstRiskYear && (
@@ -100,7 +100,7 @@ export default function CliffChart({
                 value: `${firstRiskYear}년차 위험`,
                 position: "top",
                 fill: "#a8442b",
-                fontSize: 11,
+                fontSize: 12,
                 dy: -6,
               }}
             />

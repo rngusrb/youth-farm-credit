@@ -9,11 +9,11 @@ export function Page({ children }: { children: React.ReactNode }) {
 export function Crumb({ trail }: { trail: { label: string; href?: string }[] }) {
   return (
     <nav aria-label="현재 위치" className="no-print mb-4 flex flex-wrap items-center gap-1.5 text-[12px] text-gov-ink3">
-      <Link href="/" className="hover:text-gov-link">홈</Link>
+      <Link href="/" className="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-gov-link">홈</Link>
       {trail.map((t) => (
         <span key={t.label} className="flex items-center gap-1.5">
           <span aria-hidden>›</span>
-          {t.href ? <Link href={t.href} className="hover:text-gov-link">{t.label}</Link>
+          {t.href ? <Link href={t.href} className="inline-flex min-h-11 items-center hover:text-gov-link">{t.label}</Link>
                   : <span className="text-gov-ink2">{t.label}</span>}
         </span>
       ))}
@@ -80,7 +80,7 @@ export function Badge({ tone = "plain", children }: {
     info: "border-gov-link/30 bg-gov-soft text-gov-head",
   }[tone];
   return (
-    <span className={`inline-flex items-center border px-2 py-0.5 text-[11px] font-semibold ${cls}`}>
+    <span className={`inline-flex items-center border px-2 py-0.5 text-[12px] font-semibold ${cls}`}>
       {children}
     </span>
   );
@@ -100,7 +100,7 @@ export function Stat({ label, value, unit, tone = "plain", note }: {
       <div className={`tabular mt-1 text-[26px] font-extrabold leading-none ${color}`}>
         {value}{unit && <span className="ml-1 text-[14px] font-semibold text-gov-ink3">{unit}</span>}
       </div>
-      {note && <div className="mt-1.5 text-[11px] leading-snug text-gov-ink3">{note}</div>}
+      {note && <div className="mt-1.5 text-[12px] leading-snug text-gov-ink3">{note}</div>}
     </div>
   );
 }
@@ -129,7 +129,7 @@ export function Empty({ title, body, cta }: {
       <p className="text-[15px] font-semibold text-gov-ink">{title}</p>
       <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-gov-ink2">{body}</p>
       {cta && (
-        <Link href={cta.href} className="mt-4 inline-block bg-gov-head px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-gov-navy">
+        <Link href={cta.href} className="mt-4 inline-flex min-h-11 items-center bg-gov-head px-5 text-[13px] font-semibold text-white hover:bg-gov-navy">
           {cta.label}
         </Link>
       )}
@@ -144,7 +144,7 @@ export function Btn({ href, onClick, variant = "primary", type = "button", disab
   const cls = variant === "primary"
     ? "bg-gov-head text-white hover:bg-gov-navy disabled:opacity-50"
     : "border border-gov-line bg-white text-gov-ink2 hover:border-gov-link hover:text-gov-head";
-  const base = `inline-flex items-center justify-center px-4 py-2.5 text-[13px] font-semibold ${cls}`;
+  const base = `inline-flex min-h-11 items-center justify-center px-4 text-[13px] font-semibold ${cls}`;
   return href
     ? <Link href={href} className={base}>{children}</Link>
     : <button type={type} onClick={onClick} disabled={disabled} className={base}>{children}</button>;

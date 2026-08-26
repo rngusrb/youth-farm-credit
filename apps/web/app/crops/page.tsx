@@ -57,14 +57,14 @@ export default function CropsPage() {
               <label htmlFor="search" className="text-[13px] font-semibold text-gov-ink2">작목명</label>
               <input id="search" value={query} onChange={(e) => setQuery(e.target.value)}
                      placeholder="예: 딸기"
-                     className="w-40 border border-gov-line px-3 py-2 text-[13px] outline-none focus:border-gov-link" />
+                     className="w-40 min-h-11 border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link" />
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-[13px] font-semibold text-gov-ink2">정렬</span>
               {SORTS.map(([k, l]) => (
                 <button key={k} onClick={() => setSort(k)}
                         aria-pressed={sort === k}
-                        className={`border px-2.5 py-1.5 text-[12px] ${
+                        className={`inline-flex min-h-11 items-center border px-3 text-[12px] ${
                           sort === k ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                      : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
                   {l}
@@ -77,7 +77,7 @@ export default function CropsPage() {
             {groups.map((g) => (
               <button key={g} onClick={() => setGroup(g)}
                       aria-pressed={group === g}
-                      className={`border px-3 py-1 text-[12px] ${
+                      className={`inline-flex min-h-11 items-center border px-3 text-[12px] ${
                         group === g ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                     : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
                 {g}
@@ -104,7 +104,7 @@ export default function CropsPage() {
                 <tr key={c.id} className="border-b border-gov-line2 hover:bg-gov-sunk">
                   <th scope="row" className="px-4 py-3 text-left font-medium text-gov-ink">
                     {c.name}
-                    {c.group && <span className="block text-[11px] font-normal text-gov-ink3">{c.group}</span>}
+                    {c.group && <span className="block text-[12px] font-normal text-gov-ink3">{c.group}</span>}
                   </th>
                   <td className="tabular px-4 py-3 text-gov-ink2">{won(c.income_per_10a)}</td>
                   <td className="px-4 py-3">
@@ -115,7 +115,7 @@ export default function CropsPage() {
                       </span>
                     </div>
                     {c.sigma_ci && (
-                      <span className="tabular mt-0.5 block text-[10px] text-gov-ink3">
+                      <span className="tabular mt-0.5 block text-[12px] text-gov-ink3">
                         95% {c.sigma_ci[0].toFixed(3)}–{c.sigma_ci[1].toFixed(3)}
                         {c.sigma_n ? ` · ${c.sigma_n}개년` : ""}
                       </span>
@@ -129,7 +129,7 @@ export default function CropsPage() {
                   </td>
                   <td className="px-4 py-3">
                     {c.has_market
-                      ? <Link href={`/market?crop=${c.id}`} className="lnk text-[13px]">국면 보기</Link>
+                      ? <Link href={`/market?crop=${c.id}`} className="lnk inline-flex min-h-11 items-center text-[13px]">국면 보기</Link>
                       : <span className="text-[12px] text-gov-ink3">미수집</span>}
                   </td>
                 </tr>

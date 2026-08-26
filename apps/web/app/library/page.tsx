@@ -45,7 +45,7 @@ export default function LibraryPage() {
                   <tr key={d.title} className="border-b border-gov-line2 align-top">
                     <td className="px-4 py-3">
                       <span className="font-medium text-gov-ink">{d.title}</span>
-                      <span className="mt-1 block text-[11px] text-gov-ink3">
+                      <span className="mt-1 block text-[12px] text-gov-ink3">
                         농림축산식품부 청년농육성정책팀
                       </span>
                     </td>
@@ -57,7 +57,7 @@ export default function LibraryPage() {
                     </td>
                     <td className="px-4 py-3">
                       {d.url ? (
-                        <a href={d.url} target="_blank" rel="noreferrer" className="lnk text-[13px]">
+                        <a href={d.url} target="_blank" rel="noreferrer" className="lnk inline-flex min-h-11 items-center text-[13px]">
                           내려받기 ↗
                         </a>
                       ) : (

@@ -55,7 +55,7 @@ export default function AssumedBadge({
   return (
     <span
       title={s.title}
-      className={`ml-2 inline-flex cursor-help items-center rounded border px-1.5 py-0.5 align-middle text-[10px] font-medium ${s.tone} ${className}`}
+      className={`ml-2 inline-flex cursor-help items-center rounded border px-1.5 py-0.5 align-middle text-[12px] font-medium ${s.tone} ${className}`}
     >
       {s.label}
     </span>

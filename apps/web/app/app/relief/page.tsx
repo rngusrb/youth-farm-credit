@@ -145,7 +145,7 @@ export default function ReliefPage() {
                 </li>
               )}
             </ul>
-            <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">{source}</p>
+            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">{source}</p>
           </Panel>
         )}
 
@@ -159,7 +159,7 @@ export default function ReliefPage() {
                 <div className="mb-2 flex flex-wrap items-center gap-2">
                   <Badge tone="info">{c.section}</Badge>
                   <h3 className="text-[15px] font-bold text-gov-ink">{l.key}</h3>
-                  <span className="text-[11px] text-gov-ink3">{c.doc}</span>
+                  <span className="text-[12px] text-gov-ink3">{c.doc}</span>
                 </div>
                 <blockquote className="whitespace-pre-wrap border-l-4 border-gov-line bg-gov-sunk px-4 py-3 text-[12px] leading-relaxed text-gov-ink2">
                   {c.text.slice(0, 600)}{c.text.length > 600 ? "…" : ""}

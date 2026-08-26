@@ -73,7 +73,7 @@ export default function SafetyPage() {
                   <input id="principal" inputMode="numeric"
                          value={principal != null ? Math.round(principal / 10_000) : ""}
                          onChange={(e) => setPrincipal(Number(e.target.value.replace(/[^\d]/g, "")) * 10_000)}
-                         className="tabular w-32 border border-gov-line px-3 py-2 text-right text-[14px] outline-none focus:border-gov-link" />
+                         className="tabular w-32 min-h-11 border border-gov-line px-3 text-right text-[14px] outline-none focus:border-gov-link" />
                   <span className="text-[13px] text-gov-ink3">만원</span>
                 </div>
               </div>
@@ -84,7 +84,7 @@ export default function SafetyPage() {
                   ["제도 한도", diag.limits.available],
                 ].map(([l, v]) => (
                   <button key={l as string} onClick={() => setPrincipal(v as number)}
-                          className="border border-gov-line px-3 py-2 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+                          className="inline-flex min-h-11 items-center border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
                     {l as string} {won(v as number)}
                   </button>
                 ))}

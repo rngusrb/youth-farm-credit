@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <header className="no-print border-b border-gov-line bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-8 px-4 py-4">
-        <Link href="/" className="flex items-baseline gap-2">
+        <Link href="/" className="flex min-h-11 items-center gap-2">
           <span className="text-[19px] font-extrabold tracking-tight text-gov-head">FarmFit</span>
           <span className="text-[12px] font-medium text-gov-ink2">농가 경영 · 여신설계</span>
         </Link>
@@ -20,22 +20,22 @@ export default function Header() {
               return (
                 <li key={g.label} className="group relative">
                   <button
-                    className={`px-4 py-2 text-[14px] font-semibold ${
+                    className={`inline-flex min-h-11 items-center px-4 text-[14px] font-semibold ${
                       active ? "text-gov-head" : "text-gov-ink2 hover:text-gov-head"
                     }`}
                   >
                     {g.label}
                   </button>
-                  <div className="invisible absolute left-0 top-full z-30 w-64 border border-gov-line bg-white p-2 shadow-lg group-hover:visible group-focus-within:visible">
+                  <div className="invisible absolute right-0 top-full z-30 w-64 border border-gov-line bg-white p-2 shadow-lg group-hover:visible group-focus-within:visible">
                     {g.items.map((i) => (
                       <Link
                         key={i.href}
                         href={i.href}
-                        className="block px-3 py-2 hover:bg-gov-soft"
+                        className="block min-h-11 px-3 py-2 hover:bg-gov-soft"
                       >
                         <span className="block text-[13px] font-medium text-gov-ink">{i.label}</span>
                         {i.desc && (
-                          <span className="block text-[11px] text-gov-ink3">{i.desc}</span>
+                          <span className="block text-[12px] text-gov-ink3">{i.desc}</span>
                         )}
                       </Link>
                     ))}
@@ -47,7 +47,7 @@ export default function Header() {
         </nav>
         <Link
           href="/app"
-          className="ml-auto shrink-0 bg-gov-head px-4 py-2 text-[13px] font-semibold text-white hover:bg-gov-navy lg:ml-0"
+          className="ml-auto inline-flex min-h-11 shrink-0 items-center bg-gov-head px-4 text-[13px] font-semibold text-white hover:bg-gov-navy lg:ml-0"
         >
           진단 시작
         </Link>
@@ -57,7 +57,7 @@ export default function Header() {
         <ul className="flex min-w-max px-2">
           {PORTAL.flatMap((g) => g.items).map((i) => (
             <li key={i.href}>
-              <Link href={i.href} className="block px-3 py-2.5 text-[13px] text-gov-ink2">
+              <Link href={i.href} className="inline-flex min-h-11 items-center px-3 text-[13px] text-gov-ink2">
                 {i.label}
               </Link>
             </li>

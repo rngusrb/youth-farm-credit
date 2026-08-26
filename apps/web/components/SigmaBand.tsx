@@ -93,7 +93,7 @@ export default function SigmaBand({
         달라집니다.
       </p>
       {sigmaReference && !personalized && (
-        <p className="mt-1.5 text-[11px] leading-relaxed text-paper-ink3">
+        <p className="mt-1.5 text-[12px] leading-relaxed text-paper-ink3">
           {sigmaReference}
         </p>
       )}
@@ -115,14 +115,14 @@ export default function SigmaBand({
             />
             <XAxis
               dataKey="sigma"
-              tick={{ fill: "#8a8f99", fontSize: 11 }}
+              tick={{ fill: "#61666e", fontSize: 12 }}
               tickLine={false}
               axisLine={{ stroke: "#e4dfd5" }}
               tickFormatter={(v) => `σ ${Number(v).toFixed(2)}`}
             />
             <YAxis
               domain={[0, 1]}
-              tick={{ fill: "#8a8f99", fontSize: 11 }}
+              tick={{ fill: "#61666e", fontSize: 12 }}
               tickLine={false}
               axisLine={false}
               width={44}
@@ -146,7 +146,7 @@ export default function SigmaBand({
                 value: `목표 ${pct(maxCrisisProb)}`,
                 position: "insideTopLeft",
                 fill: "#29685a",
-                fontSize: 11,
+                fontSize: 12,
               }}
             />
             <ReferenceLine
@@ -157,7 +157,7 @@ export default function SigmaBand({
                 value: "적용 σ",
                 position: "top",
                 fill: "#9a6216",
-                fontSize: 11,
+                fontSize: 12,
               }}
             />
             <Line
@@ -174,7 +174,7 @@ export default function SigmaBand({
 
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-paper-rule bg-paper-sunk p-3">
-          <dt className="text-[11px] text-paper-ink3">
+          <dt className="text-[12px] text-paper-ink3">
             σ {data[0].sigma.toFixed(2)}~{data[data.length - 1].sigma.toFixed(2)} 구간의 위기확률
           </dt>
           <dd className="tabular mt-0.5 text-lg font-semibold text-paper-ink">
@@ -182,7 +182,7 @@ export default function SigmaBand({
           </dd>
         </div>
         <div className="rounded-lg border border-paper-rule bg-paper-sunk p-3">
-          <dt className="text-[11px] text-paper-ink3">
+          <dt className="text-[12px] text-paper-ink3">
             같은 구간의 상환위험 기준 한도
           </dt>
           <dd className="tabular mt-0.5 text-lg font-semibold text-paper-ink">

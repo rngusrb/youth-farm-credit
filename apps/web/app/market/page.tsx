@@ -45,7 +45,7 @@ function Body() {
         <div className="flex flex-wrap items-center gap-3">
           <label htmlFor="crop" className="text-[13px] font-semibold text-gov-ink2">작목 선택</label>
           <select id="crop" value={id} onChange={(e) => setId(e.target.value)}
-                  className="border border-gov-line px-3 py-2 text-[13px] outline-none focus:border-gov-link">
+                  className="min-h-11 border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             {rows.map((c) => (
               <option key={c.id} value={c.id}>{c.name}{c.has_market ? " (도매가 수집됨)" : ""}</option>
             ))}
@@ -101,7 +101,7 @@ function Body() {
                     </span>],
                   ]}
                 />
-                <p className="mt-2.5 text-[11px] leading-relaxed text-gov-ink3">{m.source}</p>
+                <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">{m.source}</p>
               </Panel>
 
               <Panel>
@@ -113,7 +113,7 @@ function Body() {
                       <div key={mm} className="flex-1 text-center">
                         <div className={`h-10 ${on ? "bg-gov-link/70" : "bg-gov-line2"}`}
                              title={`${mm}월${on ? " 출하" : ""}`} />
-                        <div className={`mt-1 text-[10px] ${on ? "font-semibold text-gov-head" : "text-gov-ink3"}`}>{mm}</div>
+                        <div className={`mt-1 text-[12px] ${on ? "font-semibold text-gov-head" : "text-gov-ink3"}`}>{mm}</div>
                       </div>
                     );
                   })}

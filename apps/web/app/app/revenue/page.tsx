@@ -88,7 +88,7 @@ export default function RevenuePage() {
                   <span className="text-[13px] font-semibold text-gov-ink2">연차</span>
                   {years.map((y) => (
                     <button key={y} onClick={() => setYear(y)} aria-pressed={year === y}
-                            className={`border px-2.5 py-1.5 text-[12px] ${
+                            className={`inline-flex min-h-11 items-center border px-3 text-[12px] ${
                               year === y ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                          : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
                       {y}년차{y === grace + 1 ? " (절벽)" : y <= grace ? " (거치)" : ""}
@@ -100,7 +100,7 @@ export default function RevenuePage() {
                   <input id="principal" inputMode="numeric"
                          value={principal != null ? Math.round(principal / 10_000) : ""}
                          onChange={(e) => setPrincipal(Number(e.target.value.replace(/[^\d]/g, "")) * 10_000)}
-                         className="w-28 border border-gov-line px-2.5 py-1.5 text-right text-[13px] tabular outline-none focus:border-gov-link" />
+                         className="w-28 min-h-11 border border-gov-line px-2.5 text-right text-[13px] tabular outline-none focus:border-gov-link" />
                   <span className="text-[12px] text-gov-ink3">만원</span>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export default function RevenuePage() {
                       <th scope="row" className="px-3 py-2 text-left font-medium text-gov-ink">
                         {m.month}월
                         {cf.harvest_months.includes(m.month) && (
-                          <span className="ml-1.5 text-[10px] font-normal text-gov-link">출하</span>
+                          <span className="ml-1.5 text-[12px] font-normal text-gov-link">출하</span>
                         )}
                       </th>
                       <td className="px-3 py-2 text-gov-ink2">{m.revenue ? won(m.revenue) : "—"}</td>
@@ -168,9 +168,9 @@ export default function RevenuePage() {
                 </tbody>
               </table>
             </div>
-            <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">{cf.note}</p>
+            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">{cf.note}</p>
             {!cf.harvest_known && (
-              <p className="mt-1.5 text-[11px] text-gov-warn">
+              <p className="mt-1.5 text-[12px] text-gov-warn">
                 이 작목은 출하월 정보를 아직 확보하지 못해 12개월 균등으로 펼쳤습니다.
                 실제 출하가 몰려 있다면 부족 시점은 더 뚜렷해집니다.
               </p>

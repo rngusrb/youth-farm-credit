@@ -42,7 +42,7 @@ export default function RegulationAsk({ context }: { context: Record<string, unk
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="제도 요건을 물어보세요"
-          className="flex-1 rounded-lg border border-paper-rule bg-paper-panel px-4 py-2.5 text-sm outline-none placeholder:text-paper-ink3 focus:border-paper-accent"
+          className="flex-1 min-h-11 rounded-lg border border-paper-rule bg-paper-panel px-4 text-sm outline-none placeholder:text-paper-ink3 focus:border-paper-accent"
         />
         <button
           type="submit"
@@ -77,7 +77,7 @@ export default function RegulationAsk({ context }: { context: Record<string, unk
             <CitationBlock citations={result.citations} />
           </div>
           {result.citations.length > 0 && (
-            <p className="mt-2 text-[11px] text-paper-ink3">
+            <p className="mt-2 text-[12px] text-paper-ink3">
               근거 확신도: {result.confidence} · 인용 원문은 요약하지 않고 그대로 표시합니다.
             </p>
           )}

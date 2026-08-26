@@ -16,7 +16,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
 
   return (
     <header className="report-cover">
-      <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px]">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 text-[12px]">
         <span className="font-semibold tracking-[0.02em] text-paper-accent">
           상환여력 진단 리포트
         </span>
@@ -117,7 +117,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
 function Fact({ k, v, danger }: { k: string; v: string; danger?: boolean }) {
   return (
     <div>
-      <dt className="text-[11px] text-paper-ink3">{k}</dt>
+      <dt className="text-[12px] text-paper-ink3">{k}</dt>
       <dd
         className={`tabular mt-0.5 text-[0.95rem] font-semibold ${
           danger ? "text-paper-danger" : "text-paper-ink"

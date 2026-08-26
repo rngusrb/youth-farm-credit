@@ -124,7 +124,7 @@ export default function FarmerHome() {
                               : `그때도 ${won(cf.trough_balance)} 남습니다`} />
                     </div>
                     {!cf.harvest_known && (
-                      <p className="mt-3 text-[11px] text-gov-warn">
+                      <p className="mt-3 text-[12px] text-gov-warn">
                         이 작목은 출하월 정보가 없어 12개월 균등으로 펼쳤습니다.
                       </p>
                     )}

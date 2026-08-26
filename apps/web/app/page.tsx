@@ -62,10 +62,10 @@ export default function PortalHome() {
                 </dd>
               </div>
             </dl>
-            <Link href="/login" className="mt-4 block bg-gov-head py-2.5 text-center text-[13px] font-bold text-white hover:bg-gov-navy">
+            <Link href="/login" className="mt-4 flex min-h-11 items-center justify-center bg-gov-head text-center text-[13px] font-bold text-white hover:bg-gov-navy">
               로그인
             </Link>
-            <p className="mt-2 text-[11px] text-gov-ink3">{DEMO_HINT}</p>
+            <p className="mt-2 text-[12px] text-gov-ink3">{DEMO_HINT}</p>
           </Panel>
         </div>
       </div>
@@ -89,12 +89,12 @@ export default function PortalHome() {
             {/* ── 공지사항 ───────────────────────────── */}
             <Section
               title="공지사항"
-              action={<Link href="/notice" className="text-[12px] text-gov-ink3 hover:text-gov-link">더보기 +</Link>}
+              action={<Link href="/notice" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">더보기 +</Link>}
             >
               <ul className="border-t border-gov-ink/70">
                 {NOTICES.slice(0, 4).map((n) => (
                   <li key={n.id} className="border-b border-gov-line2">
-                    <Link href={`/notice#${n.id}`} className="flex items-baseline gap-3 px-1 py-3 hover:bg-gov-sunk">
+                    <Link href={`/notice#${n.id}`} className="flex min-h-11 items-center gap-3 px-1 py-2 hover:bg-gov-sunk">
                       <Badge tone={n.category === "제도반영" ? "info" : "plain"}>{n.category}</Badge>
                       <span className="min-w-0 flex-1 truncate text-[14px] text-gov-ink">{n.title}</span>
                       <span className="tabular shrink-0 text-[12px] text-gov-ink3">{n.date}</span>
@@ -102,7 +102,7 @@ export default function PortalHome() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-2.5 text-[11px] text-gov-ink3">
+              <p className="mt-2.5 text-[12px] text-gov-ink3">
                 이 목록은 서비스의 실제 변경 이력입니다. 정부 발표나 보도자료를 옮겨 싣지 않습니다.
               </p>
             </Section>
@@ -127,7 +127,7 @@ export default function PortalHome() {
           </div>
 
           <div className="space-y-8">
-            <Section title="데이터 현황" action={<Link href="/stats" className="text-[12px] text-gov-ink3 hover:text-gov-link">자세히 +</Link>}>
+            <Section title="데이터 현황" action={<Link href="/stats" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 +</Link>}>
               <Panel>
                 <div className="grid grid-cols-2 gap-5">
                   <Stat label="작목" value={cropCount?.toString() ?? "—"} unit="종" />
@@ -135,7 +135,7 @@ export default function PortalHome() {
                   <Stat label="시행지침" value="3" unit="종" />
                   <Stat label="시뮬레이션" value="3만" unit="회" />
                 </div>
-                <p className="mt-4 border-t border-gov-line2 pt-3 text-[11px] leading-relaxed text-gov-ink3">
+                <p className="mt-4 border-t border-gov-line2 pt-3 text-[12px] leading-relaxed text-gov-ink3">
                   소득·경영비는 농촌진흥청 농산물소득조사, 도매가격은 KAMIS,
                   제도는 농림축산식품부 2026년 시행지침을 씁니다.
                 </p>
@@ -152,7 +152,7 @@ export default function PortalHome() {
                   ["시세 · 국면", "/market"],
                 ].map(([t, href]) => (
                   <li key={href} className="border-b border-gov-line2">
-                    <Link href={href} className="flex items-center justify-between px-1 py-2.5 text-[13px] text-gov-ink2 hover:bg-gov-sunk hover:text-gov-head">
+                    <Link href={href} className="flex min-h-11 items-center justify-between px-1 text-[13px] text-gov-ink2 hover:bg-gov-sunk hover:text-gov-head">
                       {t}
                       <span aria-hidden className="text-gov-ink3">›</span>
                     </Link>

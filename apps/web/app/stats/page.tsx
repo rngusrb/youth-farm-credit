@@ -81,7 +81,7 @@ export default function StatsPage() {
                         ["1억당 연 최대상환액", won((1 / p.amort_years + p.rate) * 100_000_000)],
                       ]}
                     />
-                    <p className="mt-2.5 text-[11px] leading-relaxed text-gov-ink3">{p.source}</p>
+                    <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">{p.source}</p>
                   </Panel>
                 ))}
               </div>
@@ -97,7 +97,7 @@ export default function StatsPage() {
                     <div className="mb-1.5 flex flex-wrap items-center gap-2">
                       <Badge tone="ok">일치</Badge>
                       <span className="text-[14px] font-bold text-gov-ink">{c.item}</span>
-                      <span className="text-[11px] text-gov-ink3">p.{c.page}</span>
+                      <span className="text-[12px] text-gov-ink3">p.{c.page}</span>
                     </div>
                     <blockquote className="border-l-4 border-gov-line bg-gov-sunk px-3 py-2 text-[12px] leading-relaxed text-gov-ink2">
                       {c.quote}
@@ -110,7 +110,7 @@ export default function StatsPage() {
                     <div className="mb-1.5 flex flex-wrap items-center gap-2">
                       <Badge tone="warn">미반영</Badge>
                       <span className="text-[14px] font-bold text-gov-ink">{c.item}</span>
-                      <span className="text-[11px] text-gov-ink3">p.{c.page}</span>
+                      <span className="text-[12px] text-gov-ink3">p.{c.page}</span>
                     </div>
                     <blockquote className="border-l-4 border-gov-line bg-gov-sunk px-3 py-2 text-[12px] leading-relaxed text-gov-ink2">
                       {c.quote}

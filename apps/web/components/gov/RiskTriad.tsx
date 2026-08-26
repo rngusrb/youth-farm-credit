@@ -52,7 +52,7 @@ export default function RiskTriad({ d }: { d: Diagnosis }) {
           <div className={`tabular mt-2 text-[28px] font-extrabold leading-none ${color[it.tone]}`}>
             {it.value}
           </div>
-          <div className="mt-1.5 text-[11px] leading-snug text-gov-ink3">{it.note}</div>
+          <div className="mt-1.5 text-[12px] leading-snug text-gov-ink3">{it.note}</div>
         </div>
       ))}
     </div>

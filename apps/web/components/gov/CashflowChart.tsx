@@ -19,7 +19,7 @@ export default function CashflowChart({
         {/* 0선 */}
         <div className="absolute inset-x-0 border-t border-dashed border-gov-ink/40"
              style={{ top: `${zeroPct}%` }} aria-hidden />
-        <div className="absolute -left-1 -translate-x-full text-[10px] text-gov-ink3"
+        <div className="absolute -left-1 -translate-x-full text-[12px] text-gov-ink3"
              style={{ top: `${zeroPct}%` }} aria-hidden>0</div>
 
         <div className="flex h-full items-stretch gap-[3px] px-1">
@@ -48,13 +48,13 @@ export default function CashflowChart({
       <div className="mt-1 flex gap-[3px] px-1">
         {months.map((m) => (
           <div key={m.month}
-               className={`flex-1 text-center text-[10px] ${
+               className={`flex-1 text-center text-[12px] ${
                  m.month === troughMonth ? "font-bold text-gov-point" : "text-gov-ink3"}`}>
             {m.month}
           </div>
         ))}
       </div>
-      <figcaption className="mt-2 text-[11px] leading-relaxed text-gov-ink3">
+      <figcaption className="mt-2 text-[12px] leading-relaxed text-gov-ink3">
         막대는 연초를 0으로 둔 누적 현금 잔고입니다. 가장 낮은 달을 강조 표시했습니다.
       </figcaption>
     </figure>

@@ -73,8 +73,8 @@ export default function FinancePage() {
                     tone === "ok" ? "text-gov-ok" : tone === "warn" ? "text-gov-warn" : "text-gov-ink"}`}>
                     {won(value as number)}
                   </div>
-                  <div className="mt-1.5 text-[11px] font-medium text-gov-ink2">{sub as string}</div>
-                  <p className="mt-2 text-[11px] leading-relaxed text-gov-ink3">{why as string}</p>
+                  <div className="mt-1.5 text-[12px] font-medium text-gov-ink2">{sub as string}</div>
+                  <p className="mt-2 text-[12px] leading-relaxed text-gov-ink3">{why as string}</p>
                 </div>
               ))}
             </div>
@@ -112,14 +112,14 @@ export default function FinancePage() {
                     ["거치기간 연 이자", <span key="a" className="tabular">{won(s?.grace_payment ?? 0)}</span>],
                     [`${diag.product.grace_years + 1}년차 상환액`, <span key="b" className="tabular">
                       {won(s?.amort_payment ?? 0)}
-                      <span className="ml-1.5 text-[11px] text-gov-point">
+                      <span className="ml-1.5 text-[12px] text-gov-point">
                         {(s?.cliff_multiple ?? 0).toFixed(1)}배
                       </span>
                     </span>],
                     ["마지막 해 상환액", <span key="c" className="tabular">{won(s?.amort_payment_last ?? 0)}</span>],
                     ["최소 필요 면적", <span key="d" className="tabular">
                       {fmtPyeong(diag.min_area_pyeong)}
-                      <span className="ml-1.5 text-[11px] text-gov-ink3">
+                      <span className="ml-1.5 text-[12px] text-gov-ink3">
                         (현재 {fmtPyeong(diag.input.pyeong)})
                       </span>
                     </span>],
@@ -152,7 +152,7 @@ export default function FinancePage() {
                     ["금리", `연 ${(p.rate * 100).toFixed(1)}% 고정`],
                     ["상환", `${p.grace_years}년 거치 ${p.amort_years}년 원금 균등분할`],
                   ]} />
-                  {p.note && <p className="mt-2.5 text-[11px] leading-relaxed text-gov-ink3">{p.note}</p>}
+                  {p.note && <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">{p.note}</p>}
                   <Link href="/app/farm" className="lnk mt-2.5 inline-block text-[12px]">
                     이 자금으로 다시 계산 →
                   </Link>
@@ -171,7 +171,7 @@ export default function FinancePage() {
               {relief.length > 0 && (
                 <Notice tone="info" title="재해 시 상환연기">
                   {relief.map((r) => `피해율 ${Math.round(r.damage_min * 100)}~${Math.round(r.damage_max * 100)}% → ${r.defer_years}년 연기`).join(" · ")}
-                  <span className="mt-1 block text-[11px] text-gov-ink3">{reliefSource}</span>
+                  <span className="mt-1 block text-[12px] text-gov-ink3">{reliefSource}</span>
                 </Notice>
               )}
             </div>

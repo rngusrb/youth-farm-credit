@@ -53,7 +53,7 @@ function Body() {
           <input
             id="q" value={q} onChange={(e) => setQ(e.target.value)}
             placeholder="예: 재해가 나면 상환을 미룰 수 있나요?"
-            className="flex-1 border border-gov-line px-4 py-3 text-[14px] outline-none focus:border-gov-link"
+            className="flex-1 min-h-11 border border-gov-line px-4 text-[14px] outline-none focus:border-gov-link"
           />
           <button type="submit" disabled={busy}
                   className="shrink-0 bg-gov-head px-6 text-[14px] font-bold text-white hover:bg-gov-navy disabled:opacity-50">
@@ -64,7 +64,7 @@ function Body() {
           <span className="text-[12px] text-gov-ink3">추천 검색어</span>
           {SUGGESTED.map((s) => (
             <button key={s} onClick={() => void run(s)}
-                    className="border border-gov-line px-2.5 py-1 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+                    className="inline-flex min-h-11 items-center border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
               {s}
             </button>
           ))}
@@ -93,7 +93,7 @@ function Body() {
                   <figcaption className="flex flex-wrap items-center gap-2 border-b border-gov-line2 bg-gov-sunk px-4 py-2.5">
                     <Badge tone="info">{c.section}</Badge>
                     <span className="text-[12px] font-medium text-gov-ink2">{c.doc}</span>
-                    {c.doc_year && <span className="text-[11px] text-gov-ink3">{c.doc_year}</span>}
+                    {c.doc_year && <span className="text-[12px] text-gov-ink3">{c.doc_year}</span>}
                     {c.url && (
                       <a href={c.url} target="_blank" rel="noreferrer" className="lnk ml-auto text-[12px]">
                         원문 파일 ↗

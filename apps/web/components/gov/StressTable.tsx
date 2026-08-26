@@ -36,12 +36,12 @@ export default function StressTable({
                 className={`border-b border-gov-line2 ${s.key === "base" ? "bg-gov-sunk/60" : ""}`}>
               <th scope="row" className="px-3 py-2.5 text-left">
                 <span className="font-semibold text-gov-ink">{s.label}</span>
-                <span className="block text-[11px] font-normal text-gov-ink3">{s.detail}</span>
+                <span className="block text-[12px] font-normal text-gov-ink3">{s.detail}</span>
               </th>
               <td className="px-3 py-2.5 text-gov-ink2">
                 {won(s.income)}
                 {s.income_change !== 0 && (
-                  <span className="block text-[11px] text-gov-point">{pct(s.income_change)}</span>
+                  <span className="block text-[12px] text-gov-point">{pct(s.income_change)}</span>
                 )}
               </td>
               <td className="px-3 py-2.5 text-gov-ink2">{won(s.capacity)}</td>
@@ -58,14 +58,14 @@ export default function StressTable({
               <td className="px-3 py-2.5 text-center">
                 <Badge tone={s.survives ? "ok" : "danger"}>{s.survives ? "버팀" : "위험"}</Badge>
                 {s.relies_on_relief && (
-                  <span className="mt-1 block text-[10px] text-gov-warn">제도 의존</span>
+                  <span className="mt-1 block text-[12px] text-gov-warn">제도 의존</span>
                 )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">
+      <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
         판정 기준은 2년 연속 위기 확률 {pct(tolerance)} 이하입니다. 한 해 상환이 밀리는 것은
         저축이나 유예로 넘길 수 있지만, 두 해가 연달아 밀리면 돌려막기가 시작되기 때문입니다.
         <b className="text-gov-ink2"> ‘제도 의존’</b> 은 재해 상환연기 덕분에 수치가 좋아 보이는

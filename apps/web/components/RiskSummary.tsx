@@ -51,7 +51,7 @@ export default function RiskSummary({
               <AssumedBadge source={sigmaSource} assumedShare={assumedShare} />
             )}
           </div>
-          <p className="mt-2 text-[11px] leading-relaxed text-paper-ink3">{it.hint}</p>
+          <p className="mt-2 text-[12px] leading-relaxed text-paper-ink3">{it.hint}</p>
         </div>
       ))}
     </div>

@@ -64,7 +64,7 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
                 }`}
               >
                 <span className="block text-[14px] font-bold">{label}</span>
-                <span className="hidden text-[11px] sm:block">{desc}</span>
+                <span className="hidden text-[12px] sm:block">{desc}</span>
               </button>
             );
           })}
@@ -93,7 +93,7 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
                     }`}
                   >
                     <span className="block text-[13px] leading-tight">{i.label}</span>
-                    {i.desc && <span className="block text-[11px] text-gov-ink3">{i.desc}</span>}
+                    {i.desc && <span className="block text-[12px] text-gov-ink3">{i.desc}</span>}
                   </Link>
                 </li>
               );

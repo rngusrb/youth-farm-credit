@@ -72,10 +72,10 @@ export default function ResultPage() {
   if (error) {
     return (
       <main className="mx-auto max-w-3xl px-5 py-16">
-        <p className="rounded-lg border border-signal-danger/40 bg-signal-danger/10 p-4 text-sm text-signal-danger">
+        <p className="border-l-4 border-gov-point bg-gov-point/5 px-4 py-3 text-[14px] text-gov-point">
           {error}
         </p>
-        <a href="/" className="mt-4 inline-block text-sm text-signal-calm hover:underline">
+        <a href="/" className="mt-4 inline-flex min-h-11 items-center text-[14px] text-gov-link hover:underline">
           다시 진단하기 →
         </a>
       </main>
@@ -84,7 +84,7 @@ export default function ResultPage() {
 
   if (!data) {
     return (
-      <main className="mx-auto max-w-3xl px-5 py-16 text-sm text-slate-500">
+      <main className="mx-auto max-w-3xl px-5 py-16 text-[14px] text-gov-ink2">
         리포트를 준비하는 중입니다…
       </main>
     );
@@ -144,7 +144,7 @@ export default function ResultPage() {
                   <button
                     key={key}
                     onClick={() => setScenarioKey(key)}
-                    className={`rounded-md px-2.5 py-1 transition ${
+                    className={`inline-flex min-h-11 items-center rounded-md px-3 transition ${
                       scenarioKey === key
                         ? "bg-paper-ink font-semibold text-paper-panel"
                         : "text-paper-ink2 hover:text-paper-ink"
@@ -260,7 +260,7 @@ export default function ResultPage() {
               <dd className="tabular mt-1 text-xl font-semibold text-paper-ink">
                 {fmtPyeong(data.min_area_pyeong)}
               </dd>
-              <p className="mt-1 text-[11px] text-paper-ink3">
+              <p className="mt-1 text-[12px] text-paper-ink3">
                 현재 {fmtPyeong(data.input.pyeong)} 대비{" "}
                 {shortfall > 0 ? `${fmtPyeong(shortfall)} 부족` : "충족"}
               </p>
@@ -271,7 +271,7 @@ export default function ResultPage() {
                 피해율 30~50% 1년, 50% 이상 2년 연기. 할부유예는 최대{" "}
                 {data.assumptions.installment_defer_max_count}회.
               </dd>
-              <p className="mt-1 text-[11px] text-paper-ink3">
+              <p className="mt-1 text-[12px] text-paper-ink3">
                 농업자금이차보전 사업시행지침 — 농가단위 피해율 기준
               </p>
             </div>
@@ -398,13 +398,13 @@ export default function ResultPage() {
       <div className="no-print mx-auto mt-6 flex max-w-[46rem] flex-wrap gap-3">
         <a
           href="/diagnose"
-          className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+          className="inline-flex min-h-11 items-center border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 transition hover:border-gov-link hover:text-gov-head"
         >
           조건 바꿔 다시 계산
         </a>
         <a
           href="/"
-          className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+          className="inline-flex min-h-11 items-center border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 transition hover:border-gov-link hover:text-gov-head"
         >
           대시보드로
         </a>
@@ -417,8 +417,8 @@ export default function ResultPage() {
 
 function Assumption({ k, children }: { k: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[6rem_1fr] gap-3 border-b border-ink-800/60 pb-2 last:border-0">
-      <dt className="text-slate-500">{k}</dt>
+    <div className="grid grid-cols-[6rem_1fr] gap-3 border-b border-gov-line2 pb-2 last:border-0">
+      <dt className="text-paper-ink3">{k}</dt>
       <dd>{children}</dd>
     </div>
   );
@@ -434,7 +434,7 @@ function ShareButton() {
           setTimeout(() => setCopied(false), 2000);
         });
       }}
-      className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+      className="inline-flex min-h-11 items-center border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 transition hover:border-gov-link hover:text-gov-head"
     >
       {copied ? "링크를 복사했습니다" : "리포트 링크 복사"}
     </button>
@@ -445,7 +445,7 @@ function PrintButton() {
   return (
     <button
       onClick={() => window.print()}
-      className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+      className="inline-flex min-h-11 items-center border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 transition hover:border-gov-link hover:text-gov-head"
     >
       인쇄 · PDF 저장
     </button>

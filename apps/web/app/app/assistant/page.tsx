@@ -85,7 +85,7 @@ export default function AssistantPage() {
             <div className="flex flex-wrap gap-1.5">
               {EXAMPLES.map((e) => (
                 <button key={e} onClick={() => void send(e)}
-                        className="border border-gov-line px-3 py-1.5 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+                        className="inline-flex min-h-11 items-center border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
                   {e}
                 </button>
               ))}
@@ -136,7 +136,7 @@ export default function AssistantPage() {
               <p className="text-[14px] leading-relaxed text-gov-ink">{t.text}</p>
               {t.citations.slice(0, 2).map((c, j) => (
                 <figure key={j} className="mt-3 border-l-4 border-gov-line bg-gov-sunk px-4 py-3">
-                  <figcaption className="mb-1.5 text-[11px] text-gov-ink3">{c.doc} · {c.section}</figcaption>
+                  <figcaption className="mb-1.5 text-[12px] text-gov-ink3">{c.doc} · {c.section}</figcaption>
                   <blockquote className="whitespace-pre-wrap text-[12px] leading-relaxed text-gov-ink2">
                     {c.text.slice(0, 400)}{c.text.length > 400 ? "…" : ""}
                   </blockquote>
@@ -157,7 +157,7 @@ export default function AssistantPage() {
         <label htmlFor="ask" className="sr-only">질문</label>
         <input id="ask" value={q} onChange={(e) => setQ(e.target.value)}
                placeholder="농가 조건이나 제도 요건을 물어보세요"
-               className="flex-1 border border-gov-line px-4 py-3 text-[14px] outline-none focus:border-gov-link" />
+               className="flex-1 min-h-11 border border-gov-line px-4 text-[14px] outline-none focus:border-gov-link" />
         <button type="submit" disabled={busy}
                 className="shrink-0 bg-gov-head px-6 text-[14px] font-bold text-white hover:bg-gov-navy disabled:opacity-50">
           {busy ? "…" : "보내기"}

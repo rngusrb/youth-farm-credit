@@ -16,7 +16,7 @@ export default function CitationBlock({ citations }: { citations: Citation[] }) 
           <div className="flex flex-wrap items-baseline gap-2 text-xs text-paper-ink3">
             <span className="font-medium text-paper-ink2">{c.doc}</span>
             {c.doc_year && <span>{c.doc_year}</span>}
-            <span className="rounded bg-paper-soft px-1.5 py-0.5 font-mono text-[11px] text-paper-ink2">
+            <span className="rounded bg-paper-soft px-1.5 py-0.5 font-mono text-[12px] text-paper-ink2">
               {c.section}
             </span>
             {c.region && <span>{c.region}</span>}

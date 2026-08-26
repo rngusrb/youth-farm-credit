@@ -94,7 +94,7 @@ export default function LimitLadder({
                   style={{ width: `${share * 100}%` }}
                 />
               </div>
-              <div className="mt-1 flex flex-wrap justify-between gap-x-4 text-[11px] text-paper-ink3">
+              <div className="mt-1 flex flex-wrap justify-between gap-x-4 text-[12px] text-paper-ink3">
                 <span>{r.basis}</span>
                 {r.crisis !== null && (
                   <span>2년연속 위기확률 {pct(r.crisis)}</span>

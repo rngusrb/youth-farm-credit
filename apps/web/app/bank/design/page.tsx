@@ -69,7 +69,7 @@ export default function DesignPage() {
                       <span className={`block text-[13px] font-bold ${on ? "text-gov-head" : "text-gov-ink"}`}>
                         {p.name}
                       </span>
-                      <span className="block text-[11px] text-gov-ink3">
+                      <span className="block text-[12px] text-gov-ink3">
                         한도 {won(p.limit)} · {p.grace_years}년거치 {p.amort_years}년 · 연 {(p.rate * 100).toFixed(1)}%
                       </span>
                     </button>
@@ -120,12 +120,12 @@ export default function DesignPage() {
                       <tr key={label} className="border-b border-gov-line2">
                         <th scope="row" className="px-4 py-3 text-left font-medium text-gov-ink">
                           {label}
-                          <span className="block text-[11px] font-normal text-gov-ink3">{won(amount)}</span>
+                          <span className="block text-[12px] font-normal text-gov-ink3">{won(amount)}</span>
                         </th>
                         <td className="px-4 py-3 text-gov-ink2">{won(sc?.grace_payment ?? 0)}</td>
                         <td className="px-4 py-3 text-gov-ink2">
                           {won(sc?.amort_payment ?? 0)}
-                          <span className="block text-[11px] text-gov-point">
+                          <span className="block text-[12px] text-gov-point">
                             {(sc?.cliff_multiple ?? 0).toFixed(1)}배
                           </span>
                         </td>
@@ -165,7 +165,7 @@ export default function DesignPage() {
                 <div className="mt-4 overflow-x-auto">
                   <table className="w-full min-w-[520px] border-t border-gov-line text-[13px]">
                     <thead>
-                      <tr className="bg-gov-sunk text-right text-[11px] font-semibold text-gov-ink2">
+                      <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
                         <th scope="col" className="border-b border-gov-line px-3 py-2 text-left">σ</th>
                         <th scope="col" className="border-b border-gov-line px-3 py-2">위기확률</th>
                         <th scope="col" className="border-b border-gov-line px-3 py-2">DSCR</th>

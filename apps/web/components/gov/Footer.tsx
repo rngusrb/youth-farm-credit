@@ -16,10 +16,10 @@ export default function Footer() {
           {PORTAL.map((g) => (
             <div key={g.label}>
               <h3 className="mb-2 text-[13px] font-bold text-gov-ink">{g.label}</h3>
-              <ul className="space-y-1">
+              <ul>
                 {g.items.map((i) => (
                   <li key={i.href}>
-                    <Link href={i.href} className="text-[12px] text-gov-ink2 hover:text-gov-link">
+                    <Link href={i.href} className="inline-flex min-h-11 min-w-11 items-center text-[12px] text-gov-ink2 hover:text-gov-link">
                       {i.label}
                     </Link>
                   </li>
@@ -32,7 +32,7 @@ export default function Footer() {
         <div className="mt-5 flex flex-wrap gap-x-4 gap-y-1">
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} target="_blank" rel="noreferrer"
-               className="text-[12px] text-gov-ink3 hover:text-gov-link">
+               className="inline-flex min-h-11 min-w-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">
               {l.label} ↗
             </a>
           ))}
@@ -40,7 +40,7 @@ export default function Footer() {
       </div>
 
       <div className="bg-gov-navy py-5 text-white/70">
-        <div className="mx-auto max-w-6xl px-4 text-[11px] leading-relaxed">
+        <div className="mx-auto max-w-6xl px-4 text-[12px] leading-relaxed">
           <p className="font-semibold text-white/90">
             이 서비스는 부도 예측·신용평가·대출 알선·상품 추천을 하지 않습니다.
           </p>

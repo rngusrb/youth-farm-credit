@@ -24,7 +24,7 @@ export default function SitemapPage() {
                   <Link href={i.href} className="text-[13px] text-gov-ink2 hover:text-gov-link">
                     {i.label}
                   </Link>
-                  {i.desc && <span className="block text-[11px] text-gov-ink3">{i.desc}</span>}
+                  {i.desc && <span className="block text-[12px] text-gov-ink3">{i.desc}</span>}
                 </li>
               ))}
             </ul>

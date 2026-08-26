@@ -14,7 +14,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
 
   const field =
-    "w-full border border-gov-line px-3.5 py-2.5 text-[14px] outline-none focus:border-gov-link";
+    "w-full min-h-11 border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
 
   function submit(e: React.FormEvent) {
     e.preventDefault();

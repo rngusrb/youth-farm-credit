@@ -15,7 +15,7 @@ export default function ReportSection({
   return (
     <section className="report-section">
       <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b border-paper-rule pb-2">
-        <span className="tabular text-[11px] font-semibold tracking-[0.18em] text-paper-accent">
+        <span className="tabular text-[12px] font-semibold tracking-[0.18em] text-paper-accent">
           {n}
         </span>
         <h2 className="text-[1.35rem] font-bold text-paper-ink">{title}</h2>
