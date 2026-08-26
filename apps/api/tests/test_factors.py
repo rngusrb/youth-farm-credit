@@ -233,3 +233,50 @@ def test_annual_average_needs_enough_days_per_year():
     sparse = [("20200101", 100.0), ("20210101", 120.0)]
     assert annual_average_series(sparse, min_days=20) == []
     assert annual_price_sigma(sparse) is None
+
+
+# ── 이월 시세 (DATA-003) ──────────────────────────────────────────────
+def _series(n: int, hold: int, seed: int = 7) -> list[tuple[str, float]]:
+    """hold 일마다 한 번만 가격이 바뀌는 계열. hold=1 이면 매일 거래."""
+    rng = np.random.default_rng(seed)
+    out, v = [], 100.0
+    for i in range(n):
+        if i % hold == 0:
+            v = 100.0 * float(np.exp(rng.normal(0, 0.03)))
+        out.append((f"2024{(i // 25) % 12 + 1:02d}{i % 25 + 1:02d}", v))
+    return out
+
+
+def test_movement_ratio_detects_carried_quotes():
+    from estimators.garch import price_movement_ratio
+
+    assert price_movement_ratio(_series(300, 1)) > 0.95
+    assert price_movement_ratio(_series(300, 5)) < 0.30
+    assert price_movement_ratio([("20240101", 1.0)]) == 0.0
+
+
+def test_regime_is_withheld_when_quotes_are_carried():
+    """모르는 것을 '평상' 이라고 하지 않는다 — None 을 돌려준다.
+
+    사고 배경: KAMIS 는 거래가 없어도 직전 시세를 이월한다. 이월된 날은 수익률이
+    0 이라 GARCH 가 '조용하다' 고 읽는데, 조용한 건 시장이 아니라 집계 방식이다.
+    실측(2021~2024): 들깨 17% · 참깨 20% · 생강 40% vs 수박 74% … 애호박 99%.
+    """
+    from estimators.garch import fit_garch
+
+    live = fit_garch(_series(400, 1))
+    carried = fit_garch(_series(400, 5))
+    assert live is not None and carried is not None
+    assert live.quote_is_carried is False
+    assert live.regime in ("calm", "normal", "turbulent")
+    assert carried.quote_is_carried is True
+    assert carried.regime is None
+
+
+def test_threshold_sits_in_an_empty_region_of_the_measured_distribution():
+    """임계값 0.60 은 실측 분포의 빈 구간(40%~74%)에 있다. 경계 근처 작목이 없다."""
+    from estimators.garch import MIN_PRICE_MOVEMENT_RATIO
+
+    measured_low = [0.17, 0.20, 0.40]      # 들깨 · 참깨 · 생강
+    measured_high = [0.74, 0.76, 0.86, 0.99]  # 수박 · 고구마 · 딸기 · 애호박
+    assert max(measured_low) < MIN_PRICE_MOVEMENT_RATIO < min(measured_high)

@@ -67,10 +67,28 @@ function Body() {
         <>
           <Section title="현재 국면">
             <Panel>
+              {m.quote_is_carried && (
+                <div className="mb-4">
+                  <Notice tone="warn" title="국면 판정을 보류합니다">
+                    이 품목은 가격이 실제로 움직인 날이{" "}
+                    {m.price_movement_ratio != null
+                      ? `${Math.round(m.price_movement_ratio * 100)}%`
+                      : "기준치 미만"}
+                    뿐입니다. 거래가 없는 날 직전 시세가 이월되기 때문에, 조용해 보이는
+                    것이 시장이 아니라 집계 방식일 수 있습니다. 모르는 것을 ‘평상’이라고
+                    말하지 않습니다.
+                  </Notice>
+                </div>
+              )}
               <div className="grid gap-6 sm:grid-cols-3">
-                <Stat label={detail.name} value={REGIME[g.regime]?.label ?? g.regime}
-                      tone={REGIME[g.regime]?.tone === "warn" ? "warn" : REGIME[g.regime]?.tone === "ok" ? "ok" : "plain"}
-                      note={`현재 변동성이 장기 평균의 ${g.current_over_longrun.toFixed(2)}배`} />
+                <Stat label={detail.name}
+                      value={g.regime ? (REGIME[g.regime]?.label ?? g.regime) : "판정 보류"}
+                      tone={g.regime
+                        ? (REGIME[g.regime]?.tone === "warn" ? "warn" : REGIME[g.regime]?.tone === "ok" ? "ok" : "plain")
+                        : "warn"}
+                      note={g.regime
+                        ? `현재 변동성이 장기 평균의 ${g.current_over_longrun.toFixed(2)}배`
+                        : "이월 시세가 많아 판정할 수 없습니다"} />
                 <Stat label="충격 반감기" value={g.half_life_days.toFixed(1)} unit="일"
                       note={`지속성 ${g.persistence.toFixed(2)} — 가격 충격이 가라앉는 속도`} />
                 <Stat label="관측" value={m.trading_days.toLocaleString("ko-KR")} unit="거래일" />

@@ -98,12 +98,15 @@ export type Diagnosis = {
     trading_days: number;
     annual_price_sigma: number | null;
     kosis_price_sigma: number | null;
+    price_movement_ratio?: number;
+    quote_is_carried?: boolean;
     garch: {
       alpha: number;
       beta: number;
       persistence: number;
       half_life_days: number;
-      regime: "calm" | "normal" | "turbulent";
+      // 이월 시세가 많으면 판정하지 않는다 (null). '평상' 이라고 말하지 않는다.
+      regime: "calm" | "normal" | "turbulent" | null;
       current_over_longrun: number;
     };
     note: string;

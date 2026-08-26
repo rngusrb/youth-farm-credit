@@ -37,6 +37,18 @@ MAX_GAP_DAYS = 7
 MIN_OBSERVATIONS = 250
 
 
+# 가격이 실제로 움직인 날의 비율이 이 값 미만이면 국면 판정을 하지 않는다.
+#
+# KAMIS 는 거래가 없어도 직전 시세를 이월한다. 이월된 날은 로그수익률이 0 이라
+# GARCH 가 "조용하다" 고 읽는데, 조용한 건 시장이 아니라 **집계 방식**이다.
+#
+# 임계값 근거 — 2021~2024 KAMIS 21작목 실측 변동일 비율:
+#   들깨 17% · 참깨 20% · 생강 40%  |  수박 74% … 애호박 99%
+# 40% 와 74% 사이가 비어 있어 그 가운데인 0.60 을 잡았다. 어느 작목도 경계 근처에
+# 있지 않다. (측정: DATA-003)
+MIN_PRICE_MOVEMENT_RATIO = 0.60
+
+
 @dataclass
 class GarchFit:
     omega: float
@@ -47,6 +59,8 @@ class GarchFit:
     long_run_daily_sigma: float
     current_daily_sigma: float
     converged: bool
+    # 가격이 실제로 움직인 날의 비율. 낮으면 이월 시세가 섞인 것이다.
+    movement_ratio: float = 1.0
 
     @property
     def persistence(self) -> float:
@@ -61,8 +75,19 @@ class GarchFit:
         return self.current_daily_sigma * math.sqrt(self.trading_days_per_year)
 
     @property
-    def regime(self) -> str:
-        """현재가 평소 대비 어느 국면인가."""
+    def quote_is_carried(self) -> bool:
+        """시세가 대부분 이월된 것인가 (실제 거래가 드문 품목)."""
+        return self.movement_ratio < MIN_PRICE_MOVEMENT_RATIO
+
+    @property
+    def regime(self) -> str | None:
+        """현재가 평소 대비 어느 국면인가.
+
+        판정할 수 없으면 **None** 을 돌려준다. '평상' 이라고 말하지 않는다 —
+        모르는 것을 보통이라고 하면 화면이 거짓말을 한다.
+        """
+        if self.quote_is_carried:
+            return None
         ratio = self.current_daily_sigma / self.long_run_daily_sigma
         if ratio > 1.25:
             return "turbulent"
@@ -75,6 +100,17 @@ class GarchFit:
         """충격이 절반으로 잦아드는 데 걸리는 날수."""
         p = self.persistence
         return math.inf if p >= 1 else math.log(0.5) / math.log(p)
+
+
+def price_movement_ratio(series: list[tuple[str, float]]) -> float:
+    """가격이 전날과 달랐던 날의 비율.
+
+    1.0 에 가까우면 매일 실제로 거래된 것이고, 낮으면 직전 시세가 이월된 것이다.
+    """
+    if len(series) < 2:
+        return 0.0
+    moves = sum(1 for i in range(1, len(series)) if series[i][1] != series[i - 1][1])
+    return moves / (len(series) - 1)
 
 
 def _parse(day: str) -> date:
@@ -148,6 +184,7 @@ def fit_garch(
         var = omega + alpha * x2 + beta * var
 
     return GarchFit(
+        movement_ratio=price_movement_ratio(series),
         omega=omega,
         alpha=alpha,
         beta=beta,

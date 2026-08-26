@@ -23,7 +23,12 @@ from datetime import date, timedelta
 
 from engine.params import DATA_DIR, crops
 from stats.env import load as load_env
-from estimators.garch import annual_price_sigma, ewma_volatility, fit_garch
+from estimators.garch import (
+    annual_price_sigma,
+    ewma_volatility,
+    fit_garch,
+    price_movement_ratio,
+)
 from stats.kamis import KamisError, daily_national_average, fetch_prices
 
 CROPS_PATH = DATA_DIR / "crops.json"
@@ -78,7 +83,8 @@ def main(argv: list[str] | None = None) -> int:
               f"{diff if diff is None else round(diff,3)!s:>7}"
               f"{fit.persistence if fit else '-':>7.3f}"
               f"{fit.half_life_days if fit else 0:>7.1f}"
-              f"{fit.regime if fit else '-':>10}", file=sys.stderr)
+              f"{(fit.regime or '보류') if fit else '-':>10}"
+              f"{price_movement_ratio(series):>8.0%}", file=sys.stderr)
 
         if fit:
             measured[crop.id] = {
@@ -87,6 +93,9 @@ def main(argv: list[str] | None = None) -> int:
                 "trading_days": len(series),
                 "annual_price_sigma": round(annual_sigma, 4) if annual_sigma else None,
                 "kosis_price_sigma": kosis_price_sigma,
+                # 가격이 실제로 움직인 날의 비율. 낮으면 이월 시세다 — 국면 판정을 보류한다.
+                "price_movement_ratio": round(price_movement_ratio(series), 3),
+                "quote_is_carried": fit.quote_is_carried,
                 "garch": {
                     "alpha": round(fit.alpha, 4),
                     "beta": round(fit.beta, 4),
@@ -98,7 +107,10 @@ def main(argv: list[str] | None = None) -> int:
                     ),
                 },
                 "ewma_check": round(ewma_volatility(series) or 0, 4),
-                "note": "국면은 안내용. 한도 계산에는 쓰지 않는다.",
+                "note": (
+                    "국면은 안내용. 한도 계산에는 쓰지 않는다. "
+                    "가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+                ),
             }
 
     if args.dry_run:

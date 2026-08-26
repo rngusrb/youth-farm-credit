@@ -15,7 +15,11 @@ const REGIME = {
  */
 export default function MarketRegime({ market }: { market: Market }) {
   const g = market.garch;
-  const r = REGIME[g.regime];
+  // 이월 시세가 많으면 국면을 판정하지 않는다. 모르는 것을 '평소 수준' 이라고
+  // 적으면 리포트가 거짓말을 한다.
+  const r = g.regime
+    ? REGIME[g.regime]
+    : { label: "판정 보류", tone: "text-paper-accent" };
   const cross =
     market.annual_price_sigma !== null && market.kosis_price_sigma !== null
       ? Math.abs(market.annual_price_sigma - market.kosis_price_sigma)
@@ -46,6 +50,11 @@ export default function MarketRegime({ market }: { market: Market }) {
         <div className="rounded-lg border border-paper-rule bg-paper-sunk p-3">
           <dt className="text-[12px] text-paper-ink3">현재 시장 국면</dt>
           <dd className={`mt-0.5 text-lg font-semibold ${r.tone}`}>{r.label}</dd>
+          {!g.regime && (
+            <p className="mt-1 text-[12px] leading-snug text-paper-ink3">
+              거래가 없는 날 직전 시세가 이월되어 판정할 수 없습니다
+            </p>
+          )}
         </div>
       </dl>
 

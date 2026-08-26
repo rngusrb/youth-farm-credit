@@ -68,22 +68,24 @@
       "market": {
         "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
         "window": [
-          "2015-08-28",
-          "2026-08-25"
+          "2022-08-27",
+          "2026-08-26"
         ],
-        "trading_days": 1147,
-        "annual_price_sigma": 0.0912,
+        "trading_days": 396,
+        "annual_price_sigma": 0.1491,
         "kosis_price_sigma": 0.0827,
+        "price_movement_ratio": 0.944,
+        "quote_is_carried": false,
         "garch": {
-          "alpha": 0.1787,
-          "beta": 0.5266,
-          "persistence": 0.7054,
-          "half_life_days": 2.0,
-          "regime": "calm",
-          "current_over_longrun": 0.794
+          "alpha": 0.1684,
+          "beta": 0.2204,
+          "persistence": 0.3888,
+          "half_life_days": 0.7,
+          "regime": "normal",
+          "current_over_longrun": 0.887
         },
-        "ewma_check": 0.25,
-        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+        "ewma_check": 0.2561,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5938,
@@ -152,22 +154,24 @@
       "market": {
         "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
         "window": [
-          "2015-08-28",
-          "2026-08-25"
+          "2022-08-27",
+          "2026-08-26"
         ],
-        "trading_days": 1147,
-        "annual_price_sigma": 0.0912,
+        "trading_days": 396,
+        "annual_price_sigma": 0.1491,
         "kosis_price_sigma": 0.0827,
+        "price_movement_ratio": 0.944,
+        "quote_is_carried": false,
         "garch": {
-          "alpha": 0.1787,
-          "beta": 0.5266,
-          "persistence": 0.7054,
-          "half_life_days": 2.0,
-          "regime": "calm",
-          "current_over_longrun": 0.794
+          "alpha": 0.1684,
+          "beta": 0.2204,
+          "persistence": 0.3888,
+          "half_life_days": 0.7,
+          "regime": "normal",
+          "current_over_longrun": 0.887
         },
-        "ewma_check": 0.25,
-        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+        "ewma_check": 0.2561,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5938,
@@ -236,22 +240,24 @@
       "market": {
         "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
         "window": [
-          "2015-08-28",
-          "2026-08-25"
+          "2022-08-27",
+          "2026-08-26"
         ],
-        "trading_days": 2695,
-        "annual_price_sigma": 0.1948,
+        "trading_days": 975,
+        "annual_price_sigma": 0.2327,
         "kosis_price_sigma": 0.0997,
+        "price_movement_ratio": 0.945,
+        "quote_is_carried": false,
         "garch": {
-          "alpha": 0.1061,
-          "beta": 0.8492,
-          "persistence": 0.9553,
-          "half_life_days": 15.2,
+          "alpha": 0.1367,
+          "beta": 0.8302,
+          "persistence": 0.9669,
+          "half_life_days": 20.6,
           "regime": "turbulent",
-          "current_over_longrun": 2.276
+          "current_over_longrun": 2.062
         },
-        "ewma_check": 1.2599,
-        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+        "ewma_check": 1.2216,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
       },
       "cashflow_year": 2022,
       "cost_ratio": 0.5874,
@@ -454,22 +460,24 @@
       "market": {
         "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
         "window": [
-          "2015-08-28",
-          "2026-08-25"
+          "2022-08-27",
+          "2026-08-26"
         ],
-        "trading_days": 2694,
-        "annual_price_sigma": 0.2375,
+        "trading_days": 974,
+        "annual_price_sigma": 0.2577,
         "kosis_price_sigma": 0.1041,
+        "price_movement_ratio": 0.975,
+        "quote_is_carried": false,
         "garch": {
-          "alpha": 0.1724,
-          "beta": 0.7904,
-          "persistence": 0.9627,
-          "half_life_days": 18.3,
+          "alpha": 0.2107,
+          "beta": 0.7752,
+          "persistence": 0.9859,
+          "half_life_days": 48.8,
           "regime": "calm",
-          "current_over_longrun": 0.56
+          "current_over_longrun": 0.386
         },
-        "ewma_check": 0.7023,
-        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
+        "ewma_check": 0.689,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4293,
@@ -581,7 +589,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4722,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 975,
+        "annual_price_sigma": 0.1535,
+        "kosis_price_sigma": 0.124,
+        "price_movement_ratio": 0.897,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.175,
+          "beta": 0.7146,
+          "persistence": 0.8896,
+          "half_life_days": 5.9,
+          "regime": "calm",
+          "current_over_longrun": 0.797
+        },
+        "ewma_check": 0.5635,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "greenhouse_cherrytomato_hydro",
@@ -640,7 +670,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4722,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 975,
+        "annual_price_sigma": 0.1535,
+        "kosis_price_sigma": 0.124,
+        "price_movement_ratio": 0.897,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.175,
+          "beta": 0.7146,
+          "persistence": 0.8896,
+          "half_life_days": 5.9,
+          "regime": "calm",
+          "current_over_longrun": 0.797
+        },
+        "ewma_check": 0.5635,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "greenhouse_chive",
@@ -756,7 +808,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5683,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.1811,
+        "kosis_price_sigma": 0.0951,
+        "price_movement_ratio": 0.987,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.1267,
+          "beta": 0.6705,
+          "persistence": 0.7972,
+          "half_life_days": 3.1,
+          "regime": "normal",
+          "current_over_longrun": 0.879
+        },
+        "ewma_check": 0.8172,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "greenhouse_watermelon",
@@ -814,7 +888,29 @@
       },
       "cashflow_year": 2022,
       "cost_ratio": 0.4359,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 975,
+        "annual_price_sigma": 0.1597,
+        "kosis_price_sigma": 0.0893,
+        "price_movement_ratio": 0.857,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.4708,
+          "beta": 0.4459,
+          "persistence": 0.9167,
+          "half_life_days": 8.0,
+          "regime": "calm",
+          "current_over_longrun": 0.501
+        },
+        "ewma_check": 0.5194,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "greenhouse_cucumber",
@@ -872,7 +968,29 @@
       },
       "cashflow_year": 2022,
       "cost_ratio": 0.5174,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.1648,
+        "kosis_price_sigma": 0.0926,
+        "price_movement_ratio": 0.988,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.1107,
+          "beta": 0.8304,
+          "persistence": 0.9411,
+          "half_life_days": 11.4,
+          "regime": "normal",
+          "current_over_longrun": 1.173
+        },
+        "ewma_check": 1.7501,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "greenhouse_koreanmelon",
@@ -988,7 +1106,29 @@
       },
       "cashflow_year": 2022,
       "cost_ratio": 0.5874,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 975,
+        "annual_price_sigma": 0.2327,
+        "kosis_price_sigma": 0.0997,
+        "price_movement_ratio": 0.945,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.1367,
+          "beta": 0.8302,
+          "persistence": 0.9669,
+          "half_life_days": 20.6,
+          "regime": "turbulent",
+          "current_over_longrun": 2.062
+        },
+        "ewma_check": 1.2216,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "greenhouse_squash",
@@ -1046,7 +1186,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4209,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.1533,
+        "kosis_price_sigma": 0.1688,
+        "price_movement_ratio": 0.989,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.053,
+          "beta": 0.9101,
+          "persistence": 0.9631,
+          "half_life_days": 18.4,
+          "regime": "normal",
+          "current_over_longrun": 0.992
+        },
+        "ewma_check": 1.01,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_autumn_radish",
@@ -1304,7 +1466,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.3923,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.3424,
+        "kosis_price_sigma": 0.4077,
+        "price_movement_ratio": 0.894,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.1367,
+          "beta": 0.8189,
+          "persistence": 0.9556,
+          "half_life_days": 15.3,
+          "regime": "calm",
+          "current_over_longrun": 0.559
+        },
+        "ewma_check": 0.1884,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_greenonion",
@@ -1462,7 +1646,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5077,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.2689,
+        "kosis_price_sigma": 0.4861,
+        "price_movement_ratio": 0.49,
+        "quote_is_carried": true,
+        "garch": {
+          "alpha": 0.084,
+          "beta": 0.8754,
+          "persistence": 0.9594,
+          "half_life_days": 16.7,
+          "regime": null,
+          "current_over_longrun": 0.573
+        },
+        "ewma_check": 0.0248,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_watermelon",
@@ -1520,7 +1726,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4856,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 975,
+        "annual_price_sigma": 0.1597,
+        "kosis_price_sigma": 0.0793,
+        "price_movement_ratio": 0.857,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.4708,
+          "beta": 0.4459,
+          "persistence": 0.9167,
+          "half_life_days": 8.0,
+          "regime": "calm",
+          "current_over_longrun": 0.501
+        },
+        "ewma_check": 0.5194,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_spinach",
@@ -1578,7 +1806,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.3183,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.2577,
+        "kosis_price_sigma": 0.1916,
+        "price_movement_ratio": 0.975,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.2107,
+          "beta": 0.7752,
+          "persistence": 0.9859,
+          "half_life_days": 48.8,
+          "regime": "calm",
+          "current_over_longrun": 0.386
+        },
+        "ewma_check": 0.689,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_cabbage",
@@ -1636,7 +1886,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5442,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.2942,
+        "kosis_price_sigma": 0.1916,
+        "price_movement_ratio": 0.964,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.2785,
+          "beta": 0.0241,
+          "persistence": 0.3026,
+          "half_life_days": 0.6,
+          "regime": "normal",
+          "current_over_longrun": 0.871
+        },
+        "ewma_check": 0.6591,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_scallion",
@@ -1841,7 +2113,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5287,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.0703,
+        "kosis_price_sigma": 0.1214,
+        "price_movement_ratio": 0.886,
+        "quote_is_carried": false,
+        "garch": {
+          "alpha": 0.1158,
+          "beta": 0.6446,
+          "persistence": 0.7605,
+          "half_life_days": 2.5,
+          "regime": "normal",
+          "current_over_longrun": 0.847
+        },
+        "ewma_check": 0.2638,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "field_sweetcorn",
@@ -1932,7 +2226,29 @@
       "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '들깨' 2018~2024 7개년 σ=0.228 → 46작목 분포로 축소 0.231, 농가 고유 σ=0.17 가정 합성",
       "cashflow_year": 2024,
       "cost_ratio": 0.4547,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.1329,
+        "kosis_price_sigma": null,
+        "price_movement_ratio": 0.198,
+        "quote_is_carried": true,
+        "garch": {
+          "alpha": 0.0187,
+          "beta": 0.9803,
+          "persistence": 0.999,
+          "half_life_days": 692.8,
+          "regime": null,
+          "current_over_longrun": 0.315
+        },
+        "ewma_check": 0.0085,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     },
     {
       "id": "wheat",
@@ -2170,7 +2486,29 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4242,
-      "cashflow_rescaled": false
+      "cashflow_rescaled": false,
+      "market": {
+        "source": "KAMIS 일별 도매가격 (공공데이터포털 15156057)",
+        "window": [
+          "2022-08-27",
+          "2026-08-26"
+        ],
+        "trading_days": 974,
+        "annual_price_sigma": 0.0743,
+        "kosis_price_sigma": 0.104,
+        "price_movement_ratio": 0.161,
+        "quote_is_carried": true,
+        "garch": {
+          "alpha": 0.0449,
+          "beta": 0.9141,
+          "persistence": 0.959,
+          "half_life_days": 16.5,
+          "regime": null,
+          "current_over_longrun": 0.704
+        },
+        "ewma_check": 0.0106,
+        "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
+      }
     }
   ]
 }
