@@ -4,12 +4,6 @@
 
 :root {
   color-scheme: light;
-  /* 접근성: 상단 유틸바의 글자크기 조절이 이 값을 바꾼다 (정부 포털 관례) */
-  --ui-scale: 1;
-}
-
-html {
-  font-size: calc(16px * var(--ui-scale));
 }
 
 body {
