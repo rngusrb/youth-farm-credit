@@ -55,6 +55,10 @@ DEFAULTS = {
     "skip_dirs": ["__pycache__", ".venv", "venv", "node_modules", ".git", "tests",
                   "site-packages", "dist", "build"],
     "ruff": True,
+    # 자리표시자 — 커밋이 grace_commits 를 넘어서도 남아 있으면 FAIL (설치 직후엔 유예)
+    "placeholders": ["{프로젝트명}", "{폴더명}", "X-001: 태스크 이름",
+                     "(sprint-close 가 1줄씩 추가", "마지막 갱신: YYYY-MM-DD"],
+    "grace_commits": 3,
 }
 
 _PH = r"(?!your_|test[-_]|example|placeholder|dummy|<|xxx)"   # 플레이스홀더 제외
@@ -271,6 +275,74 @@ def run_gc(folder_key: str, guide_path: Path) -> list[dict]:
 
 # ── Doc Lint (프로젝트 문서 정합성) ─────────────────────────────────────────
 
+# ── 문서 앵커 (2026-08-26 신설) ─────────────────────────────────────────────
+# _GUIDE.md 만 잘 갱신되는 이유는 **기계적 앵커**가 있기 때문이다 — 코드에 파일을 추가하면
+# 자동으로 "가이드에 언급됐나" 검사가 생긴다. 코드 변화가 문서 요구를 만든다.
+# CLAUDE/DEV_GUIDE/TASKS 엔 그 앵커가 없어서 "갱신하세요"라는 문장만 있었고, 실측 결과
+# 13커밋 동안 세 문서 전부 템플릿과 0줄 차이였다. 아래는 각 문서에 저절로 변하는 것을 묶은 것.
+
+def commit_count() -> int:
+    if not (ROOT / ".git").exists():
+        return 0
+    r = subprocess.run(["git", "rev-list", "--count", "HEAD"],
+                       cwd=ROOT, capture_output=True, text=True)
+    return int(r.stdout.strip()) if r.returncode == 0 and r.stdout.strip().isdigit() else 0
+
+
+def check_anchors() -> list[dict]:
+    f: list[dict] = []
+    n = commit_count()
+    if n <= CFG.get("grace_commits", 3):
+        return f
+    tasks_p, index_p = ROOT / CFG["tasks_doc"], ROOT / CFG["index_doc"]
+    dev_p, archive = ROOT / "DEV_GUIDE.md", ROOT / CFG["archive_dir"]
+
+    # ① 자리표시자 잔존
+    for doc in (CFG["index_doc"], CFG["tasks_doc"], CFG["backlog_doc"], "DEV_GUIDE.md"):
+        dp = ROOT / doc
+        if dp.exists():
+            hits = [ph for ph in CFG["placeholders"] if ph in dp.read_text()]
+            if hits:
+                f.append({"level": "FAIL", "type": "placeholder_left", "file": doc,
+                          "message": f"자리표시자 잔존 {hits} — 커밋 {n}개째인데 템플릿 그대로다"})
+
+    # ② TASKS 앵커 = 커밋 수
+    if tasks_p.exists():
+        body = tasks_p.read_text()
+        if not re.search(CFG["task_heading_regex"], body, re.MULTILINE) \
+           and "현재 스프린트: 없음" not in body:
+            f.append({"level": "FAIL", "type": "tasks_empty", "file": CFG["tasks_doc"],
+                      "message": f"커밋 {n}개인데 현재 태스크도 '현재 스프린트: 없음' 선언도 없다"})
+
+    # ③ CLAUDE 앵커 = 아카이브 개수
+    if index_p.exists() and archive.is_dir():
+        n_arch = len([p for p in archive.glob("*.md") if "TEMPLATE" not in p.name])
+        n_rows = len(re.findall(CFG["index_date_regex"], index_p.read_text(), re.MULTILINE))
+        if n_arch > n_rows:
+            f.append({"level": "FAIL", "type": "index_behind_archive", "file": CFG["index_doc"],
+                      "message": f"아카이브 {n_arch}건 vs 완료 테이블 {n_rows}행 — 1줄 추가 누락"})
+
+    # ④ DEV_GUIDE 앵커 = meta.folder_guides
+    if dev_p.exists():
+        dev = dev_p.read_text()
+        missing = [k for k in (META.get("folder_guides") or {}) if k not in dev]
+        if missing:
+            f.append({"level": "FAIL", "type": "devguide_missing_folder", "file": "DEV_GUIDE.md",
+                      "message": f"색인에 없는 폴더 {missing}"})
+
+    # ⑤ 깨진 문서 참조
+    targets = [p for p in ROOT.glob("**/*.md")
+               if not any(s in p.parts for s in CFG["skip_dirs"] + ["templates", "node_modules"])]
+    targets += list((ROOT / "meta").glob("*.yaml")) if (ROOT / "meta").is_dir() else []
+    for doc in targets:
+        for ref in set(re.findall(r"(docs/[\w./-]+\.md)", doc.read_text(errors="ignore"))):
+            if not (ROOT / ref).exists():
+                f.append({"level": "FAIL", "type": "broken_doc_ref",
+                          "file": str(doc.relative_to(ROOT)),
+                          "message": f"존재하지 않는 문서 참조: {ref}"})
+    return f
+
+
 def run_doc_lint() -> list[dict]:
     """규칙이 문서에만 있으면 안 지켜진다 — 문서 자체를 기계 검사한다."""
     f: list[dict] = []
@@ -363,6 +435,7 @@ def run_doc_lint() -> list[dict]:
                           "file": str(t.relative_to(ROOT)),
                           "message": f"시크릿 하드코딩 의심: {desc}"})
                 break
+    f += check_anchors()          # 문서 앵커 (자리표시자·빈 태스크·색인 지연·깨진 참조)
     return f
 
 

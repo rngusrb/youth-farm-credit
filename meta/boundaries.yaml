@@ -36,12 +36,54 @@ allowed_imports:
   # 왜 core: [] 인가 — engine/ 은 현재 외부 의존이 0이다(검증함). 그 상태를 유지하는 것이
   # 이 프로젝트의 핵심 자산이다. "숫자는 LLM 이 만들지 않는다"는 원칙이 여기서 강제된다.
   # 왜 adapters → core 를 허용하나 — stats/ 가 crops.json 정의를 읽어야 σ 를 계산한다.
-  #   자세한 이유는 docs/decisions/0001-layer-direction.md
+  #   자세한 이유는 docs/decisions/0001-pure-estimators-belong-to-core.md
 
 features:
-  - diagnose        # 상환여력 진단 (메인)
-  - calibration     # σ 실측 파이프라인
-  - regulation      # 제도 근거 (RAG, 코퍼스 미투입)
+  # 기능은 폴더가 아니라 여러 앱에 흩어진 파일이다. 그래서 글롭으로 선언한다.
+  # ⚠️ 매칭 0이면 feature_view 가 FAIL 한다 — 조용히 "없음"으로 넘기면 도구가 거짓말을 한다.
+  - name: cashflow
+    label: 월별 현금흐름
+    paths:
+      core:     ["apps/api/engine/cashflow.py"]
+      adapters: ["apps/api/stats/calibrate_cashflow.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/revenue/**", "apps/web/app/bank/capacity/**"]
+    tests:      ["apps/api/tests/test_cashflow.py"]
+
+  - name: credit
+    label: 적정 여신
+    paths:
+      core:     ["apps/api/engine/risk_limit.py", "apps/api/engine/dscr.py",
+                 "apps/api/engine/loan.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/finance/**", "apps/web/app/bank/design/**"]
+    tests:      ["apps/api/tests/test_risk.py", "apps/api/tests/test_golden.py"]
+
+  - name: stress
+    label: 스트레스 테스트
+    paths:
+      core:     ["apps/api/engine/stress.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/safety/**", "apps/web/app/bank/stress/**"]
+    tests:      ["apps/api/tests/test_stress.py"]
+
+  - name: regulation
+    label: 제도 근거
+    paths:
+      adapters: ["apps/api/rag/**"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/policy/**", "apps/web/app/faq/**", "apps/web/app/library/**"]
+    tests:      ["apps/api/tests/test_rag.py", "apps/api/tests/test_rag_corpus.py"]
+
+  - name: sigma
+    label: σ 실측
+    paths:
+      core:     ["apps/api/estimators/**"]
+      adapters: ["apps/api/stats/calibrate_*.py", "apps/api/stats/kosis.py",
+                 "apps/api/stats/kamis.py"]
+      web:      ["apps/web/app/crops/**", "apps/web/app/stats/**"]
+    tests:      ["apps/api/tests/test_stats.py", "apps/api/tests/test_kosis.py",
+                 "apps/api/tests/test_kamis.py"]
 
 shared:
   path: shared

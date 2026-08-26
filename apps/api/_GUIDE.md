@@ -3,8 +3,9 @@
 ## 역할
 HTTP 경계. 요청을 받아 검증하고, core 를 부르고, 응답으로 직렬화한다.
 
-**이 레이어가 소유하지 않는 것**: 비즈니스 규칙(→ core), SQL·외부 호출(→ adapters).
-**의존 방향**: `api → core` 만. adapters 직접 호출 금지 (deps_check 가 잡는다).
+**이 레이어가 소유하지 않는 것**: 여신 계산(→ core `engine`/`estimators`),
+외부 호출·LLM·검색(→ adapters `llm`/`rag`/`stats`).
+**의존 방향**: `api → core, adapters` (`meta/boundaries.yaml` 선언, `deps_check` 가 집행).
 
 ---
 
@@ -12,17 +13,18 @@ HTTP 경계. 요청을 받아 검증하고, core 를 부르고, 응답으로 직
 
 ### 요청/응답 스키마는 이 레이어에만
 ```python
-# ✅ api/billing/schemas.py
-class ChargeRequest(BaseModel):
-    amount_cents: int
-    currency: str
+# ✅ apps/api/schemas.py — Pydantic 은 이 레이어에만
+class DiagnoseRequest(BaseModel):
+    crop_id: str
+    area_ha: float
 
-@router.post("/charge")
-def charge(req: ChargeRequest) -> ChargeResponse:
-    result = billing.charge(req.amount_cents, req.currency)   # core 호출
-    return ChargeResponse.from_domain(result)
+@app.post("/api/v1/diagnose")
+def run_diagnose(req: DiagnoseRequest) -> dict:
+    result = diagnose.run(req.crop_id, req.area_ha)   # core 호출 — 숫자는 여기서만 나온다
+    return result
 ```
-**이유**: core 가 Pydantic 모델을 알면 HTTP 를 아는 것이다. 그 순간 core 를 HTTP 없이 테스트할 수 없다.
+**이유**: `engine/` 이 Pydantic 을 알면 HTTP 를 아는 것이다. 그 순간 core 를 HTTP 없이
+테스트할 수 없고, "숫자는 엔진이 만든다"는 주장의 증거(외부 의존 0)가 사라진다.
 
 ---
 
@@ -30,12 +32,12 @@ def charge(req: ChargeRequest) -> ChargeResponse:
 
 ### ❌ 라우터에서 비즈니스 판단
 ```python
-# ❌ 금지
-if user.plan == "free" and amount > 10000:
-    raise HTTPException(402)          # 이 규칙이 왜 여기 있나
+# ❌ 금지 — 여신 판단이 라우터에 샌다
+if area_ha < 0.3 and loan_amount > 50_000_000:
+    raise HTTPException(400)          # 이 기준이 왜 여기 있나
 
 # ✅ 대신
-result = billing.charge(...)          # core 가 판단, api 는 예외를 상태코드로 번역
+result = diagnose.run(...)            # core 가 판단, api 는 예외를 상태코드로 번역
 ```
 **이유**: 같은 규칙이 다른 진입점(배치·CLI·웹훅)에서 안 먹는다. 규칙이 두 벌이 되면 반드시 갈라진다.
 
@@ -58,7 +60,8 @@ raise HTTPException(500, detail={"code": "CHARGE_FAILED"})
 > `forbidden_symbols` 가 그걸 소유하고 `deps_check.py` 가 집행한다.
 > 같은 규칙을 두 곳에 적으면 반드시 갈라진다 — 여기엔 **이 폴더에만 해당하는 것**만.
 
-SQL 금지는 **`meta/boundaries.yaml` 의 `forbidden_symbols.api`** 가 집행한다.
+레이어 전체 규칙(여신 판단·외부 호출 금지)은 **`meta/boundaries.yaml`** 이 소유하고
+`deps_check.py` 가 집행한다. 아래 gc 블록엔 이 폴더 고유 규칙만 둔다.
 
 ```gc
 pattern: "str\(e\)"
