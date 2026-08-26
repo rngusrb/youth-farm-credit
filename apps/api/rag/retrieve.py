@@ -10,6 +10,7 @@ import re
 from collections import Counter
 from functools import lru_cache
 
+from .expand import expand
 from .ingest import load_index
 
 _WORD = re.compile(r"[가-힣]+|[A-Za-z]+|\d+")
@@ -73,29 +74,66 @@ def _index() -> Bm25Index:
     return Bm25Index(load_index())
 
 
+def document_frequency(term: str) -> int:
+    """term 을 포함한 청크 수. 질의 확장이 변별력을 재는 데 쓴다."""
+    toks = tokenize(term)
+    if not toks:
+        return 10**9
+    return min(sum(1 for f in _index().freqs if t in f) for t in toks)
+
+
 def reset_cache() -> None:
     _index.cache_clear()
 
 
-def search(query: str, context: dict | None = None, top_k: int = 5) -> list[dict]:
-    """상위 청크 목록. score 를 함께 담아 돌려준다."""
+# RRF 상수. 표준값 60. 낮추면 1위 쏠림이 커진다.
+RRF_K = 60
+
+
+def _rrf(rankings: list[list[tuple[float, dict]]]) -> list[tuple[float, dict]]:
+    """Reciprocal Rank Fusion — 여러 질의의 순위를 합친다.
+
+    확장어를 원 질의에 **덧붙이면** 원 질의의 흔한 단어('지원', '자격')가
+    계속 방해한다. 확장 질의를 따로 돌려 순위만 합치면 그 간섭이 사라진다.
+    실측: '지원 자격 나이 제한' 이 덧붙이기로는 10위 밖, RRF 로는 상위권.
+    """
+    fused: dict[str, float] = {}
+    keep: dict[str, dict] = {}
+    for hits in rankings:
+        for rank, (_score, doc) in enumerate(hits):
+            key = doc["chunk_id"]
+            fused[key] = fused.get(key, 0.0) + 1.0 / (RRF_K + rank + 1)
+            keep[key] = doc
+    return sorted(((v, keep[k]) for k, v in fused.items()), key=lambda x: -x[0])
+
+
+def search(query: str, context: dict | None = None, top_k: int = 5,
+           use_expansion: bool = True) -> list[dict]:
+    """상위 청크 목록. score 와 확장 방식을 함께 담아 돌려준다."""
     index = _index()
-    enriched = query
+    base = query
     if context:
         # 작목·승계 여부 같은 맥락은 질의 확장에만 쓰고 답변 근거로는 쓰지 않는다.
         extra = " ".join(str(v) for v in context.values() if isinstance(v, (str, int)))
-        enriched = f"{query} {extra}".strip()
+        base = f"{query} {extra}".strip()
 
-    hits = index.search(enriched, top_k=top_k)
+    exp = expand(query, use_llm=use_expansion) if use_expansion else None
+    pool = top_k * 4  # 융합 전에는 넉넉히 뽑는다
+    rankings = [index.search(base, top_k=pool)]
+    if exp and exp.added:
+        rankings.append(index.search(" ".join(exp.added), top_k=pool))
+
+    hits = _rrf(rankings) if len(rankings) > 1 else rankings[0]
     if not hits:
         return []
     top = hits[0][0]
     out = []
-    for score, doc in hits:
+    for score, doc in hits[:top_k]:
         # 최상위 대비 지나치게 약한 근거는 인용하지 않는다.
         if score < top * 0.35:
             continue
         item = dict(doc)
         item["score"] = round(score, 4)
+        item["expansion"] = exp.method if exp else "none"
         out.append(item)
     return out

@@ -20,15 +20,76 @@ INDEX_PATH = CORPUS_DIR / "index.jsonl"
 
 REQUIRED_META = ("doc_title", "section_path", "text")
 
-# 'III-2-나', '제12조', '3. 지원대상' 등 조항 헤딩
-_HEADING = re.compile(
-    r"^\s*(?:"
-    r"(?P<roman>[IVXivx]+(?:-\d+)*(?:-[가-힣])?)\s*[.)]?\s+"
-    r"|(?P<article>제\s*\d+\s*조(?:의\s*\d+)?)\s*"
-    r"|(?P<num>\d+(?:\.\d+)*)\s*[.)]\s+"
-    r"|(?P<hangul>[가-힣]\s*[.)]\s+)"
-    r")(?P<title>.*)$"
+# 조항 헤딩. 정부 지침은 ASCII 'III' 가 아니라 전각 로마숫자(U+2160~)를 쓴다.
+# 깊이가 곧 section_path 의 계층이다.
+_LEVELS = (
+    # depth 0 — 장(章). 로마숫자만이다.
+    re.compile(r"^\s*(?P<label>[\u2160-\u217f]+|[IVX]+)\s*[.)]?\s+\S"),
+    # depth 1 — 절: '1.', '2-1.', 그리고 인용 법령 조문 '제79조'.
+    # 제N조 를 장으로 잡으면 지침 본문에 인용된 「후계농어업인법」 조문이
+    # Ⅱ장·Ⅲ장을 통째로 덮어써서 출처 표기가 거짓이 된다. (실제로 그랬다)
+    re.compile(r"^\s*(?P<label>\d+(?:[-.]\d+)*|제\s*\d+\s*조(?:의\s*\d+)?)\s*[.)]?\s+\S"),
+    # depth 2 — 항: '가.', '1)', '가)', '①'
+    re.compile(r"^\s*(?P<label>[가-힣]\s*[.)]|\d+\)|[가-힣]\)|[\u2460-\u2473])\s*\S"),
 )
+
+# 본문 불릿. 헤딩은 아니지만 큰 덩어리를 자를 때 경계로 쓴다.
+_BULLET = re.compile(r"^\s*[ㅇ○◦□▪▸·\-*]\s+\S")
+
+# 목차 줄: 'Ⅰ. 사업개요 1' 처럼 끝이 쪽번호다. 검색에 쓸모없고 노이즈만 만든다.
+_TOC_LINE = re.compile(r"^\s*\S.{0,60}?\s+\d{1,3}\s*$")
+
+# 한 청크의 목표 상한. 넘으면 불릿 경계에서 쪼갠다.
+# 4,000자 청크는 '거치기간'과 '재해 상환연기' 질문에 똑같이 걸려서 둘 다 못 맞춘다.
+MAX_CHUNK_CHARS = 900
+
+
+def _match_heading(line: str) -> tuple[int, str] | None:
+    for depth, rx in enumerate(_LEVELS):
+        m = rx.match(line)
+        if m:
+            return depth, m.group("label").strip().rstrip(".)").replace(" ", "")
+    return None
+
+
+def _strip_toc(lines: list[str]) -> list[str]:
+    """'목 차' 이후의 쪽번호 목록을 걷어낸다."""
+    try:
+        start = next(i for i, ln in enumerate(lines[:80]) if re.fullmatch(r"\s*목\s*차\s*", ln))
+    except StopIteration:
+        return lines
+    i = start + 1
+    misses = 0
+    while i < len(lines) and misses < 3:
+        ln = lines[i].strip()
+        if not ln or _TOC_LINE.match(ln):
+            misses = 0 if ln else misses
+        else:
+            misses += 1
+        i += 1
+    return lines[:start] + lines[i - misses:]
+
+
+def _split_oversized(body: str) -> list[str]:
+    """불릿 경계에서 MAX_CHUNK_CHARS 근처로 자른다. 첫 줄(제목)은 각 조각에 붙인다."""
+    if len(body) <= MAX_CHUNK_CHARS:
+        return [body]
+    lines = body.splitlines()
+    title = lines[0].strip()
+    parts, buf = [], []
+
+    def flush() -> None:
+        chunk = "\n".join(buf).strip()
+        if chunk:
+            parts.append(chunk if chunk.startswith(title) else f"{title}\n{chunk}")
+        buf.clear()
+
+    for ln in lines:
+        if buf and _BULLET.match(ln) and sum(len(x) for x in buf) >= MAX_CHUNK_CHARS:
+            flush()
+        buf.append(ln)
+    flush()
+    return parts or [body]
 
 
 @dataclass
@@ -81,15 +142,21 @@ def _from_text(path: Path) -> list[Chunk]:
         if len(parts) > 2:
             source_url = parts[2]
         lines = lines[1:]
+    lines = _strip_toc(lines)
 
     chunks: list[Chunk] = []
-    path_stack: list[str] = []
+    # (깊이, 라벨) 쌍으로 든다. 리스트 인덱스를 깊이로 쓰면 상위 헤딩이
+    # 없는 문서에서 '제3조-제4조' 처럼 형제가 부모-자식으로 붙는다.
+    path_stack: list[tuple[int, str]] = []
     buffer: list[str] = []
     current = "머리말"
 
     def flush() -> None:
         body = "\n".join(buffer).strip()
-        if body:
+        buffer.clear()
+        if not body:
+            return
+        for part in _split_oversized(body):
             chunks.append(
                 Chunk(
                     chunk_id=f"{path.stem}-{len(chunks) + 1}",
@@ -98,21 +165,17 @@ def _from_text(path: Path) -> list[Chunk]:
                     section_path=current,
                     region=None,
                     source_url=source_url,
-                    text=body,
+                    text=part,
                 )
             )
-        buffer.clear()
 
     for line in lines:
-        m = _HEADING.match(line)
-        if m and line.strip():
+        hit = _match_heading(line) if line.strip() else None
+        if hit:
             flush()
-            label = (
-                m.group("roman") or m.group("article") or m.group("num") or m.group("hangul")
-            ).strip().rstrip(".)")
-            depth = 0 if m.group("roman") or m.group("article") else 1
-            path_stack[:] = path_stack[:depth] + [label]
-            current = "-".join(path_stack)
+            depth, label = hit
+            path_stack[:] = [e for e in path_stack if e[0] < depth] + [(depth, label)]
+            current = "-".join(lbl for _d, lbl in path_stack)
             buffer.append(line.strip())
         else:
             buffer.append(line)
@@ -124,8 +187,8 @@ def build_index() -> list[Chunk]:
     CORPUS_DIR.mkdir(parents=True, exist_ok=True)
     chunks: list[Chunk] = []
     for path in sorted(CORPUS_DIR.iterdir()):
-        if path.name == INDEX_PATH.name:
-            continue
+        if path.name in (INDEX_PATH.name, "README.md"):
+            continue  # README 는 사용 설명서지 지침 원문이 아니다
         if path.suffix == ".jsonl":
             chunks += _from_jsonl(path)
         elif path.suffix in (".txt", ".md"):

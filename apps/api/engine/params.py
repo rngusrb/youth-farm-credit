@@ -26,6 +26,8 @@ class LoanProduct:
     # 상환 방식. 후계농 육성자금은 시행지침상 원금 균등분할이다.
     # 다른 상품이 원리금균등일 수 있어 상품별로 둔다.
     amort_method: str = "equal_principal"
+    # 사람이 읽는 주석. 계산에는 안 쓰지만 화면에 상품 차이를 설명할 때 쓴다.
+    note: str = ""
 
     @property
     def term_years(self) -> int:

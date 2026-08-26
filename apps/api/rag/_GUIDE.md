@@ -111,6 +111,7 @@ message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 �
 ## 하네스
 
 ```
+apps/api/tests/test_rag_corpus.py
 apps/api/tests/test_rag.py
 ```
 
@@ -132,6 +133,18 @@ apps/api/tests/test_rag.py
 | `ingest.py` | 지침 원문 → 조항 단위 청킹. 메타데이터 필수 검사 |
 | `retrieve.py` | BM25 (한국어용 문자 bigram 혼합) |
 | `answer.py` | 인용 강제. citations 가 비면 답변을 생성하지 않는다 |
+| `expand.py` | 질의 확장. 사용자의 말('이자 언제 내요')을 지침의 말('연 1회 후취')로 |
+| `fetch_guidelines.py` | 시행지침 원문 수집 CLI. 한 번만 돌린다 |
 
-> 현재 코퍼스는 비어 있다. 그래서 항상 "확인된 근거를 찾지 못했습니다" 를 반환한다.
-> 이는 고장이 아니라 설계다 — 근거 없이 답을 지어내지 않는다.
+> 코퍼스는 `data/corpus/*.txt` 에 커밋돼 있다 (2026년 시행지침 3종, 709청크).
+> 원문 수집은 `python -m rag.fetch_guidelines`, 색인은 `python -m rag.ingest`.
+> 코퍼스가 비면 API 는 항상 "확인된 근거를 찾지 못했습니다" 를 반환한다 — 고장이 아니라 설계다.
+
+## 규칙
+
+- **코퍼스에 없는 문장을 인용으로 내보내지 않는다.** citations 가 비면 답변도 없다.
+- 청크는 3,000자를 넘기지 않는다. 큰 덩어리는 서로 다른 질문에 똑같이 걸려서 둘 다 틀린다.
+- `section_path` 는 그 지침의 장·절이어야 한다. 본문에 **인용된** 법령 조문(`제79조`)을
+  장으로 잡으면 출처 표기가 거짓이 된다. (실제로 그랬다 — test_rag_corpus.py 가 지킨다)
+- 검색 품질을 건드렸으면 `test_rag_corpus.py` 의 recall 하한을 확인한다.
+  하한을 낮추는 커밋은 이유를 커밋 메시지에 적는다.
