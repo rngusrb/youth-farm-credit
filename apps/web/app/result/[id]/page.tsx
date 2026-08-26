@@ -9,6 +9,8 @@ import {
   type Explanation,
 } from "@/lib/api";
 import { manwon, pct, pyeong as fmtPyeong, won } from "@/lib/format";
+import { headlineLimit, headlineScenario } from "@/lib/diagnosis";
+import { saveReport } from "@/lib/profile";
 import AssumedBadge from "@/components/AssumedBadge";
 import CliffChart from "@/components/CliffChart";
 import DscrGauge from "@/components/DscrGauge";
@@ -41,6 +43,18 @@ export default function ResultPage() {
       .then((d) => {
         if (!alive) return;
         setData(d);
+        // 이 브라우저의 기록에 남긴다. 서버에는 아무것도 저장하지 않는다 —
+        // 입력값은 이미 문서번호에 들어 있어서 링크가 곧 저장이다.
+        const s = headlineScenario(d);
+        saveReport({
+          id: d.diagnosis_id,
+          cropName: d.input.crop_name,
+          pyeong: d.input.pyeong,
+          productName: d.product.name,
+          riskLimit: headlineLimit(d),
+          crisisProb: s?.crisis_prob ?? 0,
+          savedAt: Date.now(),
+        });
         return explain(d).then((e) => alive && setNote(e));
       })
       .catch((e) => alive && setError(e instanceof Error ? e.message : "불러오기 실패"));
@@ -383,10 +397,16 @@ export default function ResultPage() {
 
       <div className="no-print mx-auto mt-6 flex max-w-[46rem] flex-wrap gap-3">
         <a
-          href="/"
+          href="/diagnose"
           className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
         >
           조건 바꿔 다시 계산
+        </a>
+        <a
+          href="/"
+          className="rounded-lg border border-ink-700 px-4 py-2.5 text-sm text-slate-300 transition hover:border-ink-600"
+        >
+          대시보드로
         </a>
         <ShareButton />
         <PrintButton />

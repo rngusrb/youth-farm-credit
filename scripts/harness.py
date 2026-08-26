@@ -164,7 +164,18 @@ def get_tests(folder_key: str, guide_path: Path) -> list[str]:
 
 # ── 테스트 실행 ─────────────────────────────────────────────────────────────
 
-def run_tests(tests: list[str]) -> dict:
+def runner_for(folder_key: str) -> list[str] | None:
+    """폴더별 테스트 실행 명령. 없으면 pytest.
+
+    파이썬만 있는 저장소를 전제하면 앱이 하나 더 붙는 순간 하네스 밖으로 샌다.
+    새 앱은 meta/project_state.yaml 의 harness.runners 에 자기 명령을 등록한다.
+    """
+    runners = (CFG.get("runners") or {})
+    cmd = runners.get(folder_key)
+    return list(cmd) if cmd else None
+
+
+def run_tests(tests: list[str], runner: list[str] | None = None) -> dict:
     if not tests:
         return {"status": "no_tests", "passed": 0, "failed": 0, "errors": []}
     existing = [t for t in tests if (ROOT / t).exists()]
@@ -173,11 +184,15 @@ def run_tests(tests: list[str]) -> dict:
         return {"status": "missing", "passed": 0, "failed": 0,
                 "errors": [f"테스트 경로 없음: {t}" for t in missing]}
 
-    r = subprocess.run([sys.executable, "-m", "pytest", *existing, "-q", "--tb=short"],
-                       capture_output=True, text=True, cwd=ROOT)
+    cmd = ([*runner, *existing] if runner
+           else [sys.executable, "-m", "pytest", *existing, "-q", "--tb=short"])
+    r = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
     out = r.stdout + r.stderr
     n_pass = int(m.group(1)) if (m := re.search(r"(\d+) passed", out)) else 0
     n_fail = int(m.group(1)) if (m := re.search(r"(\d+) failed", out)) else 0
+    if runner and not n_pass and not n_fail and r.returncode == 0:
+        # 러너가 개수를 안 찍는 경우(tsc 등)도 통과는 통과로 센다
+        n_pass = len(existing)
     return {"status": "pass" if r.returncode == 0 else "fail",
             "passed": n_pass, "failed": n_fail, "returncode": r.returncode,
             "output": out, "tests": existing, "missing": missing,
@@ -185,6 +200,15 @@ def run_tests(tests: list[str]) -> dict:
 
 
 # ── GC (정적 검사) ──────────────────────────────────────────────────────────
+
+def _module_token(path: Path) -> str | None:
+    """가이드가 언급해야 할 이름. 라우트면 폴더명, 그 외엔 파일명."""
+    if path.name in ("__init__.py",) or path.name.startswith("_"):
+        return None
+    if path.name in ("page.tsx", "route.ts", "layout.tsx"):
+        return path.parent.name  # app/policy/page.tsx → 'policy'
+    return path.name
+
 
 def check_guide_staleness(folder_key: str, guide_path: Path) -> dict | None:
     if not guide_path.exists():
@@ -291,9 +315,15 @@ def run_doc_lint() -> list[dict]:
         if any(s in guide.parts for s in CFG["skip_dirs"] + ["docs", "templates"]):
             continue
         text = guide.read_text()
+        key = str(guide.parent.relative_to(ROOT))
+        # 언어별로 '모듈' 의 모양이 다르다. 파이썬만 검사하면 웹 앱은 가이드가
+        # 썩어도 린트를 통과한다 — 앱이 하나 더 붙는 순간 하네스가 무의미해진다.
+        globs = (CFG.get("module_globs") or {}).get(key, ["*.py"])
         unmentioned = sorted(
-            p.name for p in guide.parent.glob("*.py")
-            if p.name != "__init__.py" and not p.name.startswith("_") and p.stem not in text)
+            {_module_token(m) for g in globs for m in guide.parent.glob(g)}
+            - {None}
+        )
+        unmentioned = [n for n in unmentioned if n not in text]
         if unmentioned:
             f.append({"level": "FAIL", "type": "guide_module_missing",
                       "file": str(guide.relative_to(ROOT)),
@@ -408,7 +438,7 @@ def run_one(target: str, gc: bool, diff: bool) -> bool:
     tests = get_tests(folder_key, guide)
     print(f"\n{'='*46}\n  대상: {folder_key}  |  가이드: {guide.relative_to(ROOT)}")
     print(f"  테스트: {len(tests)}개")
-    result = run_tests(tests)
+    result = run_tests(tests, runner_for(folder_key))
 
     if result["status"] == "no_tests":
         print("  ⚠️  테스트 미지정 — _GUIDE.md '## 하네스' 섹션에 목록 추가 권장")
@@ -464,7 +494,7 @@ def collect_score(target: str = "all", with_gc: bool = True) -> dict:
     passed = failed = gc_n = 0
     for folder_key in targets:
         guide = guide_for(Path(folder_key))
-        r = run_tests(get_tests(folder_key, guide))
+        r = run_tests(get_tests(folder_key, guide), runner_for(folder_key))
         passed += r["passed"]
         failed += r["failed"]
         if with_gc:

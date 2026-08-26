@@ -15,13 +15,24 @@ folder_guides:
   apps/api/estimators: apps/api/estimators/_GUIDE.md
   apps/api/llm:     apps/api/llm/_GUIDE.md
   apps/api/rag:     apps/api/rag/_GUIDE.md
-  apps/api/stats:   apps/api/stats/_GUIDE.md
+  apps/api/stats:      apps/api/stats/_GUIDE.md
+  apps/web:            apps/web/_GUIDE.md
 
 harness:
   max_active_tasks: 3
   task_heading_regex: "^#{2,3} [A-Z][A-Z0-9]*-[A-Za-z0-9]+:"
   # 테스트는 apps/api/tests/ 에 모여 있고, 폴더별 목록은 각 _GUIDE.md 의 '## 하네스' 에 있다
-  test_path_prefixes: ["apps/api/tests/"]
+  test_path_prefixes: ["apps/api/tests/", "apps/web/tests/"]
+
+  # 폴더별 테스트 러너. 없으면 pytest.
+  # 새 앱은 여기에 자기 명령을 등록한다 — 그래야 harness all 이 그 앱도 돈다.
+  runners:
+    apps/web: ["npx", "--prefix", "apps/web", "vitest", "run", "--root", "apps/web"]
+
+  # 가이드가 언급해야 할 '모듈' 의 모양. 언어마다 다르다.
+  # 웹은 컴포넌트가 아니라 **라우트**를 검사한다 — 제품 표면이고 제일 잘 썩는다.
+  module_globs:
+    apps/web: ["app/*/page.tsx"]
   test_globs:
     - "apps/api/tests/test_{key}*.py"
   always_run: []

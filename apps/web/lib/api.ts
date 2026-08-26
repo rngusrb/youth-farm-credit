@@ -197,10 +197,67 @@ export async function fetchDiagnosis(id: string): Promise<Diagnosis> {
   return res.json();
 }
 
+export type CropRow = {
+  id: string;
+  name: string;
+  income_per_10a: number;
+  sigma: number;
+  sigma_source: string;
+  sigma_common: number | null;
+  sigma_ci: [number, number] | null;
+  sigma_n: number | null;
+  group: string | null;
+  driver: "price" | "quantity" | "cost" | null;
+  harvest_months: number[];
+  has_market: boolean;
+};
+
+export type CropDetail = CropRow & {
+  aliases: string[];
+  sigma_method: string | null;
+  sigma_reference: string | null;
+  factors: Diagnosis["factors"];
+  market: Diagnosis["market"];
+  kosis: Record<string, unknown> | null;
+  unit_area_pyeong: number;
+  idiosyncratic: { idiosyncratic_sigma: number; source: string; note: string };
+};
+
+export type ProductRow = {
+  id: string;
+  name: string;
+  limit: number;
+  rate: number;
+  grace_years: number;
+  amort_years: number;
+  amort_method: string;
+  source: string;
+  note?: string;
+};
+
 export async function fetchCrops(): Promise<{
-  crops: { id: string; name: string; income_per_10a: number; sigma_source: string }[];
+  source: string;
+  unit_area_pyeong: number;
+  crops: CropRow[];
 }> {
   const res = await fetch(`${API_BASE}/api/v1/crops`);
   if (!res.ok) throw new Error("작목 목록을 불러오지 못했습니다");
+  return res.json();
+}
+
+export async function fetchCrop(id: string): Promise<CropDetail> {
+  const res = await fetch(`${API_BASE}/api/v1/crops/${id}`);
+  if (!res.ok) throw new Error(`작목 정보를 불러오지 못했습니다 (${res.status})`);
+  return res.json();
+}
+
+export async function fetchProducts(): Promise<{
+  products: ProductRow[];
+  disaster_relief: { damage_min: number; damage_max: number; defer_years: number }[];
+  installment_defer_max_count: number;
+  relief_source: string;
+}> {
+  const res = await fetch(`${API_BASE}/api/v1/products`);
+  if (!res.ok) throw new Error("상품 목록을 불러오지 못했습니다");
   return res.json();
 }

@@ -13,7 +13,14 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from engine.diagnose import DiagnoseInput, diagnose
-from engine.params import crops, crops_source, policy, products, unit_area_pyeong
+from engine.params import (
+    crops,
+    crops_source,
+    get_crop,
+    policy,
+    products,
+    unit_area_pyeong,
+)
 from llm import extract as extract_mod
 from llm.client import available as llm_available
 from llm.narrate import narrate
@@ -67,9 +74,45 @@ def list_crops() -> dict:
                 "income_per_10a": c.income_per_10a,
                 "sigma": c.sigma,
                 "sigma_source": c.sigma_source,
+                "sigma_common": c.sigma_common,
+                "sigma_ci": c.sigma_ci,
+                "sigma_n": (c.factors or {}).get("n"),
+                "group": (c.kosis or {}).get("group"),
+                "driver": (c.factors or {}).get("driver"),
+                "harvest_months": c.harvest_months,
+                "has_market": bool(c.market),
             }
             for c in crops().values()
         ],
+    }
+
+
+@app.get("/api/v1/crops/{crop_id}")
+def crop_detail(crop_id: str) -> dict:
+    """작목 한 건의 전체 근거. 대시보드의 작목·시세 화면이 쓴다."""
+    try:
+        c = get_crop(crop_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+    return {
+        "id": c.id,
+        "name": c.name,
+        "aliases": c.aliases,
+        "group": (c.kosis or {}).get("group"),
+        "income_per_10a": c.income_per_10a,
+        "harvest_months": c.harvest_months,
+        "sigma": c.sigma,
+        "sigma_common": c.sigma_common,
+        "sigma_ci": c.sigma_ci,
+        "sigma_source": c.sigma_source,
+        "sigma_method": c.sigma_method,
+        "sigma_reference": c.sigma_reference,
+        "factors": c.factors,
+        "market": c.market,
+        "kosis": c.kosis,
+        "unit_area_pyeong": unit_area_pyeong(),
+        # 가정 성분의 출처를 화면에서 그대로 보여줄 수 있게 같이 낸다.
+        "idiosyncratic": policy()["sigma_decomposition"],
     }
 
 
