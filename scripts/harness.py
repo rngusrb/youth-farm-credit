@@ -59,6 +59,13 @@ DEFAULTS = {
     "placeholders": ["{프로젝트명}", "{폴더명}", "X-001: 태스크 이름",
                      "(sprint-close 가 1줄씩 추가", "마지막 갱신: YYYY-MM-DD"],
     "grace_commits": 3,
+    # all 실행 시 같이 돌릴 외부 검사. 파일이 있을 때만 실행한다.
+    # (2026-08-26 발견: deps_check 가 harness 에 안 물려 있어서 경계 검사가 커밋 때
+    #  자동으로 안 돌고 있었다 — 사람이 따로 쳐야만 도는 검사는 결국 안 도는 검사다)
+    "extra_checks": [
+        ["scripts/deps_check.py"],
+        ["scripts/feature_view.py", "--list"],
+    ],
 }
 
 _PH = r"(?!your_|test[-_]|example|placeholder|dummy|<|xxx)"   # 플레이스홀더 제외
@@ -624,6 +631,23 @@ def main() -> None:
             icon = "✅" if r["status"] == "pass" else "❌"
             print(f"\n{'='*46}\n  {extra}: {icon} {r['passed']} passed / {r['failed']} failed")
             ok &= r["status"] in ("pass", "no_tests")
+    # 외부 검사 (경계·기능 선언) — 파일이 있을 때만. 사람이 따로 쳐야만 도는 검사는
+    # 결국 안 도는 검사다 (2026-08-26: deps_check 가 harness 에 안 물려 있었음)
+    for cmd in CFG.get("extra_checks") or []:
+        script = ROOT / cmd[0]
+        if not script.exists():
+            continue
+        r = subprocess.run([sys.executable, str(script), *cmd[1:]],
+                           cwd=ROOT, capture_output=True, text=True)
+        name = Path(cmd[0]).stem
+        if r.returncode == 0:
+            print(f"\n{'─'*46}\n  {name}: ✅ 통과")
+        else:
+            ok = False
+            print(f"\n{'─'*46}\n  {name}: ❌ 실패")
+            print("\n".join("    " + ln for ln in
+                            (r.stdout + r.stderr).strip().splitlines()[-15:]))
+
     if not args.no_lint:
         ok &= print_doc_lint(run_doc_lint())
     print("\n" + ("✅ harness all 통과" if ok else "❌ harness all 실패"))
