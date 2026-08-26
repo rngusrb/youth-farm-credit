@@ -74,7 +74,7 @@ export default function BankStressPage() {
                   <input id="principal" inputMode="numeric"
                          value={principal != null ? Math.round(principal / 10_000) : ""}
                          onChange={(e) => setPrincipal(Number(e.target.value.replace(/[^\d]/g, "")) * 10_000)}
-                         className="tabular w-32 min-h-11 border border-gov-line px-3 text-right text-[14px] outline-none focus:border-gov-link" />
+                         className="tabular w-32 min-h-11 rounded-md border border-gov-line px-3 text-right text-[14px] outline-none focus:border-gov-link" />
                   <span className="text-[13px] text-gov-ink3">만원</span>
                 </div>
               </div>
@@ -85,7 +85,7 @@ export default function BankStressPage() {
                   ["위험기반 권장", headlineLimit(diag)],
                 ] as const).map(([l, v]) => (
                   <button key={l} onClick={() => setPrincipal(v)}
-                          className="inline-flex min-h-11 items-center border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+                          className="inline-flex min-h-11 items-center rounded-md border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
                     {l}<span className="tabular ml-1.5 text-gov-ink3">{won(v)}</span>
                   </button>
                 ))}

@@ -45,7 +45,7 @@ function Body() {
         <div className="flex flex-wrap items-center gap-3">
           <label htmlFor="crop" className="text-[13px] font-semibold text-gov-ink2">작목 선택</label>
           <select id="crop" value={id} onChange={(e) => setId(e.target.value)}
-                  className="min-h-11 border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+                  className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             {rows.map((c) => (
               <option key={c.id} value={c.id}>{c.name}{c.has_market ? " (도매가 수집됨)" : ""}</option>
             ))}

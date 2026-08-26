@@ -2,45 +2,45 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Badge, Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
+import { Badge, Btn, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchCrop, runDiagnose, type CropDetail, type Diagnosis } from "@/lib/api";
 import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
-import { useFarm } from "@/lib/useFarm";
+import { APPLICANTS, type Applicant } from "@/lib/applicants";
 import { pct, pyeong as fmtPyeong, ratio, won } from "@/lib/format";
 
 export default function BankHome() {
-  const { profile, ready } = useFarm();
+  // 심사역에게 '내 농가 정보' 를 요구하는 건 말이 안 된다. 접수된 건에서 고른다.
+  const [applicant, setApplicant] = useState<Applicant>(APPLICANTS[0]);
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [crop, setCrop] = useState<CropDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile) return;
+    let alive = true;
+    setDiag(null);
     runDiagnose({
-      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
-      other_debt_service: profile.otherDebtService, product_id: profile.productId,
-      income_history: profile.incomeHistory,
+      crop_id: applicant.cropId, pyeong: applicant.pyeong, living_cost: applicant.livingCost,
+      other_debt_service: applicant.otherDebtService, product_id: applicant.productId,
+      income_history: applicant.incomeHistory,
     })
-      .then((d) => { setDiag(d); return fetchCrop(profile.cropId).then(setCrop); })
-      .catch(() => setError("계산에 실패했습니다."));
-  }, [profile]);
-
-  if (!ready) return null;
-  if (!profile) {
-    return (
-      <>
-        <PageTitle title="심사 대시보드" lead="심사할 차주 정보가 필요합니다." />
-        <Empty title="차주 정보가 없습니다"
-               body="농가용 화면의 「내 농가 정보」에 입력한 값을 그대로 심사 관점으로 봅니다. 데모에서는 같은 정보를 공유합니다."
-               cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
-      </>
-    );
-  }
+      .then((d) => {
+        if (!alive) return;
+        setDiag(d);
+        return fetchCrop(applicant.cropId).then((c) => alive && setCrop(c));
+      })
+      .catch(() => alive && setError("계산에 실패했습니다."));
+    return () => { alive = false; };
+  }, [applicant]);
 
   const s = diag ? headlineScenario(diag) : undefined;
   const gap = diag ? unsafeGap(diag) : 0;
 
   const flags = diag && s ? [
+    {
+      on: applicant.requested > headlineLimit(diag),
+      level: "주의",
+      text: `신청액 ${won(applicant.requested)} 이 감당 가능 금액 ${won(headlineLimit(diag))} 을 ${won(applicant.requested - headlineLimit(diag))} 초과합니다.`,
+    },
     {
       on: gap > 0,
       level: "주의",
@@ -78,13 +78,35 @@ export default function BankHome() {
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 
+      <Section title="심사 대상" action={
+        <Link href="/bank/applicants" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">
+          전체 {APPLICANTS.length}건 +
+        </Link>
+      }>
+        <div className="flex flex-wrap gap-2">
+          {APPLICANTS.map((a) => {
+            const on = a.ref === applicant.ref;
+            return (
+              <button key={a.ref} onClick={() => setApplicant(a)} aria-pressed={on}
+                      className={`flex min-h-11 flex-col justify-center rounded-md border px-3 py-2 text-left transition ${
+                        on ? "border-gov-head bg-gov-soft" : "border-gov-line hover:border-gov-link"}`}>
+                <span className={`text-[13px] font-bold ${on ? "text-gov-head" : "text-gov-ink"}`}>
+                  {a.name}
+                </span>
+                <span className="tabular text-[12px] text-gov-ink3">{a.ref} · {won(a.requested)} 신청</span>
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+
       {diag && s && (
         <>
           <Section title="차주 개요">
             <Panel>
               <div className="grid gap-6 sm:grid-cols-4">
-                <Stat label="작목 · 규모" value={diag.input.crop_name}
-                      note={`${fmtPyeong(diag.input.pyeong)} · ${crop?.group ?? ""}`} />
+                <Stat label="차주" value={applicant.name}
+                      note={`${applicant.ref} · ${applicant.region} · ${diag.input.crop_name} ${fmtPyeong(diag.input.pyeong)}`} />
                 <Stat label="연 농업소득" value={won(diag.income.annual)}
                       note={`상환여력 ${won(diag.income.capacity)}`} />
                 <Stat label="소득 변동성 σ" value={diag.sigma.toFixed(3)}
@@ -165,7 +187,7 @@ export default function BankHome() {
                 ["적정 여신 설계", "/bank/design", "실행 금액별 위험 곡선"],
                 ["Stress Test", "/bank/stress", "가격·생산량·금리·재해 시나리오"],
               ].map(([t, href, d]) => (
-                <Link key={href} href={href} className="group bg-white p-5 hover:bg-gov-sunk">
+                <Link key={href} href={href} className="group bg-white p-5 transition-colors hover:bg-gov-sunk">
                   <h3 className="text-[14px] font-bold text-gov-ink group-hover:text-gov-head">{t} →</h3>
                   <p className="mt-1.5 text-[12px] leading-relaxed text-gov-ink2">{d}</p>
                 </Link>

@@ -161,7 +161,7 @@ export default function ReliefPage() {
                   <h3 className="text-[15px] font-bold text-gov-ink">{l.key}</h3>
                   <span className="text-[12px] text-gov-ink3">{c.doc}</span>
                 </div>
-                <blockquote className="whitespace-pre-wrap border-l-4 border-gov-line bg-gov-sunk px-4 py-3 text-[12px] leading-relaxed text-gov-ink2">
+                <blockquote className="whitespace-pre-wrap rounded-r-md border-l-4 border-gov-line bg-gov-sunk px-4 py-3 text-[12px] leading-relaxed text-gov-ink2">
                   {c.text.slice(0, 600)}{c.text.length > 600 ? "…" : ""}
                 </blockquote>
               </Panel>

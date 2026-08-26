@@ -26,7 +26,7 @@ export default function Header() {
                   >
                     {g.label}
                   </button>
-                  <div className="invisible absolute right-0 top-full z-30 w-64 border border-gov-line bg-white p-2 shadow-lg group-hover:visible group-focus-within:visible">
+                  <div className="invisible absolute right-0 top-full z-30 w-64 rounded-lg border border-gov-line bg-white p-2 shadow-lg group-hover:visible group-focus-within:visible">
                     {g.items.map((i) => (
                       <Link
                         key={i.href}
@@ -47,7 +47,7 @@ export default function Header() {
         </nav>
         <Link
           href="/app"
-          className="ml-auto inline-flex min-h-11 shrink-0 items-center bg-gov-head px-4 text-[13px] font-semibold text-white hover:bg-gov-navy lg:ml-0"
+          className="ml-auto inline-flex min-h-11 shrink-0 items-center rounded-md bg-gov-head px-4 text-[13px] font-semibold text-white hover:bg-gov-navy lg:ml-0"
         >
           진단 시작
         </Link>

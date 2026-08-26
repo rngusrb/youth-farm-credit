@@ -56,6 +56,7 @@ export const FARMER: Item[] = [
 /** 금융기관용 업무 메뉴 */
 export const BANK: Item[] = [
   { href: "/bank", label: "심사 대시보드", desc: "신청 건 요약" },
+  { href: "/bank/applicants", label: "차주 목록", desc: "신청 건 일괄 검토" },
   { href: "/bank/capacity", label: "상환능력 분석", desc: "계절성·변동성 반영" },
   { href: "/bank/design", label: "적정 여신 설계", desc: "권장 차입 역산" },
   { href: "/bank/stress", label: "여신 Stress Test", desc: "시나리오별 상환가능성" },

@@ -15,7 +15,7 @@ export default function GlossaryPage() {
       <nav aria-label="용어 목록" className="mb-6 flex flex-wrap gap-1.5">
         {GLOSSARY.map((t) => (
           <a key={t.term} href={`#${encodeURIComponent(t.term)}`}
-             className="border border-gov-line bg-white px-2.5 py-1 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+             className="rounded-lg border border-gov-line bg-white px-2.5 py-1 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
             {t.term.split(" ")[0]}
           </a>
         ))}

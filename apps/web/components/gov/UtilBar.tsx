@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { currentSession, signOut, type Session } from "@/lib/auth";
+import { signOut } from "@/lib/auth";
+import { useSession } from "@/lib/useSession";
 
 /** 최상단 유틸리티 바 — 정부 포털의 관례. 글자크기 조절이 여기 붙는다. */
 export default function UtilBar() {
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
+  const { session } = useSession();
   const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    setSession(currentSession());
     const saved = Number(window.localStorage.getItem("yfc.scale") || 1);
     setScale(saved);
     document.documentElement.style.setProperty("--ui-scale", String(saved));
@@ -44,7 +44,7 @@ export default function UtilBar() {
             <>
               <span className="text-white">{session.org}</span>
               <button
-                onClick={() => { signOut(); setSession(null); router.push("/"); }}
+                onClick={() => { signOut(); router.push("/"); }}
                 className="inline-flex min-h-11 min-w-11 items-center justify-center px-1 hover:text-white"
               >
                 로그아웃

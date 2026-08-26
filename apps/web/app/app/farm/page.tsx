@@ -8,7 +8,7 @@ import { clearProfile, loadProfile, saveProfile } from "@/lib/profile";
 import { won } from "@/lib/format";
 
 const MAN = 10_000;
-const field = "w-full min-h-11 border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
+const field = "w-full min-h-11 rounded-md border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
 const label = "mb-1.5 block text-[13px] font-semibold text-gov-ink2";
 
 export default function FarmPage() {
@@ -112,7 +112,7 @@ export default function FarmPage() {
                    placeholder="예: 딸기 수경 1200평 하고 있고 생활비는 한 해 3천만원쯤 씁니다"
                    className={field} />
             <button type="button" onClick={() => void readSentence()} disabled={reading}
-                    className="shrink-0 border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 hover:border-gov-link hover:text-gov-head disabled:opacity-50">
+                    className="shrink-0 rounded-md rounded-lg border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 hover:border-gov-link hover:text-gov-head disabled:opacity-50">
               {reading ? "읽는 중" : "읽기"}
             </button>
           </div>

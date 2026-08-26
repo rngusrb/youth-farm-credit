@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { BANK, FARMER } from "@/lib/nav";
-import { currentSession, switchRole, type Session } from "@/lib/auth";
+import { ROLE_LABEL } from "@/lib/auth";
+import { useSession } from "@/lib/useSession";
 
 /** 업무 영역 크롬 — 역할 전환 탭 + 좌측 메뉴.
  *
@@ -14,15 +15,21 @@ import { currentSession, switchRole, type Session } from "@/lib/auth";
 export default function WorkChrome({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
-  const [ready, setReady] = useState(false);
+  const { session, ready } = useSession();
+
+  const isBank = path.startsWith("/bank");
 
   useEffect(() => {
-    const s = currentSession();
-    setSession(s);
-    setReady(true);
-    if (!s) router.replace(`/login?next=${encodeURIComponent(path)}`);
-  }, [path, router]);
+    // 하이드레이션 전에는 세션이 null 로 보인다 — 그때 판단하면 로그인해도 튕긴다.
+    if (!ready) return;
+    if (!session) {
+      router.replace(`/login?next=${encodeURIComponent(path)}`);
+      return;
+    }
+    // 계정이 역할을 정한다. 농가 계정으로 심사 화면에 들어갈 수 없다.
+    if (isBank && session.role !== "bank") router.replace("/app");
+    if (!isBank && session.role !== "farmer") router.replace("/bank");
+  }, [path, router, session, isBank, ready]);
 
   if (!ready) return null;
   if (!session) {
@@ -33,43 +40,25 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
     );
   }
 
-  const isBank = path.startsWith("/bank");
   const menu = isBank ? BANK : FARMER;
-
-  function go(role: "farmer" | "bank") {
-    switchRole(role);
-    setSession(currentSession());
-    router.push(role === "bank" ? "/bank" : "/app");
-  }
 
   return (
     <div className="border-b border-gov-line bg-white">
       {/* 역할 전환 */}
       <div className="border-b border-gov-line bg-gov-sunk">
         <div className="mx-auto flex max-w-6xl items-stretch px-4">
-          {([
-            ["farmer", "농가용", "내 경영 상태와 감당 가능한 차입"],
-            ["bank", "금융기관용", "상환능력 분석과 여신 설계"],
-          ] as const).map(([role, label, desc]) => {
-            const on = isBank ? role === "bank" : role === "farmer";
-            return (
-              <button
-                key={role}
-                onClick={() => go(role)}
-                aria-current={on ? "true" : undefined}
-                className={`-mb-px border-b-2 px-5 py-3 text-left ${
-                  on
-                    ? "border-gov-head bg-white text-gov-head"
-                    : "border-transparent text-gov-ink3 hover:text-gov-ink2"
-                }`}
-              >
-                <span className="block text-[14px] font-bold">{label}</span>
-                <span className="hidden text-[12px] sm:block">{desc}</span>
-              </button>
-            );
-          })}
+          <div className="-mb-px border-b-2 border-gov-head bg-white px-5 py-3">
+            <span className="block text-[14px] font-bold text-gov-head">
+              {session.role === "bank" ? "금융기관용" : "농가용"}
+            </span>
+            <span className="hidden text-[12px] text-gov-ink3 sm:block">
+              {session.role === "bank"
+                ? "상환능력 분석과 여신 설계"
+                : "내 경영 상태와 감당 가능한 차입"}
+            </span>
+          </div>
           <div className="ml-auto flex items-center text-[12px] text-gov-ink3">
-            {session.org} · {session.name}
+            {ROLE_LABEL[session.role]} · {session.org} · {session.name}
           </div>
         </div>
       </div>

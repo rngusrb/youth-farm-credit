@@ -35,7 +35,20 @@ const config: Config = {
           danger:"#a8442b", dangerbg:"#f7e6e1", ok:"#29685a", okbg:"#e2ece8",
         },
       },
-      borderRadius: { DEFAULT: "2px", md: "3px", lg: "4px", xl: "6px" },
+      // 정부 포털의 신뢰감은 색계와 정보 구조가 만든다. 각진 모서리가 만드는 게 아니다.
+      // 2px 은 지나치게 경직돼서 8px 대로 올렸다 — 완전히 둥글게 가지는 않는다.
+      borderRadius: { DEFAULT: "6px", sm: "4px", md: "8px", lg: "10px", xl: "14px" },
+      transitionTimingFunction: {
+        // 감속 곡선. 눌렀을 때 '따라붙는' 느낌을 만든다.
+        out: "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      keyframes: {
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(6px)" },
+          to: { opacity: "1", transform: "none" },
+        },
+      },
+      animation: { "fade-up": "fade-up 260ms cubic-bezier(0.16,1,0.3,1) both" },
       fontFamily: {
         sans: ["Pretendard", "-apple-system", "BlinkMacSystemFont",
                "Apple SD Gothic Neo", "Malgun Gothic", "sans-serif"],

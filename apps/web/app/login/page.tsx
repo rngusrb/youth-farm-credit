@@ -3,27 +3,34 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Btn, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
-import { DEMO_HINT, ROLE_LABEL, signIn, type Role } from "@/lib/auth";
+import { DEMO_ACCOUNTS, signIn } from "@/lib/auth";
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
-  const [role, setRole] = useState<Role>("farmer");
   const [error, setError] = useState<string | null>(null);
 
   const field =
-    "w-full min-h-11 border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
+    "w-full min-h-11 rounded-md border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!signIn(id, pw, role)) {
+    const s = signIn(id, pw);
+    if (!s) {
       setError("아이디 또는 비밀번호가 맞지 않습니다.");
       return;
     }
+    // 갈 곳은 **계정의 역할**이 정한다. 화면에서 고르게 두면 농가 계정으로도
+    // 심사 화면에 들어갈 수 있어 역할 분리가 의미를 잃는다.
+    const home = s.role === "bank" ? "/bank" : "/app";
     const next = params.get("next");
-    router.push(next && next.startsWith("/") ? next : role === "bank" ? "/bank" : "/app");
+    const allowed =
+      next &&
+      next.startsWith("/") &&
+      (s.role === "bank" ? next.startsWith("/bank") : next.startsWith("/app"));
+    router.push(allowed ? next : home);
   }
 
   return (
@@ -31,31 +38,25 @@ function LoginForm() {
       <Panel>
         <h2 className="sec-title mb-4">로그인</h2>
         <form onSubmit={submit} className="space-y-4">
-          <fieldset>
-            <legend className="mb-2 text-[13px] font-semibold text-gov-ink2">이용 구분</legend>
-            <div className="grid grid-cols-2 gap-2">
-              {(["farmer", "bank"] as Role[]).map((r) => (
-                <label
-                  key={r}
-                  className={`cursor-pointer border px-3 py-2.5 text-center text-[13px] font-semibold ${
-                    role === r
-                      ? "border-gov-head bg-gov-soft text-gov-head"
-                      : "border-gov-line text-gov-ink2 hover:border-gov-link"
-                  }`}
+          <div>
+            <p className="mb-2 text-[13px] font-semibold text-gov-ink2">데모 계정</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {DEMO_ACCOUNTS.map((a) => (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => { setId(a.id); setPw(a.pw); setError(null); }}
+                  className="flex min-h-11 flex-col justify-center rounded-md border border-gov-line px-3 py-2 text-left transition hover:border-gov-link hover:bg-gov-soft"
                 >
-                  <input
-                    type="radio"
-                    name="role"
-                    value={r}
-                    checked={role === r}
-                    onChange={() => setRole(r)}
-                    className="sr-only"
-                  />
-                  {ROLE_LABEL[r]}
-                </label>
+                  <span className="text-[13px] font-bold text-gov-ink">{a.label}</span>
+                  <span className="tabular text-[12px] text-gov-ink3">{a.id} / {a.pw}</span>
+                </button>
               ))}
             </div>
-          </fieldset>
+            <p className="mt-2 text-[12px] text-gov-ink3">
+              눌러서 채운 뒤 로그인하세요. <b>계정이 역할을 정합니다</b> — 화면에서 고를 수 없습니다.
+            </p>
+          </div>
 
           <div>
             <label htmlFor="uid" className="mb-1.5 block text-[13px] font-semibold text-gov-ink2">
@@ -73,22 +74,20 @@ function LoginForm() {
           </div>
 
           {error && (
-            <p role="alert" className="border-l-4 border-gov-point bg-gov-point/5 px-3 py-2 text-[12px] text-gov-point">
+            <p role="alert" className="rounded-r-md border-l-4 border-gov-point bg-gov-point/5 px-3 py-2 text-[12px] text-gov-point">
               {error}
             </p>
           )}
 
-          <button type="submit" className="w-full bg-gov-head py-3 text-[14px] font-bold text-white hover:bg-gov-navy">
+          <button type="submit" className="w-full rounded-md bg-gov-head py-3 text-[14px] font-bold text-white shadow-sm hover:bg-gov-navy">
             로그인
           </button>
         </form>
 
         <div className="mt-5 border-t border-gov-line2 pt-4">
-          <Notice tone="info" title="데모 계정">
-            {DEMO_HINT}
-            <br />
-            같은 계정으로 농가용·금융기관용 두 화면을 모두 볼 수 있습니다. 로그인 후에도
-            상단 탭으로 전환됩니다.
+          <Notice tone="warn" title="실제 인증이 아닙니다">
+            아이디·비밀번호가 코드에 그대로 있고 검증도 브라우저에서 합니다. 화면 흐름을
+            보여주기 위한 데모 장치이며 이 상태로 운영에 쓸 수 없습니다.
           </Notice>
         </div>
       </Panel>

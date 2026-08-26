@@ -115,7 +115,7 @@ export default function PortalHome() {
                   ["금융 안전진단", "/app/safety", "가격↓·생산량↓·금리↑·재해 시나리오"],
                   ["맞춤 금융지원", "/app/finance", "감당 가능한 차입 규모 역산"],
                 ].map(([t, href, d]) => (
-                  <Link key={href} href={href} className="group bg-white p-5 hover:bg-gov-sunk">
+                  <Link key={href} href={href} className="group bg-white p-5 transition-colors hover:bg-gov-sunk">
                     <h3 className="text-[15px] font-bold text-gov-ink group-hover:text-gov-head">
                       {t} →
                     </h3>

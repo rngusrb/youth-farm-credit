@@ -27,6 +27,35 @@ body {
   @apply absolute left-0 top-[0.15em] h-[1.1em] w-[3px] bg-gov-head;
 }
 
+/* 상호작용에는 전이를 준다 — 상태가 바뀐 것을 눈이 따라가게. 장식용은 넣지 않는다. */
+:where(a, button, input, select, textarea, summary) {
+  transition:
+    background-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 누르면 살짝 들어간다. 토스 계열 앱의 촉감. */
+:where(button, a[class*="bg-gov-head"], a[class*="border-gov-line"]):active {
+  transform: scale(0.985);
+}
+
+/* 값이 바뀌어 새로 그려지는 카드에만. 스크롤 연동 애니메이션은 쓰지 않는다. */
+.enter { animation: theme("animation.fade-up"); }
+
+/* 움직임을 원치 않는 사용자에게는 전부 끈다 (필수). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  :where(button, a):active { transform: none; }
+}
+
 /* 키보드 포커스는 반드시 보이게 */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   @apply outline outline-2 outline-offset-1 outline-gov-link;
@@ -37,6 +66,8 @@ body {
 
 /* ── 리포트 시트 ─────────────────────────────────────────────
    결과 화면은 앱 화면이 아니라 받아 가는 문서다. */
+/* 리포트는 인쇄물이다 — 반경도 전이도 넣지 않는다. */
+.sheet, .sheet * { transition: none; }
 .sheet {
   background: theme("colors.paper.bg");
   color: theme("colors.paper.ink");

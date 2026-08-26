@@ -170,7 +170,7 @@ export default function FarmerHome() {
                 ["안전진단 받기", "/app/safety", "가격이 떨어져도 버티는지 시나리오별로 확인"],
                 ["구제제도 확인", "/app/relief", "위기 전에 쓸 수 있는 제도 미리 파악"],
               ].map(([t, href, d]) => (
-                <Link key={href} href={href} className="group bg-white p-5 hover:bg-gov-sunk">
+                <Link key={href} href={href} className="group bg-white p-5 transition-colors hover:bg-gov-sunk">
                   <h3 className="text-[14px] font-bold text-gov-ink group-hover:text-gov-head">{t} →</h3>
                   <p className="mt-1.5 text-[12px] leading-relaxed text-gov-ink2">{d}</p>
                 </Link>

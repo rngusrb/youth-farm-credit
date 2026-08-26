@@ -88,7 +88,7 @@ export default function RevenuePage() {
                   <span className="text-[13px] font-semibold text-gov-ink2">연차</span>
                   {years.map((y) => (
                     <button key={y} onClick={() => setYear(y)} aria-pressed={year === y}
-                            className={`inline-flex min-h-11 items-center border px-3 text-[12px] ${
+                            className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
                               year === y ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                          : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
                       {y}년차{y === grace + 1 ? " (절벽)" : y <= grace ? " (거치)" : ""}
@@ -100,7 +100,7 @@ export default function RevenuePage() {
                   <input id="principal" inputMode="numeric"
                          value={principal != null ? Math.round(principal / 10_000) : ""}
                          onChange={(e) => setPrincipal(Number(e.target.value.replace(/[^\d]/g, "")) * 10_000)}
-                         className="w-28 min-h-11 border border-gov-line px-2.5 text-right text-[13px] tabular outline-none focus:border-gov-link" />
+                         className="w-28 min-h-11 rounded-md border border-gov-line px-2.5 text-right text-[13px] tabular outline-none focus:border-gov-link" />
                   <span className="text-[12px] text-gov-ink3">만원</span>
                 </div>
               </div>

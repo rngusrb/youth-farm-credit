@@ -57,14 +57,14 @@ export default function CropsPage() {
               <label htmlFor="search" className="text-[13px] font-semibold text-gov-ink2">작목명</label>
               <input id="search" value={query} onChange={(e) => setQuery(e.target.value)}
                      placeholder="예: 딸기"
-                     className="w-40 min-h-11 border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link" />
+                     className="w-40 min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link" />
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-[13px] font-semibold text-gov-ink2">정렬</span>
               {SORTS.map(([k, l]) => (
                 <button key={k} onClick={() => setSort(k)}
                         aria-pressed={sort === k}
-                        className={`inline-flex min-h-11 items-center border px-3 text-[12px] ${
+                        className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
                           sort === k ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                      : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
                   {l}
@@ -77,7 +77,7 @@ export default function CropsPage() {
             {groups.map((g) => (
               <button key={g} onClick={() => setGroup(g)}
                       aria-pressed={group === g}
-                      className={`inline-flex min-h-11 items-center border px-3 text-[12px] ${
+                      className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
                         group === g ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                     : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
                 {g}

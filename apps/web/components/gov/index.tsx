@@ -48,7 +48,7 @@ export function Section({ title, action, children }: {
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`border border-gov-line bg-white p-5 ${className}`}>{children}</div>;
+  return <div className={`rounded-lg border border-gov-line bg-white p-5 ${className}`}>{children}</div>;
 }
 
 /** 정의형 표 — 정부 사이트의 기본 정보 표시 단위 */
@@ -80,7 +80,7 @@ export function Badge({ tone = "plain", children }: {
     info: "border-gov-link/30 bg-gov-soft text-gov-head",
   }[tone];
   return (
-    <span className={`inline-flex items-center border px-2 py-0.5 text-[12px] font-semibold ${cls}`}>
+    <span className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-[12px] font-semibold ${cls}`}>
       {children}
     </span>
   );
@@ -114,7 +114,7 @@ export function Notice({ tone = "info", title, children }: {
     danger: "border-gov-point/40 bg-gov-point/5",
   }[tone];
   return (
-    <div className={`border-l-4 ${cls} px-4 py-3`}>
+    <div className={`rounded-r-lg border-l-4 ${cls} px-4 py-3`}>
       {title && <p className="mb-1 text-[13px] font-bold text-gov-ink">{title}</p>}
       <div className="text-[12px] leading-relaxed text-gov-ink2">{children}</div>
     </div>
@@ -125,11 +125,11 @@ export function Empty({ title, body, cta }: {
   title: string; body: string; cta?: { href: string; label: string };
 }) {
   return (
-    <div className="border border-dashed border-gov-line bg-white px-5 py-10 text-center">
+    <div className="rounded-lg border border-dashed border-gov-line bg-white px-5 py-10 text-center">
       <p className="text-[15px] font-semibold text-gov-ink">{title}</p>
       <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-gov-ink2">{body}</p>
       {cta && (
-        <Link href={cta.href} className="mt-4 inline-flex min-h-11 items-center bg-gov-head px-5 text-[13px] font-semibold text-white hover:bg-gov-navy">
+        <Link href={cta.href} className="mt-4 inline-flex min-h-11 items-center rounded-md bg-gov-head px-5 text-[13px] font-semibold text-white hover:bg-gov-navy">
           {cta.label}
         </Link>
       )}
@@ -142,9 +142,9 @@ export function Btn({ href, onClick, variant = "primary", type = "button", disab
   type?: "button" | "submit"; disabled?: boolean; children: React.ReactNode;
 }) {
   const cls = variant === "primary"
-    ? "bg-gov-head text-white hover:bg-gov-navy disabled:opacity-50"
-    : "border border-gov-line bg-white text-gov-ink2 hover:border-gov-link hover:text-gov-head";
-  const base = `inline-flex min-h-11 items-center justify-center px-4 text-[13px] font-semibold ${cls}`;
+    ? "bg-gov-head text-white shadow-sm hover:bg-gov-navy disabled:opacity-50"
+    : "rounded-lg border border-gov-line bg-white text-gov-ink2 hover:border-gov-link hover:text-gov-head";
+  const base = `inline-flex min-h-11 items-center justify-center rounded-md px-4 text-[13px] font-semibold ${cls}`;
   return href
     ? <Link href={href} className={base}>{children}</Link>
     : <button type={type} onClick={onClick} disabled={disabled} className={base}>{children}</button>;

@@ -99,7 +99,7 @@ export default function StatsPage() {
                       <span className="text-[14px] font-bold text-gov-ink">{c.item}</span>
                       <span className="text-[12px] text-gov-ink3">p.{c.page}</span>
                     </div>
-                    <blockquote className="border-l-4 border-gov-line bg-gov-sunk px-3 py-2 text-[12px] leading-relaxed text-gov-ink2">
+                    <blockquote className="rounded-r-md border-l-4 border-gov-line bg-gov-sunk px-3 py-2 text-[12px] leading-relaxed text-gov-ink2">
                       {c.quote}
                     </blockquote>
                     <p className="mt-2 text-[13px] text-gov-ink2">{c.model}</p>
@@ -112,7 +112,7 @@ export default function StatsPage() {
                       <span className="text-[14px] font-bold text-gov-ink">{c.item}</span>
                       <span className="text-[12px] text-gov-ink3">p.{c.page}</span>
                     </div>
-                    <blockquote className="border-l-4 border-gov-line bg-gov-sunk px-3 py-2 text-[12px] leading-relaxed text-gov-ink2">
+                    <blockquote className="rounded-r-md border-l-4 border-gov-line bg-gov-sunk px-3 py-2 text-[12px] leading-relaxed text-gov-ink2">
                       {c.quote}
                     </blockquote>
                     <p className="mt-2 text-[13px] text-gov-ink2">{c.why}</p>

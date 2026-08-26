@@ -106,7 +106,7 @@ export default function AboutPage() {
                   <h3 className="text-[16px] font-bold text-gov-ink">{f.t}</h3>
                   <p className="mt-1.5 max-w-3xl text-[13px] leading-relaxed text-gov-ink2">{f.b}</p>
                 </div>
-                <Link href={f.href} className="shrink-0 self-start inline-flex min-h-11 items-center border border-gov-line px-3 text-[12px] font-semibold text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+                <Link href={f.href} className="shrink-0 self-start inline-flex min-h-11 items-center rounded-md border border-gov-line px-3 text-[12px] font-semibold text-gov-ink2 hover:border-gov-link hover:text-gov-head">
                   바로가기 →
                 </Link>
               </div>
