@@ -57,6 +57,10 @@ class Crop:
     factors: dict | None = None
     # KAMIS 도매가 기반 시장 국면. 안내용이며 한도 계산에는 쓰지 않는다.
     market: dict | None = None
+    # 월별 현금흐름·스트레스 테스트용. 소득만으로는 레버리지를 계산할 수 없다.
+    gross_per_10a: float | None = None
+    cost_per_10a: float | None = None
+    cashflow_year: int | None = None
 
 
 @dataclass(frozen=True)
@@ -94,6 +98,9 @@ def crops() -> dict[str, Crop]:
             sigma_common=c.get("sigma_common"),
             factors=c.get("factors"),
             market=c.get("market"),
+            gross_per_10a=c.get("gross_per_10a"),
+            cost_per_10a=c.get("cost_per_10a"),
+            cashflow_year=c.get("cashflow_year"),
         )
     return out
 

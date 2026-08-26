@@ -2,270 +2,167 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import PageHeader from "@/components/shell/PageHeader";
-import Disclaimer from "@/components/shell/Disclaimer";
-import RiskTriad from "@/components/dashboard/RiskTriad";
-import { Card, CardTitle, Empty, Page, Pill, Stat } from "@/components/ui";
-import { fetchCrop, fetchCrops, runDiagnose, type CropDetail, type Diagnosis } from "@/lib/api";
-import { headlineLimit, unsafeGap } from "@/lib/diagnosis";
-import { loadProfile, loadReports, type FarmProfile, type SavedReport } from "@/lib/profile";
-import { pyeong as fmtPyeong, won } from "@/lib/format";
+import { Badge, Btn, Panel, Section, Stat } from "@/components/gov";
+import { NOTICES } from "@/lib/content";
+import { fetchCrops } from "@/lib/api";
+import { DEMO_HINT } from "@/lib/auth";
 
-const REGIME_LABEL: Record<string, string> = {
-  calm: "평소보다 조용함",
-  normal: "평상 수준",
-  turbulent: "평소보다 요동침",
-};
+const STEPS = [
+  ["01", "농가 정보 입력", "작목·면적·생활비 세 가지면 시작합니다. 말로 적어도 알아듣습니다."],
+  ["02", "현금흐름 계산", "예상 매출·경영비를 월 단위로 펼쳐 현금이 마르는 달을 찾습니다."],
+  ["03", "적정 차입 산출", "가격 하락·재해까지 넣고 25년을 3만 번 돌려 감당 가능한 금액을 역산합니다."],
+];
 
-export default function DashboardPage() {
-  const [profile, setProfile] = useState<FarmProfile | null>(null);
-  const [reports, setReports] = useState<SavedReport[]>([]);
-  const [diag, setDiag] = useState<Diagnosis | null>(null);
-  const [crop, setCrop] = useState<CropDetail | null>(null);
+export default function PortalHome() {
   const [cropCount, setCropCount] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    setProfile(loadProfile());
-    setReports(loadReports());
-    fetchCrops()
-      .then((d) => setCropCount(d.crops.length))
-      .catch(() => setError("백엔드에 연결하지 못했습니다. apps/api 가 실행 중인지 확인해 주세요."));
+    fetchCrops().then((d) => setCropCount(d.crops.length)).catch(() => setCropCount(null));
   }, []);
 
-  // 농가 정보가 있으면 대시보드를 열 때마다 최신 기준으로 다시 계산한다.
-  // 서버에 저장된 결과를 읽는 게 아니라 매번 엔진을 돌리므로 데이터가 바뀌면 바로 반영된다.
-  useEffect(() => {
-    if (!profile) {
-      setLoading(false);
-      return;
-    }
-    let alive = true;
-    Promise.all([
-      runDiagnose({
-        crop_id: profile.cropId,
-        pyeong: profile.pyeong,
-        living_cost: profile.livingCost,
-        other_debt_service: profile.otherDebtService,
-        product_id: profile.productId,
-        income_history: profile.incomeHistory,
-      }),
-      fetchCrop(profile.cropId),
-    ])
-      .then(([d, c]) => {
-        if (!alive) return;
-        setDiag(d);
-        setCrop(c);
-      })
-      .catch((e) => alive && setError(e instanceof Error ? e.message : "계산에 실패했습니다."))
-      .finally(() => alive && setLoading(false));
-    return () => {
-      alive = false;
-    };
-  }, [profile]);
-
   return (
-    <Page>
-      <PageHeader
-        title="대시보드"
-        lead="농가 정보를 한 번 넣어 두면 여기서 상환 위험·시장 국면·제도 요건을 함께 봅니다."
-        aside={
-          <Link
-            href="/diagnose"
-            className="rounded-lg bg-signal-warn px-4 py-2 text-sm font-semibold text-ink-950 transition hover:brightness-110"
-          >
-            새 진단
-          </Link>
-        }
-      />
+    <main id="main">
+      {/* ── 히어로 ─────────────────────────────────────── */}
+      <div className="border-b border-gov-line bg-gradient-to-b from-gov-soft to-white">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 lg:grid-cols-[1fr_360px]">
+          <div>
+            <Badge tone="info">2026 금융 AI 챌린지 출품작</Badge>
+            <h1 className="mt-4 text-[34px] font-extrabold leading-[1.25] tracking-tight text-gov-ink">
+              얼마까지 받을 수 있는가가 아니라,
+              <br />
+              <span className="text-gov-head">얼마까지 받아야 안전한가.</span>
+            </h1>
+            <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-gov-ink2">
+              정책자금은 5년 거치 뒤 6년차에 원금 상환이 한 번에 시작됩니다. 농업 소득은
+              수확기에 몰려 들어오는데 상환은 그 사정을 봐주지 않습니다. 이 서비스는 농가의
+              경영 데이터로 미래 현금흐름을 계산해, <b className="text-gov-ink">감당할 수 있는
+              차입 규모</b>를 미리 알려 줍니다.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Btn href="/app">진단 시작하기</Btn>
+              <Btn href="/about" variant="ghost">서비스 소개</Btn>
+              <Btn href="/policy" variant="ghost">제도 근거 검색</Btn>
+            </div>
+          </div>
 
-      {error && (
-        <div className="mb-6 rounded-lg border border-signal-danger/40 bg-signal-danger/10 px-4 py-3 text-sm text-signal-danger">
-          {error}
+          <Panel className="self-start">
+            <h2 className="sec-title mb-3">이용 안내</h2>
+            <p className="text-[13px] leading-relaxed text-gov-ink2">
+              농가용과 금융기관용 화면이 따로 있습니다. 같은 분석을 각자에게 필요한 형태로
+              보여 줍니다.
+            </p>
+            <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
+              <div className="flex gap-3">
+                <dt className="w-20 shrink-0 font-semibold text-gov-ink2">농가</dt>
+                <dd className="text-gov-ink2">“2.3억원 이하 차입을 권장합니다”</dd>
+              </div>
+              <div className="flex gap-3">
+                <dt className="w-20 shrink-0 font-semibold text-gov-ink2">금융기관</dt>
+                <dd className="text-gov-ink2">
+                  “3억원 대출 시 가격 하락 시나리오에서 상환여력 부족”
+                </dd>
+              </div>
+            </dl>
+            <Link href="/login" className="mt-4 block bg-gov-head py-2.5 text-center text-[13px] font-bold text-white hover:bg-gov-navy">
+              로그인
+            </Link>
+            <p className="mt-2 text-[11px] text-gov-ink3">{DEMO_HINT}</p>
+          </Panel>
         </div>
-      )}
+      </div>
 
-      {!profile && !loading && (
-        <Empty
-          title="아직 농가 정보가 없습니다"
-          body="작목과 면적, 생활비만 넣으면 감당할 수 있는 차입 규모와 몇 년차에 무리가 오는지를 계산합니다. 로그인은 없고 이 브라우저에만 저장됩니다."
-          cta={{ href: "/farm", label: "내 농가 설정하기" }}
-        />
-      )}
+      <div className="mx-auto max-w-6xl px-4 py-9">
+        {/* ── 이용 절차 ────────────────────────────────── */}
+        <Section title="세 단계로 끝납니다">
+          <ol className="grid gap-px bg-gov-line sm:grid-cols-3">
+            {STEPS.map(([n, t, d]) => (
+              <li key={n} className="bg-white p-5">
+                <span className="tabular text-[13px] font-extrabold text-gov-link">{n}</span>
+                <h3 className="mt-1.5 text-[15px] font-bold text-gov-ink">{t}</h3>
+                <p className="mt-1.5 text-[13px] leading-relaxed text-gov-ink2">{d}</p>
+              </li>
+            ))}
+          </ol>
+        </Section>
 
-      {profile && (
-        <div className="grid gap-5 lg:grid-cols-3">
-          {/* ── 주 기능: 상환 위험 ─────────────────────────── */}
-          <Card className="lg:col-span-2">
-            <CardTitle href={diag ? `/result/${diag.diagnosis_id}` : undefined} action="리포트 보기">
-              상환 위험
-            </CardTitle>
-            {loading && <p className="text-sm text-slate-500">계산 중…</p>}
-            {diag && (
-              <>
-                <div className="mb-4 flex flex-wrap items-end gap-x-6 gap-y-3">
-                  <Stat
-                    label="감당 가능한 차입"
-                    value={won(headlineLimit(diag))}
-                    tone={unsafeGap(diag) > 0 ? "warn" : "ok"}
-                    note={
-                      unsafeGap(diag) > 0
-                        ? `제도상 ${won(diag.limits.available)} 까지 신청 가능하지만 ${won(unsafeGap(diag))} 는 갚기 어려운 구간입니다`
-                        : "제도 한도까지 감당 가능합니다"
-                    }
-                  />
-                  <div className="ml-auto text-right">
-                    <div className="text-[11px] text-slate-500">
-                      {diag.input.crop_name} · {fmtPyeong(diag.input.pyeong)}
-                    </div>
-                    <div className="mt-1 text-[11px] text-slate-500">{diag.product.name}</div>
-                  </div>
-                </div>
-                <RiskTriad d={diag} />
-                {diag.limits.binding_constraint === "livelihood" && (
-                  <p className="mt-3 rounded-lg border border-signal-danger/30 bg-signal-danger/5 px-3 py-2 text-xs leading-relaxed text-signal-danger">
-                    빌리는 금액이 문제가 아니라 <b>경영 규모가 작습니다</b>. 대출을 0으로 해도
-                    생활비를 감당하기 어려운 상태라, 한도를 낮추는 것으로는 풀리지 않습니다.
-                  </p>
-                )}
-              </>
-            )}
-          </Card>
-
-          {/* ── 내 농가 ────────────────────────────────── */}
-          <Card>
-            <CardTitle href="/farm" action="수정">
-              내 농가
-            </CardTitle>
-            {diag && (
-              <dl className="space-y-2.5 text-sm">
-                {[
-                  ["작목", diag.input.crop_name],
-                  ["재배 면적", fmtPyeong(diag.input.pyeong)],
-                  ["연 농업소득", won(diag.income.annual)],
-                  ["생활비", won(diag.input.living_cost)],
-                  ["상환 가용액", won(diag.income.capacity)],
-                ].map(([k, v]) => (
-                  <div key={k} className="flex items-baseline justify-between gap-3">
-                    <dt className="text-slate-500">{k}</dt>
-                    <dd className="tabular font-medium">{v}</dd>
-                  </div>
-                ))}
-                <div className="flex items-baseline justify-between gap-3 border-t border-ink-800 pt-2.5">
-                  <dt className="text-slate-500">소득 변동성 σ</dt>
-                  <dd className="flex items-center gap-2">
-                    <span className="tabular font-medium">{diag.sigma.toFixed(3)}</span>
-                    <Pill tone={diag.sigma_personalized ? "info" : "plain"}>
-                      {diag.sigma_personalized ? "내 이력 반영" : "작목 평균"}
-                    </Pill>
-                  </dd>
-                </div>
-              </dl>
-            )}
-          </Card>
-
-          {/* ── 시장 국면 ──────────────────────────────── */}
-          <Card>
-            <CardTitle href="/market" action="자세히">
-              시장 국면
-            </CardTitle>
-            {crop?.market?.garch ? (
-              <>
-                <Stat
-                  label={crop.name}
-                  value={REGIME_LABEL[crop.market.garch.regime] ?? crop.market.garch.regime}
-                  tone={
-                    crop.market.garch.regime === "turbulent"
-                      ? "warn"
-                      : crop.market.garch.regime === "calm"
-                        ? "ok"
-                        : "plain"
-                  }
-                  note={`현재 변동성이 장기 평균의 ${crop.market.garch.current_over_longrun.toFixed(2)}배 · KAMIS 도매가 ${crop.market.trading_days.toLocaleString("ko-KR")}거래일`}
-                />
-                <p className="mt-3 text-[11px] leading-relaxed text-slate-600">
-                  시장 국면은 한도 계산에 반영하지 않습니다. 25년 상환에 본질적인 것은 장기
-                  평균이고, 조용한 시기라고 더 빌려도 된다는 뜻은 아니기 때문입니다.
-                </p>
-              </>
-            ) : (
-              <p className="text-xs leading-relaxed text-slate-500">
-                {crop?.name ?? "이 작목"}은 KAMIS 도매가 시계열을 아직 수집하지 않았습니다.
-                σ 는 KOSIS 소득조사 실측값을 씁니다.
-              </p>
-            )}
-          </Card>
-
-          {/* ── 제도 근거 ──────────────────────────────── */}
-          <Card>
-            <CardTitle href="/policy" action="검색">
-              제도 근거
-            </CardTitle>
-            <p className="mb-3 text-xs leading-relaxed text-slate-500">
-              2026년 시행지침 3종 원문에서 근거 조항을 찾습니다. 조항을 못 찾으면 답을
-              만들어내지 않습니다.
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {["거치기간", "재해 상환연기", "연령 요건", "융자 한도"].map((q) => (
-                <Link
-                  key={q}
-                  href={`/policy?q=${encodeURIComponent(q)}`}
-                  className="rounded-full border border-ink-700 px-2.5 py-1 text-[11px] text-slate-400 transition hover:border-ink-600 hover:text-slate-200"
-                >
-                  {q}
-                </Link>
-              ))}
-            </div>
-          </Card>
-
-          {/* ── 데이터 현황 ────────────────────────────── */}
-          <Card>
-            <CardTitle href="/crops" action="전체">
-              데이터 현황
-            </CardTitle>
-            <div className="grid grid-cols-2 gap-4">
-              <Stat label="작목" value={cropCount?.toString() ?? "—"} unit="종" />
-              <Stat label="지침 원문" value="3" unit="종" />
-            </div>
-            <p className="mt-3 text-[11px] leading-relaxed text-slate-600">
-              소득 변동성은 KOSIS 농산물소득조사에서 작목별로 실측합니다. 농가 고유 변동만
-              가정값이며, 소득 이력을 넣으면 그것도 실측으로 바뀝니다.
-            </p>
-          </Card>
-
-          {/* ── 최근 리포트 ────────────────────────────── */}
-          <Card className="lg:col-span-3">
-            <CardTitle href="/reports" action="전체">
-              최근 리포트
-            </CardTitle>
-            {reports.length === 0 ? (
-              <p className="text-xs text-slate-500">
-                아직 저장된 리포트가 없습니다. 진단을 실행하면 이 브라우저에 남습니다.
-              </p>
-            ) : (
-              <ul className="divide-y divide-ink-800">
-                {reports.slice(0, 4).map((r) => (
-                  <li key={r.id}>
-                    <Link
-                      href={`/result/${r.id}`}
-                      className="flex items-center justify-between gap-4 py-2.5 text-sm transition hover:text-slate-100"
-                    >
-                      <span className="min-w-0 truncate">
-                        {r.cropName} · {fmtPyeong(r.pyeong)}
-                        <span className="ml-2 text-xs text-slate-500">{r.productName}</span>
-                      </span>
-                      <span className="tabular shrink-0 text-slate-400">{won(r.riskLimit)}</span>
+        <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
+          <div>
+            {/* ── 공지사항 ───────────────────────────── */}
+            <Section
+              title="공지사항"
+              action={<Link href="/notice" className="text-[12px] text-gov-ink3 hover:text-gov-link">더보기 +</Link>}
+            >
+              <ul className="border-t border-gov-ink/70">
+                {NOTICES.slice(0, 4).map((n) => (
+                  <li key={n.id} className="border-b border-gov-line2">
+                    <Link href={`/notice#${n.id}`} className="flex items-baseline gap-3 px-1 py-3 hover:bg-gov-sunk">
+                      <Badge tone={n.category === "제도반영" ? "info" : "plain"}>{n.category}</Badge>
+                      <span className="min-w-0 flex-1 truncate text-[14px] text-gov-ink">{n.title}</span>
+                      <span className="tabular shrink-0 text-[12px] text-gov-ink3">{n.date}</span>
                     </Link>
                   </li>
                 ))}
               </ul>
-            )}
-          </Card>
-        </div>
-      )}
+              <p className="mt-2.5 text-[11px] text-gov-ink3">
+                이 목록은 서비스의 실제 변경 이력입니다. 정부 발표나 보도자료를 옮겨 싣지 않습니다.
+              </p>
+            </Section>
 
-      <Disclaimer />
-    </Page>
+            {/* ── 핵심 기능 ───────────────────────────── */}
+            <Section title="주요 기능">
+              <div className="grid gap-px bg-gov-line sm:grid-cols-3">
+                {[
+                  ["수익 전망", "/app/revenue", "월별 현금흐름과 운전자금이 부족해지는 달"],
+                  ["금융 안전진단", "/app/safety", "가격↓·생산량↓·금리↑·재해 시나리오"],
+                  ["맞춤 금융지원", "/app/finance", "감당 가능한 차입 규모 역산"],
+                ].map(([t, href, d]) => (
+                  <Link key={href} href={href} className="group bg-white p-5 hover:bg-gov-sunk">
+                    <h3 className="text-[15px] font-bold text-gov-ink group-hover:text-gov-head">
+                      {t} →
+                    </h3>
+                    <p className="mt-1.5 text-[13px] leading-relaxed text-gov-ink2">{d}</p>
+                  </Link>
+                ))}
+              </div>
+            </Section>
+          </div>
+
+          <div className="space-y-8">
+            <Section title="데이터 현황" action={<Link href="/stats" className="text-[12px] text-gov-ink3 hover:text-gov-link">자세히 +</Link>}>
+              <Panel>
+                <div className="grid grid-cols-2 gap-5">
+                  <Stat label="작목" value={cropCount?.toString() ?? "—"} unit="종" />
+                  <Stat label="지침 조항" value="709" unit="개" />
+                  <Stat label="시행지침" value="3" unit="종" />
+                  <Stat label="시뮬레이션" value="3만" unit="회" />
+                </div>
+                <p className="mt-4 border-t border-gov-line2 pt-3 text-[11px] leading-relaxed text-gov-ink3">
+                  소득·경영비는 농촌진흥청 농산물소득조사, 도매가격은 KAMIS,
+                  제도는 농림축산식품부 2026년 시행지침을 씁니다.
+                </p>
+              </Panel>
+            </Section>
+
+            <Section title="바로가기">
+              <ul className="border-t border-gov-ink/70">
+                {[
+                  ["자료실 — 시행지침 원문", "/library"],
+                  ["자주 묻는 질문", "/faq"],
+                  ["용어사전", "/glossary"],
+                  ["작목 데이터", "/crops"],
+                  ["시세 · 국면", "/market"],
+                ].map(([t, href]) => (
+                  <li key={href} className="border-b border-gov-line2">
+                    <Link href={href} className="flex items-center justify-between px-1 py-2.5 text-[13px] text-gov-ink2 hover:bg-gov-sunk hover:text-gov-head">
+                      {t}
+                      <span aria-hidden className="text-gov-ink3">›</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Section>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }

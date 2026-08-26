@@ -1,0 +1,151 @@
+import Link from "next/link";
+
+/** 정부 포털 공통 조각. 각진 모서리, 표 중심, 좌측 컬러바. */
+
+export function Page({ children }: { children: React.ReactNode }) {
+  return <main className="mx-auto max-w-6xl px-4 py-7">{children}</main>;
+}
+
+export function Crumb({ trail }: { trail: { label: string; href?: string }[] }) {
+  return (
+    <nav aria-label="현재 위치" className="no-print mb-4 flex flex-wrap items-center gap-1.5 text-[12px] text-gov-ink3">
+      <Link href="/" className="hover:text-gov-link">홈</Link>
+      {trail.map((t) => (
+        <span key={t.label} className="flex items-center gap-1.5">
+          <span aria-hidden>›</span>
+          {t.href ? <Link href={t.href} className="hover:text-gov-link">{t.label}</Link>
+                  : <span className="text-gov-ink2">{t.label}</span>}
+        </span>
+      ))}
+    </nav>
+  );
+}
+
+export function PageTitle({ title, lead, aside }: { title: string; lead?: string; aside?: React.ReactNode }) {
+  return (
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-gov-head pb-4">
+      <div className="min-w-0">
+        <h1 className="text-[26px] font-extrabold leading-tight tracking-tight text-gov-ink">{title}</h1>
+        {lead && <p className="mt-2 max-w-3xl text-[14px] leading-relaxed text-gov-ink2">{lead}</p>}
+      </div>
+      {aside}
+    </div>
+  );
+}
+
+export function Section({ title, action, children }: {
+  title: string; action?: React.ReactNode; children: React.ReactNode;
+}) {
+  return (
+    <section className="mb-8">
+      <div className="mb-3 flex items-baseline justify-between gap-3">
+        <h2 className="sec-title">{title}</h2>
+        {action}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`border border-gov-line bg-white p-5 ${className}`}>{children}</div>;
+}
+
+/** 정의형 표 — 정부 사이트의 기본 정보 표시 단위 */
+export function DefTable({ rows }: { rows: [string, React.ReactNode][] }) {
+  return (
+    <table className="w-full border-t border-gov-ink/70 text-[14px]">
+      <tbody>
+        {rows.map(([k, v]) => (
+          <tr key={k} className="border-b border-gov-line2">
+            <th scope="row" className="w-40 bg-gov-sunk px-4 py-2.5 text-left align-top font-semibold text-gov-ink2">
+              {k}
+            </th>
+            <td className="px-4 py-2.5 align-top">{v}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+export function Badge({ tone = "plain", children }: {
+  tone?: "plain" | "ok" | "warn" | "danger" | "info"; children: React.ReactNode;
+}) {
+  const cls = {
+    plain: "border-gov-line bg-gov-sunk text-gov-ink2",
+    ok: "border-gov-ok/30 bg-gov-ok/10 text-gov-ok",
+    warn: "border-gov-warn/30 bg-gov-warn/10 text-gov-warn",
+    danger: "border-gov-point/30 bg-gov-point/10 text-gov-point",
+    info: "border-gov-link/30 bg-gov-soft text-gov-head",
+  }[tone];
+  return (
+    <span className={`inline-flex items-center border px-2 py-0.5 text-[11px] font-semibold ${cls}`}>
+      {children}
+    </span>
+  );
+}
+
+export function Stat({ label, value, unit, tone = "plain", note }: {
+  label: string; value: string; unit?: string;
+  tone?: "plain" | "ok" | "warn" | "danger"; note?: string;
+}) {
+  const color = {
+    plain: "text-gov-ink", ok: "text-gov-ok",
+    warn: "text-gov-warn", danger: "text-gov-point",
+  }[tone];
+  return (
+    <div>
+      <div className="text-[12px] font-medium text-gov-ink3">{label}</div>
+      <div className={`tabular mt-1 text-[26px] font-extrabold leading-none ${color}`}>
+        {value}{unit && <span className="ml-1 text-[14px] font-semibold text-gov-ink3">{unit}</span>}
+      </div>
+      {note && <div className="mt-1.5 text-[11px] leading-snug text-gov-ink3">{note}</div>}
+    </div>
+  );
+}
+
+export function Notice({ tone = "info", title, children }: {
+  tone?: "info" | "warn" | "danger"; title?: string; children: React.ReactNode;
+}) {
+  const cls = {
+    info: "border-gov-link/40 bg-gov-soft",
+    warn: "border-gov-warn/40 bg-gov-warn/5",
+    danger: "border-gov-point/40 bg-gov-point/5",
+  }[tone];
+  return (
+    <div className={`border-l-4 ${cls} px-4 py-3`}>
+      {title && <p className="mb-1 text-[13px] font-bold text-gov-ink">{title}</p>}
+      <div className="text-[12px] leading-relaxed text-gov-ink2">{children}</div>
+    </div>
+  );
+}
+
+export function Empty({ title, body, cta }: {
+  title: string; body: string; cta?: { href: string; label: string };
+}) {
+  return (
+    <div className="border border-dashed border-gov-line bg-white px-5 py-10 text-center">
+      <p className="text-[15px] font-semibold text-gov-ink">{title}</p>
+      <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-gov-ink2">{body}</p>
+      {cta && (
+        <Link href={cta.href} className="mt-4 inline-block bg-gov-head px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-gov-navy">
+          {cta.label}
+        </Link>
+      )}
+    </div>
+  );
+}
+
+export function Btn({ href, onClick, variant = "primary", type = "button", disabled, children }: {
+  href?: string; onClick?: () => void; variant?: "primary" | "ghost";
+  type?: "button" | "submit"; disabled?: boolean; children: React.ReactNode;
+}) {
+  const cls = variant === "primary"
+    ? "bg-gov-head text-white hover:bg-gov-navy disabled:opacity-50"
+    : "border border-gov-line bg-white text-gov-ink2 hover:border-gov-link hover:text-gov-head";
+  const base = `inline-flex items-center justify-center px-4 py-2.5 text-[13px] font-semibold ${cls}`;
+  return href
+    ? <Link href={href} className={base}>{children}</Link>
+    : <button type={type} onClick={onClick} disabled={disabled} className={base}>{children}</button>;
+}

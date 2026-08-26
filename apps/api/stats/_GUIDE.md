@@ -138,5 +138,6 @@ apps/api/tests/test_kamis.py
 | `kamis.py` | KAMIS 일별 도매가. 인증키 이중 인코딩 함정 처리 |
 | `calibrate.py` | CSV·KAMIS → σ 추정 CLI |
 | `calibrate_kosis.py` | σ 실측 + 계층 축소 + 요인분해 → crops.json |
+| `calibrate_cashflow.py` | 총수입·경영비 수집. 소득만으로는 레버리지를 못 잰다 |
 | `calibrate_market.py` | KAMIS 교차검증 + 시장 국면 → crops.json |
 | `expand_crops.py` | KOSIS 작목을 crops.json 으로 확장 |

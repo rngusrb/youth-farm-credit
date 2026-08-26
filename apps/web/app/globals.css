@@ -3,53 +3,56 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
+  /* 접근성: 상단 유틸바의 글자크기 조절이 이 값을 바꾼다 (정부 포털 관례) */
+  --ui-scale: 1;
+}
+
+html {
+  font-size: calc(16px * var(--ui-scale));
 }
 
 body {
-  @apply bg-ink-950 text-slate-100 antialiased;
+  @apply bg-gov-bg text-gov-ink antialiased;
 }
 
-.tabular {
-  font-variant-numeric: tabular-nums;
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* 좌측 컬러바가 붙는 섹션 제목 — 정부 포털의 기본 문법 */
+.sec-title {
+  @apply relative pl-3 text-[17px] font-bold leading-tight text-gov-ink;
 }
+.sec-title::before {
+  content: "";
+  @apply absolute left-0 top-[0.15em] h-[1.1em] w-[3px] bg-gov-head;
+}
+
+/* 키보드 포커스는 반드시 보이게 */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  @apply outline outline-2 outline-offset-1 outline-gov-link;
+}
+
+/* 본문 링크 */
+.lnk { @apply text-gov-link underline underline-offset-2 hover:text-gov-head; }
 
 /* ── 리포트 시트 ─────────────────────────────────────────────
-   결과 화면은 앱 화면이 아니라 받아 가는 문서다. 어두운 바탕 위에 종이 한 장을
-   올려 두고, 그 안은 종이의 색계·타이포로 완전히 갈아탄다. 인쇄하면 그대로 나온다. */
+   결과 화면은 앱 화면이 아니라 받아 가는 문서다. */
 .sheet {
   background: theme("colors.paper.bg");
   color: theme("colors.paper.ink");
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 0.4),
-    0 24px 60px -20px rgb(0 0 0 / 0.55);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 12px 32px -16px rgb(0 0 0 / 0.25);
 }
 .sheet ::selection { background: theme("colors.paper.accentbg"); }
-
-.sheet h1,
-.sheet h2,
-.sheet h3 {
+.sheet h1, .sheet h2, .sheet h3 {
   font-family: theme("fontFamily.serif");
   letter-spacing: -0.01em;
 }
-
-/* 본문은 읽기 폭을 지킨다 */
 .sheet .prose-w { max-width: 34rem; }
 
 @media print {
-  :root { color-scheme: light; }
   body { background: #fff; }
-  body > header,
-  body > footer,
   .no-print { display: none !important; }
-  .sheet {
-    box-shadow: none;
-    margin: 0;
-    padding: 0;
-    max-width: none;
-  }
+  .sheet { box-shadow: none; margin: 0; padding: 0; max-width: none; }
   .report-section { break-inside: avoid; page-break-inside: avoid; }
   .report-cover { break-after: avoid; }
 }
-
-

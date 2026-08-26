@@ -13,8 +13,8 @@
         "딸기 수경재배"
       ],
       "income_per_10a": 14670000,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 36114220,
+      "cost_per_10a": 21444220,
       "sigma": 0.2148,
       "sigma_source": "MEASURED",
       "harvest_months": [
@@ -84,7 +84,10 @@
         },
         "ewma_check": 0.25,
         "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5938,
+      "cashflow_rescaled": true
     },
     {
       "id": "strawberry_soil",
@@ -94,8 +97,8 @@
         "딸기 토경재배"
       ],
       "income_per_10a": 11500000,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 28310397,
+      "cost_per_10a": 16810397,
       "sigma": 0.2154,
       "sigma_source": "MEASURED",
       "harvest_months": [
@@ -165,7 +168,10 @@
         },
         "ewma_check": 0.25,
         "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5938,
+      "cashflow_rescaled": true
     },
     {
       "id": "tomato_hydro",
@@ -176,8 +182,8 @@
         "시설토마토"
       ],
       "income_per_10a": 12150000,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 29449657,
+      "cost_per_10a": 17299657,
       "sigma": 0.3066,
       "sigma_source": "MEASURED",
       "harvest_months": [
@@ -246,7 +252,10 @@
         },
         "ewma_check": 1.2599,
         "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
-      }
+      },
+      "cashflow_year": 2022,
+      "cost_ratio": 0.5874,
+      "cashflow_rescaled": true
     },
     {
       "id": "eggplant",
@@ -256,8 +265,8 @@
         "시설가지"
       ],
       "income_per_10a": 13060000,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 26197423,
+      "cost_per_10a": 13137423,
       "sigma": 0.2433,
       "sigma_source": "MEASURED",
       "harvest_months": [
@@ -308,7 +317,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5015,
+      "cashflow_rescaled": true
     },
     {
       "id": "rose",
@@ -318,8 +330,8 @@
         "시설장미"
       ],
       "income_per_10a": 12840000,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 34568301,
+      "cost_per_10a": 21728301,
       "sigma": 0.3229,
       "sigma_source": "MEASURED",
       "harvest_months": [
@@ -375,7 +387,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.6286,
+      "cashflow_rescaled": true
     },
     {
       "id": "spinach",
@@ -385,8 +400,8 @@
         "시설시금치"
       ],
       "income_per_10a": 1730000,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 3031599,
+      "cost_per_10a": 1301599,
       "sigma": 0.3101,
       "sigma_source": "MEASURED",
       "harvest_months": [
@@ -455,7 +470,10 @@
         },
         "ewma_check": 0.7023,
         "note": "국면은 안내용. 한도 계산에는 쓰지 않는다."
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4293,
+      "cashflow_rescaled": true
     },
     {
       "id": "greenhouse_pepper",
@@ -466,8 +484,8 @@
       ],
       "income_per_10a": 12594942,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 22359106,
+      "cost_per_10a": 9764164,
       "sigma": 0.3009,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -502,7 +520,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4367,
+      "cashflow_rescaled": false
     },
     {
       "id": "greenhouse_cherrytomato",
@@ -513,8 +534,8 @@
       ],
       "income_per_10a": 10690553,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 20255687,
+      "cost_per_10a": 9565134,
       "sigma": 0.3157,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -557,7 +578,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4722,
+      "cashflow_rescaled": false
     },
     {
       "id": "greenhouse_cherrytomato_hydro",
@@ -569,8 +593,8 @@
       ],
       "income_per_10a": 12082117,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 22892322,
+      "cost_per_10a": 10810205,
       "sigma": 0.3898,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -613,7 +637,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4722,
+      "cashflow_rescaled": true
     },
     {
       "id": "greenhouse_chive",
@@ -624,8 +651,8 @@
       ],
       "income_per_10a": 5248793,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 12290946,
+      "cost_per_10a": 7042152,
       "sigma": 0.246,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -668,7 +695,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.573,
+      "cashflow_rescaled": false
     },
     {
       "id": "greenhouse_lettuce",
@@ -679,8 +709,8 @@
       ],
       "income_per_10a": 5020401,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 11629071,
+      "cost_per_10a": 6608669,
       "sigma": 0.2867,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -723,7 +753,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5683,
+      "cashflow_rescaled": false
     },
     {
       "id": "greenhouse_watermelon",
@@ -734,8 +767,8 @@
       ],
       "income_per_10a": 3634855,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 6443731,
+      "cost_per_10a": 2808876,
       "sigma": 0.2345,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -778,7 +811,10 @@
           2013,
           2022
         ]
-      }
+      },
+      "cashflow_year": 2022,
+      "cost_ratio": 0.4359,
+      "cashflow_rescaled": true
     },
     {
       "id": "greenhouse_cucumber",
@@ -789,8 +825,8 @@
       ],
       "income_per_10a": 12883641,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 26694812,
+      "cost_per_10a": 13811171,
       "sigma": 0.2383,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -833,7 +869,10 @@
           2013,
           2022
         ]
-      }
+      },
+      "cashflow_year": 2022,
+      "cost_ratio": 0.5174,
+      "cashflow_rescaled": true
     },
     {
       "id": "greenhouse_koreanmelon",
@@ -844,8 +883,8 @@
       ],
       "income_per_10a": 7022018,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 13193589,
+      "cost_per_10a": 6171572,
       "sigma": 0.2303,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -888,7 +927,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4678,
+      "cashflow_rescaled": false
     },
     {
       "id": "greenhouse_tomato",
@@ -899,8 +941,8 @@
       ],
       "income_per_10a": 10741353,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 26035322,
+      "cost_per_10a": 15293969,
       "sigma": 0.2568,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -943,7 +985,10 @@
           2013,
           2022
         ]
-      }
+      },
+      "cashflow_year": 2022,
+      "cost_ratio": 0.5874,
+      "cashflow_rescaled": true
     },
     {
       "id": "greenhouse_squash",
@@ -954,8 +999,8 @@
       ],
       "income_per_10a": 10791514,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 18633705,
+      "cost_per_10a": 7842191,
       "sigma": 0.3412,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -998,7 +1043,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4209,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_autumn_radish",
@@ -1009,8 +1057,8 @@
       ],
       "income_per_10a": 1531514,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 2796080,
+      "cost_per_10a": 1264566,
       "sigma": 0.3269,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1045,7 +1093,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4523,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_autumn_napacabbage",
@@ -1056,8 +1107,8 @@
       ],
       "income_per_10a": 2603067,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 4136819,
+      "cost_per_10a": 1533753,
       "sigma": 0.3154,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1092,7 +1143,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.3708,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_highland_radish",
@@ -1103,8 +1157,8 @@
       ],
       "income_per_10a": 1974717,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 3806962,
+      "cost_per_10a": 1832245,
       "sigma": 0.3853,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1139,7 +1193,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4813,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_highland_napacabbage",
@@ -1150,8 +1207,8 @@
       ],
       "income_per_10a": 1213278,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 2754908,
+      "cost_per_10a": 1541629,
       "sigma": 0.3457,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1186,7 +1243,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5596,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_carrot",
@@ -1197,8 +1257,8 @@
       ],
       "income_per_10a": 3813332,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 6275072,
+      "cost_per_10a": 2461740,
       "sigma": 0.5695,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1241,7 +1301,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.3923,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_greenonion",
@@ -1252,8 +1315,8 @@
       ],
       "income_per_10a": 2654782,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 4569980,
+      "cost_per_10a": 1915197,
       "sigma": 0.3366,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1288,7 +1351,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4191,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_spring_napacabbage",
@@ -1299,8 +1365,8 @@
       ],
       "income_per_10a": 1158419,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 2501713,
+      "cost_per_10a": 1343294,
       "sigma": 0.2774,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1335,7 +1401,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5369,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_ginger",
@@ -1346,8 +1415,8 @@
       ],
       "income_per_10a": 4170854,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 8472194,
+      "cost_per_10a": 4301341,
       "sigma": 0.5201,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1390,7 +1459,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5077,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_watermelon",
@@ -1401,8 +1473,8 @@
       ],
       "income_per_10a": 2526242,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 4910955,
+      "cost_per_10a": 2384712,
       "sigma": 0.2468,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1445,7 +1517,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4856,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_spinach",
@@ -1456,8 +1531,8 @@
       ],
       "income_per_10a": 2581259,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 3786633,
+      "cost_per_10a": 1205375,
       "sigma": 0.2599,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1500,7 +1575,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.3183,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_cabbage",
@@ -1511,8 +1589,8 @@
       ],
       "income_per_10a": 1139035,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 2498961,
+      "cost_per_10a": 1359926,
       "sigma": 0.3117,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1555,7 +1633,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5442,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_scallion",
@@ -1566,8 +1647,8 @@
       ],
       "income_per_10a": 3081534,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 5873196,
+      "cost_per_10a": 2791661,
       "sigma": 0.3577,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1602,7 +1683,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4753,
+      "cashflow_rescaled": false
     },
     {
       "id": "autumn_potato",
@@ -1612,8 +1696,8 @@
       ],
       "income_per_10a": 945902,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 2631152,
+      "cost_per_10a": 1685251,
       "sigma": 0.4383,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1648,7 +1732,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.6405,
+      "cashflow_rescaled": false
     },
     {
       "id": "barley",
@@ -1658,8 +1745,8 @@
       ],
       "income_per_10a": 120432,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 454571,
+      "cost_per_10a": 334139,
       "sigma": 0.3589,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1694,7 +1781,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.7351,
+      "cashflow_rescaled": false
     },
     {
       "id": "sweetpotato",
@@ -1704,8 +1794,8 @@
       ],
       "income_per_10a": 1710559,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 3629811,
+      "cost_per_10a": 1919252,
       "sigma": 0.2892,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1748,7 +1838,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.5287,
+      "cashflow_rescaled": false
     },
     {
       "id": "field_sweetcorn",
@@ -1759,8 +1852,8 @@
       ],
       "income_per_10a": 1135449,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 1988080,
+      "cost_per_10a": 852631,
       "sigma": 0.2432,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1795,7 +1888,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4289,
+      "cashflow_rescaled": false
     },
     {
       "id": "perilla",
@@ -1805,8 +1901,8 @@
       ],
       "income_per_10a": 596862,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 1094506,
+      "cost_per_10a": 497644,
       "sigma": 0.2867,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1833,7 +1929,10 @@
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 7,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '들깨' 2018~2024 7개년 σ=0.228 → 46작목 분포로 축소 0.231, 농가 고유 σ=0.17 가정 합성"
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '들깨' 2018~2024 7개년 σ=0.228 → 46작목 분포로 축소 0.231, 농가 고유 σ=0.17 가정 합성",
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4547,
+      "cashflow_rescaled": false
     },
     {
       "id": "wheat",
@@ -1843,8 +1942,8 @@
       ],
       "income_per_10a": 50148,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 364906,
+      "cost_per_10a": 314758,
       "sigma": 0.5524,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1863,7 +1962,10 @@
       ],
       "sigma_method": "kosis_pooled_income_series_plus_assumed_idiosyncratic",
       "sigma_n": 7,
-      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '밀' 2018~2024 7개년 σ=0.867 → 46작목 분포로 축소 0.526, 농가 고유 σ=0.17 가정 합성"
+      "sigma_reference": "KOSIS 농산물소득조사(농촌진흥청) '밀' 2018~2024 7개년 σ=0.867 → 46작목 분포로 축소 0.526, 농가 고유 σ=0.17 가정 합성",
+      "cashflow_year": 2024,
+      "cost_ratio": 0.8626,
+      "cashflow_rescaled": false
     },
     {
       "id": "spring_potato",
@@ -1873,8 +1975,8 @@
       ],
       "income_per_10a": 1249665,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 2693175,
+      "cost_per_10a": 1443511,
       "sigma": 0.3079,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1909,7 +2011,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.536,
+      "cashflow_rescaled": false
     },
     {
       "id": "naked_barley",
@@ -1919,8 +2024,8 @@
       ],
       "income_per_10a": 78918,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 439374,
+      "cost_per_10a": 360456,
       "sigma": 0.4236,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -1955,7 +2060,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.8204,
+      "cashflow_rescaled": false
     },
     {
       "id": "ginseng_4_yr",
@@ -1966,8 +2074,8 @@
       ],
       "income_per_10a": 5634777,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 14561630,
+      "cost_per_10a": 8926853,
       "sigma": 0.277,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -2002,7 +2110,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.613,
+      "cashflow_rescaled": false
     },
     {
       "id": "sesame",
@@ -2012,8 +2123,8 @@
       ],
       "income_per_10a": 1045564,
       "income_year": 2024,
-      "gross_per_10a": null,
-      "cost_per_10a": null,
+      "gross_per_10a": 1815866,
+      "cost_per_10a": 770302,
       "sigma": 0.2803,
       "sigma_source": "MEASURED",
       "harvest_months": [],
@@ -2056,7 +2167,10 @@
           2013,
           2024
         ]
-      }
+      },
+      "cashflow_year": 2024,
+      "cost_ratio": 0.4242,
+      "cashflow_rescaled": false
     }
   ]
 }

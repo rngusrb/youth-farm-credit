@@ -12,12 +12,18 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+from dataclasses import asdict
+
+from engine.cashflow import monthly_cashflow
 from engine.diagnose import DiagnoseInput, diagnose
+from engine.loan import repayment_schedule
+from engine.stress import run_stress
 from engine.params import (
     crops,
     crops_source,
     get_crop,
     policy,
+    get_product,
     products,
     unit_area_pyeong,
 )
@@ -26,6 +32,7 @@ from llm.client import available as llm_available
 from llm.narrate import narrate
 from rag.answer import ask as regulation_ask
 from schemas import (
+    CashflowRequest,
     DiagnoseRequest,
     ExplainRequest,
     ExplainResponse,
@@ -33,6 +40,7 @@ from schemas import (
     ExtractResponse,
     RegulationRequest,
     RegulationResponse,
+    StressRequest,
 )
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -100,6 +108,10 @@ def crop_detail(crop_id: str) -> dict:
         "aliases": c.aliases,
         "group": (c.kosis or {}).get("group"),
         "income_per_10a": c.income_per_10a,
+        "gross_per_10a": c.gross_per_10a,
+        "cost_per_10a": c.cost_per_10a,
+        "cashflow_year": c.cashflow_year,
+        "leverage": (c.gross_per_10a / c.income_per_10a) if (c.gross_per_10a and c.income_per_10a) else None,
         "harvest_months": c.harvest_months,
         "sigma": c.sigma,
         "sigma_common": c.sigma_common,
@@ -160,12 +172,172 @@ def get_diagnose(diagnosis_id: str) -> dict:
     return result
 
 
+@app.post("/api/v1/cashflow")
+def cashflow(req: CashflowRequest) -> dict:
+    """월별 현금흐름. 연 단위로는 안 보이는 운전자금 부족 시점을 짚는다."""
+    try:
+        crop, product = get_crop(req.crop_id), get_product(req.product_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    if not crop.gross_per_10a or not crop.cost_per_10a:
+        raise HTTPException(
+            status_code=409,
+            detail=f"{crop.name}은 총수입·경영비가 없어 월별 현금흐름을 낼 수 없습니다. "
+                   "python -m stats.calibrate_cashflow --write 로 채우세요.",
+        )
+    units = req.pyeong / unit_area_pyeong()
+    due = repayment_schedule(req.principal, product)
+    year_idx = min(req.year, len(due)) - 1
+    cf = monthly_cashflow(
+        gross=crop.gross_per_10a * units,
+        operating_cost=crop.cost_per_10a * units,
+        living_cost=req.living_cost,
+        debt_payment=float(due[year_idx]) + req.other_debt_service,
+        harvest_months=crop.harvest_months,
+    )
+    return {
+        "crop": {"id": crop.id, "name": crop.name, "cashflow_year": crop.cashflow_year,
+                 "rescaled": bool(getattr(crop, "cashflow_rescaled", False))},
+        "year": year_idx + 1,
+        "is_grace_year": year_idx < product.grace_years,
+        "annual": {
+            "gross": crop.gross_per_10a * units,
+            "operating_cost": crop.cost_per_10a * units,
+            "income": (crop.gross_per_10a - crop.cost_per_10a) * units,
+            "living_cost": req.living_cost,
+            "debt_payment": float(due[year_idx]),
+            "other_debt_service": req.other_debt_service,
+        },
+        "harvest_known": cf.harvest_known,
+        "harvest_months": list(cf.harvest_months),
+        "trough_month": cf.trough_month,
+        "trough_balance": cf.trough_balance,
+        "working_capital_need": cf.working_capital_need,
+        "annual_net": cf.annual_net,
+        "months": [asdict(m) for m in cf.months],
+        "note": (
+            "총수입은 출하월에, 경영비·생활비는 12개월 균등으로 배분합니다. "
+            "월별 경영비 배분에 대한 공개 통계가 없어 균등으로 두며, 지어내지 않습니다. "
+            "상환은 시행지침 '이자는 연 1회 후취'에 따라 마지막 출하월 다음 달로 봅니다."
+        ),
+    }
+
+
+@app.post("/api/v1/stress")
+def stress(req: StressRequest) -> dict:
+    """스트레스 테스트. 특정한 나쁜 일이 실제로 일어나면 버티는지 본다."""
+    try:
+        crop, product = get_crop(req.crop_id), get_product(req.product_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    if not crop.gross_per_10a or not crop.cost_per_10a:
+        raise HTTPException(status_code=409, detail=f"{crop.name}은 총수입·경영비가 없습니다.")
+
+    units = req.pyeong / unit_area_pyeong()
+    base = diagnose(DiagnoseInput(
+        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
+        other_debt_service=req.other_debt_service, product_id=req.product_id,
+        max_crisis_prob=req.max_crisis_prob,
+    ))
+    principal = req.principal if req.principal is not None else base["limits"]["risk_based"]
+    tolerance = base["limits"]["max_crisis_prob"]
+
+    results = run_stress(
+        gross=crop.gross_per_10a * units,
+        operating_cost=crop.cost_per_10a * units,
+        fixed_outflow=req.living_cost + req.other_debt_service,
+        principal=principal,
+        product=product,
+        sigma=base["sigma"],
+        max_crisis_prob=tolerance,
+        p_disaster=policy()["simulation"]["p_disaster"],
+    )
+    return {
+        "principal": principal,
+        "tolerance": tolerance,
+        "sigma": base["sigma"],
+        "leverage": (crop.gross_per_10a / (crop.gross_per_10a - crop.cost_per_10a)),
+        "scenarios": [asdict(r) for r in results],
+        "note": (
+            "판정은 crisis_prob 가 아니라 distress_prob 로 합니다. 재해가 잦아지면 "
+            "상환연기가 자주 걸려 '부족'으로 세지 않게 되는데, 상환연기는 제도가 "
+            "구해준 것이지 농가가 버틴 것이 아니기 때문입니다."
+        ),
+    }
+
+
 @app.post("/api/v1/explain", response_model=ExplainResponse)
 def explain(req: ExplainRequest) -> dict:
     d = req.diagnosis
     if "income" not in d or "limits" not in d:
         raise HTTPException(status_code=422, detail="diagnose 응답 전체를 보내주세요.")
     return narrate(d)
+
+
+@app.get("/api/v1/corpus")
+def corpus() -> dict:
+    """자료실이 쓰는 목록. 어떤 원문을 몇 개 조항으로 색인했는지 그대로 낸다."""
+    from collections import Counter
+
+    from rag.ingest import load_index
+
+    index = load_index()
+    by_doc: dict[str, dict] = {}
+    for c in index:
+        d = by_doc.setdefault(c["doc_title"], {
+            "title": c["doc_title"], "year": c.get("doc_year"),
+            "url": c.get("source_url"), "chunks": 0, "chars": 0, "sections": set(),
+        })
+        d["chunks"] += 1
+        d["chars"] += len(c["text"])
+        top = (c["section_path"] or "").split("-")[0]
+        if top:
+            d["sections"].add(top)
+    docs = []
+    for d in by_doc.values():
+        docs.append({**d, "sections": len(d["sections"])})
+    docs.sort(key=lambda d: -d["chunks"])
+    return {
+        "documents": docs,
+        "total_chunks": len(index),
+        "note": (
+            "원문은 저장소에 평문으로 함께 배포됩니다. 네트워크 없이도 색인을 다시 만들 수 "
+            "있게 하기 위해서입니다. 요약본이 아니라 조항 원문 그대로입니다."
+        ),
+    }
+
+
+@app.get("/api/v1/stats")
+def data_stats() -> dict:
+    """데이터 현황. 무엇을 어디서 언제 받았는지."""
+    from rag.ingest import load_index
+
+    cs = list(crops().values())
+    measured = [c for c in cs if c.sigma_source == "MEASURED"]
+    sigmas = sorted(c.sigma for c in cs)
+    years = sorted({c.cashflow_year for c in cs if c.cashflow_year})
+    return {
+        "crops": {
+            "total": len(cs),
+            "sigma_measured": len(measured),
+            "sigma_min": sigmas[0] if sigmas else None,
+            "sigma_max": sigmas[-1] if sigmas else None,
+            "with_market": sum(1 for c in cs if c.market),
+            "with_kamis_mapping": sum(1 for c in cs if (c.kamis or {}).get("available")),
+            "with_harvest_months": sum(1 for c in cs if c.harvest_months),
+            "cashflow_years": years,
+            "source": crops_source(),
+        },
+        "corpus": {"chunks": len(load_index())},
+        "products": [
+            {"id": p.id, "name": p.name, "limit": p.limit, "rate": p.rate,
+             "grace_years": p.grace_years, "amort_years": p.amort_years}
+            for p in products().values()
+        ],
+        "simulation": policy()["simulation"],
+        "sigma_decomposition": policy()["sigma_decomposition"],
+        "verified_against_guideline": policy()["verified_against_guideline"],
+    }
 
 
 @app.post("/api/v1/regulation/ask", response_model=RegulationResponse)

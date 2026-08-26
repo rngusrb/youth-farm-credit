@@ -34,6 +34,15 @@ class SimResult:
     first_risk_year: int | None  # 연간 부족확률 20% 최초 초과 연차
     schedule: list[float] = field(default_factory=list)  # 연도별 상환액 (차트용)
     short_prob_by_year: list[float] = field(default_factory=list)
+    # 재해 상환연기가 걸린 상환기 연차의 비율.
+    deferral_prob: float = 0.0
+    # 2년 연속 '부족 **또는** 상환연기' 확률.
+    #
+    # crisis_prob 만 보면 재해가 잦을수록 위험이 **줄어드는** 것처럼 보인다.
+    # 연기된 해는 부족으로 세지 않기 때문이다(실측: 재해확률 8%→20% 에서
+    # crisis 0.755→0.628). 하지만 상환연기는 제도가 구해준 것이지 농가가
+    # 버틴 게 아니다. 스트레스 테스트는 이 값으로 판정한다.
+    distress_prob: float = 0.0
 
 
 @dataclass
@@ -119,6 +128,10 @@ def evaluate(
     short_amort = short[:, grace:]
     consecutive = short_amort[:, :-1] & short_amort[:, 1:]
 
+    # 상환연기를 '무사히 넘긴 해' 로 세지 않는 지표. distress_prob 주석 참조.
+    deferred_amort = paths.deferred[:, grace:]
+    distress = short_amort | deferred_amort
+
     short_by_year = short.mean(axis=0)
     risk_years = np.flatnonzero(short_by_year > risk_threshold)
     first_risk_year = int(risk_years[0]) + 1 if risk_years.size else None
@@ -140,6 +153,8 @@ def evaluate(
         first_risk_year=first_risk_year,
         schedule=[float(x) for x in due],
         short_prob_by_year=[float(x) for x in short_by_year],
+        deferral_prob=float(deferred_amort.mean()),
+        distress_prob=float((distress[:, :-1] & distress[:, 1:]).any(axis=1).mean()),
     )
 
 

@@ -80,3 +80,25 @@ class RegulationResponse(BaseModel):
     answer: str
     citations: list[Citation]
     confidence: Literal["high", "medium", "low", "none"]
+
+
+# ── /cashflow, /stress ───────────────────────────────
+class CashflowRequest(BaseModel):
+    crop_id: str
+    pyeong: float = Field(gt=0, le=1_000_000)
+    living_cost: float = Field(ge=0, le=1_000_000_000)
+    other_debt_service: float = Field(default=0.0, ge=0, le=1_000_000_000)
+    principal: float = Field(default=0.0, ge=0, le=10_000_000_000)
+    product_id: str = DEFAULT_PRODUCT_ID
+    # 몇 년차의 상환액으로 볼 것인가. 1=첫해(거치), grace+1=절벽이 오는 해.
+    year: int = Field(default=6, ge=1, le=40)
+
+
+class StressRequest(BaseModel):
+    crop_id: str
+    pyeong: float = Field(gt=0, le=1_000_000)
+    living_cost: float = Field(ge=0, le=1_000_000_000)
+    other_debt_service: float = Field(default=0.0, ge=0, le=1_000_000_000)
+    principal: float | None = Field(default=None, ge=0, le=10_000_000_000)
+    product_id: str = DEFAULT_PRODUCT_ID
+    max_crisis_prob: float | None = Field(default=None, gt=0.005, le=0.5)

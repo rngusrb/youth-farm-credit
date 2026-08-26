@@ -5,17 +5,48 @@
 
 ## 라우트 지도
 
-| 경로 | 화면 | 데이터 출처 |
+세 영역으로 나뉜다. **공개 포털**(로그인 전), **농가용**, **금융기관용**.
+뒤의 둘은 같은 엔진을 서로 다른 관점으로 낸다.
+
+### 공개 포털
+
+| 경로 | 화면 | 출처 |
 |---|---|---|
-| `/` | 대시보드 — 상환위험·내농가·시장국면·제도근거를 한 화면에 | 매 진입마다 `/diagnose` 재계산 |
-| `diagnose` | 진단 입력 | `/api/v1/extract`, `/api/v1/diagnose` |
-| `result/[id]` | 리포트 (문서 화면, 사이드바 없음) | `/api/v1/diagnose/{id}` |
-| `reports` | 이 브라우저에 남은 리포트 목록 | localStorage |
-| `farm` | 내 농가 기본값 설정 | localStorage + `/api/v1/crops`,`/products` |
-| `crops` | 38작목 σ·요인·측정등급 표 | `/api/v1/crops` |
-| `market` | KAMIS 도매가 국면·교차검증·수확기 | `/api/v1/crops/{id}` |
-| `policy` | 시행지침 원문 검색 | `/api/v1/regulation/ask` |
-| `assistant` | 계산 질문과 제도 질문을 갈라 처리 | extract → diagnose 또는 regulation |
+| `/` | 포털 홈 — 히어로·이용절차·공지·데이터 현황 | `lib/content.ts`, `/api/v1/crops` |
+| `login` | 로그인 (데모 계정) | `lib/auth.ts` |
+| `about` | 서비스 소개 — 기획 배경과 계산 규칙 | 정적 |
+| `notice` | 공지사항 — **이 서비스의 실제 변경 이력** | `lib/content.ts` |
+| `library` | 자료실 — 수록 지침 원문 목록 | `/api/v1/corpus` |
+| `faq` | 자주 묻는 질문 — 누르면 그 자리에서 원문 검색 | `/api/v1/regulation/ask` |
+| `glossary` | 용어사전 — 우리가 쓰는 계산의 정의 | `lib/content.ts` |
+| `stats` | 데이터 현황 — 출처·미완 항목·지침 대조 | `/api/v1/stats` |
+| `sitemap` | 사이트맵 | `lib/nav.ts` |
+| `policy` | 제도 근거 검색 | `/api/v1/regulation/ask` |
+| `crops` | 38작목 σ·요인·측정등급 | `/api/v1/crops` |
+| `market` | KAMIS 국면·교차검증·수확기 | `/api/v1/crops/{id}` |
+| `result/[id]` | 리포트 (문서 화면, 크롬 없음) | `/api/v1/diagnose/{id}` |
+
+### 농가용 (`app/app/…`)
+
+| 경로 | 화면 | 핵심기능 |
+|---|---|---|
+| `app` | 홈 — 요약과 다음 할 일 | — |
+| `app/farm` | 내 농가 정보 + 대화형 인테이크 | — |
+| `app/revenue` | 수익 전망 — 월별 현금흐름 | ① |
+| `app/safety` | 금융 안전진단 — 스트레스 테스트 | ③ |
+| `app/finance` | 맞춤 금융지원 — 적정 차입 | ② |
+| `app/relief` | 구제제도 조기 라우팅 | 부가 |
+| `app/assistant` | AI 상담 — 계산/제도 질문 분기 | 부가 |
+| `app/reports` | 내 리포트 | — |
+
+### 금융기관용 (`app/bank/…`)
+
+| 경로 | 화면 | 핵심기능 |
+|---|---|---|
+| `bank` | 심사 대시보드 — 차주 개요와 위험 신호 | — |
+| `bank/capacity` | 상환능력 분석 — 계절성·변동성 | ① |
+| `bank/design` | 적정 여신 설계 — 금액별 위험, σ 밴드 | ② |
+| `bank/stress` | 여신 Stress Test | ③ |
 
 ## 금지사항
 
@@ -30,8 +61,13 @@
 - **빈 메뉴를 만들지 않는다.** `lib/nav.ts` 에 올리는 항목은 반드시 실제 데이터가
   있어야 한다. 목업에 있던 '기상 위험'·'보험'을 뺀 이유가 이것이다
   (기상 관측 자료 없음, 보험료율 미공개).
-- **로그인·서버 저장을 넣지 않는다.** 진단 입력은 문서번호(URL)에 인코딩돼 있고
-  개인 기본값은 localStorage 에 있다. 서버로 개인정보를 보내지 않는다.
+- **개인정보를 서버로 보내지 않는다.** 진단 입력은 문서번호(URL)에 인코딩돼 있고
+  농가 기본값은 localStorage 에 있다. `lib/auth.ts` 의 로그인은 **데모용이며 실제
+  인증이 아니다** — 아이디·비밀번호가 코드에 박혀 있고 검증도 브라우저에서 한다.
+  이 상태로 배포하면 안 된다.
+- **공지·소식에 지어낸 정부 발표를 싣지 않는다.** `lib/content.ts` 의 공지는
+  이 저장소에서 실제로 일어난 변경이고, 자료실은 실제 수집한 원문이다.
+  화면을 채우려고 가짜 보도자료를 만들지 않는다.
 - 리포트(`.sheet`)와 대시보드는 **색계가 다르다**. 리포트는 종이, 대시보드는 앱이다.
   한쪽 컴포넌트를 다른 쪽에 그대로 쓰면 대비가 깨진다 (실제로 깨진 적 있다).
 
@@ -42,4 +78,5 @@ apps/web/tests/nav.test.ts
 apps/web/tests/format.test.ts
 apps/web/tests/profile.test.ts
 apps/web/tests/diagnosis.test.ts
+apps/web/tests/auth.test.ts
 ```

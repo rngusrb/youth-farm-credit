@@ -214,6 +214,10 @@ export type CropRow = {
 
 export type CropDetail = CropRow & {
   aliases: string[];
+  gross_per_10a: number | null;
+  cost_per_10a: number | null;
+  cashflow_year: number | null;
+  leverage: number | null;
   sigma_method: string | null;
   sigma_reference: string | null;
   factors: Diagnosis["factors"];
@@ -261,3 +265,90 @@ export async function fetchProducts(): Promise<{
   if (!res.ok) throw new Error("상품 목록을 불러오지 못했습니다");
   return res.json();
 }
+
+
+// ── 자료실 · 데이터 현황 ─────────────────────────────
+export type CorpusDoc = {
+  title: string; year: number | null; url: string | null;
+  chunks: number; chars: number; sections: number;
+};
+
+export async function fetchCorpus(): Promise<{
+  documents: CorpusDoc[]; total_chunks: number; note: string;
+}> {
+  const res = await fetch(`${API_BASE}/api/v1/corpus`);
+  if (!res.ok) throw new Error("자료실 목록을 불러오지 못했습니다");
+  return res.json();
+}
+
+export type DataStats = {
+  crops: {
+    total: number; sigma_measured: number; sigma_min: number; sigma_max: number;
+    with_market: number; with_kamis_mapping: number; with_harvest_months: number;
+    cashflow_years: number[]; source: string;
+  };
+  corpus: { chunks: number };
+  products: ProductRow[];
+  simulation: Record<string, number>;
+  sigma_decomposition: { idiosyncratic_sigma: number; source: string; note: string };
+  verified_against_guideline: {
+    document: string; checked_on: string;
+    confirmed: { item: string; page: number; quote: string; model: string }[];
+    not_modelled: { item: string; page: number; quote: string; why: string }[];
+  };
+};
+
+export async function fetchStats(): Promise<DataStats> {
+  const res = await fetch(`${API_BASE}/api/v1/stats`);
+  if (!res.ok) throw new Error("데이터 현황을 불러오지 못했습니다");
+  return res.json();
+}
+
+// ── 월별 현금흐름 ────────────────────────────────────
+export type MonthFlow = {
+  month: number; revenue: number; operating: number;
+  living: number; debt: number; net: number; balance: number;
+};
+
+export type Cashflow = {
+  crop: { id: string; name: string; cashflow_year: number | null; rescaled: boolean };
+  year: number;
+  is_grace_year: boolean;
+  annual: {
+    gross: number; operating_cost: number; income: number;
+    living_cost: number; debt_payment: number; other_debt_service: number;
+  };
+  harvest_known: boolean;
+  harvest_months: number[];
+  trough_month: number;
+  trough_balance: number;
+  working_capital_need: number;
+  annual_net: number;
+  months: MonthFlow[];
+  note: string;
+};
+
+export const fetchCashflow = (p: {
+  crop_id: string; pyeong: number; living_cost: number;
+  other_debt_service?: number; principal?: number; product_id?: string; year?: number;
+}) => post<Cashflow>("/api/v1/cashflow", p);
+
+// ── 스트레스 테스트 ──────────────────────────────────
+export type StressScenario = {
+  key: string; label: string; detail: string;
+  income: number; income_change: number; capacity: number;
+  dscr_median: number; crisis_prob: number; annual_short_prob: number;
+  distress_prob: number; deferral_prob: number; relies_on_relief: boolean;
+  first_risk_year: number | null; survives: boolean;
+};
+
+export type StressReport = {
+  principal: number; tolerance: number; sigma: number; leverage: number;
+  scenarios: StressScenario[]; note: string;
+};
+
+export const fetchStress = (p: {
+  crop_id: string; pyeong: number; living_cost: number;
+  other_debt_service?: number; principal?: number | null;
+  product_id?: string; max_crisis_prob?: number | null;
+}) => post<StressReport>("/api/v1/stress", p);

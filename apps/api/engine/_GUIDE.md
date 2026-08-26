@@ -71,6 +71,8 @@ message: "core 는 api 를 부르지 않는다 (역방향)"
 ## 하네스
 
 ```
+apps/api/tests/test_cashflow.py
+apps/api/tests/test_stress.py
 apps/api/tests/test_golden.py
 apps/api/tests/test_risk.py
 apps/api/tests/test_personalization.py
@@ -87,6 +89,8 @@ apps/api/tests/test_personalization.py
 | `dscr.py` | 상환여력, DSCR 한도 역산, 최소면적 |
 | `simulate.py` | 몬테카를로. 소득경로(draw_paths)와 평가(evaluate) 분리 |
 | `risk_limit.py` | 위험기반 한도 이분탐색, σ 불확실성 밴드, 생계 제약 판정 |
+| `cashflow.py` | 월별 현금흐름. 총수입은 출하월에, 비용은 12개월 균등 |
+| `stress.py` | 시나리오 스트레스(가격↓·생산량↓·금리↑·재해). 영업레버리지 반영 |
 | `diagnose.py` | 위 전부를 묶는 오케스트레이션. 결과 id 인코딩 |
 
 > **이 폴더는 인터넷 없이 전부 테스트된다.** 외부 의존 0, 환경변수 0, 프롬프트 0.
