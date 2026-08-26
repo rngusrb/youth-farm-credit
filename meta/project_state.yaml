@@ -45,3 +45,12 @@ loop:
   max_rounds: 8
   stall_rounds: 3
   guard_tests: true
+
+ui_check:
+  # 화면을 바꾼 뒤 ui_check 를 안 돌리면 harness 가 알려준다 (자동 실행은 서버가 필요해서 불가).
+  # level: FAIL 로 올리면 커밋을 막는다. 기본은 WARN — 기록이지 게이트가 아니다.
+  level: WARN
+  watch:
+    - "apps/web/app/**/*.tsx"
+    - "apps/web/components/**/*.tsx"
+    - "apps/web/tailwind.config.ts"

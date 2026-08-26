@@ -337,7 +337,36 @@ def check_anchors() -> list[dict]:
             f.append({"level": "FAIL", "type": "devguide_missing_folder", "file": "DEV_GUIDE.md",
                       "message": f"색인에 없는 폴더 {missing}"})
 
-    # ⑤ 깨진 문서 참조
+    # ⑤ ui_check 노후 — 화면을 바꾼 뒤 검사를 안 돌렸다
+    #    ui_check 는 서버가 떠 있어야 해서 커밋 훅에 못 넣는다. 그렇다고 조용히 두면
+    #    "있는데 아무도 안 부르는" 상태가 되고, 그게 제일 나쁘다 — 도구가 있다는 사실이
+    #    안심을 주는데 실제로는 아무것도 안 지키니까. 그래서 **안 돌린 사실**을 잡는다.
+    #    (실측: 정부 포털 톤을 표방한 화면이 WCAG AA 를 75~110건 어기고 있었는데,
+    #     검사기는 저장소에 있었고 한 번도 실행된 적이 없었다)
+    ui = META.get("ui_check") or {}
+    if ui.get("watch"):
+        newest, newest_file = 0.0, None
+        for pat in ui["watch"]:
+            for q in ROOT.glob(pat):
+                if q.is_file() and not any(s in q.parts for s in CFG["skip_dirs"]):
+                    m = q.stat().st_mtime
+                    if m > newest:
+                        newest, newest_file = m, q
+        rec = ROOT / ".harness_cache" / "ui_check.json"
+        level = (ui.get("level") or "WARN").upper()
+        if newest and not rec.exists():
+            f.append({"level": level, "type": "ui_check_never_run", "file": "(화면)",
+                      "message": "ui_check 를 한 번도 안 돌렸다 — "
+                                 "python scripts/ui_check.py <URL> --all-viewports"})
+        elif newest:
+            ts = json.loads(rec.read_text()).get("ts", 0)
+            if newest > ts:
+                import datetime as _dt
+                when = _dt.datetime.fromtimestamp(ts).strftime("%m-%d %H:%M")
+                f.append({"level": level, "type": "ui_check_stale", "file": str(newest_file.relative_to(ROOT)),
+                          "message": f"마지막 ui_check({when}) 이후 화면이 바뀌었다 — 다시 돌릴 것"})
+
+    # ⑥ 깨진 문서 참조
     targets = [p for p in ROOT.glob("**/*.md")
                if not any(s in p.parts for s in CFG["skip_dirs"] + ["templates", "node_modules"])]
     targets += list((ROOT / "meta").glob("*.yaml")) if (ROOT / "meta").is_dir() else []

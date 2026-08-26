@@ -21,9 +21,26 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
+ROOT = Path(__file__).resolve().parent.parent
+
 VIEWPORTS = {"mobile": (390, 844), "tablet": (768, 1024), "desktop": (1280, 800)}
+
+# 실행 사실을 남긴다. 서버가 떠 있어야 해서 커밋 훅에 못 넣지만,
+# **안 돌렸다는 사실**은 harness 가 자동으로 잡을 수 있다 (ui_check_stale).
+RECORD = ROOT / ".harness_cache" / "ui_check.json"
+
+
+def write_record(results: list[dict]) -> None:
+    RECORD.parent.mkdir(parents=True, exist_ok=True)
+    RECORD.write_text(json.dumps({
+        "ts": time.time(),
+        "targets": sorted({r["target"] for r in results}),
+        "viewports": sorted({r["viewport"] for r in results}),
+        "total": sum(r["count"] for r in results),
+    }, ensure_ascii=False, indent=2))
 
 # 규칙 정의 — 숫자의 출처를 같이 적는다. 근거 없는 커트라인을 쌓지 않기 위해서다.
 RULES = {
@@ -221,6 +238,7 @@ def main() -> int:
     views = list(VIEWPORTS) if a.all_viewports else [a.viewport]
     results = [run(a.target, v, a.settle_ms) for v in views]
     total = sum(r["count"] for r in results)
+    write_record(results)          # 돌렸다는 사실을 남긴다
 
     if a.content:
         print(min(r["content_units"] for r in results))
