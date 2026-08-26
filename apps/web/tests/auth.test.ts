@@ -63,3 +63,22 @@ describe("데모 로그인", () => {
     expect(currentSession()).toBeNull();
   });
 });
+
+describe("데모 계정 표기", () => {
+  it("농가와 금융기관이 뒤바뀌지 않는다", async () => {
+    const { DEMO_ACCOUNTS, DEMO_HINT } = await import("@/lib/auth");
+    // 사고 이력: 아이디를 키로 쓰는 객체에 두었더니 JS 가 정수처럼 보이는 "222222" 를
+    // 앞으로 당겨 화면에 "농가 222222" 라고 잘못 떴다. 배열로 바꿔 순서를 고정했다.
+    expect(DEMO_ACCOUNTS[0].role).toBe("farmer");
+    expect(DEMO_ACCOUNTS[0].id).toBe("000000");
+    expect(DEMO_ACCOUNTS[1].role).toBe("bank");
+    expect(DEMO_HINT).toContain("농가 000000");
+    expect(DEMO_HINT).toContain("금융기관 222222");
+  });
+
+  it("역할별 업무 홈이 갈린다", async () => {
+    const { ROLE_HOME } = await import("@/lib/auth");
+    expect(ROLE_HOME.farmer).toBe("/app");
+    expect(ROLE_HOME.bank).toBe("/bank");
+  });
+});

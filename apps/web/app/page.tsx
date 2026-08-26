@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Badge, Btn, Panel, Section, Stat } from "@/components/gov";
 import { NOTICES } from "@/lib/content";
 import { fetchCrops } from "@/lib/api";
-import { DEMO_HINT } from "@/lib/auth";
+import { DEMO_HINT, ROLE_HOME, ROLE_LABEL } from "@/lib/auth";
+import { useSession } from "@/lib/useSession";
 
 const STEPS = [
   ["01", "농가 정보 입력", "작목·면적·생활비 세 가지면 시작합니다. 말로 적어도 알아듣습니다."],
@@ -14,6 +15,7 @@ const STEPS = [
 ];
 
 export default function PortalHome() {
+  const { session, ready } = useSession();
   const [cropCount, setCropCount] = useState<number | null>(null);
   useEffect(() => {
     fetchCrops().then((d) => setCropCount(d.crops.length)).catch(() => setCropCount(null));
@@ -38,34 +40,80 @@ export default function PortalHome() {
               차입 규모</b>를 미리 알려 줍니다.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              <Btn href="/app">진단 시작하기</Btn>
+              <Btn href={ready && session ? ROLE_HOME[session.role] : "/app"}>
+                {ready && session
+                  ? session.role === "bank" ? "심사 대시보드" : "내 농가 화면"
+                  : "진단 시작하기"}
+              </Btn>
               <Btn href="/about" variant="ghost">서비스 소개</Btn>
               <Btn href="/policy" variant="ghost">제도 근거 검색</Btn>
             </div>
           </div>
 
           <Panel className="self-start">
-            <h2 className="sec-title mb-3">이용 안내</h2>
-            <p className="text-[13px] leading-relaxed text-gov-ink2">
-              농가용과 금융기관용 화면이 따로 있습니다. 같은 분석을 각자에게 필요한 형태로
-              보여 줍니다.
-            </p>
-            <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
-              <div className="flex gap-3">
-                <dt className="w-20 shrink-0 font-semibold text-gov-ink2">농가</dt>
-                <dd className="text-gov-ink2">“2.3억원 이하 차입을 권장합니다”</dd>
-              </div>
-              <div className="flex gap-3">
-                <dt className="w-20 shrink-0 font-semibold text-gov-ink2">금융기관</dt>
-                <dd className="text-gov-ink2">
-                  “3억원 대출 시 가격 하락 시나리오에서 상환여력 부족”
-                </dd>
-              </div>
-            </dl>
-            <Link href="/login" className="mt-4 flex min-h-11 items-center justify-center bg-gov-head text-center text-[13px] font-bold text-white hover:bg-gov-navy">
-              로그인
-            </Link>
-            <p className="mt-2 text-[12px] text-gov-ink3">{DEMO_HINT}</p>
+            {ready && session ? (
+              <>
+                <h2 className="sec-title mb-3">{session.name}님</h2>
+                <p className="text-[13px] leading-relaxed text-gov-ink2">
+                  {ROLE_LABEL[session.role]} 계정으로 로그인되어 있습니다.
+                  {session.role === "bank"
+                    ? " 업무 화면에서 접수된 신청 건의 상환능력과 적정 여신을 봅니다."
+                    : " 업무 화면에서 내 농가의 현금흐름과 감당 가능한 차입 규모를 봅니다."}
+                </p>
+                <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
+                  <div className="flex gap-3">
+                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">소속</dt>
+                    <dd className="text-gov-ink2">{session.org}</dd>
+                  </div>
+                  <div className="flex gap-3">
+                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">구분</dt>
+                    <dd className="text-gov-ink2">{ROLE_LABEL[session.role]}용 화면</dd>
+                  </div>
+                </dl>
+                <Link
+                  href={ROLE_HOME[session.role]}
+                  className="mt-4 flex min-h-11 items-center justify-center rounded-md bg-gov-head text-[13px] font-bold text-white shadow-sm hover:bg-gov-navy"
+                >
+                  {session.role === "bank" ? "심사 대시보드로" : "내 농가 화면으로"}
+                </Link>
+                <div className="mt-1 flex flex-wrap gap-x-4">
+                  {(session.role === "bank"
+                    ? [["차주 목록", "/bank/applicants"], ["Stress Test", "/bank/stress"]]
+                    : [["수익 전망", "/app/revenue"], ["안전진단", "/app/safety"]]
+                  ).map(([label, href]) => (
+                    <Link key={href} href={href}
+                          className="inline-flex min-h-11 items-center text-[12px] text-gov-link hover:underline">
+                      {label} →
+                    </Link>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="sec-title mb-3">이용 안내</h2>
+                <p className="text-[13px] leading-relaxed text-gov-ink2">
+                  농가용과 금융기관용 화면이 따로 있습니다. 같은 분석을 각자에게 필요한
+                  형태로 보여 줍니다.
+                </p>
+                <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
+                  <div className="flex gap-3">
+                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">농가</dt>
+                    <dd className="text-gov-ink2">“2.3억원 이하 차입을 권장합니다”</dd>
+                  </div>
+                  <div className="flex gap-3">
+                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">금융기관</dt>
+                    <dd className="text-gov-ink2">
+                      “3억원 대출 시 가격 하락 시나리오에서 상환여력 부족”
+                    </dd>
+                  </div>
+                </dl>
+                <Link href="/login"
+                      className="mt-4 flex min-h-11 items-center justify-center rounded-md bg-gov-head text-[13px] font-bold text-white shadow-sm hover:bg-gov-navy">
+                  로그인
+                </Link>
+                <p className="mt-2 text-[12px] text-gov-ink3">{DEMO_HINT}</p>
+              </>
+            )}
           </Panel>
         </div>
       </div>

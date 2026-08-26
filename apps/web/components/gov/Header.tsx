@@ -3,9 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PORTAL } from "@/lib/nav";
+import { ROLE_HOME } from "@/lib/auth";
+import { useSession } from "@/lib/useSession";
 
 export default function Header() {
   const path = usePathname();
+  const { session, ready } = useSession();
+  const home = ready && session ? ROLE_HOME[session.role] : "/app";
   return (
     <header className="no-print border-b border-gov-line bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-8 px-4 py-4">
@@ -46,10 +50,10 @@ export default function Header() {
           </ul>
         </nav>
         <Link
-          href="/app"
+          href={home}
           className="ml-auto inline-flex min-h-11 shrink-0 items-center rounded-md bg-gov-head px-4 text-[13px] font-semibold text-white hover:bg-gov-navy lg:ml-0"
         >
-          진단 시작
+          {ready && session ? "업무 화면" : "진단 시작"}
         </Link>
       </div>
       {/* 좁은 화면용 가로 스크롤 메뉴 */}

@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Btn, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
-import { DEMO_ACCOUNTS, signIn } from "@/lib/auth";
+import { DEMO_ACCOUNTS, ROLE_LABEL, signIn } from "@/lib/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -48,7 +48,7 @@ function LoginForm() {
                   onClick={() => { setId(a.id); setPw(a.pw); setError(null); }}
                   className="flex min-h-11 flex-col justify-center rounded-md border border-gov-line px-3 py-2 text-left transition hover:border-gov-link hover:bg-gov-soft"
                 >
-                  <span className="text-[13px] font-bold text-gov-ink">{a.label}</span>
+                  <span className="text-[13px] font-bold text-gov-ink">{ROLE_LABEL[a.role]}</span>
                   <span className="tabular text-[12px] text-gov-ink3">{a.id} / {a.pw}</span>
                 </button>
               ))}

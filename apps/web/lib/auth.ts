@@ -16,17 +16,20 @@ export type Session = { id: string; role: Role; name: string; org: string; at: n
 const KEY = "yfc.session.v1";
 
 /** 데모 계정. **계정이 역할을 정한다** — 라디오 버튼으로 고르게 두면
- *  아무나 금융기관 화면에 들어갈 수 있어서 심사 화면의 의미가 없어진다. */
-const ACCOUNTS: Record<string, { pw: string; role: Role; name: string; org: string }> = {
-  "000000": { pw: "111111", role: "farmer", name: "김청년", org: "청년후계농" },
-  "222222": { pw: "333333", role: "bank", name: "박심사", org: "농협은행 여신심사부" },
-};
+ *  아무나 금융기관 화면에 들어갈 수 있어서 심사 화면의 의미가 없어진다.
+ *
+ *  **객체가 아니라 배열이다.** 아이디를 키로 쓰는 객체에 두면 JS 가 정수처럼 보이는
+ *  키("222222")를 앞으로 당겨서 순서가 뒤집힌다 — "000000" 은 앞자리 0 때문에
+ *  정수 키가 아니라 뒤로 간다. 그래서 화면에 "농가 222222" 라고 잘못 떴었다. */
+export const DEMO_ACCOUNTS = [
+  { id: "000000", pw: "111111", role: "farmer" as Role, name: "김청년", org: "청년후계농" },
+  { id: "222222", pw: "333333", role: "bank" as Role, name: "박심사", org: "농협은행 여신심사부" },
+];
 
 export const ROLE_LABEL: Record<Role, string> = { farmer: "농가", bank: "금융기관" };
 
-export const DEMO_ACCOUNTS = Object.entries(ACCOUNTS).map(([id, a]) => ({
-  id, pw: a.pw, role: a.role, label: ROLE_LABEL[a.role], org: a.org,
-}));
+/** 역할별 업무 홈. 로그인 후 갈 곳이자, 이미 로그인한 사람에게 보여줄 링크. */
+export const ROLE_HOME: Record<Role, string> = { farmer: "/app", bank: "/bank" };
 
 // ── 구독 스토어 ───────────────────────────────────────────
 let cache: Session | null | undefined;   // undefined = 아직 안 읽음
@@ -83,7 +86,7 @@ export const serverSession = (): Session | null => null;
 // ── 동작 ─────────────────────────────────────────────────
 
 export function signIn(id: string, pw: string): Session | null {
-  const a = ACCOUNTS[id];
+  const a = DEMO_ACCOUNTS.find((x) => x.id === id);
   if (!a || a.pw !== pw) return null;
   const s: Session = { id, role: a.role, name: a.name, org: a.org, at: Date.now() };
   commit(s);
@@ -94,6 +97,9 @@ export function signOut(): void {
   commit(null);
 }
 
+/** 순서에 기대지 않고 역할로 찾는다. 인덱스로 꺼내다 농가/금융기관이 뒤바뀐 적이 있다. */
+const byRole = (r: Role) => DEMO_ACCOUNTS.find((a) => a.role === r)!;
+
 export const DEMO_HINT =
-  `데모 계정 — 농가 ${DEMO_ACCOUNTS[0].id}/${DEMO_ACCOUNTS[0].pw} · ` +
-  `금융기관 ${DEMO_ACCOUNTS[1].id}/${DEMO_ACCOUNTS[1].pw}`;
+  `데모 계정 — 농가 ${byRole("farmer").id}/${byRole("farmer").pw} · ` +
+  `금융기관 ${byRole("bank").id}/${byRole("bank").pw}`;
