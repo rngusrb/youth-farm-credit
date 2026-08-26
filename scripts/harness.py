@@ -316,10 +316,26 @@ def check_anchors() -> list[dict]:
     # ② TASKS 앵커 = 커밋 수
     if tasks_p.exists():
         body = tasks_p.read_text()
-        if not re.search(CFG["task_heading_regex"], body, re.MULTILINE) \
-           and "현재 스프린트: 없음" not in body:
+        has_task = re.search(CFG["task_heading_regex"], body, re.MULTILINE)
+        declared_empty = "현재 스프린트: 없음" in body
+        if not has_task and not declared_empty:
             f.append({"level": "FAIL", "type": "tasks_empty", "file": CFG["tasks_doc"],
                       "message": f"커밋 {n}개인데 현재 태스크도 '현재 스프린트: 없음' 선언도 없다"})
+        elif declared_empty:
+            # '없음' 선언은 면제가 아니다. 그 상태로 커밋이 계속 쌓이면 작업이 TASKS 를
+            # 안 거치고 흘러간다는 뜻이다. (실측: '없음' 상태에서 커밋 4개가 나갔다 —
+            # 하네스 배선·접근성 수정 전부 태스크 없이 진행됐고 아무도 몰랐다)
+            r = subprocess.run(["git", "log", "-1", "--format=%H", "--", CFG["tasks_doc"]],
+                               cwd=ROOT, capture_output=True, text=True)
+            base = r.stdout.strip()
+            if base:
+                c = subprocess.run(["git", "rev-list", "--count", f"{base}..HEAD"],
+                                   cwd=ROOT, capture_output=True, text=True)
+                since = int(c.stdout.strip()) if c.stdout.strip().isdigit() else 0
+                if since > CFG.get("grace_commits", 3):
+                    f.append({"level": "WARN", "type": "tasks_bypassed", "file": CFG["tasks_doc"],
+                              "message": f"'현재 스프린트: 없음' 선언 이후 커밋 {since}개 — "
+                                         "작업이 TASKS 를 안 거치고 흘러가고 있다"})
 
     # ③ CLAUDE 앵커 = 아카이브 개수
     if index_p.exists() and archive.is_dir():
