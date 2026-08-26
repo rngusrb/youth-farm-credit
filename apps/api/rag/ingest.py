@@ -200,8 +200,22 @@ def build_index() -> list[Chunk]:
 
 
 def load_index() -> list[dict]:
+    """색인을 읽는다. 없으면 원문에서 한 번 만든다.
+
+    색인(index.jsonl)은 생성물이라 저장소에 넣지 않는다. 그런데 클론한 사람이
+    `python -m rag.ingest` 를 안 돌리면 제도 근거가 **조용히** "근거 없음"이 된다 —
+    기능이 없는 것과 설정이 덜 된 것을 화면에서 구분할 수 없다. 그래서 원문이
+    있으면 자동으로 만든다. 원문까지 없으면 그때는 진짜 근거가 없는 것이다.
+    """
     if not INDEX_PATH.exists():
-        return []
+        if any(CORPUS_DIR.glob("*.txt")) or any(CORPUS_DIR.glob("*.jsonl")):
+            import logging
+            logging.getLogger(__name__).info(
+                "색인이 없어 %s 의 원문에서 새로 만듭니다.", CORPUS_DIR
+            )
+            build_index()
+        else:
+            return []
     return [
         json.loads(line)
         for line in INDEX_PATH.read_text(encoding="utf-8").splitlines()

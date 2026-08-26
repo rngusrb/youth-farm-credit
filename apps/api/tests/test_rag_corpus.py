@@ -83,3 +83,38 @@ def test_expansion_adds_few_discriminative_terms(corpus):
     """확장어를 쏟아부으면 원 질의가 희석된다. 상한을 지키는지 본다."""
     for q, _ in GOLD:
         assert len(expand(q, use_llm=False).added) <= 2
+
+
+def test_index_is_built_on_demand_when_missing(tmp_path, monkeypatch):
+    """클론한 사람이 ingest 를 안 돌려도 제도 근거가 동작해야 한다.
+
+    색인은 생성물이라 커밋하지 않는다. 그런데 없을 때 조용히 '근거 없음' 이 되면
+    기능이 없는 것과 설정이 덜 된 것을 화면에서 구분할 수 없다.
+    """
+    from rag import ingest
+
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    (corpus / "doc.txt").write_text(
+        "# 시험 지침 | 2026 | https://example.test\n"
+        "Ⅰ. 총칙\n1. 목적\n이 지침은 시험을 목적으로 한다.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ingest, "CORPUS_DIR", corpus)
+    monkeypatch.setattr(ingest, "INDEX_PATH", corpus / "index.jsonl")
+
+    assert not (corpus / "index.jsonl").exists()
+    rows = ingest.load_index()
+    assert rows, "색인이 없으면 원문에서 만들어야 한다"
+    assert (corpus / "index.jsonl").exists()
+
+
+def test_no_corpus_means_no_answer(tmp_path, monkeypatch):
+    """원문까지 없으면 그때는 진짜로 근거가 없는 것이다 — 지어내지 않는다."""
+    from rag import ingest
+
+    empty = tmp_path / "empty"
+    empty.mkdir()
+    monkeypatch.setattr(ingest, "CORPUS_DIR", empty)
+    monkeypatch.setattr(ingest, "INDEX_PATH", empty / "index.jsonl")
+    assert ingest.load_index() == []

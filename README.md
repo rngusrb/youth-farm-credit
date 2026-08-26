@@ -20,42 +20,48 @@ API 키가 없으면 규칙기반 슬롯 추출과 템플릿 해설로 자동 �
 
 ```
 apps/
-├─ api/                    FastAPI (Python 3.11)
-│  ├─ engine/              결정론적 재무 계산 — 이 디렉토리만 숫자를 만든다
-│  │  ├─ params.py         crops/loan_products/policy 로더
-│  │  ├─ loan.py           연금현가 · 상환 스케줄
-│  │  ├─ income.py         작목·면적 → 소득
-│  │  ├─ dscr.py           상환여력 · DSCR 한도 역산 · 최소면적
-│  │  ├─ simulate.py       몬테카를로 (소득충격 · 재해 · 상환연기)
-│  │  ├─ risk_limit.py     위험기반 한도 역산 · σ 불확실성 밴드
-│  │  └─ diagnose.py       진단 오케스트레이션 + 결과 id 인코딩
-│  ├─ stats/               σ 추정 — 가정값을 실측으로 교체하는 경로
-│  │  ├─ kamis.py          공공데이터포털 일별 도·소매 가격 API 클라이언트
-│  │  ├─ kosis.py          KOSIS 농산물소득조사 클라이언트
-│  │  ├─ factors.py        소득 변동의 요인분해 (가격/수량/비용)
-│  │  ├─ hierarchical.py   작목 층위 계층 축소 (경험적 베이즈)
-│  │  ├─ garch.py          GARCH(1,1) · 연평균 변동성 · 계절 공백 처리
-│  │  ├─ calibrate_kosis.py σ 실측 + 축소 + 요인분해 → crops.json
-│  │  ├─ calibrate_market.py KAMIS 교차검증 + 시장 국면 → crops.json
-│  │  ├─ leverage.py       영업레버리지(DOL) · 분산분해
-│  │  ├─ shrinkage.py      개인 소득이력 계층적 축소추정
-│  │  ├─ volatility.py     로그수익률 · 연율화 · 부트스트랩 CI · 계절조정
-│  │  └─ calibrate.py      수집 → 추정 → crops.json 반영 CLI
-│  ├─ rag/                 조항 청킹 · BM25 검색 · 인용 강제 응답
-│  ├─ llm/                 슬롯 추출 · 결과 해설 · 수치 검증
-│  ├─ data/                작목 파라미터 · 대출상품 · 재해구제 규칙 · 지침 코퍼스
-│  └─ tests/               골든 케이스 + API 계약 + RAG (49건)
-└─ web/                    Next.js (App Router) + Tailwind + Recharts
-   ├─ app/                 랜딩 · 진단 · 결과
-   ├─ components/          CliffChart · DscrGauge · GapCard · CitationBlock …
-   └─ lib/                 API 클라이언트 · 표시 포맷
+├─ api/                     FastAPI (Python 3.11)
+│  ├─ engine/               결정론적 재무 계산 — 여기만 숫자를 만든다
+│  │  ├─ params.py          crops/loan_products/policy 로더
+│  │  ├─ loan.py            상환 스케줄 (원금 균등분할)
+│  │  ├─ income.py          작목·면적 → 소득
+│  │  ├─ dscr.py            상환여력 · DSCR 한도 역산 · 최소면적
+│  │  ├─ simulate.py        몬테카를로 (소득충격 · 재해 · 상환연기)
+│  │  ├─ risk_limit.py      위험기반 한도 역산 · σ 불확실성 밴드
+│  │  ├─ cashflow.py        월별 현금흐름 · 운전자금 부족 시점
+│  │  ├─ stress.py          시나리오 스트레스 (가격↓·생산량↓·금리↑·재해)
+│  │  └─ diagnose.py        진단 오케스트레이션 + 결과 id 인코딩
+│  ├─ estimators/           순수 추정기 — 외부 I/O 0 (core 레이어)
+│  │  ├─ volatility.py      로그수익률 · 연율화 · 부트스트랩 CI
+│  │  ├─ shrinkage.py       개인 소득이력 계층적 축소추정
+│  │  ├─ hierarchical.py    작목 층위 부분 풀링 (경험적 베이즈)
+│  │  ├─ leverage.py        영업레버리지(DOL) · 분산분해
+│  │  └─ garch.py           GARCH(1,1) · 계절 공백 처리
+│  ├─ stats/                외부 수집 (adapters) — 1회성 CLI
+│  │  ├─ kosis.py           KOSIS 농산물소득조사
+│  │  ├─ kamis.py           KAMIS 일별 도매가
+│  │  ├─ factors.py         소득 변동 요인분해 (가격/수량/비용)
+│  │  └─ calibrate_*.py     실측 → data/crops.json 반영
+│  ├─ rag/                  조항 청킹 · BM25+RRF 검색 · 인용 강제
+│  ├─ llm/                  슬롯 추출 · 해설 · 수치 검증
+│  ├─ data/                 작목 38종 · 대출상품 · 재해규칙 · 지침 원문 3종
+│  └─ tests/                골든 케이스 · API 계약 · RAG · 현금흐름 · 스트레스
+└─ web/                     Next.js (App Router) + Tailwind
+   ├─ app/                  공개 포털 12 + 농가용 8 + 금융기관용 5 라우트
+   ├─ components/gov/       정부 포털 UI 키트
+   └─ lib/                  API 클라이언트 · 세션 · 표시 포맷
 ```
+
+레이어 경계(`api → core → adapters`)는 `meta/boundaries.yaml` 이 선언하고
+`scripts/deps_check.py` 가 커밋마다 검사한다. **core 는 외부 의존 0** — 이것이
+"숫자는 LLM 이 만들지 않는다"는 주장의 기계적 증거다.
 
 ## 실행
 
-**인증키는 필요 없다.** 클론해서 바로 띄우면 된다. σ·요인분해·시장 교차검증 결과가
-모두 `data/crops.json` 에 실측값으로 들어가 있어서, 서비스는 외부 API 를 호출하지
-않는다. 아무 키도 없는 환경에서 전 엔드포인트가 정상 동작하는 것을 확인했다.
+**인증키도 별도 설정도 필요 없다.** 클론해서 두 개만 띄우면 된다.
+σ·요인분해·총수입/경영비·지침 원문이 전부 저장소에 들어 있어서 서비스는 외부 API 를
+호출하지 않는다. (아무 키도 없는 깨끗한 클론에서 200 테스트 통과 · 전 엔드포인트 정상 ·
+웹 빌드 성공을 확인했다.)
 
 ### 백엔드
 
@@ -65,18 +71,61 @@ pip install -r requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-`http://localhost:8000/docs` 에서 OpenAPI 문서를 볼 수 있다.
+`http://localhost:8000/docs` — OpenAPI 문서.
+제도 근거 색인은 첫 요청 때 원문에서 자동으로 만들어진다.
 
 ### 프론트엔드
 
 ```bash
 cd apps/web
 npm install
-echo 'NEXT_PUBLIC_API_BASE=http://localhost:8000' > .env.local
 npm run dev
 ```
 
-`http://localhost:3000` — 값 세 개(작목·면적·생활비)를 넣으면 바로 리포트로 간다.
+`http://localhost:3000`
+
+> API 주소를 바꾸려면 `apps/web/.env.local` 에 `NEXT_PUBLIC_API_BASE` 를 넣는다.
+> 기본값이 `http://localhost:8000` 이라 보통은 필요 없다.
+
+## 화면
+
+로그인 없이 볼 수 있는 것 — 포털 홈, 서비스 소개, 공지사항, 자료실(시행지침 원문),
+자주 묻는 질문, 용어사전, 제도 근거 검색, 작목 데이터, 시세·국면, 데이터 현황.
+
+로그인하면 역할에 따라 갈린다.
+
+| 구분 | 아이디 / 비밀번호 | 화면 |
+|------|------------------|------|
+| 농가 | `000000` / `111111` | 홈 · 내 농가 정보 · 수익 전망 · 금융 안전진단 · 맞춤 금융지원 · 구제제도 · AI 상담 · 내 리포트 |
+| 금융기관 | `222222` / `333333` | 심사 대시보드 · 차주 목록 · 상환능력 분석 · 적정 여신 설계 · 여신 Stress Test |
+
+> ⚠️ **데모 로그인이며 실제 인증이 아니다.** 아이디·비밀번호가 코드에 그대로 있고
+> 검증도 브라우저에서 한다. 화면 흐름을 보여주기 위한 장치이므로 이 상태로 운영에
+> 쓸 수 없다.
+
+## 검증
+
+```bash
+python scripts/harness.py all      # 테스트 + 경계 + 기능 + 문서 + 화면 노후
+python scripts/deps_check.py       # 레이어 경계만
+python scripts/ui_check.py http://localhost:3000   # 접근성 (서버가 떠 있어야 함)
+```
+
+`harness all` 이 완료 기준이다. 테스트 러너 단독 실행은 인정하지 않는다 —
+Doc Lint 와 경계 검사가 빠지기 때문이다. 자세한 규칙은 `CLAUDE.md`,
+아키텍처 색인은 `DEV_GUIDE.md` 를 본다.
+
+## 데이터 출처
+
+| 값 | 출처 |
+|----|------|
+| 작목별 소득·총수입·경영비 | KOSIS 농산물소득조사 (농촌진흥청) |
+| 소득 변동성 σ | 위 시계열에서 실측 + 계층 축소추정 |
+| 도매가격·시장 국면 | KAMIS 일별 도매가 (공공데이터포털 15156057) |
+| 제도 요건·상환 조건 | 농림축산식품부 2026년 시행지침 3종 (원문 수록) |
+
+가정값은 화면에서 실측값과 구분해 표시한다. 근거가 없는 값은 지어내지 않고
+미반영으로 남긴다 (예: 농신보 보증료율 — 지침에 요율이 없다).
 
 ### 테스트
 
@@ -396,6 +445,11 @@ GET https://apis.data.go.kr/B552845/perDay/price
 | POST | `/api/v1/diagnose` | 세 가지 한도 + 시뮬레이션 + σ 불확실성 밴드 |
 | GET | `/api/v1/diagnose/{id}` | 결과 재계산 (id 에 입력이 인코딩되어 있어 서버 저장 없음) |
 | POST | `/api/v1/explain` | 엔진 출력 → 자연어 해설 + 수치 검증 |
+| GET | `/api/v1/crops/{id}` | 작목 상세 — 요인분해 · 시장국면 · σ 근거 · 레버리지 |
+| POST | `/api/v1/cashflow` | 월별 현금흐름 · 운전자금 부족 시점 |
+| POST | `/api/v1/stress` | 시나리오 스트레스 (가격↓·생산량↓·금리↑·재해) |
+| GET | `/api/v1/corpus` | 수록 지침 원문 목록 |
+| GET | `/api/v1/stats` | 데이터 현황 · 지침 대조 결과 |
 | POST | `/api/v1/regulation/ask` | 제도 요건 질의 (근거 없으면 답변 생성 안 함) |
 
 ## 검증 상태
@@ -414,27 +468,40 @@ GET https://apis.data.go.kr/B552845/perDay/price
   요인 기여도 합이 1, 탄력성이 실측값 (`test_data_integrity.py`)
 - 요인분해·계층축소·GARCH: 합성 데이터에서 알려진 모수 복원, 계절 공백 처리,
   짧은 계열의 축소 방향 (`test_factors.py`)
-- 총 168건
+- 월별 현금흐름: 연 합계 일치, 출하 집중일수록 운전자금 증가 (`test_cashflow.py`)
+- 스트레스: 영업레버리지 증폭, 재해 시 상환연기 착시 탐지 (`test_stress.py`)
+- 제도 근거 품질: recall 하한, 청크 크기, 인용 법령이 장 경로를 덮지 않음 (`test_rag_corpus.py`)
+- 총 200건 (+ 웹 26건)
 - `/explain` 수치 검증: 엔진 출력에 없는 수치가 든 문장은 제거 후 반환
 - `/regulation/ask`: 코퍼스가 비면 항상 `"확인된 근거를 찾지 못했습니다"`
 
-### 지침 코퍼스는 비어 있다
+### 지침 코퍼스
 
-`apps/api/data/corpus/` 에 실제 시행지침 원문을 넣어야 제도 근거 응답이 동작한다.
-넣는 방법은 [해당 디렉토리 README](apps/api/data/corpus/README.md) 참조. 근거 없이
-답을 지어내지 않도록, 비어 있는 동안에는 인용 없는 답변을 차단한다.
+2026년 시행지침 3종(후계농업경영인 육성사업 · 청년농업인 영농정착지원사업 ·
+우수후계농업경영인 육성사업)의 원문이 `apps/api/data/corpus/` 에 평문으로
+들어 있다. 총 709개 조항이며 색인은 첫 요청 때 자동 생성된다.
+
+원문을 다시 받으려면 `python -m rag.fetch_guidelines`. 코퍼스를 비우면 제도 근거
+응답은 항상 `"확인된 근거를 찾지 못했습니다"` 를 반환한다 — 근거 없이 답을
+지어내지 않기 위한 설계다.
 
 ## 배포
+
+> ⚠️ 배포 전에 **데모 로그인(`apps/web/lib/auth.ts`)을 실제 인증으로 교체**해야 한다.
+> 현재는 아이디·비밀번호가 코드에 있고 검증도 브라우저에서 한다.
 
 - 백엔드: `render.yaml` — Render 에 리포를 연결하면 그대로 뜬다. 배포 후
   `CORS_ORIGINS` 에 프론트 도메인을 넣는다.
 - 프론트: Vercel. Root Directory 를 `apps/web` 으로 잡고 환경변수
   `NEXT_PUBLIC_API_BASE` 에 백엔드 URL 을 넣는다.
 
-## 출처
+## 참고 문헌
 
 1. KREI 『농업경영체의 부채 실태와 정책 과제』 R2025-09 — 청년농 부채 실태
-2. 농촌진흥청 2023년 농산물 소득조사 — 작목별 10a당 소득
+2. 농촌진흥청 농산물 소득조사(KOSIS) — 작목별 10a당 소득 · 총수입 · 경영비
+3. 농림축산식품부 2026년 후계농업경영인 육성사업 시행지침
+4. 농림축산식품부 2026년 청년농업인 영농정착지원사업 시행지침
+5. 농림축산식품부 2026년 우수후계농업경영인 육성사업 시행지침
 3. 농업자금이차보전 사업시행지침 — 재해 시 상환연기, 할부유예
 4. 후계농업경영인 육성사업 — 5억 / 1.5% / 5년거치 20년
 
