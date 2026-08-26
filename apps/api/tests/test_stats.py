@@ -4,7 +4,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from stats.volatility import (
+from estimators.volatility import (
     annualize,
     bootstrap_ci,
     deseasonalize,

@@ -23,7 +23,7 @@ from datetime import date, timedelta
 
 from engine.params import DATA_DIR, crops
 from stats.env import load as load_env
-from stats.garch import annual_price_sigma, ewma_volatility, fit_garch
+from estimators.garch import annual_price_sigma, ewma_volatility, fit_garch
 from stats.kamis import KamisError, daily_national_average, fetch_prices
 
 CROPS_PATH = DATA_DIR / "crops.json"

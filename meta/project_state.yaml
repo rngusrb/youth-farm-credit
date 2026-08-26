@@ -1,0 +1,36 @@
+# meta/project_state.yaml — harness Doc Lint 의 검증 원천.
+# 여기 적힌 경로가 존재하지 않으면 harness all 이 FAIL 한다.
+
+entry_points:
+  api: apps/api/main.py
+  web: apps/web/app/page.tsx
+
+archive_dir: docs/sprints
+
+folder_guides:
+  # 키가 곧 폴더 경로다 (harness.all_folders 가 키를 대상으로 삼는다).
+  # 레이어가 루트가 아니라 apps/api 아래에 있다 — boundaries.yaml 참조.
+  apps/api:         apps/api/_GUIDE.md
+  apps/api/engine:     apps/api/engine/_GUIDE.md
+  apps/api/estimators: apps/api/estimators/_GUIDE.md
+  apps/api/llm:     apps/api/llm/_GUIDE.md
+  apps/api/rag:     apps/api/rag/_GUIDE.md
+  apps/api/stats:   apps/api/stats/_GUIDE.md
+
+harness:
+  max_active_tasks: 3
+  task_heading_regex: "^#{2,3} [A-Z][A-Z0-9]*-[A-Za-z0-9]+:"
+  # 테스트는 apps/api/tests/ 에 모여 있고, 폴더별 목록은 각 _GUIDE.md 의 '## 하네스' 에 있다
+  test_path_prefixes: ["apps/api/tests/"]
+  test_globs:
+    - "apps/api/tests/test_{key}*.py"
+  always_run: []
+  skip_dirs: ["__pycache__", ".venv", "venv", "node_modules", ".git", ".next",
+              "site-packages", "dist", "build", ".harness_cache", ".loop"]
+  ruff: false          # 아직 ruff 설정을 안 넣었다. 넣는 순간 true 로.
+
+loop:
+  score_order: [failed, lint_fail, gc]
+  max_rounds: 8
+  stall_rounds: 3
+  guard_tests: true

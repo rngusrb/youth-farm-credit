@@ -27,7 +27,7 @@ from engine.params import DATA_DIR
 from stats.env import load as load_env
 from stats.kamis import codes
 from stats.kosis import fetch_group, series_for
-from stats.volatility import log_returns
+from estimators.volatility import log_returns
 
 CROPS_PATH = DATA_DIR / "crops.json"
 MIN_YEARS = 5

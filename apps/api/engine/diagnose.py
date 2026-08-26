@@ -9,6 +9,8 @@ from typing import Any
 
 from dataclasses import asdict as _asdict
 
+from estimators.shrinkage import explain, shrink
+
 from .dscr import TARGET_DSCR, capacity, limit_by_dscr, min_area
 from .income import annual_income
 from .params import get_crop, get_product, policy, sim_defaults
@@ -127,7 +129,6 @@ def resolve_sigma(crop, income_history: tuple[float, ...]) -> tuple[float, dict]
     if len(income_history) < 3:
         return crop.sigma, base
 
-    from stats.shrinkage import explain, shrink
 
     try:
         result = shrink(income_history, prior_sigma=crop.sigma)

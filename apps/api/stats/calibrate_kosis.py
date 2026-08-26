@@ -30,10 +30,10 @@ import numpy as np
 from engine.params import DATA_DIR, crops
 from stats.env import load as load_env
 from stats.factors import FactorProfile, decompose_all, median_elasticity
-from stats.hierarchical import CropObservation, Population, PooledSigma, pool_all
+from estimators.hierarchical import CropObservation, Population, PooledSigma, pool_all
 from stats.kosis import KosisError, fetch_group, series_for
-from stats.leverage import degree_of_operating_leverage
-from stats.volatility import bootstrap_ci, log_returns
+from estimators.leverage import degree_of_operating_leverage
+from estimators.volatility import bootstrap_ci, log_returns
 
 CROPS_PATH = DATA_DIR / "crops.json"
 POLICY_PATH = DATA_DIR / "policy.json"

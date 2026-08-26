@@ -1,0 +1,61 @@
+# meta/boundaries.yaml — 경계 선언 (0단계 산출물)
+#
+# 이 파일은 설명이 아니라 제약이다. scripts/deps_check.py 가 읽어 실제 import 를
+# 검사하고, 위반하면 FAIL 시킨다.
+#
+# ※ 이 저장소는 모노레포(apps/api, apps/web)라 레이어가 루트 폴더가 아니다.
+#   그래서 layers[].path 로 실제 경로를, layers[].modules 로 import 이름을 선언한다.
+#   코드를 도구 가정에 맞춰 옮기는 대신 도구가 코드를 가리키게 했다.
+#   (deps_check.py 의 layer_paths / module_map / source_files_for)
+
+layers:
+  # 순서가 곧 의존 방향이다. 위가 아래를 부른다. 역방향 금지.
+  - name: api
+    path: [apps/api/main.py, apps/api/schemas.py]
+    modules: [main, schemas]
+    owns:  "요청/응답, 입력 검증, 직렬화"
+    never: "비즈니스 규칙, 외부 API 직접 호출"
+
+  - name: core
+    path: [apps/api/engine, apps/api/estimators]
+    modules: [engine, estimators]
+    owns:  "여신 계산 전부 — 상환 스케줄, DSCR, 몬테카를로, 한도 역산"
+    never: "HTTP, 환경변수, 프롬프트, 외부 API"
+
+  - name: adapters
+    path: [apps/api/llm, apps/api/rag, apps/api/stats]
+    modules: [llm, rag, stats]
+    owns:  "외부 세계 전부 — Anthropic API, KOSIS, KAMIS, 파일 읽기, 프롬프트"
+    never: "여신 판단"
+
+allowed_imports:
+  api:      [core, adapters]
+  core:     []            # ← 엄격. core 는 인터넷 없이 전부 테스트된다
+  adapters: [core]        # ← 어댑터는 core 의 데이터 정의(params)를 읽는다
+
+  # 왜 core: [] 인가 — engine/ 은 현재 외부 의존이 0이다(검증함). 그 상태를 유지하는 것이
+  # 이 프로젝트의 핵심 자산이다. "숫자는 LLM 이 만들지 않는다"는 원칙이 여기서 강제된다.
+  # 왜 adapters → core 를 허용하나 — stats/ 가 crops.json 정의를 읽어야 σ 를 계산한다.
+  #   자세한 이유는 docs/decisions/0001-layer-direction.md
+
+features:
+  - diagnose        # 상환여력 진단 (메인)
+  - calibration     # σ 실측 파이프라인
+  - regulation      # 제도 근거 (RAG, 코퍼스 미투입)
+
+shared:
+  path: shared
+  rule: "2개 이상의 기능이 실제로 사용할 때만 승격. 1개만 쓰면 원래 자리로 되돌린다."
+  max_files: 20
+
+forbidden_symbols:
+  core:
+    - pattern: "(?i)(you are|system prompt|assistant:|\\{\\{prompt)"
+      message: "프롬프트는 adapters 밖으로 나가지 않는다 — 나가는 순간 테스트 불가"
+    - pattern: "os\\.environ|getenv"
+      message: "core 는 환경변수를 직접 읽지 않는다 — 설정은 주입받는다"
+    - pattern: "\\b(requests|httpx|urllib)\\b"
+      message: "core 는 네트워크를 모른다 — 인터넷 없이 전부 테스트되어야 한다"
+  api:
+    - pattern: "\\b(SELECT|INSERT|UPDATE|DELETE)\\s"
+      message: "api 레이어에 SQL 금지 — adapters 로"

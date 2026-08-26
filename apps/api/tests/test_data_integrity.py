@@ -100,7 +100,7 @@ def test_no_perennial_fruit_crops():
 def test_elasticity_is_measured_not_assumed():
     """가격→소득 환산 계수가 실측으로 교체됐는지."""
     from engine.params import policy
-    from stats.volatility import DEFAULT_QUANTITY_ELASTICITY
+    from estimators.volatility import DEFAULT_QUANTITY_ELASTICITY
 
     entry = policy()["price_quantity_elasticity"]
     assert entry["source"] == "MEASURED"

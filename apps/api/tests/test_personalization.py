@@ -6,7 +6,7 @@ import pytest
 
 from engine.diagnose import DiagnoseInput, diagnose, resolve_sigma
 from engine.params import get_crop
-from stats.shrinkage import DEFAULT_PRIOR_DF, MIN_OBSERVATIONS, explain, shrink
+from estimators.shrinkage import DEFAULT_PRIOR_DF, MIN_OBSERVATIONS, explain, shrink
 
 CROP = get_crop("strawberry_hydro")
 STEADY = [48_000_000, 48_500_000, 47_800_000, 48_200_000, 48_400_000, 48_100_000]

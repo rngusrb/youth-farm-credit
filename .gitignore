@@ -8,3 +8,5 @@ __pycache__/
 .venv/
 .DS_Store
 apps/api/data/corpus/index.jsonl
+.loop/
+.harness_cache/

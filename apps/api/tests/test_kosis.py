@@ -6,14 +6,14 @@ import math
 import pytest
 
 from stats import kosis
-from stats.leverage import (
+from estimators.leverage import (
     combine,
     decompose,
     degree_of_operating_leverage,
     implied_idiosyncratic_from_leverage,
     lift_national_average,
 )
-from stats.volatility import estimate_from_annual_series
+from estimators.volatility import estimate_from_annual_series
 
 
 def row(year: int, crop: str, item: str, value: float, *, swapped: bool = False) -> dict:

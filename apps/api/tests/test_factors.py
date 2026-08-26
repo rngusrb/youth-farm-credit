@@ -7,14 +7,14 @@ import numpy as np
 import pytest
 
 from stats.factors import MIN_YEARS, decompose, decompose_all, median_elasticity
-from stats.garch import (
+from estimators.garch import (
     annual_average_series,
     annual_price_sigma,
     ewma_volatility,
     fit_garch,
     segmented_log_returns,
 )
-from stats.hierarchical import CropObservation, fit_population, pool, pool_all
+from estimators.hierarchical import CropObservation, fit_population, pool, pool_all
 from stats.kosis import IncomeRow
 
 

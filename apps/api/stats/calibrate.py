@@ -33,7 +33,7 @@ import numpy as np
 
 from engine.params import DATA_DIR
 from stats.env import load as load_env
-from stats.volatility import (
+from estimators.volatility import (
     DEFAULT_COST_LEVERAGE,
     DEFAULT_QUANTITY_ELASTICITY,
     MONTHS_PER_YEAR,
@@ -110,7 +110,7 @@ def load_from_kosis(crop_id: str, group: str) -> tuple[np.ndarray, str]:
     cost = dict(series_for(rows, crop.name, "cost"))
     last = years[-1]
     if gross.get(last) and cost.get(last):
-        from stats.leverage import degree_of_operating_leverage
+        from estimators.leverage import degree_of_operating_leverage
 
         lev = degree_of_operating_leverage(gross[last], cost[last])
         print(f"레버리지  DOL {lev.dol:.2f} (조수입 {gross[last]:,.0f} / 경영비 {cost[last]:,.0f}, {last})",

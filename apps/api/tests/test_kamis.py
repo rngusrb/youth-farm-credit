@@ -228,7 +228,7 @@ def test_collected_series_feeds_the_estimator(key, monkeypatch):
     """API 응답에서 σ 추정까지 한 줄로 이어지는지 확인한다."""
     import numpy as np
 
-    from stats.volatility import estimate_from_price_series
+    from estimators.volatility import estimate_from_price_series
 
     rng = np.random.default_rng(0)
     prices = 10000 * np.exp(np.cumsum(rng.normal(0, 0.30 / np.sqrt(250), 750)))
