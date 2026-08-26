@@ -351,11 +351,11 @@ footer {
       전부 공개 통계에 대한 결정론적 계산과 시뮬레이션입니다.
     </p>
     <div class="meta">
-      <span>데이터 원천 5종</span>
-      <span>분석 9단계</span>
+      <span>데이터 원천 6종</span>
+      <span>분석 13단계</span>
       <span>지침 원문 대조 6건</span>
       <span>작목 38종</span>
-      <span>테스트 178건</span>
+      <span>테스트 231건</span>
       <span>최종 갱신 2026-08-26</span>
     </div>
   </header>
@@ -383,16 +383,28 @@ footer {
       </article>
 
       <article class="source">
+        <span class="who">농촌진흥청 · KOSIS</span>
+        <h3>비목별 총수입·경영비</h3>
+        <p>같은 조사의 비목 축에서 총수입과 경영비를 따로 받습니다. 소득만으로는
+        "가격이 20% 떨어지면 소득이 얼마나 주는가"를 계산할 수 없습니다.</p>
+        <div class="gives">→ <b>영업레버리지</b> · <b>월별 현금흐름</b></div>
+      </article>
+
+      <article class="source">
         <span class="who">농림축산식품부</span>
-        <h3>후계농 육성자금 지침</h3>
-        <p>5억 한도, 연 1.5% 고정, 5년 거치 20년 상환. 제도 사실이라 추정할 것이 없습니다.</p>
-        <div class="gives">→ <b>상환 조건</b></div>
+        <h3>시행지침 3종 원문</h3>
+        <p>후계농 육성자금 5억·연 1.5% 고정·5년 거치 20년, 우수후계농 2억·5년 거치 10년.
+        2026년판 <span class="num">3</span>종 원문 <span class="num">709</span>개 조항을 그대로 수록해
+        제도 요건을 인용합니다. 제도 사실이라 추정할 것이 없습니다.</p>
+        <div class="gives">→ <b>상환 조건</b> · <b>제도 근거</b></div>
       </article>
 
       <article class="source">
         <span class="who">aT · 공공데이터포털</span>
         <h3>KAMIS 도매가격</h3>
-        <p>전국 도매시장 일별 실거래가. 딸기·토마토·시금치 11년치, 최대 2,695 거래일을 받아 교차검증에 썼다.</p>
+        <p>전국 도매시장 일별 실거래가. <span class="num">19</span>작목, 최대 2,695 거래일을 받아
+        교차검증과 시장 국면에 썼습니다. 다만 거래가 없는 날 직전 시세가 이월되므로,
+        가격이 실제로 움직인 날의 비율을 함께 재서 <b>60% 미만이면 국면 판정을 보류</b>합니다.</p>
         <div class="gives">→ <b>독립 검증</b> · <b>시장 국면</b></div>
       </article>
 
@@ -565,6 +577,74 @@ footer {
         <p class="finding"><b>부수 효과 —</b> 같은 난수를 재사용하니 평가가 35ms에서 1.8ms로 빨라졌습니다. 속도가 목적이 아니라, <b>"많이 빌릴수록 위험하다"가 흔들리지 않게</b> 하려던 것이었습니다.</p>
       </div>
     </div>
+
+    <div class="stage">
+      <div class="stage-n">10</div>
+      <div class="stage-body">
+        <h3>총수입과 경영비를 따로 재다 — 영업레버리지</h3>
+        <p class="why">지금까지는 <b>소득</b>만 알았습니다. 그런데 가격이 20% 떨어졌을 때 소득이 얼마나 줄어드는지는, 그 소득이 <b>얼마짜리 매출에서 나왔는지</b>를 알아야 계산됩니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">KOSIS 비목별 조사<br>총수입 · 경영비 <span class="num">38</span>작목</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">레버리지 = 총수입 ÷ 소득<br>충격 후 소득 = 총수입×(1−하락) − 경영비</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">딸기(수경) <span class="num">2.46</span>배</span></div>
+        </div>
+        <code class="formula">경영비는 매출이 줄어도 그대로 나간다 — 그래서 총수입 −20%가 소득 −49%가 된다</code>
+        <p class="finding"><b>발견 —</b> 열 작목은 소득 계열과 비목 계열의 출처가 달라 <b>총수입 − 경영비 ≠ 소득</b> 이었습니다. 실측한 <b>비용률</b>은 살리고 규모만 자기 소득에 맞춰 재조정해 항등식을 복구했습니다. 비용률을 지어내지 않기 위해서입니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">11</div>
+      <div class="stage-body">
+        <h3>월별 현금흐름 — 연간 흑자인데 돈이 마르는 달</h3>
+        <p class="why">농업 소득은 수확기에 몰려 들어오는데 경영비와 생활비는 매달 나갑니다. 연 단위로만 보면 이 구간이 통째로 보이지 않습니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">총수입 · 경영비 · 생활비<br>출하월 · 그 해 상환액</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">총수입은 출하월에, 비용은 12개월 균등<br>상환은 마지막 출하월 다음 달</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">누적 잔고가 가장 낮은 달<br>필요한 운전자금</span></div>
+        </div>
+        <code class="formula">딸기(수경) 1,200평 6년차 — 12~5월 출하, 11월에 잔고 최저</code>
+        <p class="finding"><b>지어내지 않은 것 —</b> 월별 경영비 배분에 대한 공개 통계가 없어 <b>균등</b>으로 둡니다. 실제로는 정식·자재 구입이 앞에 몰리므로 부족 시점은 더 이를 수 있습니다. 출하월을 모르는 작목은 12개월 균등으로 펼치고 <b>'출하월 미상'</b>이라고 표시합니다 — 추정해서 채우지 않습니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">12</div>
+      <div class="stage-body">
+        <h3>스트레스 테스트 — 나쁜 일이 실제로 일어나면</h3>
+        <p class="why">몬테카를로는 "평균적으로 얼마나 위험한가"를 셉니다. 이건 다른 질문입니다 — <b>특정한 나쁜 일이 실제로 닥치면 버티는가.</b></p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">가격 −20% · 생산량 −30%<br>금리 +25bp · 재해 빈발 · 복합</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">시나리오마다 소득·상환액을 바꿔 25년을 다시 3만 회</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">시나리오별 DSCR · 위기확률 · 버팀 여부</span></div>
+        </div>
+        <code class="formula">경영비는 줄지 않는 것으로 둔다 — 감소율에 공개 근거가 없어 보수적으로</code>
+        <p class="finding"><b>착시를 하나 잡았습니다 —</b> 재해 확률을 8%에서 20%로 <b>올렸더니 위기확률이 0.755에서 0.628로 떨어졌습니다.</b> 재해 상환연기가 걸린 해를 '부족'으로 세지 않기 때문입니다. 제도가 구해준 것을 농가가 버틴 것으로 계산하고 있었습니다. 그래서 상환연기율을 따로 세고, 그런 경우 <b>'제도 의존'</b>이라고 표시합니다.</p>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-n">13</div>
+      <div class="stage-body">
+        <h3>제도 근거 — 지침 원문에서 찾아 인용한다</h3>
+        <p class="why">자격·의무·환수는 틀리게 안내하면 사람이 실제로 손해를 봅니다. 그래서 답을 만들지 않고 <b>조항을 찾아 원문 그대로</b> 냅니다.</p>
+        <div class="flow">
+          <div class="cell"><span class="lab">입력</span><span class="val">2026년 시행지침 <span class="num">3</span>종<br>조항 <span class="num">709</span>개</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">계산</span><span class="val">질의를 지침 용어로 확장 → 원 질의와 따로 검색 → 순위 융합(RRF)</span></div>
+          <div class="arw">→</div>
+          <div class="cell"><span class="lab">출력</span><span class="val">조항 경로 + 원문 + 출처 링크</span></div>
+        </div>
+        <code class="formula">근거를 못 찾으면 답변을 생성하지 않는다 — 기능 부족이 아니라 설계</code>
+        <p class="finding"><b>실측 —</b> 확장어를 덧붙이기만 했을 땐 개선이 <b>정확히 0</b>이었습니다. 원인은 확장어 7개가 원 질의를 희석시킨 것이었고, 확장 질의를 따로 돌려 순위만 합치자 상위 5건 적중이 6/8에서 <b>8/8</b>로 올랐습니다. (질문 8개는 손으로 만든 것이라 절대 성능의 증거가 아닙니다.)</p>
+      </div>
+    </div>
   </section>
 
   <!-- ─────────────────────────────────────────── -->
@@ -675,8 +755,10 @@ footer {
           <li><b>변동의 원인</b> — 가격·수확량·비용 기여도 분해 (400+ 작목-연도)</li>
           <li><b>가격-수량 탄력성</b> — 37작목 실측 중앙값 −0.24</li>
           <li><b>재배방식별 비용 구조</b> — 동일연도 총수입·경영비 대조</li>
-          <li><b>도매가 교차검증</b> — KAMIS 11년치로 독립 재측정</li>
+          <li><b>도매가 교차검증</b> — KAMIS 11년치로 독립 재측정 (<span class="num">19</span>작목)</li>
           <li><b>작목별 소득 수준</b> — 농진청 소득조사 최신연도(2024) 기준</li>
+          <li><b>총수입·경영비</b> — 비목별 조사에서 따로 수집. 영업레버리지의 재료 (딸기 수경 <span class="num">2.46</span>배)</li>
+          <li><b>제도 요건</b> — 2026년 시행지침 <span class="num">3</span>종 원문 <span class="num">709</span>개 조항을 수록해 인용</li>
           <li><b>상환 조건</b> — 시행지침 원문 대조 (원금 균등분할·연 1회 후취)</li>
           <li><b>재해 시 상환유예</b> — 이차보전 지침의 피해율 구간</li>
         </ul>
@@ -685,14 +767,30 @@ footer {
         <h4>가정 — 아직 근거가 없는 것</h4>
         <ul>
           <li><b>농가 고유 변동성 0.17</b> — 전국 평균에서는 상쇄돼 보이지 않음. 딸기 기준 분산의 63%. 소득 이력을 입력하면 대체됨</li>
-          <li><b>농신보 보증료</b> — 지침에 요율이 없어 미반영. 실제로는 상환여력에서 차감된다</li>
+          <li><b>농신보 보증료</b> — 지침에 요율이 없어 미반영. 실제로는 상환여력에서 차감되므로 <b>이 계산은 그만큼 낙관적이다</b></li>
+          <li><b>월별 경영비 배분</b> — 공개 통계가 없어 12개월 균등. 실제로는 앞에 몰리므로 부족 시점은 더 이를 수 있다</li>
+          <li><b>충격 시 경영비 불변</b> — 수확 관련 비용이 일부 줄지만 그 비율에 근거가 없어 보수적으로 고정</li>
           <li><b>연간 재해확률 8%</b> — 지역·작목별 실측으로 대체 가능</li>
           <li><b>가지·장미의 도매가 검증 불가</b> — KAMIS 중도매 시세 미제공(가지), 화훼 미수록(장미)</li>
+          <li><b>출하월 <span class="num">6</span>/38 작목만 확보</b> — 나머지는 12개월 균등 + '미상' 표시. KAMIS 관측일수로 역산을 시도했으나 실패했다(아래)</li>
+          <li><b>참깨·들깨·노지생강은 시장 국면 판정 보류</b> — 가격이 실제로 움직인 날이 16~49%뿐이라 이월 시세가 섞였다. 조용해 보이는 것이 시장이 아니라 집계 방식일 수 있어 <b>'평상'이라고 말하지 않는다</b></li>
           <li><b>면적과 소득이 정비례</b> — 규모의 경제가 반영되어 있지 않음</li>
           <li><b>목표 DSCR 1.25</b> — 은행 통상 관행값</li>
           <li><b>과수·축산 미지원</b> — 다년생은 식재 후 무수익 기간이 있어 '면적 → 매년 같은 소득' 전제가 깨진다</li>
         </ul>
       </div>
+    </div>
+
+    <div class="note a" style="margin-top:1.4rem">
+      <h4>해보고 안 된 것 — 출하월 역산</h4>
+      <p style="margin:.5rem 0 0">KAMIS 도매가의 <b>월별 관측일수</b>로 출하 시기를 잡으려 했습니다.
+      21작목 중 17개가 관측일수 983/984일에 최저·최대 비율 <span class="num">0.86</span>으로
+      <b>완전히 동일</b>했습니다. 수박과 참깨가 같은 분포일 리 없어 파고들었더니, 그 0.86은
+      계절성이 아니라 <b>달의 영업일수 차이</b>(2월 20일 vs 3월 23일)였습니다.
+      KAMIS는 제철이 아니어도 매일 시세를 냅니다 — 참깨는 24,407원이 5일 연속 같았습니다.</p>
+      <p style="margin:.6rem 0 0">검증용 4작목 중 딸기 2종만 재현됐고 토마토·시금치는 실패했습니다.
+      임계값을 억지로 맞추면 17작목에 <b>틀린 출하월</b>이 들어갑니다. 그래서 멈췄습니다.
+      거래량이 있는 자료를 구하면 다시 시도합니다.</p>
     </div>
 
     <div class="tbl-wrap" style="margin-top:1.4rem">
