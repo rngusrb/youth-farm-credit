@@ -66,7 +66,7 @@ export default function FaqPage() {
       <Crumb trail={[{ label: "제도 · 자료" }, { label: "자주 묻는 질문" }]} />
       <PageTitle
         title="자주 묻는 질문"
-        lead="답을 미리 적어 두지 않습니다. 질문을 누르면 그 자리에서 2026년 시행지침 원문을 찾아 해당 조항을 함께 보여 드립니다."
+        lead="답을 미리 적어 두지 않아요. 질문을 누르면 그 자리에서 2026년 시행지침 원문을 찾아 해당 조항을 함께 보여 드려요."
       />
 
       <div id="main" className="space-y-7">
@@ -93,7 +93,7 @@ export default function FaqPage() {
                         {a === "loading" && <p className="text-[13px] text-gov-ink3">원문에서 찾는 중…</p>}
                         {a === "error" && (
                           <p className="text-[13px] text-gov-point">
-                            검색에 실패했습니다. 백엔드가 실행 중인지 확인해 주세요.
+                            검색에 실패했어요. 백엔드가 실행 중인지 확인해 주세요.
                           </p>
                         )}
                         {a && a !== "loading" && a !== "error" && (
@@ -123,7 +123,7 @@ export default function FaqPage() {
 
         <Notice tone="warn" title="안내의 한계">
           검색 결과는 지침 원문을 찾아 주는 것이지 유권해석이 아닙니다. 자격·의무·환수처럼
-          불이익이 걸린 사항은 반드시 관할 시·군·구 담당자에게 확인하시기 바랍니다.
+          불이익이 걸린 사항은 반드시 관할 시·군·구 담당자에게 확인하시기 바라요.
         </Notice>
       </div>
     </Page>

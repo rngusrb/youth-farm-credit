@@ -9,7 +9,7 @@ export default function GlossaryPage() {
       <Crumb trail={[{ label: "제도 · 자료" }, { label: "용어사전" }]} />
       <PageTitle
         title="용어사전"
-        lead="이 서비스가 실제로 쓰는 계산의 정의만 싣습니다. 화면에 나오는 숫자가 무슨 뜻인지 여기서 확인하실 수 있습니다."
+        lead="이 서비스가 실제로 쓰는 계산의 정의만 실었어요. 화면에 나오는 숫자가 무슨 뜻인지 여기서 확인하실 수 있어요."
       />
 
       <nav aria-label="용어 목록" className="mb-6 flex flex-wrap gap-1.5">

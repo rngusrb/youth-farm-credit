@@ -24,7 +24,7 @@ export default function SafetyPage() {
       income_history: profile.incomeHistory,
     })
       .then((d) => { setDiag(d); setPrincipal((p) => p ?? headlineLimit(d)); })
-      .catch(() => setError("계산에 실패했습니다."));
+      .catch(() => setError("계산에 실패했어요."));
   }, [profile]);
 
   useEffect(() => {
@@ -43,8 +43,8 @@ export default function SafetyPage() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="금융 안전진단" lead="농가 정보가 있어야 계산합니다." />
-        <Empty title="농가 정보가 없습니다" body="작목과 면적을 먼저 입력해 주세요."
+        <PageTitle title="금융 안전진단" lead="농가 정보가 있어야 계산해요." />
+        <Empty title="농가 정보가 없어요" body="작목과 면적을 먼저 입력해 주세요."
                cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
       </>
     );
@@ -56,7 +56,7 @@ export default function SafetyPage() {
     <>
       <PageTitle
         title="금융 안전진단"
-        lead="평균적으로 얼마나 위험한가가 아니라, 특정한 나쁜 일이 실제로 일어나면 버티는지를 봅니다."
+        lead="평균적으로 얼마나 위험한가가 아니라, 특정한 나쁜 일이 실제로 일어나면 버티는지를 봐요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -105,9 +105,9 @@ export default function SafetyPage() {
         <>
           {failed.length > 0 && (
             <div className="mb-5">
-              <Notice tone="danger" title={`${failed.length}개 시나리오에서 상환이 어렵습니다`}>
+              <Notice tone="danger" title={`${failed.length}개 시나리오에서 상환이 어려워요`}>
                 {failed.map((f) => f.label).join(", ")} 상황에서 2년 연속 위기 확률이 감내
-                기준을 넘습니다. 차입 규모를 줄이거나, 아래 대응을 미리 준비해 두시기 바랍니다.
+                기준을 넘어요. 차입 규모를 줄이거나, 아래 대응을 미리 준비해 두시기 바라요.
               </Notice>
             </div>
           )}
@@ -123,12 +123,12 @@ export default function SafetyPage() {
                 경영비는 매출이 줄어도 그대로 나가기 때문에, 가격이 20% 떨어지면 소득은 20%가
                 아니라 <b className="text-gov-point">
                   {Math.abs((report.scenarios.find((s) => s.key === "price")?.income_change ?? 0) * 100).toFixed(0)}%
-                </b> 줄어듭니다.
+                </b> 줄어들어요.
               </p>
               <p className="mt-2.5 text-[13px] leading-relaxed text-gov-ink3">
                 계산에서 경영비는 줄어들지 않는 것으로 둡니다. 실제로는 수확 관련 비용이 일부
-                줄지만 그 비율에 대한 공개 근거가 없어 지어내지 않았습니다. 그만큼 이 결과는
-                보수적입니다.
+                줄지만 그 비율에 대한 공개 근거가 없어 지어내지 않았어요. 그만큼 이 결과는
+                보수적이에요.
               </p>
             </Panel>
           </Section>
@@ -136,9 +136,9 @@ export default function SafetyPage() {
           <Section title="대응">
             <ol className="border-t border-gov-ink/70">
               {[
-                ["차입 규모를 줄인다", `현재 평가 중인 ${won(report.principal)} 대신 감당 가능한 범위로 낮추면 모든 시나리오의 위험이 함께 내려갑니다.`],
-                ["출하 시기를 나눈다", "한 시점의 시세에 한 해 소득이 걸리지 않게 합니다. 계약재배나 수매 약정으로 판매가를 미리 묶는 방법도 있습니다."],
-                ["재해 대응을 미리 확인한다", "피해율 30% 이상이면 상환기한 연기가 가능합니다. 요건과 신청 경로를 미리 알아 두는 것과 사후에 알아보는 것은 다릅니다."],
+                ["차입 규모를 줄인다", `현재 평가 중인 ${won(report.principal)} 대신 권장 금액으로 낮추면 모든 시나리오의 위험이 함께 내려가요.`],
+                ["출하 시기를 나눈다", "한 시점의 시세에 한 해 소득이 걸리지 않게 해요. 계약재배나 수매 약정으로 판매가를 미리 묶는 방법도 있어요."],
+                ["재해 대응을 미리 확인한다", "피해율 30% 이상이면 상환기한 연기가 가능해요. 요건과 신청 경로를 미리 알아 두는 것과 사후에 알아보는 것은 다릅니다."],
               ].map(([t, d], i) => (
                 <li key={t} className="flex gap-4 border-b border-gov-line2 px-1 py-3.5">
                   <span className="tabular w-5 shrink-0 font-extrabold text-gov-link">{i + 1}</span>

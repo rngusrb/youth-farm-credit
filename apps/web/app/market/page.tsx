@@ -26,12 +26,12 @@ function Body() {
         const withMarket = d.crops.find((c) => c.has_market);
         setId((wanted && d.crops.some((c) => c.id === wanted) ? wanted : null) ?? withMarket?.id ?? d.crops[0]?.id ?? "");
       })
-      .catch(() => setError("작목 목록을 불러오지 못했습니다."));
+      .catch(() => setError("작목 목록을 불러오지 못했어요."));
   }, [params]);
 
   useEffect(() => {
     if (!id) return;
-    fetchCrop(id).then(setDetail).catch(() => setError("작목 정보를 불러오지 못했습니다."));
+    fetchCrop(id).then(setDetail).catch(() => setError("작목 정보를 불러오지 못했어요."));
   }, [id]);
 
   const m = detail?.market;
@@ -58,8 +58,8 @@ function Body() {
 
       {detail && !m && (
         <Empty
-          title={`${detail.name}은 도매가 시계열을 아직 수집하지 않았습니다`}
-          body="KAMIS 품목 매핑이 있는 작목부터 순차로 수집합니다. 소득 변동성은 KOSIS 소득조사 실측값을 쓰므로 진단 결과에는 영향이 없습니다."
+          title={`${detail.name}은 도매가 시계열을 아직 수집하지 않았어요`}
+          body="KAMIS 품목 매핑이 있는 작목부터 순차로 수집해요. 소득 변동성은 KOSIS 소득조사 실측값을 쓰므로 진단 결과에는 영향이 없어요."
         />
       )}
 
@@ -69,14 +69,14 @@ function Body() {
             <Panel>
               {m.quote_is_carried && (
                 <div className="mb-4">
-                  <Notice tone="warn" title="국면 판정을 보류합니다">
+                  <Notice tone="warn" title="국면 판정을 보류해요">
                     이 품목은 가격이 실제로 움직인 날이{" "}
                     {m.price_movement_ratio != null
                       ? `${Math.round(m.price_movement_ratio * 100)}%`
                       : "기준치 미만"}
-                    뿐입니다. 거래가 없는 날 직전 시세가 이월되기 때문에, 조용해 보이는
-                    것이 시장이 아니라 집계 방식일 수 있습니다. 모르는 것을 ‘평상’이라고
-                    말하지 않습니다.
+                    뿐이에요. 거래가 없는 날 직전 시세가 이월되기 때문에, 조용해 보이는
+                    것이 시장이 아니라 집계 방식일 수 있어요. 모르는 것을 ‘평상’이라고
+                    말하지 않아요.
                   </Notice>
                 </div>
               )}
@@ -88,15 +88,15 @@ function Body() {
                         : "warn"}
                       note={g.regime
                         ? `현재 변동성이 장기 평균의 ${g.current_over_longrun.toFixed(2)}배`
-                        : "이월 시세가 많아 판정할 수 없습니다"} />
+                        : "이월 시세가 많아 판정할 수 없어요"} />
                 <Stat label="충격 반감기" value={g.half_life_days.toFixed(1)} unit="일"
                       note={`지속성 ${g.persistence.toFixed(2)} — 가격 충격이 가라앉는 속도`} />
                 <Stat label="관측" value={m.trading_days.toLocaleString("ko-KR")} unit="거래일" />
               </div>
               <div className="mt-4">
-                <Notice tone="info" title="국면은 한도 계산에 반영하지 않습니다">
-                  25년 상환에 본질적인 것은 장기 평균입니다. 조용한 시기라고 해서 더 빌려도
-                  된다는 뜻이 아니므로, 이 값은 참고 지표로만 씁니다.
+                <Notice tone="info" title="국면은 한도 계산에 반영하지 않아요">
+                  25년 상환에 본질적인 것은 장기 평균이에요. 조용한 시기라고 해서 더 빌려도
+                  된다는 뜻이 아니므로, 이 값은 참고 지표로만 써요.
                 </Notice>
               </div>
             </Panel>
@@ -107,7 +107,7 @@ function Body() {
               <Panel>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
                   소득조사와 완전히 다른 자료로 같은 값을 다시 잽니다. 두 기관의 조사가 비슷한
-                  값을 가리키면 변동성 추정이 독립적으로 뒷받침됩니다.
+                  값을 가리키면 변동성 추정이 독립적으로 뒷받침돼요.
                 </p>
                 <DefTable
                   rows={[
@@ -138,8 +138,8 @@ function Body() {
                 </div>
                 <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
                   {detail.harvest_months.length
-                    ? "출하가 몇 달에 몰릴수록 그 시점의 시세 하나에 한 해 소득이 걸립니다."
-                    : "이 작목은 출하월 정보를 아직 확보하지 못했습니다. 월별 현금흐름은 12개월 균등으로 펼쳐 계산합니다."}
+                    ? "출하가 몇 달에 몰릴수록 그 시점의 시세 하나에 한 해 소득이 걸려요."
+                    : "이 작목은 출하월 정보를 아직 확보하지 못했어요. 월별 현금흐름은 12개월 균등으로 펼쳐 계산해요."}
                 </p>
               </Panel>
             </div>
@@ -156,7 +156,7 @@ export default function MarketPage() {
       <Crumb trail={[{ label: "데이터" }, { label: "시세 · 국면" }]} />
       <PageTitle
         title="시세 · 국면"
-        lead="KAMIS 일별 도매가에 GARCH(1,1)를 적합해 지금 시장이 평소보다 조용한지 요동치는지 봅니다."
+        lead="KAMIS 일별 도매가에 GARCH(1,1)를 적합해 지금 시장이 평소보다 조용한지 요동치는지 봐요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>

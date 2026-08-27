@@ -28,7 +28,7 @@ export default function RevenuePage() {
         setPrincipal((p) => p ?? headlineLimit(d));
         setYear((y) => y ?? d.product.grace_years + 1);
       })
-      .catch(() => setError("계산에 실패했습니다."));
+      .catch(() => setError("계산에 실패했어요."));
   }, [profile]);
 
   useEffect(() => {
@@ -46,8 +46,8 @@ export default function RevenuePage() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="수익 전망" lead="농가 정보가 있어야 계산합니다." />
-        <Empty title="농가 정보가 없습니다" body="작목과 면적을 먼저 입력해 주세요."
+        <PageTitle title="수익 전망" lead="농가 정보가 있어야 계산해요." />
+        <Empty title="농가 정보가 없어요" body="작목과 면적을 먼저 입력해 주세요."
                cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
       </>
     );
@@ -60,7 +60,7 @@ export default function RevenuePage() {
     <>
       <PageTitle
         title="수익 전망"
-        lead="연 단위로는 보이지 않는 것이 있습니다. 소득은 수확기에 몰려 들어오는데 경영비와 생활비는 매달 나갑니다. 연간으로 흑자여도 특정 달에는 현금이 마를 수 있습니다."
+        lead="연 단위로는 보이지 않는 것이 있어요. 소득은 수확기에 몰려 들어오는데 경영비와 생활비는 매달 나가요. 연간으로 흑자여도 특정 달에는 현금이 마를 수 있어요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -121,8 +121,8 @@ export default function RevenuePage() {
                 <div className="mt-4">
                   <Notice tone="danger" title={`${cf.trough_month}월에 현금이 마릅니다`}>
                     연간으로는 {cf.annual_net >= 0 ? "흑자" : "적자"}지만, 수확 대금이 들어오기
-                    전까지 {won(cf.working_capital_need)}가 부족합니다. 운전자금 대출이나 출하
-                    시기 분산을 미리 검토해 두시는 것이 좋습니다.
+                    전까지 {won(cf.working_capital_need)}가 부족해요. 운전자금 대출이나 출하
+                    시기 분산을 미리 검토해 두시는 것이 좋아요.
                   </Notice>
                 </div>
               )}
@@ -171,8 +171,8 @@ export default function RevenuePage() {
             <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">{cf.note}</p>
             {!cf.harvest_known && (
               <p className="mt-1.5 text-[12px] text-gov-warn">
-                이 작목은 출하월 정보를 아직 확보하지 못해 12개월 균등으로 펼쳤습니다.
-                실제 출하가 몰려 있다면 부족 시점은 더 뚜렷해집니다.
+                이 작목은 출하월 정보를 아직 확보하지 못해 12개월 균등으로 펼쳤어요.
+                실제 출하가 몰려 있다면 부족 시점은 더 뚜렷해져요.
               </p>
             )}
           </Section>

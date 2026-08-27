@@ -54,7 +54,7 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
             <span className="hidden text-[12px] text-gov-ink3 sm:block">
               {session.role === "bank"
                 ? "상환능력 분석과 여신 설계"
-                : "내 경영 상태와 감당 가능한 차입"}
+                : "내 경영 상태와 권장 차입 규모"}
             </span>
           </div>
           <div className="ml-auto flex items-center text-[12px] text-gov-ink3">

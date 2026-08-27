@@ -28,15 +28,15 @@ export default function FinancePage() {
       crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService, product_id: profile.productId,
       income_history: profile.incomeHistory,
-    }).then(setDiag).catch(() => setError("계산에 실패했습니다."));
+    }).then(setDiag).catch(() => setError("계산에 실패했어요."));
   }, [profile]);
 
   if (!ready) return null;
   if (!profile) {
     return (
       <>
-        <PageTitle title="맞춤 금융지원" lead="농가 정보가 있어야 계산합니다." />
-        <Empty title="농가 정보가 없습니다" body="작목과 면적을 먼저 입력해 주세요."
+        <PageTitle title="맞춤 금융지원" lead="농가 정보가 있어야 계산해요." />
+        <Empty title="농가 정보가 없어요" body="작목과 면적을 먼저 입력해 주세요."
                cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
       </>
     );
@@ -50,7 +50,7 @@ export default function FinancePage() {
     <>
       <PageTitle
         title="맞춤 금융지원"
-        lead="신청 가능한 최대 한도가 아니라, 거치가 끝난 뒤에도 감당할 수 있는 차입 원금을 역산합니다."
+        lead="신청 가능한 최대 한도가 아니라, 거치가 끝난 뒤에도 감당할 수 있는 차입 원금을 역산해요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -61,11 +61,11 @@ export default function FinancePage() {
             <div className="grid gap-px bg-gov-line sm:grid-cols-3">
               {[
                 ["제도상 신청 가능", diag.limits.available, "시행지침이 정한 세대당 한도", "plain",
-                 "갚을 수 있는지와는 무관합니다."],
+                 "갚을 수 있는지와는 무관해요."],
                 ["은행 심사 관행", diag.limits.recommended, `DSCR ${ratio(diag.target_dscr)} 기준`, "warn",
-                 "소득이 흔들리지 않는다는 가정에서 나온 값입니다."],
+                 "소득이 흔들리지 않는다는 가정에서 나온 값이에요."],
                 ["AI 권장 차입", headlineLimit(diag), `2년연속 위기 ${pct(diag.limits.max_crisis_prob)} 이하`, "ok",
-                 "가격 변동과 재해까지 넣고 25년을 3만 번 돌린 결과입니다."],
+                 "가격 변동과 재해까지 넣고 25년을 3만 번 돌린 결과예요."],
               ].map(([label, value, sub, tone, why]) => (
                 <div key={label as string} className="bg-white p-5">
                   <div className="text-[12px] font-medium text-gov-ink3">{label as string}</div>
@@ -84,7 +84,7 @@ export default function FinancePage() {
                 <Notice tone="warn" title={`두 금액 사이가 ${won(unsafeGap(diag))}예요`}>
                   {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
                   {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}, {won(headlineLimit(diag))}
-                  에서는 {pct(diag.limits.max_crisis_prob)}입니다. 거치가 끝나는{" "}
+                  에서는 {pct(diag.limits.max_crisis_prob)}예요. 거치가 끝나는{" "}
                   {diag.product.grace_years + 1}년차에 상환액이 {won(s?.grace_payment ?? 0)}에서{" "}
                   {won(s?.amort_payment ?? 0)}로 뛰기 때문이에요.
                 </Notice>
@@ -166,9 +166,9 @@ export default function FinancePage() {
           <Section title="함께 확인할 것">
             <div className="space-y-3">
               <Notice tone="info" title="농신보 보증">
-                담보가 부족해도 농림수산업자신용보증기금 보증으로 대출이 가능합니다. 다만
-                <b> 보증료율이 지침에 명시돼 있지 않아 이 계산에는 반영하지 않았습니다.</b>{" "}
-                실제로는 상환여력에서 차감되므로 위 금액은 그만큼 낙관적입니다.
+                담보가 부족해도 농림수산업자신용보증기금 보증으로 대출이 가능해요. 다만
+                <b> 보증료율이 지침에 명시돼 있지 않아 이 계산에는 넣지 않았어요.</b>{" "}
+                실제로는 상환여력에서 차감되므로 위 금액은 그만큼 낙관적이에요.
               </Notice>
               {relief.length > 0 && (
                 <Notice tone="info" title="재해 시 상환연기">

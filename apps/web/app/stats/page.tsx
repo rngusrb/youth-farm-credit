@@ -9,7 +9,7 @@ export default function StatsPage() {
   const [d, setD] = useState<DataStats | null>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
-    fetchStats().then(setD).catch(() => setError("데이터 현황을 불러오지 못했습니다."));
+    fetchStats().then(setD).catch(() => setError("데이터 현황을 불러오지 못했어요."));
   }, []);
 
   return (
@@ -17,7 +17,7 @@ export default function StatsPage() {
       <Crumb trail={[{ label: "데이터" }, { label: "데이터 현황" }]} />
       <PageTitle
         title="데이터 현황"
-        lead="이 서비스가 쓰는 값이 어디서 왔고 무엇이 아직 가정인지 그대로 공개합니다."
+        lead="이 서비스가 쓰는 값이 어디서 왔고 무엇이 아직 가정인지 그대로 공개해요."
       />
 
       <div id="main">
@@ -51,11 +51,11 @@ export default function StatsPage() {
                   <tbody>
                     {[
                       ["도매가 시계열 (KAMIS)", `${d.crops.with_market} / ${d.crops.total}`,
-                       "시장 국면 화면만 비고, 변동성은 소득조사 실측값을 씁니다"],
+                       "시장 국면 화면만 비고, 변동성은 소득조사 실측값을 써요"],
                       ["KAMIS 품목 매핑", `${d.crops.with_kamis_mapping} / ${d.crops.total}`,
-                       "매핑이 있는 작목부터 순차로 도매가를 수집합니다"],
+                       "매핑이 있는 작목부터 순차로 도매가를 수집해요"],
                       ["출하월", `${d.crops.with_harvest_months} / ${d.crops.total}`,
-                       "월별 현금흐름을 12개월 균등으로 펼치고 ‘출하월 미상’으로 표시합니다"],
+                       "월별 현금흐름을 12개월 균등으로 펼치고 ‘출하월 미상’으로 표시해요"],
                     ].map(([k, v, how]) => (
                       <tr key={k} className="border-b border-gov-line2">
                         <td className="px-4 py-3 font-medium text-gov-ink">{k}</td>

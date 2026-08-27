@@ -65,7 +65,7 @@ export default function AssistantPage() {
       const r = await askRegulation(text);
       setTurns((t) => [...t, { role: "cite", text: r.answer, citations: r.citations, confidence: r.confidence }]);
     } catch (e) {
-      setTurns((t) => [...t, { role: "error", text: e instanceof Error ? e.message : "처리에 실패했습니다." }]);
+      setTurns((t) => [...t, { role: "error", text: e instanceof Error ? e.message : "처리에 실패했어요." }]);
     } finally {
       setBusy(false);
     }
@@ -75,13 +75,13 @@ export default function AssistantPage() {
     <>
       <PageTitle
         title="AI 상담"
-        lead="농가 조건이 들어간 질문은 계산 엔진이 답하고, 제도 질문은 시행지침 원문에서 근거를 찾습니다. 숫자를 지어내지 않습니다."
+        lead="농가 조건이 들어간 질문은 계산 엔진이 답하고, 제도 질문은 시행지침 원문에서 근거를 찾아요. 숫자를 지어내지 않습니다."
       />
 
       <div className="space-y-4">
         {turns.length === 0 && (
           <Panel>
-            <p className="mb-3 text-[14px] text-gov-ink2">이런 걸 물어볼 수 있습니다.</p>
+            <p className="mb-3 text-[14px] text-gov-ink2">이런 걸 물어볼 수 있어요.</p>
             <div className="flex flex-wrap gap-1.5">
               {EXAMPLES.map((e) => (
                 <button key={e} onClick={() => void send(e)}
@@ -108,7 +108,7 @@ export default function AssistantPage() {
               </div>
               <div className="grid gap-5 sm:grid-cols-3">
                 {[
-                  ["감당 가능한 차입", won(headlineLimit(t.diag))],
+                  [`위기확률 ${pct(t.diag.limits.max_crisis_prob)} 기준`, won(headlineLimit(t.diag))],
                   ["상환 가용액", won(t.diag.income.capacity)],
                   ["2년연속 위기확률", pct(headlineScenario(t.diag)?.crisis_prob ?? 0)],
                 ].map(([k, v]) => (
@@ -119,9 +119,9 @@ export default function AssistantPage() {
                 ))}
               </div>
               <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">
-                제도상 {won(t.diag.limits.available)}까지 신청할 수 있지만, 소득이 해마다
-                흔들리는 것까지 넣으면 위 금액이 감당 가능한 범위입니다. DSCR 중앙값은{" "}
-                {ratio(headlineScenario(t.diag)?.dscr_median ?? 0)}입니다.
+                제도상 {won(t.diag.limits.available)}까지 신청할 수 있어요. 소득이 해마다
+                흔들리는 것까지 넣어 계산하면 위 금액이고요. DSCR 중앙값은{" "}
+                {ratio(headlineScenario(t.diag)?.dscr_median ?? 0)}예요.
               </p>
               <Link href={`/result/${t.diag.diagnosis_id}`} className="lnk mt-3 inline-block text-[13px]">
                 리포트 전체 보기 →

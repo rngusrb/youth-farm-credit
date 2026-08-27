@@ -9,9 +9,9 @@ import { DEMO_HINT, ROLE_HOME, ROLE_LABEL } from "@/lib/auth";
 import { useSession } from "@/lib/useSession";
 
 const STEPS = [
-  ["01", "농가 정보 입력", "작목·면적·생활비 세 가지면 시작합니다. 말로 적어도 알아듣습니다."],
-  ["02", "현금흐름 계산", "예상 매출·경영비를 월 단위로 펼쳐 현금이 마르는 달을 찾습니다."],
-  ["03", "적정 차입 산출", "가격 하락·재해까지 넣고 25년을 3만 번 돌려 감당 가능한 금액을 역산합니다."],
+  ["01", "농가 정보 입력", "작목·면적·생활비 세 가지면 시작해요. 말로 적으셔도 알아듣습니다."],
+  ["02", "현금흐름 계산", "예상 매출·경영비를 월 단위로 펼쳐 현금이 마르는 달을 찾아요."],
+  ["03", "권장 차입 산출", "가격 하락·재해까지 넣고 25년을 3만 번 돌려 무리 없는 금액을 역산해요."],
 ];
 
 export default function PortalHome() {
@@ -36,7 +36,7 @@ export default function PortalHome() {
             <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-gov-ink2">
               정책자금은 5년 거치 뒤 6년차에 원금 상환이 한 번에 시작됩니다. 농업 소득은
               수확기에 몰려 들어오는데 상환은 그 사정을 봐주지 않습니다. 이 서비스는 농가의
-              경영 데이터로 미래 현금흐름을 계산해, <b className="text-gov-ink">감당할 수 있는
+              경영 데이터로 미래 현금흐름을 계산해, <b className="text-gov-ink">무리 없이 갚을 수 있는
               차입 규모</b>를 미리 알려 줍니다.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
@@ -55,10 +55,10 @@ export default function PortalHome() {
               <>
                 <h2 className="sec-title mb-3">{session.name}님</h2>
                 <p className="text-[13px] leading-relaxed text-gov-ink2">
-                  {ROLE_LABEL[session.role]} 계정으로 로그인되어 있습니다.
+                  {ROLE_LABEL[session.role]} 계정으로 로그인되어 있어요.
                   {session.role === "bank"
                     ? " 업무 화면에서 접수된 신청 건의 상환능력과 적정 여신을 봅니다."
-                    : " 업무 화면에서 내 농가의 현금흐름과 감당 가능한 차입 규모를 봅니다."}
+                    : " 업무 화면에서 내 농가의 현금흐름과 권장 차입 규모를 볼 수 있어요."}
                 </p>
                 <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
                   <div className="flex gap-3">
@@ -92,7 +92,7 @@ export default function PortalHome() {
               <>
                 <h2 className="sec-title mb-3">이용 안내</h2>
                 <p className="text-[13px] leading-relaxed text-gov-ink2">
-                  농가용과 금융기관용 화면이 따로 있습니다. 같은 분석을 각자에게 필요한
+                  농가용과 금융기관용 화면이 따로 있어요. 같은 분석을 각자에게 필요한
                   형태로 보여 줍니다.
                 </p>
                 <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
@@ -151,7 +151,7 @@ export default function PortalHome() {
                 ))}
               </ul>
               <p className="mt-2.5 text-[12px] text-gov-ink3">
-                이 목록은 서비스의 실제 변경 이력입니다. 정부 발표나 보도자료를 옮겨 싣지 않습니다.
+                이 목록은 서비스의 실제 변경 이력이에요. 정부 발표나 보도자료를 옮겨 싣지 않습니다.
               </p>
             </Section>
 
@@ -161,7 +161,7 @@ export default function PortalHome() {
                 {[
                   ["수익 전망", "/app/revenue", "월별 현금흐름과 운전자금이 부족해지는 달"],
                   ["금융 안전진단", "/app/safety", "가격↓·생산량↓·금리↑·재해 시나리오"],
-                  ["맞춤 금융지원", "/app/finance", "감당 가능한 차입 규모 역산"],
+                  ["맞춤 금융지원", "/app/finance", "권장 차입 규모 역산"],
                 ].map(([t, href, d]) => (
                   <Link key={href} href={href} className="group bg-white p-5 transition-colors hover:bg-gov-sunk">
                     <h3 className="text-[15px] font-bold text-gov-ink group-hover:text-gov-head">
@@ -185,7 +185,7 @@ export default function PortalHome() {
                 </div>
                 <p className="mt-4 border-t border-gov-line2 pt-3 text-[12px] leading-relaxed text-gov-ink3">
                   소득·경영비는 농촌진흥청 농산물소득조사, 도매가격은 KAMIS,
-                  제도는 농림축산식품부 2026년 시행지침을 씁니다.
+                  제도는 농림축산식품부 2026년 시행지침을 써요.
                 </p>
               </Panel>
             </Section>

@@ -47,7 +47,7 @@ export const FARMER: Item[] = [
   { href: "/app/farm", label: "내 농가 정보", desc: "작목·면적·부채" },
   { href: "/app/revenue", label: "수익 전망", desc: "월별 현금흐름" },
   { href: "/app/safety", label: "금융 안전진단", desc: "스트레스 테스트" },
-  { href: "/app/finance", label: "맞춤 금융지원", desc: "적정 차입 규모" },
+  { href: "/app/finance", label: "맞춤 금융지원", desc: "권장 차입 규모" },
   { href: "/app/relief", label: "구제제도", desc: "상환연기·회생자금" },
   { href: "/app/assistant", label: "AI 상담", desc: "계산과 조항을 함께" },
   { href: "/app/reports", label: "내 리포트", desc: "저장된 진단" },

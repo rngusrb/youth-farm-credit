@@ -125,16 +125,16 @@ export default function FarmerHome() {
                             tone={cf.working_capital_need > 0 ? "danger" : "plain"}
                             note={cf.working_capital_need > 0
                               ? `운전자금 ${won(cf.working_capital_need)} 부족`
-                              : `그때도 ${won(cf.trough_balance)} 남습니다`} />
+                              : `그때도 ${won(cf.trough_balance)} 남아요`} />
                     </div>
                     {!cf.harvest_known && (
                       <p className="mt-3 text-[12px] text-gov-warn">
-                        이 작목은 출하월 정보가 없어 12개월 균등으로 펼쳤습니다.
+                        이 작목은 출하월 정보가 없어 12개월 균등으로 펼쳤어요.
                       </p>
                     )}
                   </>
                 ) : (
-                  <p className="text-[13px] text-gov-ink3">현금흐름을 계산할 수 없습니다.</p>
+                  <p className="text-[13px] text-gov-ink3">현금흐름을 계산할 수 없어요.</p>
                 )}
               </Panel>
             </Section>
@@ -157,7 +157,7 @@ export default function FarmerHome() {
                     ]}
                   />
                 ) : (
-                  <p className="text-[13px] text-gov-ink3">요인분해 자료가 없습니다.</p>
+                  <p className="text-[13px] text-gov-ink3">요인분해 자료가 없어요.</p>
                 )}
                 <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
                   영업레버리지가 크면 총수입이 조금만 빠져도 소득은 크게 빠져요.

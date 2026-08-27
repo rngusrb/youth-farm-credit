@@ -41,7 +41,7 @@ export default function FarmPage() {
           setHistory(prev.incomeHistory.map((v) => v / MAN).join(", "));
         }
       })
-      .catch(() => setError("백엔드에 연결하지 못했습니다."));
+      .catch(() => setError("백엔드에 연결하지 못했어요."));
   }, []);
 
   const parsedHistory = history
@@ -65,10 +65,10 @@ export default function FarmPage() {
       }
       if (r.slots.pyeong) { setPyeong(String(r.slots.pyeong)); filled.push("면적"); }
       if (r.slots.living_cost) { setLiving(String(r.slots.living_cost / MAN)); filled.push("생활비"); }
-      setReadNote(filled.length ? `${filled.join(" · ")}을(를) 채웠습니다. 나머지는 직접 확인해 주세요.`
-                                : "문장에서 알아볼 수 있는 값이 없었습니다. 아래에 직접 넣어 주세요.");
+      setReadNote(filled.length ? `${filled.join(" · ")}을(를) 채웠어요. 나머지는 직접 확인해 주세요.`
+                                : "문장에서 알아볼 수 있는 값이 없었어요. 아래에 직접 넣어 주세요.");
     } catch {
-      setReadNote("문장을 읽지 못했습니다. 아래에 직접 넣어 주세요.");
+      setReadNote("문장을 읽지 못했어요. 아래에 직접 넣어 주세요.");
     } finally {
       setReading(false);
     }
@@ -77,7 +77,7 @@ export default function FarmPage() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!cropId || !Number(pyeong)) {
-      setError("작목과 재배 면적은 반드시 필요합니다.");
+      setError("작목과 재배 면적은 반드시 필요해요.");
       return;
     }
     saveProfile({
@@ -95,7 +95,7 @@ export default function FarmPage() {
     <>
       <PageTitle
         title="내 농가 정보"
-        lead="한 번 넣어 두면 모든 화면이 이 값으로 계산합니다. 로그인 계정과 무관하게 이 브라우저에만 저장되며 서버로 보내지 않습니다."
+        lead="한 번 넣어 두면 모든 화면이 이 값으로 계산해요. 로그인 계정과 무관하게 이 브라우저에만 저장되며 서버로 보내지 않아요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -104,12 +104,12 @@ export default function FarmPage() {
         <Panel>
           <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
             항목을 하나씩 채우기 번거로우면 문장으로 적어 보세요. 알아들은 칸만 채우고,
-            못 알아들은 칸은 비워 둡니다 — 지어내지 않습니다.
+            못 알아들은 칸은 비워 둡니다 — 지어내지 않아요.
           </p>
           <div className="flex gap-2">
             <label htmlFor="sentence" className="sr-only">농가 상황 문장</label>
             <input id="sentence" value={sentence} onChange={(e) => setSentence(e.target.value)}
-                   placeholder="예: 딸기 수경 1200평 하고 있고 생활비는 한 해 3천만원쯤 씁니다"
+                   placeholder="예: 딸기 수경 1200평 하고 있고 생활비는 한 해 3천만원쯤 써요"
                    className={field} />
             <button type="button" onClick={() => void readSentence()} disabled={reading}
                     className="shrink-0 rounded-md rounded-lg border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 hover:border-gov-link hover:text-gov-head disabled:opacity-50">
@@ -168,8 +168,8 @@ export default function FarmPage() {
         <Section title="소득 이력 (선택)">
           <Panel>
             <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
-              연도순 농업소득을 만원 단위로, 쉼표로 구분해 넣습니다. 3개년 이상이면 작목
-              평균 대신 <b className="text-gov-ink">내 농가의 실제 변동성</b>으로 계산합니다.
+              연도순 농업소득을 만원 단위로, 쉼표로 구분해 넣어 주세요. 3개년 이상이면 작목
+              평균 대신 <b className="text-gov-ink">내 농가의 실제 변동성</b>으로 계산해요.
             </p>
             <label htmlFor="history" className="sr-only">연도순 농업소득</label>
             <textarea id="history" rows={3} value={history} onChange={(e) => setHistory(e.target.value)}
@@ -177,7 +177,7 @@ export default function FarmPage() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <Badge tone={parsedHistory.length >= 3 ? "info" : "plain"}>{parsedHistory.length}개년 입력</Badge>
               <span className="text-[12px] text-gov-ink3">
-                {parsedHistory.length >= 3 ? "변동성을 개인화합니다" : "3개년부터 반영됩니다"}
+                {parsedHistory.length >= 3 ? "변동성을 개인화해요" : "3개년부터 반영돼요"}
               </span>
               {crop && (
                 <span className="ml-auto text-[12px] text-gov-ink3">

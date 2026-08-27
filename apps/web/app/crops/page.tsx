@@ -21,7 +21,7 @@ export default function CropsPage() {
   useEffect(() => {
     fetchCrops()
       .then((d) => { setRows(d.crops); setSource(d.source); })
-      .catch(() => setError("작목 목록을 불러오지 못했습니다."));
+      .catch(() => setError("작목 목록을 불러오지 못했어요."));
   }, []);
 
   const groups = useMemo(
@@ -45,7 +45,7 @@ export default function CropsPage() {
       <Crumb trail={[{ label: "데이터" }, { label: "작목 데이터" }]} />
       <PageTitle
         title="작목 데이터"
-        lead={`같은 소득이어도 변동성이 크면 감당할 수 있는 대출은 작아집니다. 작목별 소득과 변동성을 실측한 표입니다. 출처: ${source || "농촌진흥청 농산물소득조사"}`}
+        lead={`같은 소득이어도 변동성이 크면 감당할 수 있는 대출은 작아집니다. 작목별 소득과 변동성을 실측한 표예요. 출처: ${source || "농촌진흥청 농산물소득조사"}`}
       />
 
       <div id="main">
@@ -141,8 +141,8 @@ export default function CropsPage() {
         <div className="mt-6">
           <Notice tone="info" title="변동성은 두 부분으로 나뉩니다">
             여기 표시된 σ 는 시장이 함께 겪는 <b>공통 변동</b>과 농가마다 다른 <b>고유 변동</b>을
-            합친 값입니다. 공통 변동은 전국 평균 시계열에서 실측하지만, 고유 변동은 평균에서
-            상쇄돼 보이지 않으므로 가정값(0.17)을 씁니다. 「내 농가」에 소득 이력을 넣으면
+            합친 값이에요. 공통 변동은 전국 평균 시계열에서 실측하지만, 고유 변동은 평균에서
+            상쇄돼 보이지 않으므로 가정값(0.17)을 써요. 「내 농가」에 소득 이력을 넣으면
             그 부분이 실측으로 바뀝니다.
           </Notice>
         </div>

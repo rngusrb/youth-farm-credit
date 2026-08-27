@@ -24,15 +24,15 @@ const LOOKUPS = [
 const NOT_IN_CORPUS = [
   {
     name: "농업경영회생자금",
-    why: "이 서비스의 자료실에 해당 지침 원문이 수록돼 있지 않습니다. 내용을 지어내지 않고 링크로만 안내합니다.",
+    why: "이 서비스의 자료실에 해당 지침 원문이 수록돼 있지 않아요. 내용을 지어내지 않고 링크로만 안내해요.",
     href: "https://www.nonghyup.com",
     hint: "취급 기관과 요건은 농협 또는 관할 시·군·구에 확인하세요.",
   },
   {
     name: "농작물재해보험",
-    why: "보험료율과 보장 범위가 우리 자료에 없어 계산에 반영하지 않았습니다.",
+    why: "보험료율과 보장 범위가 우리 자료에 없어 계산에 넣지 않았어요.",
     href: "https://www.nonghyup.com",
-    hint: "가입 시기가 품목별로 정해져 있어 미리 확인이 필요합니다.",
+    hint: "가입 시기가 품목별로 정해져 있어 미리 확인이 필요해요.",
   },
 ];
 
@@ -82,8 +82,8 @@ export default function ReliefPage() {
 
       {!profile && (
         <div className="mb-6">
-          <Empty title="농가 정보를 넣으면 내 상황에 맞춰 안내합니다"
-                 body="지금은 제도 일반 안내만 표시됩니다."
+          <Empty title="농가 정보를 넣으면 내 상황에 맞춰 안내해요"
+                 body="지금은 제도 일반 안내만 표시돼요."
                  cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
         </div>
       )}
@@ -102,10 +102,10 @@ export default function ReliefPage() {
             </div>
             <div className="mt-4">
               {nearCliff ? (
-                <Notice tone="danger" title="거치 종료 직후가 고비입니다">
-                  {s.first_risk_year}년차에 상환 부족 확률이 20%를 넘습니다. 그 전에 아래
+                <Notice tone="danger" title="거치 종료 직후가 고비예요">
+                  {s.first_risk_year}년차에 상환 부족 확률이 20%를 넘어요. 그 전에 아래
                   제도의 요건과 신청 경로를 확인해 두시고, 상환이 밀리기 전에 취급 기관과
-                  먼저 상담하시기 바랍니다. 연체가 시작된 뒤에는 선택지가 줄어듭니다.
+                  먼저 상담하시기 바라요. 연체가 시작된 뒤에는 선택지가 줄어들어요.
                 </Notice>
               ) : atRisk ? (
                 <Notice tone="warn" title={`${s.first_risk_year}년차를 주의하세요`}>
@@ -113,8 +113,8 @@ export default function ReliefPage() {
                   것만으로도 대응 폭이 넓어집니다.
                 </Notice>
               ) : (
-                <Notice tone="info" title="지금 조건에서는 위험 연차가 나타나지 않습니다">
-                  다만 재해나 가격 급락은 예고 없이 옵니다. 아래 제도는 미리 알아 두세요.
+                <Notice tone="info" title="지금 조건에서는 위험 연차가 나타나지 않아요">
+                  다만 재해나 가격 급락은 예고 없이 와요. 아래 제도는 미리 알아 두세요.
                 </Notice>
               )}
             </div>
@@ -173,7 +173,7 @@ export default function ReliefPage() {
       <Section title="원문을 갖고 있지 않은 제도">
         <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
           아래 제도는 실제로 존재하지만 이 서비스 자료실에 지침 원문이 수록돼 있지
-          않습니다. 내용을 추측해 적지 않고, 확인할 곳만 안내합니다.
+          않아요. 내용을 추측해 적지 않고, 확인할 곳만 안내해요.
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           {NOT_IN_CORPUS.map((n) => (
@@ -191,7 +191,7 @@ export default function ReliefPage() {
 
       <Notice tone="warn" title="반드시 확인하세요">
         여기 안내는 지침 원문을 찾아 주는 것이지 유권해석이 아닙니다. 실제 적용 여부와
-        절차는 관할 시·군·구 담당자와 대출취급기관에 확인해야 합니다.
+        절차는 관할 시·군·구 담당자와 대출취급기관에 확인해야 해요.
       </Notice>
 
       <div className="mt-6 flex gap-2">
