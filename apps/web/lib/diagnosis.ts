@@ -20,3 +20,30 @@ export const headlineScenario = (d: Diagnosis): Scenario | undefined =>
  * **엔진이 내는 값을 그대로 쓴다.** 화면에서 빼면 해설(narrate)이 만든 문장과
  * 갈라지고, 수치 검증(llm/verify.py)에도 걸린다 — 실제로 걸렸다. */
 export const unsafeGap = (d: Diagnosis): number => d.limits.unsafe_gap;
+
+/** 변동 요인 이름. 작목 표와 리포트가 같은 말을 쓰도록 한 곳에 둔다. */
+export const DRIVER_LABEL: Record<string, string> = {
+  price: "가격",
+  quantity: "수확량",
+  cost: "경영비",
+};
+
+/**
+ * σ 의 출처를 심사 화면의 세 갈래(입력/통계/가정)로 옮긴다 (UX-010).
+ *
+ * PARTIAL 을 "통계" 로 부르지 않는 것이 요점이다 — 시장 공통분만 실측이고
+ * 농가 고유분은 가정값이다. 딸기는 분산의 63%가 가정이다.
+ */
+export function sigmaSourceKind(d: Diagnosis): "input" | "public" | "assumed" {
+  if (d.sigma_source === "PERSONAL") return "input";
+  if (d.sigma_source === "MEASURED") return "public";
+  return "assumed";
+}
+
+export function sigmaSourceNote(d: Diagnosis): string {
+  if (d.sigma_source === "PERSONAL") return "차주가 제출한 소득 이력으로 직접 계산했습니다.";
+  if (d.sigma_source === "MEASURED") return "공표 통계 시계열로 실측했습니다.";
+  const share = d.sigma_assumed_share;
+  const pct = typeof share === "number" ? `분산 기준 ${Math.round(share * 100)}%가 가정입니다. ` : "";
+  return `${pct}시장 공통 변동은 실측이고 농가 고유 변동은 가정값입니다. 차주 소득 이력을 받으면 가정이 사라집니다.`;
+}

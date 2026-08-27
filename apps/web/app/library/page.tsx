@@ -8,11 +8,12 @@ export default function LibraryPage() {
   const [docs, setDocs] = useState<CorpusDoc[]>([]);
   const [total, setTotal] = useState(0);
   const [note, setNote] = useState("");
+  const [checkedOn, setCheckedOn] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCorpus()
-      .then((d) => { setDocs(d.documents); setTotal(d.total_chunks); setNote(d.note); })
+      .then((d) => { setDocs(d.documents); setTotal(d.total_chunks); setNote(d.note); setCheckedOn(d.checked_on); })
       .catch(() => setError("자료실 목록을 불러오지 못했어요. 백엔드가 실행 중인지 확인해 주세요."));
   }, []);
 
@@ -28,6 +29,12 @@ export default function LibraryPage() {
         {error && <Notice tone="danger">{error}</Notice>}
 
         <Section title={`수록 문서 ${docs.length}종 · ${total.toLocaleString("ko-KR")}개 조항`}>
+          {/* 색인이 언제 원문과 맞춰본 것인지. 지침은 해마다 바뀐다. */}
+          {checkedOn && (
+            <p className="mb-3 text-[12px] text-gov-ink3">
+              <span className="font-semibold">기준 시점</span> · 발행 연도는 각 문서 행에, 원문 대조는 {checkedOn} 기준이에요.
+            </p>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] border-t border-gov-ink/70 text-[14px]">
               <thead>

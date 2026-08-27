@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+import re
 import hashlib
 import json
 from dataclasses import asdict, dataclass
@@ -91,6 +92,44 @@ class DiagnoseInput:
 # 차지하는 비중이 곧 "이 숫자의 몇 %가 추측인가"다.
 SIGMA_MEASURED_MAX_ASSUMED_SHARE = 0.25
 SIGMA_PARTIAL_MAX_ASSUMED_SHARE = 0.75
+
+
+def _as_of(crop) -> dict:
+    """이 진단이 쓴 값들이 **언제 것인지**.
+
+    화면이 `new Date()` 로 오늘을 찍지 않도록 엔진이 내려준다.
+    없는 시점은 넣지 않는다 — 모르는 것을 오늘로 채우면 거짓이 된다.
+    """
+    market = crop.market or {}
+    guideline = policy().get("verified_against_guideline", {})
+    out = {
+        "income_survey_year": crop.income_year,
+        "cost_survey_year": crop.cashflow_year,
+        "sigma_series": _sigma_years(crop.sigma_reference),
+        # 주의: 자료실에 색인된 원문은 2026년판이고, 대출조건(거치·상환·연기)을
+        # 쪽·인용까지 대조한 문서는 2025년판이다. 둘을 한 줄로 뭉개면 거짓이 된다.
+        "guideline": guideline.get("document"),
+        "guideline_year": _doc_year(guideline.get("document")),
+        "guideline_checked_on": guideline.get("checked_on"),
+        "market_window": market.get("window"),
+    }
+    return {k: v for k, v in out.items() if v}
+
+
+def _doc_year(document: str | None) -> int | None:
+    """지침 제목 끝의 (2025) 에서 연도만."""
+    if not document:
+        return None
+    m = re.search(r"\((\d{4})\)", document)
+    return int(m.group(1)) if m else None
+
+
+def _sigma_years(reference: str | None) -> str | None:
+    """σ 근거 문장에서 계열 구간(2013~2024)만 뽑는다."""
+    if not reference:
+        return None
+    m = re.search(r"(\d{4}\s*~\s*\d{4})", reference)
+    return m.group(1).replace(" ", "") if m else None
 
 
 def sigma_status(sigma_common: float | None, sigma_total: float) -> tuple[str, float]:
@@ -302,6 +341,9 @@ def diagnose(
         max_crisis_prob == DEFAULT_MAX_CRISIS_PROB
     )
     base["limits"]["binding_constraint"] = binding
+    # 각 값이 **언제 것인지**. 화면이 날짜를 지어내지 않도록 여기서 내려준다.
+    # 없는 시점은 넣지 않는다 — 모르는 것을 오늘로 찍으면 거짓이 된다.
+    base["as_of"] = _as_of(crop)
     base["limits"]["livelihood_floor_prob"] = floor_prob
 
     # σ 가 가정값인 이상 결과도 점 하나로 내놓으면 안 된다. 그럴듯한 σ 범위

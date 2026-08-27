@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "source": "농촌진흥청 2023년 농산물 소득조사",
+  "source": "농촌진흥청 농산물소득조사 (KOSIS) — 작목마다 조사연도가 다르다",
   "unit_area_pyeong": 302.5,
   "crops": [
     {
@@ -89,7 +89,9 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5938,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "income_year": 2023,
+      "income_source": "구현명세서 §부록 — 농촌진흥청 2023년 농산물소득조사"
     },
     {
       "id": "strawberry_soil",
@@ -175,7 +177,9 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5938,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "income_year": 2023,
+      "income_source": "구현명세서 §부록 — 농촌진흥청 2023년 농산물소득조사"
     },
     {
       "id": "tomato_hydro",
@@ -261,7 +265,9 @@
       },
       "cashflow_year": 2022,
       "cost_ratio": 0.5874,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "income_year": 2023,
+      "income_source": "구현명세서 §부록 — 농촌진흥청 2023년 농산물소득조사"
     },
     {
       "id": "eggplant",
@@ -326,7 +332,9 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.5015,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "income_year": 2023,
+      "income_source": "구현명세서 §부록 — 농촌진흥청 2023년 농산물소득조사"
     },
     {
       "id": "rose",
@@ -396,7 +404,9 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.6286,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "income_year": 2023,
+      "income_source": "구현명세서 §부록 — 농촌진흥청 2023년 농산물소득조사"
     },
     {
       "id": "spinach",
@@ -481,7 +491,9 @@
       },
       "cashflow_year": 2024,
       "cost_ratio": 0.4293,
-      "cashflow_rescaled": true
+      "cashflow_rescaled": true,
+      "income_year": 2023,
+      "income_source": "구현명세서 §부록 — 농촌진흥청 2023년 농산물소득조사"
     },
     {
       "id": "greenhouse_pepper",
@@ -2510,5 +2522,9 @@
         "note": "국면은 안내용. 한도 계산에는 쓰지 않는다. 가격 변동일 비율이 60% 미만이면 이월 시세로 보고 국면 판정을 보류한다."
       }
     }
+  ],
+  "income_years": [
+    2023,
+    2024
   ]
 }

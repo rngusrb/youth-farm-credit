@@ -1,4 +1,5 @@
 import type { Diagnosis } from "@/lib/api";
+import AsOfLine from "./AsOf";
 import { pct, pyeong as fmtPyeong, won } from "@/lib/format";
 
 /**
@@ -24,6 +25,9 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
           발행 {issued} · 문서 {data.document_ref}
         </span>
       </div>
+
+      {/* 발행일은 오늘이지만 숫자는 아니다. 바로 옆에 붙여 오해를 끊는다. */}
+      <AsOfLine as_of={data.as_of} className="mt-2" />
 
       <h1 className="mt-8 text-[1.6rem] font-bold leading-snug text-paper-ink sm:text-[1.9rem]">
         {data.input.crop_name} {fmtPyeong(data.input.pyeong)}

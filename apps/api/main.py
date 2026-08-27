@@ -89,6 +89,7 @@ def list_crops() -> dict:
                 "driver": (c.factors or {}).get("driver"),
                 "harvest_months": c.harvest_months,
                 "has_market": bool(c.market),
+                "income_year": c.income_year,
             }
             for c in crops().values()
         ],
@@ -111,6 +112,7 @@ def crop_detail(crop_id: str) -> dict:
         "gross_per_10a": c.gross_per_10a,
         "cost_per_10a": c.cost_per_10a,
         "cashflow_year": c.cashflow_year,
+        "income_year": c.income_year,
         "leverage": (c.gross_per_10a / c.income_per_10a) if (c.gross_per_10a and c.income_per_10a) else None,
         "harvest_months": c.harvest_months,
         "sigma": c.sigma,
@@ -197,6 +199,7 @@ def cashflow(req: CashflowRequest) -> dict:
     )
     return {
         "crop": {"id": crop.id, "name": crop.name, "cashflow_year": crop.cashflow_year,
+                 "income_year": crop.income_year,
                  "rescaled": bool(getattr(crop, "cashflow_rescaled", False))},
         "year": year_idx + 1,
         "is_grace_year": year_idx < product.grace_years,
@@ -299,6 +302,8 @@ def corpus() -> dict:
     docs.sort(key=lambda d: -d["chunks"])
     return {
         "documents": docs,
+        # 원문을 마지막으로 대조한 날. 색인이 언제 것인지 자료실이 밝히게 한다.
+        "checked_on": policy().get("verified_against_guideline", {}).get("checked_on"),
         "total_chunks": len(index),
         "note": (
             "원문은 저장소에 평문으로 함께 배포됩니다. 네트워크 없이도 색인을 다시 만들 수 "
@@ -326,6 +331,7 @@ def data_stats() -> dict:
             "with_kamis_mapping": sum(1 for c in cs if (c.kamis or {}).get("available")),
             "with_harvest_months": sum(1 for c in cs if c.harvest_months),
             "cashflow_years": years,
+            "income_years": sorted({c.income_year for c in cs if c.income_year}),
             "source": crops_source(),
         },
         "corpus": {"chunks": len(load_index())},

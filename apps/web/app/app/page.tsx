@@ -1,5 +1,6 @@
 "use client";
 
+import AsOfLine from "@/components/AsOf";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge, Btn, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
@@ -107,6 +108,8 @@ export default function FarmerHome() {
                     가 돼요. 그 사이가 {won(unsafeGap(diag))}입니다.
                   </p>
                 )}
+                {/* 이 숫자들이 언제 것인지. 오늘 조회했다고 오늘 데이터가 아니다. */}
+                <AsOfLine as_of={diag.as_of} className="mt-4 border-t border-gov-line2 pt-3" />
               </div>
               <div className="px-6 py-6 sm:px-9">
                 <RiskTriad d={diag} />

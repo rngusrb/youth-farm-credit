@@ -119,7 +119,14 @@ function Body() {
                     </span>],
                   ]}
                 />
-                <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">{m.source}</p>
+                <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">
+                  {m.source}
+                  {m.window && (
+                    <>
+                      {" "}· 시계열 {m.window[0]}~{m.window[1]} ({m.trading_days.toLocaleString("ko-KR")}거래일)
+                    </>
+                  )}
+                </p>
               </Panel>
 
               <Panel>

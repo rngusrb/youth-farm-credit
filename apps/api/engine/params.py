@@ -61,6 +61,8 @@ class Crop:
     gross_per_10a: float | None = None
     cost_per_10a: float | None = None
     cashflow_year: int | None = None
+    # 이 작목 소득값이 몇 년 조사인가. 작목마다 다르다 — 하나로 뭉뚱그리지 않는다.
+    income_year: int | None = None
 
 
 @dataclass(frozen=True)
@@ -101,6 +103,7 @@ def crops() -> dict[str, Crop]:
             gross_per_10a=c.get("gross_per_10a"),
             cost_per_10a=c.get("cost_per_10a"),
             cashflow_year=c.get("cashflow_year"),
+            income_year=c.get("income_year"),
         )
     return out
 

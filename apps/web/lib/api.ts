@@ -15,6 +15,16 @@ export type Scenario = {
   short_prob_by_year: number[];
 };
 
+export type AsOf = {
+  income_survey_year?: number;
+  cost_survey_year?: number;
+  sigma_series?: string;
+  guideline?: string;
+  guideline_year?: number;
+  guideline_checked_on?: string;
+  market_window?: [string, string];
+};
+
 export type Diagnosis = {
   diagnosis_id: string;
   document_ref: string;
@@ -39,6 +49,8 @@ export type Diagnosis = {
     source: string;
   };
   income: { annual: number; capacity: number };
+  /** 각 값이 언제 것인지. 엔진이 내려준다 — 화면에서 오늘 날짜로 채우지 말 것. */
+  as_of?: AsOf;
   limits: {
     available: number;
     recommended: number;
@@ -97,6 +109,8 @@ export type Diagnosis = {
   } | null;
   market: {
     source: string;
+    /** 시계열 구간 [시작, 끝]. 화면은 이 값만 쓴다 — 오늘 날짜를 찍지 않는다. */
+    window?: [string, string];
     trading_days: number;
     annual_price_sigma: number | null;
     kosis_price_sigma: number | null;
@@ -232,6 +246,8 @@ export type CropRow = {
   driver: "price" | "quantity" | "cost" | null;
   harvest_months: number[];
   has_market: boolean;
+  /** 이 작목 소득값의 조사연도. 작목마다 다르다. */
+  income_year: number | null;
 };
 
 export type CropDetail = CropRow & {
@@ -297,6 +313,8 @@ export type CorpusDoc = {
 
 export async function fetchCorpus(): Promise<{
   documents: CorpusDoc[]; total_chunks: number; note: string;
+  /** 원문을 마지막으로 대조한 날. */
+  checked_on: string | null;
 }> {
   const res = await fetch(`${API_BASE}/api/v1/corpus`);
   if (!res.ok) throw new Error("자료실 목록을 불러오지 못했습니다");

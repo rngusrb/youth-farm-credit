@@ -1,12 +1,12 @@
 "use client";
 
+import { DRIVER_LABEL } from "@/lib/diagnosis";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Badge, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
 import { fetchCrops, type CropRow } from "@/lib/api";
 import { won } from "@/lib/format";
 
-const DRIVER: Record<string, string> = { price: "가격", quantity: "수확량", cost: "경영비" };
 type SortKey = "sigma" | "income" | "name";
 const SORTS: [SortKey, string][] = [["sigma", "변동성순"], ["income", "소득순"], ["name", "이름순"]];
 
@@ -45,7 +45,7 @@ export default function CropsPage() {
       <Crumb trail={[{ label: "데이터" }, { label: "작목 데이터" }]} />
       <PageTitle
         title="작목 데이터"
-        lead={`같은 소득이어도 변동성이 크면 감당할 수 있는 대출은 작아집니다. 작목별 소득과 변동성을 실측한 표예요. 출처: ${source || "농촌진흥청 농산물소득조사"}`}
+        lead={`같은 소득이어도 변동성이 크면 감당할 수 있는 대출은 작아집니다. 작목별 소득과 변동성을 실측한 표예요. 출처: ${source || "농촌진흥청 농산물소득조사"} — 조사연도는 작목마다 달라 소득 옆에 적었어요.`}
       />
 
       <div id="main">
@@ -106,7 +106,15 @@ export default function CropsPage() {
                     {c.name}
                     {c.group && <span className="block text-[12px] font-normal text-gov-ink3">{c.group}</span>}
                   </th>
-                  <td className="tabular px-4 py-3 text-gov-ink2">{won(c.income_per_10a)}</td>
+                  <td className="px-4 py-3 text-gov-ink2">
+                    <span className="tabular">{won(c.income_per_10a)}</span>
+                    {/* 조사연도는 작목마다 다르다 — 표 위에 한 줄로 뭉뚱그리면 거짓이 된다. */}
+                    {c.income_year && (
+                      <span className="tabular mt-0.5 block text-[12px] text-gov-ink3">
+                        {c.income_year}년 조사
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <span className="tabular w-11 text-gov-ink">{c.sigma.toFixed(3)}</span>
@@ -121,7 +129,7 @@ export default function CropsPage() {
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-gov-ink2">{c.driver ? DRIVER[c.driver] : "—"}</td>
+                  <td className="px-4 py-3 text-gov-ink2">{c.driver ? DRIVER_LABEL[c.driver] : "—"}</td>
                   <td className="px-4 py-3">
                     <Badge tone={c.sigma_source === "MEASURED" ? "ok" : "warn"}>
                       {c.sigma_source === "MEASURED" ? "실측" : "가정"}
