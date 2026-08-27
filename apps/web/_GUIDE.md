@@ -55,6 +55,13 @@
   `risk_based`=위기확률 기준(변동을 넣고 시뮬레이션). 대표 금액은 항상 `risk_based` 다.
   대시보드가 이걸 헷갈려 위기확률 64.9% 짜리 금액을 '감당 가능' 으로 띄운 적이 있다 —
   `lib/diagnosis.ts` 의 `headlineLimit()` 만 쓰고 직접 필드를 꺼내지 않는다.
+- **`useEffect` 는 반드시 블록 본문으로 쓴다.** `useEffect(() => expr, [x])` 는
+  **식의 반환값이 그대로 cleanup 으로 넘어간다.**
+  사고 이력: `useEffect(() => el?.scrollIntoView(…), [turns])` 가 유저 환경에서만
+  `useEffect must not return anything besides a function` 을 냈다. 우리 코드는
+  undefined 를 반환하지만 브라우저 확장이 그 메서드를 패치하면 값이 생긴다.
+  내 환경에서는 재현이 안 돼 원인을 찾는 데 오래 걸렸다.
+  `apps/web/tests/effects.test.ts` 가 간결 본문을 막는다.
 - **화면에서 숫자를 계산하지 않는다.** 합계·비율·한도는 전부 API 응답을 그대로 쓴다.
   프런트에서 한 번이라도 계산하면 리포트와 대시보드의 숫자가 갈라지고, 어느 쪽이
   맞는지 아무도 모르게 된다.
@@ -164,6 +171,7 @@
 ## 하네스
 
 ```
+apps/web/tests/effects.test.ts
 apps/web/tests/nav.test.ts
 apps/web/tests/format.test.ts
 apps/web/tests/profile.test.ts

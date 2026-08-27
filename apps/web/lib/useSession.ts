@@ -13,6 +13,8 @@ import { currentSession, serverSession, subscribe, type Session } from "./auth";
 export function useSession(): { session: Session | null; ready: boolean } {
   const session = useSyncExternalStore(subscribe, currentSession, serverSession);
   const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
+  useEffect(() => {
+    setReady(true);
+  }, []);
   return { session, ready };
 }

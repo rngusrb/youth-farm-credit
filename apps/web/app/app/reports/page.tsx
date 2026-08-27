@@ -8,7 +8,9 @@ import { pct, pyeong as fmtPyeong, won } from "@/lib/format";
 
 export default function ReportsPage() {
   const [rows, setRows] = useState<SavedReport[]>([]);
-  useEffect(() => setRows(loadReports()), []);
+  useEffect(() => {
+    setRows(loadReports());
+  }, []);
 
   return (
     <>

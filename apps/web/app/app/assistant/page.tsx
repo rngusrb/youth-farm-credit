@@ -37,7 +37,13 @@ export default function AssistantPage() {
   const [busy, setBusy] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [turns]);
+  // 블록 본문으로 둔다. 간결 본문(`() => expr`)은 **식의 반환값이 그대로 새어 나가서**
+  // React 가 그것을 cleanup 으로 받는다. 보통은 undefined 지만, 브라우저 확장이나
+  // 폴리필이 scrollIntoView 를 패치해 뭔가 반환하게 만들면
+  // "useEffect must not return anything besides a function" 이 뜬다.
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [turns]);
 
   async function send(text: string) {
     if (!text.trim() || busy) return;
