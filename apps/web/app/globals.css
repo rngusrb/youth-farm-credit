@@ -83,6 +83,11 @@ body {
 }
 .sheet .prose-w { max-width: 34rem; }
 
+/* 종이도 숨 쉴 자리가 필요하다. 반경·전이는 넣지 않되 여백과 표제는 키운다. */
+.sheet { line-height: 1.8; }
+.sheet .report-section { margin-top: 4.5rem; }
+.sheet .report-section > h2 { letter-spacing: -0.015em; }
+
 @media print {
   body { background: #fff; }
   .no-print { display: none !important; }

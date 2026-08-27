@@ -101,10 +101,10 @@ export default function ResultPage() {
 
   return (
     <main className="px-4 py-8 sm:px-6 sm:py-12">
-      <article className="sheet mx-auto max-w-[46rem] px-6 py-10 sm:px-14 sm:py-16">
+      <article className="sheet mx-auto max-w-[46rem] rounded-sm px-6 py-12 sm:px-16 sm:py-20">
         <ReportCover data={data} />
 
-        <div className="mt-14 space-y-14">
+        <div className="mt-16">
         {/* ── 01 결론 ─────────────────────────────────── */}
         {ok && (
           <ReportSection

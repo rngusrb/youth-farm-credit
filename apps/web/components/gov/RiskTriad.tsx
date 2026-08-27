@@ -41,18 +41,25 @@ export default function RiskTriad({ d }: { d: Diagnosis }) {
 
   const color = { ok: "text-gov-ok", warn: "text-gov-warn", danger: "text-gov-point" };
 
+  // 칸을 붙여 표처럼 두지 않고 떼어 놓는다 — 셋은 나란한 지표지 표의 행이 아니다.
+  const bg = { ok: "bg-gov-ok/[0.04]", warn: "bg-gov-warn/[0.05]", danger: "bg-gov-point/[0.04]" };
+  const ring = { ok: "border-gov-ok/25", warn: "border-gov-warn/30", danger: "border-gov-point/25" };
+
   return (
-    <div className="grid gap-px bg-gov-line sm:grid-cols-3">
+    <div className="grid gap-3 sm:grid-cols-3">
       {items.map((it) => (
-        <div key={it.label} className="bg-white p-4">
+        <div
+          key={it.label}
+          className={`rounded-lg border p-4 ${ring[it.tone]} ${bg[it.tone]}`}
+        >
           <div className="flex items-start justify-between gap-2">
             <span className="text-[12px] leading-tight text-gov-ink3">{it.label}</span>
             <Badge tone={it.tone}>{it.state}</Badge>
           </div>
-          <div className={`tabular mt-2 text-[28px] font-extrabold leading-none ${color[it.tone]}`}>
+          <div className={`tabular mt-2.5 text-[30px] font-extrabold leading-none tracking-[-0.025em] ${color[it.tone]}`}>
             {it.value}
           </div>
-          <div className="mt-1.5 text-[12px] leading-snug text-gov-ink3">{it.note}</div>
+          <div className="mt-2 text-[12px] leading-snug text-gov-ink3">{it.note}</div>
         </div>
       ))}
     </div>

@@ -5,7 +5,8 @@ import Link from "next/link";
 import { Badge, Btn, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import RiskTriad from "@/components/gov/RiskTriad";
 import { fetchCashflow, fetchCrop, runDiagnose, type Cashflow, type CropDetail, type Diagnosis } from "@/lib/api";
-import { headlineLimit, unsafeGap } from "@/lib/diagnosis";
+import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
+import { saveReport } from "@/lib/profile";
 import { useFarm } from "@/lib/useFarm";
 import { pct, pyeong as fmtPyeong, won } from "@/lib/format";
 
@@ -28,6 +29,18 @@ export default function FarmerHome() {
       .then((d) => {
         if (!alive) return;
         setDiag(d);
+        // 「내 리포트」는 리포트를 **열었을 때만** 쌓이고 있었다. 진단만 하고 홈에
+        // 머물면 목록이 영영 비어 보인다 — 여기서도 기록한다 (id 로 중복 제거됨).
+        const sc = headlineScenario(d);
+        saveReport({
+          id: d.diagnosis_id,
+          cropName: d.input.crop_name,
+          pyeong: d.input.pyeong,
+          productName: d.product.name,
+          riskLimit: headlineLimit(d),
+          crisisProb: sc?.crisis_prob ?? 0,
+          savedAt: Date.now(),
+        });
         return Promise.all([
           fetchCrop(profile.cropId).then((c) => alive && setCrop(c)),
           fetchCashflow({ ...base, principal: headlineLimit(d), year: d.product.grace_years + 1 })
@@ -71,35 +84,36 @@ export default function FarmerHome() {
               전체 리포트 +
             </Link>
           }>
-            <Panel>
-              <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
-                <div className="lg:w-56">
-                  <Stat
-                    label={`2년 연속 위기 확률 ${pct(diag.limits.max_crisis_prob)} 기준`}
-                    value={won(headlineLimit(diag))}
-                    tone={unsafeGap(diag) > 0 ? "warn" : "ok"}
-                  />
-                  <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
-                    제도상 <b className="text-gov-ink">{won(diag.limits.available)}</b>까지 신청할 수
-                    있어요. 소득이 해마다 흔들리는 것까지 넣어 계산하면 위 금액이에요.
+            {/* 히어로 — 한 화면에 강조는 한 곳(_GUIDE 모양 규칙).
+                숫자가 화면을 지배하고 나머지는 회색조로 내린다. */}
+            <div className="overflow-hidden rounded-xl border border-gov-line bg-white shadow-card">
+              <div className="border-b border-gov-line2 bg-gradient-to-b from-gov-soft/70 to-white px-6 py-8 sm:px-9 sm:py-10">
+                <p className="text-[13px] font-medium text-gov-ink3">
+                  2년 연속 상환이 밀릴 확률 {pct(diag.limits.max_crisis_prob)} 기준
+                </p>
+                <p className="tabular mt-2 text-[2.75rem] font-extrabold leading-[1.02] tracking-[-0.035em] text-gov-head sm:text-[3.4rem]">
+                  {won(headlineLimit(diag))}
+                </p>
+                <p className="mt-3.5 max-w-xl text-[14px] leading-[1.75] text-gov-ink2">
+                  제도상 <b className="text-gov-ink">{won(diag.limits.available)}</b>까지 신청할 수
+                  있어요. 소득이 해마다 흔들리는 것까지 넣어 계산하면 위 금액이에요.
+                </p>
+                {unsafeGap(diag) > 0 && (
+                  <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-gov-ink3">
+                    {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
+                    <b className="text-gov-point">
+                      {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}
+                    </b>
+                    가 돼요. 그 사이가 {won(unsafeGap(diag))}입니다.
                   </p>
-                  {unsafeGap(diag) > 0 && (
-                    <p className="mt-2 text-[12px] leading-relaxed text-gov-ink2">
-                      {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
-                      <b className="text-gov-point">
-                        {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}
-                      </b>
-                      가 돼요. 그 사이가 {won(unsafeGap(diag))}입니다.
-                    </p>
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <RiskTriad d={diag} />
-                </div>
+                )}
+              </div>
+              <div className="px-6 py-6 sm:px-9">
+                <RiskTriad d={diag} />
               </div>
 
               {diag.limits.binding_constraint === "livelihood" && (
-                <div className="mt-4">
+                <div className="border-t border-gov-line2 px-6 py-5 sm:px-9">
                   {/* 규칙 9 예외 — 차입 조정으로 풀리지 않는 상태라 단정형을 유지한다. */}
                   <Notice tone="danger" title="무차입 상태에서도 상환여력이 모자랍니다">
                     대출을 0원으로 놓고 계산해도 생활비를 채우지 못합니다. 차입 규모를 줄여도
@@ -107,7 +121,7 @@ export default function FarmerHome() {
                   </Notice>
                 </div>
               )}
-            </Panel>
+            </div>
           </Section>
 
           <div className="grid gap-6 lg:grid-cols-2">

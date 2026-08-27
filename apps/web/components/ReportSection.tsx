@@ -14,15 +14,17 @@ export default function ReportSection({
 }) {
   return (
     <section className="report-section">
-      <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b border-paper-rule pb-2">
+      <div className="mb-5 flex flex-wrap items-baseline gap-x-4 gap-y-2 border-b border-paper-rule pb-3">
         <span className="tabular text-[12px] font-semibold tracking-[0.18em] text-paper-accent">
           {n}
         </span>
-        <h2 className="text-[1.35rem] font-bold text-paper-ink">{title}</h2>
+        <h2 className="text-[1.6rem] font-bold leading-tight tracking-[-0.015em] text-paper-ink">
+          {title}
+        </h2>
         {aside && <div className="ml-auto text-xs text-paper-ink3">{aside}</div>}
       </div>
       {lead && (
-        <p className="prose-w mb-6 text-[0.95rem] leading-[1.85] text-paper-ink2">{lead}</p>
+        <p className="prose-w mb-7 text-[1rem] leading-[1.9] text-paper-ink2">{lead}</p>
       )}
       {children}
     </section>
