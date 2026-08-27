@@ -95,3 +95,7 @@ body {
   .report-section { break-inside: avoid; page-break-inside: avoid; }
   .report-cover { break-after: avoid; }
 }
+
+/* 기본 삼각형 마커를 지운다 — 우리가 직접 그린다 (Fold.tsx). */
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::marker { content: ""; }

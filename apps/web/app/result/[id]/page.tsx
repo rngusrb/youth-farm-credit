@@ -10,7 +10,7 @@ import {
   type Explanation,
 } from "@/lib/api";
 import { manwon, pct, pyeong as fmtPyeong, won } from "@/lib/format";
-import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
+import { headlineLimit, headlineScenario, unsafeGap, DRIVER_LABEL } from "@/lib/diagnosis";
 import { saveReport } from "@/lib/profile";
 import AssumedBadge from "@/components/AssumedBadge";
 import CliffChart from "@/components/CliffChart";
@@ -19,6 +19,7 @@ import LimitLadder from "@/components/LimitLadder";
 import MarketRegime from "@/components/MarketRegime";
 import RegulationAsk from "@/components/RegulationAsk";
 import ReportCover from "@/components/ReportCover";
+import Fold from "@/components/Fold";
 import ReportSection from "@/components/ReportSection";
 import RiskDriver from "@/components/RiskDriver";
 import RiskSummary from "@/components/RiskSummary";
@@ -225,7 +226,12 @@ export default function ResultPage() {
             title="이 작목의 소득이 흔들리는 이유"
             lead="원인이 가격인지 수확량인지에 따라 대응이 완전히 달라집니다."
           >
-            <RiskDriver factors={data.factors} cropName={data.input.crop_name} />
+            <Fold
+              summary={`${data.input.crop_name}의 소득 변동은 ${DRIVER_LABEL[data.factors.driver] ?? "여러 요인"}이 가장 크게 움직입니다`}
+              hint="요인별 분해 보기"
+            >
+              <RiskDriver factors={data.factors} cropName={data.input.crop_name} />
+            </Fold>
           </ReportSection>
         )}
 
@@ -323,12 +329,15 @@ export default function ResultPage() {
               />
             )}
 
-            <div className="rounded-xl border border-paper-rule bg-paper-panel p-5">
-              <h3 className="text-sm font-semibold text-paper-ink">계산 전제</h3>
-              <dl className="mt-3 space-y-2 text-xs leading-relaxed text-paper-ink2">
+            <Fold
+              summary="계산 전제"
+              hint={`${data.assumptions.n_sim.toLocaleString("ko-KR")}회 반복 · seed ${data.assumptions.seed}`}
+            >
+              <dl className="space-y-2 text-xs leading-relaxed text-paper-ink2">
                 <Assumption k="소득 기준">
-                  농촌진흥청 2023년 농산물 소득조사 10a당 소득에 면적을 비례 적용.
-                  규모의 경제는 반영되어 있지 않습니다.
+                  농촌진흥청 농산물소득조사
+                  {data.as_of?.income_survey_year ? ` ${data.as_of.income_survey_year}년` : ""} 10a당
+                  소득에 면적을 비례 적용. 규모의 경제는 반영되어 있지 않습니다.
                 </Assumption>
                 <Assumption k="소득 변동성">
                   σ={data.sigma.toFixed(2)} —{" "}
@@ -384,11 +393,11 @@ export default function ResultPage() {
                 href="/methodology.html"
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 inline-block border-b border-paper-accent/40 text-xs font-medium text-paper-accent transition hover:border-paper-accent"
+                className="mt-4 inline-flex min-h-11 items-center border-b border-paper-accent/40 text-xs font-medium text-paper-accent transition hover:border-paper-accent"
               >
                 데이터가 어떤 분석을 거쳐 이 숫자가 됐는지 — 전체 계보 보기 →
               </a>
-            </div>
+            </Fold>
           </div>
         </ReportSection>
 

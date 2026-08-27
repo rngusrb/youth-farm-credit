@@ -1,5 +1,6 @@
 "use client";
 
+import Fold from "@/components/Fold";
 import { useEffect, useState } from "react";
 import { Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import StressTable from "@/components/gov/StressTable";
@@ -125,12 +126,27 @@ export default function SafetyPage() {
                   {Math.abs((report.scenarios.find((s) => s.key === "price")?.income_change ?? 0) * 100).toFixed(0)}%
                 </b> 줄어들어요.
               </p>
-              <p className="mt-2.5 text-[13px] leading-relaxed text-gov-ink3">
-                계산에서 경영비는 줄어들지 않는 것으로 둡니다. 실제로는 수확 관련 비용이 일부
-                줄지만 그 비율에 대한 공개 근거가 없어 지어내지 않았어요. 그만큼 이 결과는
-                보수적이에요.
-              </p>
             </Panel>
+
+            {/* 가정·한계는 결론이 아니다. 지우지 않고 접는다 (UX-001). */}
+            <div className="mt-3">
+              <Fold
+                tone="gov"
+                summary="이 계산이 둔 가정과 한계"
+                hint="펼쳐 보기"
+              >
+                <p className="text-[13px] leading-relaxed text-gov-ink2">
+                  계산에서 경영비는 줄어들지 않는 것으로 둡니다. 실제로는 수확 관련 비용이 일부
+                  줄지만 그 비율에 대한 공개 근거가 없어 지어내지 않았어요. 그만큼 이 결과는
+                  보수적이에요.
+                </p>
+                <p className="mt-2.5 text-[13px] leading-relaxed text-gov-ink2">
+                  반대로 재해 시 이자 감면과 농신보 보증료는 넣지 않았어요. 앞의 것은 결과를
+                  나쁘게, 뒤의 것은 좋게 기울입니다. 어느 쪽이 더 큰지는 저희도 재보지
+                  않았어요.
+                </p>
+              </Fold>
+            </div>
           </Section>
 
           <Section title="대응">
