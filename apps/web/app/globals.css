@@ -12,9 +12,18 @@ body {
 
 .tabular { font-variant-numeric: tabular-nums; }
 
+/* 카드 — 정부 포털의 테두리 + 토스의 옅은 그림자 */
+.card-s { @apply rounded-lg border border-gov-line bg-white shadow-card; }
+.card-s.is-link { @apply transition-shadow duration-200; }
+.card-s.is-link:hover { @apply shadow-lift; }
+
+/* 핵심 숫자 한 개. 한 화면에 하나만. */
+.figure { @apply tabular text-figure text-gov-ink; }
+.hero-num { @apply tabular text-hero text-gov-ink; }
+
 /* 좌측 컬러바가 붙는 섹션 제목 — 정부 포털의 기본 문법 */
 .sec-title {
-  @apply relative pl-3 text-[17px] font-bold leading-tight text-gov-ink;
+  @apply relative pl-3.5 text-[18px] font-bold leading-tight tracking-[-0.01em] text-gov-ink;
 }
 .sec-title::before {
   content: "";

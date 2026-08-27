@@ -15,6 +15,8 @@ export const headlineLimit = (d: Diagnosis): number => d.limits.risk_based;
 export const headlineScenario = (d: Diagnosis): Scenario | undefined =>
   d.scenarios.at_risk_based;
 
-/** 제도상 신청 가능하지만 감당은 어려운 구간. */
-export const unsafeGap = (d: Diagnosis): number =>
-  Math.max(0, d.limits.available - d.limits.risk_based);
+/** 제도상 신청 가능하지만 감당은 어려운 구간.
+ *
+ * **엔진이 내는 값을 그대로 쓴다.** 화면에서 빼면 해설(narrate)이 만든 문장과
+ * 갈라지고, 수치 검증(llm/verify.py)에도 걸린다 — 실제로 걸렸다. */
+export const unsafeGap = (d: Diagnosis): number => d.limits.unsafe_gap;

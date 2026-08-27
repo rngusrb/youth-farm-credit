@@ -52,10 +52,18 @@ class ExplainRequest(BaseModel):
     diagnosis: dict[str, Any]
 
 
+class Action(BaseModel):
+    """다음 걸음 하나. 화면이 link 를 실제 경로로 바꾼다."""
+
+    text: str
+    detail: str = ""
+    link: str | None = None
+
+
 class ExplainResponse(BaseModel):
     headline: str
     body: str
-    actions: list[str]
+    actions: list[Action]
     numbers_used: list[float]
     dropped_sentences: list[str] = []
     narrator: Literal["llm", "template"] = "template"

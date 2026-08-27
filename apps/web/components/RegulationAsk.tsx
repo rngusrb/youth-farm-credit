@@ -61,7 +61,7 @@ export default function RegulationAsk({ context }: { context: Record<string, unk
               setQuestion(p);
               ask(p);
             }}
-            className="rounded-full border border-paper-rule px-3 py-1 text-xs text-paper-ink3 transition hover:border-paper-ink3 hover:text-paper-ink2"
+            className="inline-flex min-h-11 items-center rounded-full border border-paper-rule px-3.5 text-xs text-paper-ink2 transition hover:border-paper-ink3 hover:text-paper-ink"
           >
             {p}
           </button>

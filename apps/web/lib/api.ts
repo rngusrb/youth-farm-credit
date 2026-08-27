@@ -43,6 +43,8 @@ export type Diagnosis = {
     available: number;
     recommended: number;
     gap: number;
+    /** 제도 한도 − 위험기반 한도. 화면에서 빼지 말 것. */
+    unsafe_gap: number;
     risk_based: number;
     max_crisis_prob: number;
     max_crisis_prob_basis: string;
@@ -140,10 +142,27 @@ export type ExtractResult = {
   extractor: "llm" | "rule";
 };
 
+export type Action = {
+  text: string;
+  detail: string;
+  /** 서버는 무엇을 가리키는지만 말한다. 실제 경로는 화면이 정한다. */
+  link: "farm" | "revenue" | "safety" | "finance" | "relief" | "policy" | null;
+};
+
+/** link → 실제 라우트. 서버에 경로를 박아두면 프런트 라우팅이 바뀔 때 서버도 고쳐야 한다. */
+export const ACTION_HREF: Record<NonNullable<Action["link"]>, { href: string; label: string }> = {
+  farm:    { href: "/app/farm",    label: "내 농가 정보" },
+  revenue: { href: "/app/revenue", label: "수익 전망" },
+  safety:  { href: "/app/safety",  label: "금융 안전진단" },
+  finance: { href: "/app/finance", label: "맞춤 금융지원" },
+  relief:  { href: "/app/relief",  label: "구제제도" },
+  policy:  { href: "/policy",      label: "제도 근거" },
+};
+
 export type Explanation = {
   headline: string;
   body: string;
-  actions: string[];
+  actions: Action[];
   numbers_used: number[];
   dropped_sentences: string[];
   narrator: "llm" | "template";

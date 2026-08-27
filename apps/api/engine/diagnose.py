@@ -290,6 +290,10 @@ def diagnose(
         schedules["at_requested"] = at_requested.schedule
 
     base["limits"]["risk_based"] = risk_based
+    # 제도 한도와 **위험기반 한도**의 차이. gap(=available−recommended) 과 다르다.
+    # 화면과 해설이 이 값을 각자 빼서 만들면 어느 쪽이 맞는지 알 수 없고,
+    # 수치 검증(llm/verify.py)에도 걸린다 — 엔진이 내는 값이어야 한다.
+    base["limits"]["unsafe_gap"] = max(0.0, available - risk_based)
     base["limits"]["max_crisis_prob"] = max_crisis_prob
     # DSCR 1.25 는 은행 관행이라는 외부 근거가 있지만, 이 기준은 우리가 정한 값이다.
     # 근거 없는 숫자를 근거 있는 것처럼 두지 않고, 성격을 밝히고 조정 가능하게 한다.

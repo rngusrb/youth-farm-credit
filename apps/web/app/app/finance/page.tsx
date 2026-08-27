@@ -81,10 +81,12 @@ export default function FinancePage() {
 
             {unsafeGap(diag) > 0 && (
               <div className="mt-4">
-                <Notice tone="warn" title={`${won(unsafeGap(diag))} 는 “빌릴 수는 있지만 갚기는 어려운” 구간입니다`}>
-                  제도 한도까지 빌리면 거치가 끝나는 {diag.product.grace_years + 1}년차부터
-                  상환액이 {won(s?.grace_payment ?? 0)}에서 {won(s?.amort_payment ?? 0)}로 뜁니다.
-                  소득은 그만큼 늘어나 있지 않은 경우가 많습니다.
+                <Notice tone="warn" title={`두 금액 사이가 ${won(unsafeGap(diag))}예요`}>
+                  {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
+                  {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}, {won(headlineLimit(diag))}
+                  에서는 {pct(diag.limits.max_crisis_prob)}입니다. 거치가 끝나는{" "}
+                  {diag.product.grace_years + 1}년차에 상환액이 {won(s?.grace_payment ?? 0)}에서{" "}
+                  {won(s?.amort_payment ?? 0)}로 뛰기 때문이에요.
                 </Notice>
               </div>
             )}

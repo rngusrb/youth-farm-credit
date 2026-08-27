@@ -3,7 +3,7 @@ import Link from "next/link";
 /** 정부 포털 공통 조각. 각진 모서리, 표 중심, 좌측 컬러바. */
 
 export function Page({ children }: { children: React.ReactNode }) {
-  return <main className="mx-auto max-w-6xl px-4 py-7">{children}</main>;
+  return <main className="mx-auto max-w-6xl px-4 py-9 sm:px-6 lg:py-11">{children}</main>;
 }
 
 export function Crumb({ trail }: { trail: { label: string; href?: string }[] }) {
@@ -23,10 +23,10 @@ export function Crumb({ trail }: { trail: { label: string; href?: string }[] }) 
 
 export function PageTitle({ title, lead, aside }: { title: string; lead?: string; aside?: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-gov-head pb-4">
+    <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b-2 border-gov-head pb-5">
       <div className="min-w-0">
-        <h1 className="text-[26px] font-extrabold leading-tight tracking-tight text-gov-ink">{title}</h1>
-        {lead && <p className="mt-2 max-w-3xl text-[14px] leading-relaxed text-gov-ink2">{lead}</p>}
+        <h1 className="text-[30px] font-extrabold leading-[1.15] tracking-[-0.025em] text-gov-ink">{title}</h1>
+        {lead && <p className="mt-2.5 max-w-3xl text-[15px] leading-[1.75] text-gov-ink2">{lead}</p>}
       </div>
       {aside}
     </div>
@@ -37,8 +37,8 @@ export function Section({ title, action, children }: {
   title: string; action?: React.ReactNode; children: React.ReactNode;
 }) {
   return (
-    <section className="mb-8">
-      <div className="mb-3 flex items-baseline justify-between gap-3">
+    <section className="mb-11">
+      <div className="mb-4 flex items-baseline justify-between gap-3">
         <h2 className="sec-title">{title}</h2>
         {action}
       </div>
@@ -48,7 +48,7 @@ export function Section({ title, action, children }: {
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-lg border border-gov-line bg-white p-5 ${className}`}>{children}</div>;
+  return <div className={`rounded-lg border border-gov-line bg-white p-6 shadow-card sm:p-7 ${className}`}>{children}</div>;
 }
 
 /** 정의형 표 — 정부 사이트의 기본 정보 표시 단위 */
@@ -125,7 +125,7 @@ export function Empty({ title, body, cta }: {
   title: string; body: string; cta?: { href: string; label: string };
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-gov-line bg-white px-5 py-10 text-center">
+    <div className="rounded-lg border border-dashed border-gov-line bg-white px-5 py-14 text-center">
       <p className="text-[15px] font-semibold text-gov-ink">{title}</p>
       <p className="mx-auto mt-2 max-w-md text-[13px] leading-relaxed text-gov-ink2">{body}</p>
       {cta && (

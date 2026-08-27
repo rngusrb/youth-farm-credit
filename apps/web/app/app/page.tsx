@@ -7,7 +7,7 @@ import RiskTriad from "@/components/gov/RiskTriad";
 import { fetchCashflow, fetchCrop, runDiagnose, type Cashflow, type CropDetail, type Diagnosis } from "@/lib/api";
 import { headlineLimit, unsafeGap } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
-import { pyeong as fmtPyeong, won } from "@/lib/format";
+import { pct, pyeong as fmtPyeong, won } from "@/lib/format";
 
 export default function FarmerHome() {
   const { profile, ready } = useFarm();
@@ -44,10 +44,10 @@ export default function FarmerHome() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="홈" lead="농가 정보를 넣으면 여기에 요약이 표시됩니다." />
+        <PageTitle title="홈" lead="농가 정보를 넣으면 여기에 요약이 나와요." />
         <Empty
-          title="아직 농가 정보가 없습니다"
-          body="작목과 면적, 생활비 세 가지면 시작합니다. 문장으로 적어도 알아듣습니다."
+          title="아직 농가 정보가 없어요"
+          body="작목과 면적, 생활비 세 가지면 시작해요. 문장으로 적으셔도 알아듣습니다."
           cta={{ href: "/app/farm", label: "내 농가 정보 입력" }}
         />
       </>
@@ -66,7 +66,7 @@ export default function FarmerHome() {
 
       {diag && (
         <>
-          <Section title="감당할 수 있는 차입 규모" action={
+          <Section title="지금 조건에서 빌릴 수 있는 금액" action={
             <Link href={`/result/${diag.diagnosis_id}`} className="text-[12px] text-gov-ink3 hover:text-gov-link">
               전체 리포트 +
             </Link>
@@ -75,18 +75,21 @@ export default function FarmerHome() {
               <div className="grid gap-6 lg:grid-cols-[auto_1fr]">
                 <div className="lg:w-56">
                   <Stat
-                    label="AI 권장 차입"
+                    label={`2년 연속 위기 확률 ${pct(diag.limits.max_crisis_prob)} 기준`}
                     value={won(headlineLimit(diag))}
                     tone={unsafeGap(diag) > 0 ? "warn" : "ok"}
                   />
                   <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
                     제도상 <b className="text-gov-ink">{won(diag.limits.available)}</b>까지 신청할 수
-                    있지만, 소득이 해마다 흔들리는 것까지 넣으면 위 금액이 감당 가능한
-                    범위입니다.
+                    있어요. 소득이 해마다 흔들리는 것까지 넣어 계산하면 위 금액이에요.
                   </p>
                   {unsafeGap(diag) > 0 && (
-                    <p className="mt-2 text-[12px] font-semibold text-gov-point">
-                      차이 {won(unsafeGap(diag))} 는 “빌릴 수는 있지만 갚기는 어려운” 구간입니다.
+                    <p className="mt-2 text-[12px] leading-relaxed text-gov-ink2">
+                      {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
+                      <b className="text-gov-point">
+                        {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}
+                      </b>
+                      가 돼요. 그 사이가 {won(unsafeGap(diag))}입니다.
                     </p>
                   )}
                 </div>
@@ -97,9 +100,10 @@ export default function FarmerHome() {
 
               {diag.limits.binding_constraint === "livelihood" && (
                 <div className="mt-4">
-                  <Notice tone="danger" title="대출 규모의 문제가 아닙니다">
-                    대출을 0으로 놓아도 생활비를 감당하기 어려운 상태입니다. 한도를 낮추는
-                    것으로는 풀리지 않고, 경영 규모를 늘리거나 생활비를 조정해야 합니다.
+                  {/* 규칙 9 예외 — 차입 조정으로 풀리지 않는 상태라 단정형을 유지한다. */}
+                  <Notice tone="danger" title="무차입 상태에서도 상환여력이 모자랍니다">
+                    대출을 0원으로 놓고 계산해도 생활비를 채우지 못합니다. 차입 규모를 줄여도
+                    이 부분은 달라지지 않습니다 — 재배 규모나 생활비 쪽을 먼저 보셔야 합니다.
                   </Notice>
                 </div>
               )}
@@ -135,7 +139,7 @@ export default function FarmerHome() {
               </Panel>
             </Section>
 
-            <Section title="이 작목이 흔들리는 이유" action={
+            <Section title="이 작목의 소득이 흔들리는 이유" action={
               <Link href="/app/safety" className="text-[12px] text-gov-ink3 hover:text-gov-link">안전진단 +</Link>
             }>
               <Panel>
@@ -156,14 +160,14 @@ export default function FarmerHome() {
                   <p className="text-[13px] text-gov-ink3">요인분해 자료가 없습니다.</p>
                 )}
                 <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
-                  영업레버리지가 크면 총수입이 조금만 빠져도 소득은 크게 빠집니다. 경영비는
-                  매출이 줄어도 그대로 나가기 때문입니다.
+                  영업레버리지가 크면 총수입이 조금만 빠져도 소득은 크게 빠져요.
+                  경영비는 매출이 줄어도 그대로 나가거든요.
                 </p>
               </Panel>
             </Section>
           </div>
 
-          <Section title="다음으로 할 일">
+          <Section title="다음으로 해보실 것">
             <div className="grid gap-px bg-gov-line sm:grid-cols-3">
               {[
                 ["수익 전망 보기", "/app/revenue", "월별로 어느 달에 현금이 마르는지 확인"],

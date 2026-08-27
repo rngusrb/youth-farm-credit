@@ -57,7 +57,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
         ) : (
           <>
             <p className="text-xs font-semibold tracking-[0.02em] text-paper-ink3">
-              감당할 수 있는 차입 규모
+              2년 연속 상환이 밀릴 확률 {pct(data.limits.max_crisis_prob)} 기준
             </p>
             <p className="tabular mt-2 text-[3rem] font-bold leading-none text-paper-ink sm:text-[4rem]">
               {won(data.limits.risk_based)}
@@ -82,18 +82,26 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
               <b className="tabular font-semibold text-paper-danger">
                 {pct(data.limits.livelihood_floor_prob)}
               </b>
-              입니다. 재배 규모나 생활비 기준을 먼저 손봐야 합니다.
+              입니다. 차입 규모를 줄여도 이 부분은 달라지지 않습니다 — 재배 규모나 생활비
+              기준을 먼저 보셔야 합니다.
             </>
           ) : (
             <>
-              제도상 신청은 <b className="tabular">{won(data.limits.available)}</b>까지,
-              은행 심사 관행으로는 <b className="tabular">{won(data.limits.recommended)}</b>
-              까지 가능합니다. 다만 농업소득이 해마다 흔들리는 것까지 넣으면, 2년 연속
-              상환이 밀릴 확률을 {pct(data.limits.max_crisis_prob)} 이하로 유지하는 금액은
-              위와 같습니다.
+              제도상 <b className="tabular">{won(data.limits.available)}</b>, 은행 심사
+              관행으로 <b className="tabular">{won(data.limits.recommended)}</b>까지 신청할
+              수 있습니다. 농업소득이 해마다 흔들리는 것까지 넣어 계산하면, 2년 연속 상환이
+              밀릴 확률이 {pct(data.limits.max_crisis_prob)}를 넘지 않는 금액이 위 금액입니다.
             </>
           )}
         </p>
+
+        {/* 규칙 7 — 한계를 먼저 밝힌다. 뒤에 숨기면 변명, 앞에 두면 근거다. */}
+        {!noCapacity && (
+          <p className="prose-w mt-3 border-t border-paper-rule pt-3 text-[0.8rem] leading-relaxed text-paper-ink3">
+            재해 시 이자 감면은 넣지 않아 보수적이고, 농신보 보증료는 빼고 계산해 그만큼
+            낙관적입니다. 자세한 것은 「이 보고서가 쓴 근거」에 있습니다.
+          </p>
+        )}
       </div>
 
       {/* 계산의 출발점 */}

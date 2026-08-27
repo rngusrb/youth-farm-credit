@@ -3,13 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import {
+  ACTION_HREF,
   explain,
   fetchDiagnosis,
   type Diagnosis,
   type Explanation,
 } from "@/lib/api";
 import { manwon, pct, pyeong as fmtPyeong, won } from "@/lib/format";
-import { headlineLimit, headlineScenario } from "@/lib/diagnosis";
+import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
 import { saveReport } from "@/lib/profile";
 import AssumedBadge from "@/components/AssumedBadge";
 import CliffChart from "@/components/CliffChart";
@@ -109,7 +110,7 @@ export default function ResultPage() {
           <ReportSection
             n={next()}
             title="세 가지 한도"
-            lead="무엇을 기준으로 삼느냐에 따라 빌려도 되는 금액이 달라집니다. 어느 하나가 정답은 아니지만, 셋이 벌어지는 폭이 이 리포트의 요점입니다."
+            lead={`같은 농가인데 기준에 따라 ${won(unsafeGap(data))}이 벌어집니다.`}
           >
             <LimitLadder
               available={data.limits.available}
@@ -130,7 +131,7 @@ export default function ResultPage() {
         {ok && scenario && (
           <ReportSection
             n={next()}
-            title={`왜 ${data.product.grace_years + 1}년차인가`}
+            title={`${data.product.grace_years + 1}년차부터 왜 어려울까요`}
             lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치가 끝나는 ${data.product.grace_years + 1}년차에 원금이 붙으면서 연 상환액이 최댓값을 찍고, 이후 매년 줄어듭니다. 즉 ${data.product.grace_years + 1}년차는 우연히 위험한 해가 아니라 구조적으로 가장 무거운 해입니다.`}
             aside={
               <div className="inline-flex rounded-lg border border-paper-rule p-0.5">
@@ -206,7 +207,7 @@ export default function ResultPage() {
         {ok && scenario && (
           <ReportSection
             n={next()}
-            title="얼마나 위험한가"
+            title="얼마나 위험할까요"
             lead="소득이 흔들리는 25년을 3만 번 시뮬레이션해 센 결과입니다. 1년 부족은 저축으로 버티지만, 2년 연속은 돌려막기의 시작입니다."
           >
             <RiskSummary
@@ -221,7 +222,7 @@ export default function ResultPage() {
         {data.factors && (
           <ReportSection
             n={next()}
-            title="이 작목은 왜 흔들리나"
+            title="이 작목의 소득이 흔들리는 이유"
             lead="원인이 가격인지 수확량인지에 따라 대응이 완전히 달라집니다."
           >
             <RiskDriver factors={data.factors} cropName={data.input.crop_name} />
@@ -231,7 +232,7 @@ export default function ResultPage() {
         {/* ── 05 선택지 ───────────────────────────────── */}
         <ReportSection
           n={next()}
-          title="무엇을 할 수 있나"
+          title="어떻게 하면 좋을까요"
           lead={
             note?.actions.length
               ? undefined
@@ -243,10 +244,28 @@ export default function ResultPage() {
               <h3 className="text-sm font-semibold text-paper-ink">{note.headline}</h3>
               <p className="mt-2 text-sm leading-relaxed text-paper-ink2">{note.body}</p>
               {note.actions.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-paper-ink2">
-                  {note.actions.map((a, i) => (
-                    <li key={i}>· {a}</li>
-                  ))}
+                <ul className="mt-4 space-y-3.5">
+                  {note.actions.map((a, i) => {
+                    const to = a.link ? ACTION_HREF[a.link] : null;
+                    return (
+                      <li key={i} className="border-l-2 border-paper-rule pl-3.5">
+                        <p className="text-sm font-semibold leading-snug text-paper-ink">{a.text}</p>
+                        {a.detail && (
+                          <p className="mt-1 text-[13px] leading-relaxed text-paper-ink2">
+                            {a.detail}
+                          </p>
+                        )}
+                        {to && (
+                          <a
+                            href={to.href}
+                            className="no-print mt-0.5 inline-flex min-h-11 items-center text-[12px] font-medium text-paper-accent"
+                          >
+                            {to.label}에서 보기 →
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
@@ -281,7 +300,7 @@ export default function ResultPage() {
         {/* ── 06 이 계산의 근거 ───────────────────────── */}
         <ReportSection
           n={next()}
-          title="이 계산을 믿어도 되나"
+          title="이 보고서가 쓴 근거"
           lead="여기부터는 위 결론이 어디서 나왔는지에 대한 자료입니다. 결론만 필요하시면 건너뛰셔도 됩니다."
         >
           <div className="space-y-4">

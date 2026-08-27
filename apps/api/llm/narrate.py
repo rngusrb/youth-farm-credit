@@ -64,8 +64,9 @@ def _template(d: dict) -> tuple[str, str, list[str]]:
             f"면적을 늘리거나, 생활비 기준을 낮추거나, 차입 규모 자체를 줄이는 쪽을 먼저 검토해 보세요."
         )
         actions = [
-            f"같은 작목이라면 {d['min_area_pyeong']:,.0f}평 이상 규모를 확보한 뒤 다시 계산해 보기",
-            "소득이 높은 작목으로 조건을 바꿔 다시 진단해 보기",
+            _act(f"같은 작목이라면 {d['min_area_pyeong']:,.0f}평 이상을 확보한 뒤 다시 보기",
+                 "지금 조건에서는 상환에 쓸 돈이 남지 않아요.", LINK_FARM),
+            _act("소득이 높은 작목으로 조건을 바꿔 보기", "", LINK_FARM),
         ]
         return headline, body, actions
 
@@ -78,9 +79,10 @@ def _template(d: dict) -> tuple[str, str, list[str]]:
     # 리포트 표지가 위험기반 한도를 결론으로 내세우므로 해설도 같은 숫자로 맞춘다.
     # 서로 다른 금액을 말하면 읽는 사람이 어느 쪽을 믿어야 할지 알 수 없다.
     lead_limit = limits.get("risk_based") or limits["recommended"]
+    # 화법 규칙 2 — 판정("감당 가능한 범위") 대신 조건을 밝힌다.
     headline = (
-        f"신청 가능한 {_man(limits['available'])} 중 "
-        f"{_man(lead_limit)}까지가 감당 가능한 범위입니다"
+        f"2년 연속 위기 확률 {_pct(limits.get('max_crisis_prob') or 0.1)} 기준으로는 "
+        f"{_man(lead_limit)}입니다"
     )
     body = (
         f"{crop} {pyeong:,.0f}평의 연간 농업소득은 {_man(d['income']['annual'])}, "
@@ -90,8 +92,9 @@ def _template(d: dict) -> tuple[str, str, list[str]]:
         f"{s['cliff_multiple']:.1f}배 뛰어오릅니다. "
         f"그래서 {risk_phrase} 상환액이 상환여력을 넘어설 확률이 높아지고, "
         f"2년 연속으로 상환이 밀릴 확률은 {_pct(s['crisis_prob'])}로 계산됩니다. "
-        f"신청 가능 한도와 권장 한도의 차이 {_man(limits['gap'])}은 "
-        f"'빌릴 수 있지만 갚기는 어려운 구간'을 뜻합니다."
+        f"{_man(limits['available'])}를 다 빌리면 이 확률이 {_pct(s['crisis_prob'])}, "
+        f"{_man(lead_limit)}에서는 {_pct(limits.get('max_crisis_prob') or 0.1)}입니다. "
+        f"그 사이가 {_man(limits.get('unsafe_gap') or 0)}입니다."
     )
     # 위험기반 한도가 DSCR 한도보다 보수적이면 그 차이를 본문에서 다룬다.
     risk_based = limits.get("risk_based")
@@ -115,23 +118,93 @@ def _template(d: dict) -> tuple[str, str, list[str]]:
             f"{_pct(max_crisis)} 이하로 두려면 {_man(risk_based)} 선입니다."
         )
 
-    if binding == "livelihood":
-        actions = [
-            f"재배 규모를 {d['min_area_pyeong']:,.0f}평 수준까지 늘렸을 때를 먼저 비교해 보기",
-            "생활비 기준을 낮춰 다시 계산해 보기",
-            "소득이 더 높은 작목으로 조건을 바꿔 진단해 보기",
-        ]
-    else:
-        actions = [
-            f"차입 규모를 {_man(risk_based if risk_based else limits['recommended'])} 수준으로 낮춰 다시 계산해 보기",
-            f"같은 한도를 유지하려면 재배 규모를 {d['min_area_pyeong']:,.0f}평까지 늘렸을 때를 비교해 보기",
-            "재해 시 상환유예 요건을 미리 확인해 두기",
-        ]
-    if d.get("sigma_source") == "ASSUMED":
-        actions.append(
-            "이 확률은 소득 변동성 가정값(σ=0.20)에 기댄 값이라는 점을 감안하기"
-        )
+    actions = _actions(d)
     return headline, body, actions
+
+
+# 화면이 링크로 바꿀 키. 문자열 경로를 여기 두면 프런트 라우트가 바뀔 때 서버도 고쳐야 한다.
+# 무엇을 가리키는지만 말하고 주소는 화면이 정한다.
+LINK_FARM = "farm"
+LINK_REVENUE = "revenue"
+LINK_SAFETY = "safety"
+LINK_FINANCE = "finance"
+LINK_RELIEF = "relief"
+LINK_POLICY = "policy"
+
+
+def _act(text: str, detail: str = "", link: str | None = None) -> dict:
+    return {"text": text, "detail": detail, "link": link}
+
+
+def _actions(d: dict) -> list[dict]:
+    """그 농가의 실제 숫자에서 다음 걸음을 뽑는다.
+
+    고정 목록이면 "면적을 늘려라" 수준에서 멈춘다. 조건마다 다른 것을 내고,
+    **그렇게 하면 숫자가 어떻게 되는지**를 같이 적는다 (화법 규칙 5).
+    """
+    limits = d["limits"]
+    risk_based = limits.get("risk_based") or limits["recommended"]
+    product = d["product"]
+    out: list[dict] = []
+
+    if limits.get("binding_constraint") == "livelihood":
+        out.append(_act(
+            f"재배 규모를 {d['min_area_pyeong']:,.0f}평까지 늘렸을 때를 먼저 보기",
+            "차입을 줄이는 것으로는 풀리지 않는 상태예요.", LINK_FARM))
+        out.append(_act("생활비 기준을 낮춰 다시 계산해 보기", "", LINK_FARM))
+        out.append(_act("소득이 더 높은 작목으로 조건을 바꿔 보기", "", LINK_FARM))
+        return out
+
+    at_avail = d["scenarios"]["at_available"]
+    gap = limits["available"] - risk_based
+    if gap > 0:
+        out.append(_act(
+            f"차입을 {_man(risk_based)}으로 낮추면",
+            f"{product['grace_years'] + 1}년차 상환액이 "
+            f"{_man(at_avail['amort_payment'])} → "
+            f"{_man(d['scenarios'].get('at_risk_based', at_avail)['amort_payment'])}으로 줄어요.",
+            LINK_REVENUE))
+
+    if product["grace_years"] >= 5:
+        out.append(_act(
+            "거치기간을 줄이면 어떻게 되는지 보기",
+            "시행지침상 최대 5년 이내에서 고를 수 있어요. 짧게 잡으면 절벽이 앞당겨지는 대신 "
+            "총이자와 잔액이 빨리 줄어듭니다.", LINK_POLICY))
+
+    rb = d["scenarios"].get("at_risk_based") or at_avail
+    if rb.get("first_risk_year"):
+        out.append(_act(
+            f"{rb['first_risk_year']}년차 전에 대비해 두기",
+            "그 해부터 연간 부족 확률이 20%를 넘어요. 연체가 시작된 뒤에는 쓸 수 있는 제도가 줄어듭니다.",
+            LINK_RELIEF))
+    else:
+        out.append(_act(
+            "재해 시 상환연기 요건을 미리 확인해 두기",
+            "피해율 30% 이상이면 1~2년 연기가 가능해요.", LINK_RELIEF))
+
+    if not d.get("sigma_personalized"):
+        out.append(_act(
+            "지난 3개년 농업소득을 넣으면 이 숫자가 달라져요",
+            "지금은 작목 평균 변동성으로 계산했어요. 실제 이력이 있으면 그것으로 바꿉니다.",
+            LINK_FARM))
+
+    factors = d.get("factors") or {}
+    if factors.get("driver") == "price":
+        out.append(_act(
+            "받는 값이 흔들리는 작목이에요",
+            "계약재배·수매 약정으로 판매가를 미리 묶거나, 출하 시기를 나눠 한 시점 시세에 "
+            "몰리지 않게 하는 방법이 있어요.", LINK_SAFETY))
+    elif factors.get("driver") == "quantity":
+        out.append(_act(
+            "수확량이 흔들리는 작목이에요",
+            "가격보다 작황이 소득을 좌우해요. 재해 대비와 시설 보완 쪽을 먼저 보시는 게 낫습니다.",
+            LINK_SAFETY))
+
+    out.append(_act(
+        "농신보 보증료는 이 계산에 없어요",
+        "시행지침에 요율이 없어 넣지 않았어요. 취급 기관에 확인하시면 실제 부담은 조금 더 큽니다.",
+        LINK_FINANCE))
+    return out
 
 
 def _llm(d: dict) -> tuple[str, str, list[str]] | None:
@@ -168,7 +241,13 @@ def _llm(d: dict) -> tuple[str, str, list[str]] | None:
         )
         text = "".join(b.text for b in response.content if b.type == "text")
         parsed = json.loads(text)
-        return parsed["headline"], parsed["body"], list(parsed.get("actions", []))
+        # LLM 은 문자열만 낸다. 링크는 규칙기반 경로에서만 붙인다 —
+        # 어느 화면으로 보낼지는 지어낼 수 있는 값이 아니다.
+        return (
+            parsed["headline"],
+            parsed["body"],
+            [_act(str(a)) for a in parsed.get("actions", [])],
+        )
     except Exception as exc:
         log.warning("LLM 해설 실패, 템플릿으로 대체: %s", exc)
         return None
@@ -184,15 +263,19 @@ def narrate(diagnosis: dict) -> dict:
 
     checked_head, dropped_head, used_head = verify_text(headline, diagnosis)
     checked_body, dropped_body, used_body = verify_text(body, diagnosis)
-    checked_actions: list[str] = []
+    checked_actions: list[dict] = []
     dropped_actions: list[str] = []
     used_actions: list[float] = []
     for action in actions:
-        kept, dropped, used = verify_text(action, diagnosis)
-        if kept:
-            checked_actions.append(kept)
-        dropped_actions.extend(dropped)
-        used_actions.extend(used)
+        # text 와 detail 을 따로 검사한다. 엔진에 없는 수치가 든 쪽만 떨어진다.
+        kept_text, dropped_t, used_t = verify_text(action["text"], diagnosis)
+        kept_detail, dropped_d, used_d = verify_text(action.get("detail", ""), diagnosis)
+        dropped_actions.extend(dropped_t + dropped_d)
+        used_actions.extend(used_t + used_d)
+        if kept_text:
+            checked_actions.append(
+                {"text": kept_text, "detail": kept_detail, "link": action.get("link")}
+            )
 
     if not checked_head:
         # 헤드라인이 통째로 걸러졌다면 템플릿 헤드라인으로 되돌린다.

@@ -35,9 +35,19 @@ const config: Config = {
           danger:"#a8442b", dangerbg:"#f7e6e1", ok:"#29685a", okbg:"#e2ece8",
         },
       },
-      // 정부 포털의 신뢰감은 색계와 정보 구조가 만든다. 각진 모서리가 만드는 게 아니다.
-      // 2px 은 지나치게 경직돼서 8px 대로 올렸다 — 완전히 둥글게 가지는 않는다.
-      borderRadius: { DEFAULT: "6px", sm: "4px", md: "8px", lg: "10px", xl: "14px" },
+      // 정부 포털의 신뢰감(색계·정보구조·표) + 토스의 읽기 편함(여백·반경·전이).
+      // 표는 각지게 두고 카드·버튼만 둥글린다.
+      borderRadius: { DEFAULT: "8px", sm: "6px", md: "10px", lg: "14px", xl: "18px" },
+      boxShadow: {
+        // 아주 옅게. 그림자로 위계를 만들지 않는다 — 위계는 여백과 크기가 만든다.
+        card: "0 1px 2px rgb(13 43 82 / 0.04), 0 4px 12px -6px rgb(13 43 82 / 0.08)",
+        lift: "0 2px 4px rgb(13 43 82 / 0.05), 0 12px 24px -10px rgb(13 43 82 / 0.14)",
+      },
+      fontSize: {
+        // 핵심 숫자용. 한 화면에 하나만 쓴다.
+        hero: ["2.6rem", { lineHeight: "1.05", letterSpacing: "-0.03em", fontWeight: "800" }],
+        figure: ["1.9rem", { lineHeight: "1.1", letterSpacing: "-0.025em", fontWeight: "700" }],
+      },
       transitionTimingFunction: {
         // 감속 곡선. 눌렀을 때 '따라붙는' 느낌을 만든다.
         out: "cubic-bezier(0.16, 1, 0.3, 1)",
