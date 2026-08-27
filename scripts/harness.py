@@ -82,17 +82,31 @@ SECRET_PATTERNS = [
 # ── 설정 로딩 ────────────────────────────────────────────────────────────────
 
 def load_meta() -> dict:
+    """meta/project_state.yaml 을 읽는다. **실패하면 죽는다.**
+
+    사고 이력(2026-08-27): PyYAML 이 없으면 조용히 {} 를 반환했다. 그러면
+    test_path_prefixes 가 기본값 ["tests/"] 로 돌아가 _GUIDE.md 의
+    `apps/api/tests/...` 줄이 전부 걸러지고, all_folders() 는 glob 폴백으로
+    폴더 7개를 그럴듯하게 채운다. 결과는 **"테스트 0개 · harness all 통과"**.
+    설정을 못 읽은 하네스가 초록불을 내는 것이 하네스가 없는 것보다 나쁘다.
+    """
     if not META_PATH.exists():
         return {}
     try:
         import yaml
     except ImportError:
-        return {}
+        sys.exit(
+            "❌ PyYAML 이 없어 meta/project_state.yaml 을 읽을 수 없다.\n"
+            "   설정 없이 돌면 테스트 0개로 '통과'가 나온다 — 그래서 여기서 멈춘다.\n"
+            "   python3 -m pip install pyyaml"
+        )
     try:
-        return yaml.safe_load(META_PATH.read_text()) or {}
+        meta = yaml.safe_load(META_PATH.read_text()) or {}
     except Exception as e:
-        print(f"⚠️  meta/project_state.yaml 파싱 실패: {e}")
-        return {}
+        sys.exit(f"❌ meta/project_state.yaml 파싱 실패: {e}")
+    if not meta.get("harness"):
+        sys.exit("❌ meta/project_state.yaml 에 harness: 블록이 없다 — 설정 없이 돌지 않는다.")
+    return meta
 
 
 META = load_meta()
@@ -352,6 +366,28 @@ def check_anchors() -> list[dict]:
         if missing:
             f.append({"level": "FAIL", "type": "devguide_missing_folder", "file": "DEV_GUIDE.md",
                       "message": f"색인에 없는 폴더 {missing}"})
+
+    # ⑤ 등록 안 된 테스트 — 디스크에 있는데 어느 _GUIDE.md 에도 없다
+    #    _GUIDE.md 의 '## 하네스' 목록이 곧 실행 allowlist 다. 목록에 안 올리면
+    #    파일이 있어도 harness 가 안 돌린다 — **있는데 안 도는 테스트**가 된다.
+    #    (2026-08-27 발견: apps/web/tests/gap.test.ts 가 등록 없이 방치돼 있었고,
+    #     harness all 은 8개 중 6개만 돌면서 초록불을 냈다. 아무도 몰랐다.)
+    listed: set[str] = set()
+    for gpath in (META.get("folder_guides") or {}).values():
+        gp = ROOT / gpath
+        if gp.exists():
+            listed.update(parse_guide_tests(gp))
+    on_disk: set[str] = set()
+    for pre in CFG.get("test_path_prefixes", ["tests/"]):
+        d = ROOT / pre
+        if d.is_dir():
+            for q in d.rglob("*"):
+                if q.is_file() and re.match(r"^(test_.*\.py|.*\.test\.[tj]sx?)$", q.name):
+                    on_disk.add(str(q.relative_to(ROOT)))
+    orphans = sorted(on_disk - listed)
+    if orphans:
+        f.append({"level": "FAIL", "type": "unregistered_test", "file": "(테스트)",
+                  "message": f"_GUIDE.md '## 하네스' 에 없어 실행되지 않는 테스트 {orphans}"})
 
     # ⑤ ui_check 노후 — 화면을 바꾼 뒤 검사를 안 돌렸다
     #    ui_check 는 서버가 떠 있어야 해서 커밋 훅에 못 넣는다. 그렇다고 조용히 두면

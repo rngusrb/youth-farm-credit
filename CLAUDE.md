@@ -80,6 +80,7 @@ maker-review-loop 스킬 사용 (Reviewer PASS 없이 sprint-close 금지)
 |------|---------|
 | 2026-08-26 | vibe-kit 골격 이식 + 레이어 경계 확립 — estimators/ 분리로 core 순수성 확보 (`docs/decisions/0001-pure-estimators-belong-to-core.md`) |
 | 2026-08-26 | 리포트 한 장 → 정부 포털형 양면 서비스 — RAG 코퍼스 3종·월별 현금흐름·스트레스 테스트 (`docs/sprints/2026-08-26-service-buildout.md`) |
+| 2026-08-27 | 팀 피드백 2차 — 기준 시점 표시·근거 접기·출처 구분, 안 돌던 테스트 2개와 안 검사되던 심사 화면 발견 (`docs/sprints/2026-08-27-team-feedback-2.md`) |
 
 > ⚠️ 여기에 상세 이력 bullet 을 쓰지 말 것. 한 줄, 상세는 아카이브에.
 

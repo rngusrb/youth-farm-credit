@@ -83,10 +83,19 @@ PROBE = r"""
     }
     return { r: 255, g: 255, b: 255, a: 1 };
   };
+  // 접힌 <details> 안은 **보이지 않는다**. 엔진에 따라 rect 가 남아 있어서
+  // 그대로 재면 없는 겹침을 만들고, 접어서 줄인 정보량이 줄지 않은 것처럼 나온다.
+  // (2026-08-27 실측: Fold 적용 후 리포트에서 겹침 3건이 유령으로 잡혔다)
+  const inClosedFold = (el) => {
+    const d = el.closest("details:not([open])");
+    if (!d) return false;
+    const sm = d.querySelector(":scope > summary");
+    return !(sm && (sm === el || sm.contains(el)));
+  };
   const visible = (el) => {
     const s = getComputedStyle(el), r = el.getBoundingClientRect();
     return s.display !== "none" && s.visibility !== "hidden" && parseFloat(s.opacity) > 0.1
-           && r.width > 0 && r.height > 0;
+           && r.width > 0 && r.height > 0 && !inClosedFold(el);
   };
   const hasText = (el) =>
     Array.from(el.childNodes).some(n => n.nodeType === 3 && n.textContent.trim().length > 0);
@@ -158,10 +167,19 @@ PROBE = r"""
 # 내용 총량 — "지워서 점수 올리기" 감시용. 요소를 지우면 반드시 줄어든다.
 CENSUS = r"""
 () => {
+  // 접힌 <details> 안은 **보이지 않는다**. 엔진에 따라 rect 가 남아 있어서
+  // 그대로 재면 없는 겹침을 만들고, 접어서 줄인 정보량이 줄지 않은 것처럼 나온다.
+  // (2026-08-27 실측: Fold 적용 후 리포트에서 겹침 3건이 유령으로 잡혔다)
+  const inClosedFold = (el) => {
+    const d = el.closest("details:not([open])");
+    if (!d) return false;
+    const sm = d.querySelector(":scope > summary");
+    return !(sm && (sm === el || sm.contains(el)));
+  };
   const visible = (el) => {
     const s = getComputedStyle(el), r = el.getBoundingClientRect();
     return s.display !== "none" && s.visibility !== "hidden" && parseFloat(s.opacity) > 0.1
-           && r.width > 0 && r.height > 0;
+           && r.width > 0 && r.height > 0 && !inClosedFold(el);
   };
   const hasText = (el) =>
     Array.from(el.childNodes).some(n => n.nodeType === 3 && n.textContent.trim().length > 0);

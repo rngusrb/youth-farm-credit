@@ -62,6 +62,19 @@
   undefined 를 반환하지만 브라우저 확장이 그 메서드를 패치하면 값이 생긴다.
   내 환경에서는 재현이 안 돼 원인을 찾는 데 오래 걸렸다.
   `apps/web/tests/effects.test.ts` 가 간결 본문을 막는다.
+- **심사 화면에서 값의 출처를 섞지 않는다.** 차주 입력 / 공개 통계 / 가정을
+  `<SourceTag>` 로 구분하고, 표마다 `<SourceLegend>` 를 한 번 둔다. 배지는 **라벨 칸**에
+  붙인다 — 심사 화면은 표가 주고, 숫자를 가리면 안 된다. σ 는 `sigmaSourceKind()` 로
+  판단한다: PARTIAL 을 "통계" 라고 부르면 분산의 60% 넘는 가정값이 실측으로 읽힌다.
+- **근거를 접을 때 지우지 않는다.** `<Fold>` 만 쓰고 직접 토글을 만들지 않는다.
+  `<details>` 는 키보드·스크린리더 동작이 브라우저에 이미 들어 있고, 손으로 만든
+  토글은 그걸 매번 다시 틀린다. 접힌 내용은 DOM 에 남아야 한다 — 세 팀원 모두
+  "정보량이 많다"고 했지만 세 명 모두 "근거가 설득력 있다"고도 했다.
+- **날짜도 화면에서 만들지 않는다.** 데이터의 기준 시점은 API 의 `as_of` 만 쓴다.
+  `new Date()` 는 리포트 **발행일**에만 허용되고, 그 옆에는 반드시 `<AsOfLine>` 이
+  붙어야 한다. 사고 이력: 표지에 발행일(오늘)만 찍혀 있어 2023~2024년 소득조사 값이
+  오늘 데이터처럼 읽혔다. 없는 시점은 **표시하지 않는다** — 빈 자리를 오늘로 메우면
+  거짓이 된다 (`apps/web/tests/asof.test.ts`).
 - **화면에서 숫자를 계산하지 않는다.** 합계·비율·한도는 전부 API 응답을 그대로 쓴다.
   프런트에서 한 번이라도 계산하면 리포트와 대시보드의 숫자가 갈라지고, 어느 쪽이
   맞는지 아무도 모르게 된다.
@@ -177,4 +190,7 @@ apps/web/tests/format.test.ts
 apps/web/tests/profile.test.ts
 apps/web/tests/diagnosis.test.ts
 apps/web/tests/auth.test.ts
+apps/web/tests/gap.test.ts
+apps/web/tests/asof.test.ts
+apps/web/tests/fold.test.tsx
 ```
