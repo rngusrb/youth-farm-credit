@@ -19,7 +19,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ko" className={serif.variable}>
+    // suppressHydrationWarning — 브라우저 확장이 <html> 에 속성을 심으면
+    // (예: data-vp-extension) 서버 HTML 과 달라져 하이드레이션 경고가 난다.
+    // 우리가 만든 차이가 아니고 막을 수도 없다. 이 태그에만 좁게 끈다.
+    <html lang="ko" className={serif.variable} suppressHydrationWarning>
       <body className="min-h-screen">
         <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-gov-head focus:px-4 focus:py-2 focus:text-white">
           본문 바로가기

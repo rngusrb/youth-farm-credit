@@ -100,8 +100,8 @@ export default function ResultPage() {
   const next = () => String(++counter).padStart(2, "0");
 
   return (
-    <main className="px-4 py-8 sm:px-6 sm:py-12">
-      <article className="sheet mx-auto max-w-[46rem] rounded-sm px-6 py-12 sm:px-16 sm:py-20">
+    <main id="main" className="pb-4">
+      <article className="sheet mx-auto max-w-[46rem] rounded-md px-6 py-12 sm:px-14 sm:py-16">
         <ReportCover data={data} />
 
         <div className="mt-16">
@@ -414,7 +414,7 @@ export default function ResultPage() {
         </div>
       </article>
 
-      <div className="no-print mx-auto mt-6 flex max-w-[46rem] flex-wrap gap-3">
+      <div className="no-print mx-auto mt-5 flex max-w-[46rem] flex-wrap gap-2">
         <a
           href="/diagnose"
           className="inline-flex min-h-11 items-center border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 transition hover:border-gov-link hover:text-gov-head"

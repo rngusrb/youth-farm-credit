@@ -17,7 +17,9 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
   const router = useRouter();
   const { session, ready } = useSession();
 
-  const isBank = path.startsWith("/bank");
+  const isReport = path.startsWith("/result/");
+  // 리포트는 양쪽에서 다 열린다. 역할로 메뉴를 고르고 리다이렉트는 걸지 않는다.
+  const isBank = isReport ? session?.role === "bank" : path.startsWith("/bank");
 
   useEffect(() => {
     // 하이드레이션 전에는 세션이 null 로 보인다 — 그때 판단하면 로그인해도 튕긴다.
@@ -26,10 +28,11 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
       router.replace(`/login?next=${encodeURIComponent(path)}`);
       return;
     }
+    if (isReport) return; // 리포트는 두 역할 모두 볼 수 있다
     // 계정이 역할을 정한다. 농가 계정으로 심사 화면에 들어갈 수 없다.
     if (isBank && session.role !== "bank") router.replace("/app");
     if (!isBank && session.role !== "farmer") router.replace("/bank");
-  }, [path, router, session, isBank, ready]);
+  }, [path, router, session, isBank, ready, isReport]);
 
   if (!ready) return null;
   if (!session) {
@@ -67,9 +70,11 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
         <nav aria-label="업무 메뉴" className="hidden w-52 shrink-0 border-r border-gov-line2 py-6 lg:block">
           <ul>
             {menu.map((i) => {
-              const active = i.href === "/app" || i.href === "/bank"
-                ? path === i.href
-                : path.startsWith(i.href);
+              const active = isReport
+                ? i.href.endsWith("/reports")
+                : i.href === "/app" || i.href === "/bank"
+                  ? path === i.href
+                  : path.startsWith(i.href);
               return (
                 <li key={i.href}>
                   <Link
@@ -95,8 +100,10 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
           <nav aria-label="업무 메뉴 (모바일)" className="mb-5 overflow-x-auto lg:hidden">
             <ul className="flex min-w-max gap-1 border-b border-gov-line2">
               {menu.map((i) => {
-                const active = i.href === "/app" || i.href === "/bank"
-                  ? path === i.href : path.startsWith(i.href);
+                const active = isReport
+                  ? i.href.endsWith("/reports")
+                  : i.href === "/app" || i.href === "/bank"
+                    ? path === i.href : path.startsWith(i.href);
                 return (
                   <li key={i.href}>
                     <Link href={i.href}
