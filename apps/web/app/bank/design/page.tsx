@@ -1,7 +1,9 @@
 "use client";
 
+import Fold from "@/components/Fold";
+import { SourceLegend } from "@/components/SourceTag";
 import { useEffect, useState } from "react";
-import { Badge, Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
+import { Badge, Btn, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchProducts, runDiagnose, type Diagnosis, type ProductRow } from "@/lib/api";
 import { headlineLimit, unsafeGap } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
@@ -86,7 +88,8 @@ export default function DesignPage() {
           <Section title="권장 실행 금액">
             <Panel>
               <div className="grid gap-6 sm:grid-cols-3">
-                <Stat label="신청 가능" value={won(diag.limits.available)} note="제도상 한도" />
+                <Stat label="신청 가능" value={won(diag.limits.available)} note="제도상 한도"
+                      src="public" srcNote={diag.product.source} />
                 <Stat label="권장 실행" value={won(headlineLimit(diag))} tone="ok"
                       note={`2년연속 위기확률 ${pct(diag.limits.max_crisis_prob)} 이하 유지`} />
                 <Stat label="과다 구간" value={won(unsafeGap(diag))}
@@ -94,6 +97,33 @@ export default function DesignPage() {
                       note="실행 시 감내 기준 초과" />
               </div>
             </Panel>
+          </Section>
+
+          <Section title="이 설계가 선 가정">
+            <SourceLegend className="mb-3" />
+            <Fold
+              tone="gov"
+              summary="가정값 3건 — 각각의 근거"
+              hint="펼쳐 보기"
+            >
+              <DefTable rows={[
+                ["농가 고유 변동성",
+                 <span key="a" className="tabular">{diag.sigma_idiosyncratic.toFixed(2)}</span>,
+                 diag.sigma_personalized
+                   ? { src: "input", note: "차주 소득 이력에서 계산했습니다." }
+                   : { src: "assumed", note: "근거가 없습니다 — 농가별 고유 변동을 공표하는 통계를 찾지 못했습니다." }],
+                ["연간 재해 발생확률",
+                 <span key="b" className="tabular">{pct(diag.assumptions.p_disaster)}</span>,
+                 { src: "assumed", note: "지역·작목별 실측값이 아닙니다. 피해율은 30~80% 균등으로 둡니다." }],
+                ["농신보 보증료",
+                 <span key="c" className="text-gov-ink3">계산에 넣지 않음</span>,
+                 { src: "assumed", note: "요율이 공개되어 있지 않아 뺐습니다. 그만큼 이 결과는 낙관적입니다." }],
+              ]} />
+              <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
+                재해 시 이자 감면도 넣지 않았습니다. 앞의 세 가정과 방향이 반대라 서로 얼마나
+                상쇄되는지는 재보지 않았습니다.
+              </p>
+            </Fold>
           </Section>
 
           <Section title="실행 금액별 위험">

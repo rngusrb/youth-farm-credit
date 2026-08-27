@@ -1,3 +1,4 @@
+import SourceTag, { type SourceKind } from "@/components/SourceTag";
 import Link from "next/link";
 
 /** 정부 포털 공통 조각. 각진 모서리, 표 중심, 좌측 컬러바. */
@@ -52,14 +53,18 @@ export function Panel({ children, className = "" }: { children: React.ReactNode;
 }
 
 /** 정의형 표 — 정부 사이트의 기본 정보 표시 단위 */
-export function DefTable({ rows }: { rows: [string, React.ReactNode][] }) {
+/** 세 번째 원소는 값의 출처 (UX-010). 배지는 라벨 칸에만 들어간다 — 표가 주다. */
+export type DefRow = [string, React.ReactNode, { src?: SourceKind; note?: string }?];
+
+export function DefTable({ rows }: { rows: DefRow[] }) {
   return (
     <table className="w-full border-t border-gov-ink/70 text-[14px]">
       <tbody>
-        {rows.map(([k, v]) => (
+        {rows.map(([k, v, meta]) => (
           <tr key={k} className="border-b border-gov-line2">
             <th scope="row" className="w-40 bg-gov-sunk px-4 py-2.5 text-left align-top font-semibold text-gov-ink2">
               {k}
+              {meta?.src && <SourceTag kind={meta.src} note={meta.note} />}
             </th>
             <td className="px-4 py-2.5 align-top">{v}</td>
           </tr>
@@ -86,9 +91,11 @@ export function Badge({ tone = "plain", children }: {
   );
 }
 
-export function Stat({ label, value, unit, tone = "plain", note }: {
+export function Stat({ label, value, unit, tone = "plain", note, src, srcNote }: {
   label: string; value: string; unit?: string;
   tone?: "plain" | "ok" | "warn" | "danger"; note?: string;
+  /** 값의 출처 (UX-010). 배지는 라벨 쪽에 붙어 숫자를 가리지 않는다. */
+  src?: SourceKind; srcNote?: string;
 }) {
   const color = {
     plain: "text-gov-ink", ok: "text-gov-ok",
@@ -96,7 +103,10 @@ export function Stat({ label, value, unit, tone = "plain", note }: {
   }[tone];
   return (
     <div>
-      <div className="text-[12px] font-medium text-gov-ink3">{label}</div>
+      <div className="text-[12px] font-medium text-gov-ink3">
+        {label}
+        {src && <SourceTag kind={src} note={srcNote} />}
+      </div>
       <div className={`tabular mt-1 text-[26px] font-extrabold leading-none ${color}`}>
         {value}{unit && <span className="ml-1 text-[14px] font-semibold text-gov-ink3">{unit}</span>}
       </div>

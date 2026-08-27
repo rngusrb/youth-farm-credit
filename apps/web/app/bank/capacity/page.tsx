@@ -1,5 +1,7 @@
 "use client";
 
+import { SourceLegend } from "@/components/SourceTag";
+import { sigmaSourceKind, sigmaSourceNote } from "@/lib/diagnosis";
 import { useEffect, useState } from "react";
 import { Badge, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import CashflowChart from "@/components/gov/CashflowChart";
@@ -57,14 +59,19 @@ export default function CapacityPage() {
         <Section title="상환여력 구성">
           <div className="grid gap-5 lg:grid-cols-2">
             <Panel>
+              <SourceLegend className="mb-4" />
               <DefTable rows={[
-                ["연 총수입", <span key="a" className="tabular">{cf ? won(cf.annual.gross) : "—"}</span>],
-                ["경영비", <span key="b" className="tabular">{cf ? `− ${won(cf.annual.operating_cost)}` : "—"}</span>],
-                ["농업소득", <b key="c" className="tabular">{won(diag.income.annual)}</b>],
-                ["생활비", <span key="d" className="tabular">− {won(diag.input.living_cost)}</span>],
+                ["연 총수입", <span key="a" className="tabular">{cf ? won(cf.annual.gross) : "—"}</span>,
+                  { src: "public", note: "공표 10a당 총수입 × 차주 신고 면적." }],
+                ["경영비", <span key="b" className="tabular">{cf ? `− ${won(cf.annual.operating_cost)}` : "—"}</span>,
+                  { src: "public", note: "같은 조사의 경영비입니다. 조사연도는 작목마다 다릅니다." }],
+                ["농업소득", <b key="c" className="tabular">{won(diag.income.annual)}</b>,
+                  { src: "public" }],
+                ["생활비", <span key="d" className="tabular">− {won(diag.input.living_cost)}</span>,
+                  { src: "input", note: "차주가 적어 낸 값입니다. 검증 대상입니다." }],
                 ["기존 부채상환", <span key="e" className="tabular">
                   {diag.input.other_debt_service ? `− ${won(diag.input.other_debt_service)}` : "없음"}
-                </span>],
+                </span>, { src: "input", note: "차주 신고 기준입니다. 신용정보로 대조해야 합니다." }],
                 ["상환여력", <b key="f" className="tabular text-gov-head">{won(diag.income.capacity)}</b>],
               ]} />
             </Panel>
@@ -74,19 +81,23 @@ export default function CapacityPage() {
                 ["소득 변동성 σ", <span key="a" className="tabular">{diag.sigma.toFixed(3)}{" "}
                   <Badge tone={diag.sigma_personalized ? "info" : "warn"}>
                     {diag.sigma_personalized ? "차주 실적" : "작목 평균"}
-                  </Badge></span>],
+                  </Badge></span>,
+                  { src: sigmaSourceKind(diag), note: sigmaSourceNote(diag) }],
                 ["시장 공통 성분", <span key="b" className="tabular">
                   {diag.sigma_common?.toFixed(3) ?? "—"} <span className="text-[12px] text-gov-ink3">실측</span>
-                </span>],
+                </span>, { src: "public", note: "작목 그룹의 공표 소득 시계열에서 실측했습니다." }],
                 ["농가 고유 성분", <span key="c" className="tabular">
                   {diag.sigma_idiosyncratic.toFixed(3)}{" "}
                   <span className="text-[12px] text-gov-warn">
                     {diag.sigma_personalized ? "실측" : "가정"}
                   </span>
-                </span>],
+                </span>,
+                  diag.sigma_personalized
+                    ? { src: "input" as const, note: "차주 소득 이력에서 직접 계산했습니다." }
+                    : { src: "assumed" as const, note: `실측 근거가 없어 ${diag.sigma_idiosyncratic.toFixed(2)} 로 두었습니다. 농가별 고유 변동을 공표하는 통계가 없습니다.` }],
                 ["영업레버리지", <span key="d" className="tabular">
                   {crop?.leverage ? `${crop.leverage.toFixed(2)}배` : "—"}
-                </span>],
+                </span>, { src: "public" }],
                 ["주 변동요인", crop?.factors
                   ? { price: "가격", quantity: "수확량", cost: "경영비" }[crop.factors.driver]
                   : "—"],

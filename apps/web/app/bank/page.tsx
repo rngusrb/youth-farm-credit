@@ -1,5 +1,7 @@
 "use client";
 
+import { SourceLegend } from "@/components/SourceTag";
+import { sigmaSourceKind, sigmaSourceNote } from "@/lib/diagnosis";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge, Btn, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
@@ -104,15 +106,20 @@ export default function BankHome() {
         <>
           <Section title="차주 개요">
             <Panel>
+              <SourceLegend className="mb-5" />
               <div className="grid gap-6 sm:grid-cols-4">
-                <Stat label="차주" value={applicant.name}
+                <Stat label="차주" value={applicant.name} src="input"
                       note={`${applicant.ref} · ${applicant.region} · ${diag.input.crop_name} ${fmtPyeong(diag.input.pyeong)}`} />
                 <Stat label="연 농업소득" value={won(diag.income.annual)}
+                      src="public"
+                      srcNote="공표 10a당 소득에 차주가 신고한 면적을 비례 적용했습니다. 규모의 경제는 반영하지 않았습니다."
                       note={`상환여력 ${won(diag.income.capacity)}`} />
                 <Stat label="소득 변동성 σ" value={diag.sigma.toFixed(3)}
+                      src={sigmaSourceKind(diag)} srcNote={sigmaSourceNote(diag)}
                       note={diag.sigma_personalized ? "차주 실적 반영" : "작목 평균 (실적 미제출)"} />
                 <Stat label="영업레버리지" value={crop?.leverage ? `${crop.leverage.toFixed(2)}배` : "—"}
                       tone={(crop?.leverage ?? 0) >= 2 ? "warn" : "plain"}
+                      src="public" srcNote="총수입·경영비 모두 공표 소득조사 값입니다."
                       note="총수입 ÷ 소득" />
               </div>
             </Panel>
