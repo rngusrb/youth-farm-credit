@@ -397,3 +397,38 @@ export const fetchStress = (p: {
   other_debt_service?: number; principal?: number | null;
   product_id?: string; max_crisis_prob?: number | null;
 }) => post<StressReport>("/api/v1/stress", p);
+
+// ── 정책자금 자격 요건 ──────────────────────────────────────
+/**
+ * 요건 하나와 그 **근거 조항 원문**.
+ * `check` 가 self 면 화면이 판정하지 않고 농가가 직접 대본다.
+ */
+export type Requirement = {
+  key: string;
+  label: string;
+  check: "age_range" | "career_max" | "self";
+  min: number | null;
+  max: number | null;
+  document: string;
+  section: string;
+  /** 시행지침 원문 그대로. 요약이 아니다. */
+  quote: string;
+  quote_truncated: boolean;
+  source_url: string | null;
+};
+
+export type ProductEligibility = {
+  product_id: string;
+  product_name: string;
+  document: string | null;
+  requirements: Requirement[];
+};
+
+export async function fetchEligibility(): Promise<{
+  products: ProductEligibility[];
+  note: string;
+}> {
+  const res = await fetch(`${API_BASE}/api/v1/eligibility`);
+  if (!res.ok) throw new Error("자격 요건을 불러오지 못했습니다");
+  return res.json();
+}

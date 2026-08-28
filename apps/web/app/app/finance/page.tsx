@@ -1,9 +1,10 @@
 "use client";
 
+import EligibilityCheck from "@/components/EligibilityCheck";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge, Btn, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchProducts, runDiagnose, type Diagnosis, type ProductRow } from "@/lib/api";
+import { fetchProducts, runDiagnose, type Diagnosis, type ProductRow, fetchEligibility, type ProductEligibility } from "@/lib/api";
 import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
 import { pct, pyeong as fmtPyeong, ratio, won } from "@/lib/format";
@@ -12,11 +13,24 @@ export default function FinancePage() {
   const { profile, ready } = useFarm();
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [products, setProducts] = useState<ProductRow[]>([]);
+  const [elig, setElig] = useState<ProductEligibility[]>([]);
+  const [eligNote, setEligNote] = useState("");
+  /** null = 아직 안 옴, "" = 정상 응답, 그 외 = 실패 사유.
+      "못 불러옴" 과 "조항이 없음" 은 다른 일이다 — 화면이 틀린 이유를 대지 않게 나눈다. */
+  const [eligError, setEligError] = useState<string | null>(null);
   const [relief, setRelief] = useState<{ damage_min: number; damage_max: number; defer_years: number }[]>([]);
   const [reliefSource, setReliefSource] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // 자격 요건은 코퍼스에서 온다. 못 가져오면 섹션이 비고, 그건 정상이다 —
+    // 없는 근거로 자격을 말하지 않는다. (조용히 넘기지 않도록 로그는 남긴다)
+    fetchEligibility()
+      .then((e) => { setElig(e.products); setEligNote(e.note); setEligError(""); })
+      .catch((err) => {
+        console.warn("자격 요건을 불러오지 못했습니다:", err);
+        setEligError(err instanceof Error ? err.message : String(err));
+      });
     fetchProducts()
       .then((p) => { setProducts(p.products); setRelief(p.disaster_relief); setReliefSource(p.relief_source); })
       .catch(() => undefined);
@@ -161,6 +175,24 @@ export default function FinancePage() {
                 </Panel>
               ))}
             </div>
+          </Section>
+
+          <Section title="신청 자격 스스로 대보기">
+            {elig.length > 0 ? (
+              <EligibilityCheck data={elig} note={eligNote} />
+            ) : eligError === null ? (
+              <p className="text-[13px] text-gov-ink3">요건을 불러오는 중이에요.</p>
+            ) : eligError ? (
+              <Notice tone="danger" title="요건을 불러오지 못했어요">
+                자료실에 조항이 없다는 뜻은 아니에요 — 서버에서 받아오는 데 실패했어요.
+                잠시 뒤 다시 열어 주세요. ({eligError})
+              </Notice>
+            ) : (
+              <Notice tone="info">
+                자격 요건 조항을 자료실에서 찾지 못해 표시하지 않아요. 없는 근거로
+                해당 여부를 말하지 않아요.
+              </Notice>
+            )}
           </Section>
 
           <Section title="함께 확인할 것">

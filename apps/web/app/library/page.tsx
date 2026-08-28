@@ -1,14 +1,19 @@
 "use client";
 
+import { useFarm } from "@/lib/useFarm";
 import { useEffect, useState } from "react";
 import { Badge, Crumb, Notice, Page, PageTitle, Panel, Section } from "@/components/gov";
-import { fetchCorpus, type CorpusDoc } from "@/lib/api";
+import { fetchCorpus, type CorpusDoc, fetchEligibility } from "@/lib/api";
 
 export default function LibraryPage() {
   const [docs, setDocs] = useState<CorpusDoc[]>([]);
   const [total, setTotal] = useState(0);
   const [note, setNote] = useState("");
   const [checkedOn, setCheckedOn] = useState<string | null>(null);
+  /** 내가 고른 자금의 지침이 어느 문서인지. 못 찾으면 필터를 안 그린다. */
+  const { profile } = useFarm();
+  const [myDoc, setMyDoc] = useState<string | null>(null);
+  const [mineOnly, setMineOnly] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -16,6 +21,18 @@ export default function LibraryPage() {
       .then((d) => { setDocs(d.documents); setTotal(d.total_chunks); setNote(d.note); setCheckedOn(d.checked_on); })
       .catch(() => setError("자료실 목록을 불러오지 못했어요. 백엔드가 실행 중인지 확인해 주세요."));
   }, []);
+
+  useEffect(() => {
+    if (!profile) return;
+    fetchEligibility()
+      .then((e) => {
+        const hit = e.products.find((p) => p.product_id === profile.productId);
+        setMyDoc(hit?.document ?? null);
+      })
+      .catch((err) => console.warn("자격 요건을 불러오지 못했습니다:", err));
+  }, [profile]);
+
+  const view = mineOnly && myDoc ? docs.filter((d) => d.title === myDoc) : docs;
 
   return (
     <Page>
@@ -29,6 +46,16 @@ export default function LibraryPage() {
         {error && <Notice tone="danger">{error}</Notice>}
 
         <Section title={`수록 문서 ${docs.length}종 · ${total.toLocaleString("ko-KR")}개 조항`}>
+          {/* 내 자금의 지침을 못 찾으면 필터를 그리지 않는다 — 빈 필터를 두지 않는다 (UX-012) */}
+          {myDoc && (
+            <button onClick={() => setMineOnly((v) => !v)}
+                    aria-pressed={mineOnly}
+                    className={`mb-3 inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
+                      mineOnly ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
+                               : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
+              내 자금의 지침만 보기
+            </button>
+          )}
           {/* 색인이 언제 원문과 맞춰본 것인지. 지침은 해마다 바뀐다. */}
           {checkedOn && (
             <p className="mb-3 text-[12px] text-gov-ink3">
@@ -48,7 +75,7 @@ export default function LibraryPage() {
                 </tr>
               </thead>
               <tbody>
-                {docs.map((d) => (
+                {view.map((d) => (
                   <tr key={d.title} className="border-b border-gov-line2 align-top">
                     <td className="px-4 py-3">
                       <span className="font-medium text-gov-ink">{d.title}</span>

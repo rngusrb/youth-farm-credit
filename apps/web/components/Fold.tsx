@@ -16,6 +16,7 @@ export default function Fold({
   children,
   open = false,
   tone = "paper",
+  className = "",
 }: {
   /** 접혀 있어도 보이는 한 줄. 판정·지시가 아니라 사실을 적는다 (화법 규칙 2·3). */
   summary: React.ReactNode;
@@ -24,6 +25,7 @@ export default function Fold({
   children: React.ReactNode;
   open?: boolean;
   tone?: "paper" | "gov";
+  className?: string;
 }) {
   const c =
     tone === "gov"
@@ -31,7 +33,7 @@ export default function Fold({
       : { box: "border-paper-rule bg-paper-panel", sum: "text-paper-ink", hint: "text-paper-ink3", body: "border-paper-rule" };
 
   return (
-    <details open={open} className={`fold group rounded-xl border ${c.box}`}>
+    <details open={open} className={`fold group rounded-xl border ${c.box} ${className}`}>
       <summary
         className={`flex min-h-11 cursor-pointer list-none items-center gap-3 px-5 py-3.5 text-[14px] font-semibold ${c.sum} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2`}
       >

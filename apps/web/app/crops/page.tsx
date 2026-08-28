@@ -1,5 +1,6 @@
 "use client";
 
+import { useFarm } from "@/lib/useFarm";
 import { DRIVER_LABEL } from "@/lib/diagnosis";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
@@ -17,6 +18,9 @@ export default function CropsPage() {
   const [sort, setSort] = useState<SortKey>("sigma");
   const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
+  /** 저장된 농가 정보. 없으면 필터 자체를 그리지 않는다 — 빈 필터를 두지 않는다. */
+  const { profile } = useFarm();
+  const [mineOnly, setMineOnly] = useState(false);
 
   useEffect(() => {
     fetchCrops()
@@ -29,14 +33,21 @@ export default function CropsPage() {
     [rows],
   );
 
+  /** 내 작목이 속한 분류. 한 줄만 남기면 비교가 안 되니 **같은 분류**로 좁힌다. */
+  const myGroup = useMemo(
+    () => rows.find((r) => r.id === profile?.cropId)?.group ?? null,
+    [rows, profile],
+  );
+
   const view = useMemo(() => {
     let f = group === "전체" ? rows : rows.filter((r) => r.group === group);
+    if (mineOnly && myGroup) f = f.filter((r) => r.group === myGroup);
     if (query.trim()) f = f.filter((r) => r.name.includes(query.trim()));
     return [...f].sort((a, b) =>
       sort === "name" ? a.name.localeCompare(b.name, "ko")
         : sort === "income" ? b.income_per_10a - a.income_per_10a
         : b.sigma - a.sigma);
-  }, [rows, group, sort, query]);
+  }, [rows, group, sort, query, mineOnly, myGroup]);
 
   const maxSigma = Math.max(...rows.map((r) => r.sigma), 0.001);
 
@@ -71,6 +82,16 @@ export default function CropsPage() {
                 </button>
               ))}
             </div>
+            {/* 농가 정보가 없거나 분류를 모르면 아예 안 그린다 (UX-012) */}
+            {myGroup && (
+              <button onClick={() => setMineOnly((v) => !v)}
+                      aria-pressed={mineOnly}
+                      className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
+                        mineOnly ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
+                                 : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
+                내 작목과 같은 분류만 ({myGroup})
+              </button>
+            )}
             <span className="ml-auto text-[12px] text-gov-ink3">{view.length}건</span>
           </div>
           <div className="mt-3 flex flex-wrap gap-1.5 border-t border-gov-line2 pt-3">

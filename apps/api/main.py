@@ -140,6 +140,33 @@ def list_products() -> dict:
     }
 
 
+@app.get("/api/v1/eligibility")
+def eligibility() -> dict:
+    """정책자금 자격 요건 + 근거 조항 **원문**.
+
+    자격을 판정해 주지 않는다. 요건과 조문을 내려주고 농가가 스스로 대보게 한다 —
+    자격 판정을 잘못 내리면 받을 수 있는 사람이 포기한다.
+    코퍼스에서 조문을 못 찾은 요건은 목록에서 빠진다 (지어내지 않는다).
+    """
+    from rag.eligibility import requirements
+
+    out = []
+    for p in products().values():
+        reqs = requirements(p)
+        if not reqs:
+            continue
+        out.append({
+            "product_id": p.id,
+            "product_name": p.name,
+            "document": (p.eligibility or {}).get("doc"),
+            "requirements": reqs,
+        })
+    return {
+        "products": out,
+        "note": "요건과 조문만 제공합니다. 해당 여부의 최종 판단은 사업 시행기관(시·군·구)에 있습니다.",
+    }
+
+
 @app.post("/api/v1/extract", response_model=ExtractResponse)
 def extract(req: ExtractRequest) -> dict:
     return extract_mod.extract(req.text, req.known)

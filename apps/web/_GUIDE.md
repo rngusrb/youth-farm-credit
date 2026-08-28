@@ -62,6 +62,11 @@
   undefined 를 반환하지만 브라우저 확장이 그 메서드를 패치하면 값이 생긴다.
   내 환경에서는 재현이 안 돼 원인을 찾는 데 오래 걸렸다.
   `apps/web/tests/effects.test.ts` 가 간결 본문을 막는다.
+- **자격을 판정하지 않는다.** 자가진단이 낼 수 있는 말은 "○○조 기준으로는 해당하지
+  않을 수 있어요" 까지다. "자격 없음"·"신청 불가" 는 쓰지 않는다 — 잘못 판정하면
+  받을 수 있는 사람이 포기한다. 답하지 않은 요건에는 **아무 의견도 내지 않는다**.
+  요건 목록은 코퍼스에서 온다: 조문을 못 찾으면 그 요건은 화면에 없다
+  (`apps/web/tests/eligibility.test.ts`, `apps/api/tests/test_eligibility.py`).
 - **금액 뒤 조사를 기계적으로 붙이지 않는다.** `won()` 은 "원"(받침 O), `pct()` 는
   "%"(퍼센트, 받침 X) 로 끝나서 조사가 갈린다 — `…원이에요`/`…원을` vs `…%예요`/`…%를`.
   사고 이력: "2억 8,918만원예요", "5억원를 다 빌리면", "…원가 부족해요" 가 화면에 떠
@@ -199,4 +204,5 @@ apps/web/tests/gap.test.ts
 apps/web/tests/asof.test.ts
 apps/web/tests/fold.test.tsx
 apps/web/tests/particles.test.ts
+apps/web/tests/eligibility.test.ts
 ```

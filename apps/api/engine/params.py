@@ -28,6 +28,9 @@ class LoanProduct:
     amort_method: str = "equal_principal"
     # 사람이 읽는 주석. 계산에는 안 쓰지만 화면에 상품 차이를 설명할 때 쓴다.
     note: str = ""
+    # 자격 요건의 **구조만** (문서·조항번호·판정방식). 문장은 코퍼스 원문에서 끌어온다.
+    # 계산에는 쓰지 않는다 — core 는 자격을 판정하지 않는다. `rag/eligibility.py` 참조.
+    eligibility: dict | None = None
 
     @property
     def term_years(self) -> int:

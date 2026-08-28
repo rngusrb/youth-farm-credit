@@ -1,25 +1,75 @@
 [
-  {
-    "id": "successor_farmer",
-    "name": "후계농업경영인 육성자금",
-    "limit": 500000000,
-    "rate": 0.015,
-    "rate_type": "fixed",
-    "grace_years": 5,
-    "amort_years": 20,
-    "source": "2026년 후계농업경영인 육성사업 시행지침 Ⅱ-2-1 — '대출한도 : 세대당 최대 5억원', '대출금리 : 연 1.5%(고정금리)', '대출(상환)기간 : 5년 거치 20년 원금 균등분할 상환'",
-    "amort_method": "equal_principal"
-  },
-  {
-    "id": "excellent_successor",
-    "name": "우수후계농업경영인 육성자금",
-    "limit": 200000000,
-    "rate": 0.015,
-    "rate_type": "fixed",
-    "grace_years": 5,
-    "amort_years": 10,
-    "source": "2026년 우수후계농업경영인 육성사업 시행지침 Ⅱ-2-1 — '대출한도 : 최대 2억 원', '대출금리 : 연 1.5%(고정금리)', '대출(상환)기간 : 5년 거치 10년 원금 균등분할 상환'",
-    "amort_method": "equal_principal",
-    "note": "후계농으로 선정된 지 5년 이상인 사람 중에서 선발된다(후계농 지침 Ⅱ-2-3). 기본 육성자금과 별개 사업이라 상환기간이 20년이 아니라 10년이다 — 같은 원금이면 연 상환액이 거의 두 배다."
+ {
+  "id": "successor_farmer",
+  "name": "후계농업경영인 육성자금",
+  "limit": 500000000,
+  "rate": 0.015,
+  "rate_type": "fixed",
+  "grace_years": 5,
+  "amort_years": 20,
+  "source": "2026년 후계농업경영인 육성사업 시행지침 Ⅱ-2-1 — '대출한도 : 세대당 최대 5억원', '대출금리 : 연 1.5%(고정금리)', '대출(상환)기간 : 5년 거치 20년 원금 균등분할 상환'",
+  "amort_method": "equal_principal",
+  "eligibility": {
+   "doc": "2026년 후계농업경영인 육성사업 시행지침",
+   "items": [
+    {
+     "key": "age",
+     "label": "나이",
+     "section": "Ⅱ-1-가",
+     "check": "age_range",
+     "min": 18,
+     "max": 49
+    },
+    {
+     "key": "career",
+     "label": "영농경력",
+     "section": "Ⅱ-1-나",
+     "check": "career_max",
+     "max": 10
+    },
+    {
+     "key": "military",
+     "label": "병역",
+     "section": "Ⅱ-1-다",
+     "check": "self"
+    },
+    {
+     "key": "residence",
+     "label": "거주지",
+     "section": "Ⅱ-1-라",
+     "check": "self"
+    },
+    {
+     "key": "education",
+     "label": "교육실적",
+     "section": "Ⅱ-1-마",
+     "check": "self"
+    }
+   ]
   }
+ },
+ {
+  "id": "excellent_successor",
+  "name": "우수후계농업경영인 육성자금",
+  "limit": 200000000,
+  "rate": 0.015,
+  "rate_type": "fixed",
+  "grace_years": 5,
+  "amort_years": 10,
+  "source": "2026년 우수후계농업경영인 육성사업 시행지침 Ⅱ-2-1 — '대출한도 : 최대 2억 원', '대출금리 : 연 1.5%(고정금리)', '대출(상환)기간 : 5년 거치 10년 원금 균등분할 상환'",
+  "amort_method": "equal_principal",
+  "note": "후계농으로 선정된 지 5년 이상인 사람 중에서 선발된다(후계농 지침 Ⅱ-2-3). 기본 육성자금과 별개 사업이라 상환기간이 20년이 아니라 10년이다 — 같은 원금이면 연 상환액이 거의 두 배다.",
+  "eligibility": {
+   "doc": "2026년 우수후계농업경영인 육성사업 시행지침",
+   "items": [
+    {
+     "key": "successor_years",
+     "label": "후계농 선정 후 경과",
+     "section": "Ⅱ-1",
+     "check": "self",
+     "contains": "지원자격 및 요건"
+    }
+   ]
+  }
+ }
 ]

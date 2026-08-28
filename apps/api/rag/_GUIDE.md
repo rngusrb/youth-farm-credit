@@ -119,6 +119,7 @@ message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 �
 ```
 apps/api/tests/test_rag_corpus.py
 apps/api/tests/test_rag.py
+apps/api/tests/test_eligibility.py
 ```
 
 > **계약 테스트와 품질 테스트를 절대 섞지 않는다.**
