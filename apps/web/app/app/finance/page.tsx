@@ -1,5 +1,6 @@
 "use client";
 
+import AmountCompare from "@/components/AmountCompare";
 import EligibilityCheck from "@/components/EligibilityCheck";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -18,6 +19,9 @@ export default function FinancePage() {
   /** null = 아직 안 옴, "" = 정상 응답, 그 외 = 실패 사유.
       "못 불러옴" 과 "조항이 없음" 은 다른 일이다 — 화면이 틀린 이유를 대지 않게 나눈다. */
   const [eligError, setEligError] = useState<string | null>(null);
+  /** 농가가 직접 대보는 금액. 계산은 엔진이 한다 — 화면은 값을 넘기기만 한다. */
+  const [ask, setAsk] = useState("");
+  const [asked, setAsked] = useState<number | null>(null);
   const [relief, setRelief] = useState<{ damage_min: number; damage_max: number; defer_years: number }[]>([]);
   const [reliefSource, setReliefSource] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -42,8 +46,9 @@ export default function FinancePage() {
       crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService, product_id: profile.productId,
       income_history: profile.incomeHistory,
+      requested_principal: asked,
     }).then(setDiag).catch(() => setError("계산에 실패했어요."));
-  }, [profile]);
+  }, [profile, asked]);
 
   if (!ready) return null;
   if (!profile) {
@@ -104,6 +109,42 @@ export default function FinancePage() {
                 </Notice>
               </div>
             )}
+          </Section>
+
+          <Section title="금액별로 무엇이 달라지나">
+            <Panel>
+              <AmountCompare d={diag} />
+              <form
+                className="mt-4 flex flex-wrap items-center gap-2 border-t border-gov-line2 pt-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const man = Number(ask.trim());
+                  // 만원 단위로 받아 원으로 넘긴다. 계산은 전부 엔진이 한다.
+                  setAsked(Number.isFinite(man) && man > 0 ? man * 10_000 : null);
+                }}
+              >
+                <label htmlFor="ask" className="text-[13px] font-semibold text-gov-ink2">
+                  직접 금액 대보기
+                </label>
+                <input
+                  id="ask" type="number" inputMode="numeric" min={0} step={100}
+                  value={ask} onChange={(e) => setAsk(e.target.value)}
+                  placeholder="예: 10000"
+                  className="tabular h-11 w-32 rounded-md border border-gov-line px-3 text-right text-[13px]"
+                />
+                <span className="text-[13px] text-gov-ink3">만원</span>
+                <button type="submit"
+                        className="inline-flex min-h-11 items-center rounded-md border border-gov-head bg-gov-head px-4 text-[13px] font-semibold text-white">
+                  표에 넣기
+                </button>
+                {asked != null && (
+                  <button type="button" onClick={() => { setAsk(""); setAsked(null); }}
+                          className="inline-flex min-h-11 items-center rounded-md border border-gov-line px-3 text-[13px] text-gov-ink2">
+                    빼기
+                  </button>
+                )}
+              </form>
+            </Panel>
           </Section>
 
           <Section title="이 금액이 나온 근거">

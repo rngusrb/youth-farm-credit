@@ -205,4 +205,5 @@ apps/web/tests/asof.test.ts
 apps/web/tests/fold.test.tsx
 apps/web/tests/particles.test.ts
 apps/web/tests/eligibility.test.ts
+apps/web/tests/amount-compare.test.ts
 ```
