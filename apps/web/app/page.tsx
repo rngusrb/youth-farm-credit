@@ -82,7 +82,7 @@ export default function PortalHome() {
                     : [["수익 전망", "/app/revenue"], ["안전진단", "/app/safety"]]
                   ).map(([label, href]) => (
                     <Link key={href} href={href}
-                          className="inline-flex min-h-11 items-center text-[12px] text-gov-link hover:underline">
+                          className="inline-flex min-h-11 min-w-11 items-center justify-center text-[12px] text-gov-link hover:underline">
                       {label} →
                     </Link>
                   ))}
@@ -137,7 +137,7 @@ export default function PortalHome() {
             {/* ── 공지사항 ───────────────────────────── */}
             <Section
               title="공지사항"
-              action={<Link href="/notice" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">더보기 +</Link>}
+              action={<Link href="/notice" className="inline-flex min-h-11 min-w-11 items-center justify-center text-[12px] text-gov-ink3 hover:text-gov-link">더보기 +</Link>}
             >
               <ul className="border-t border-gov-ink/70">
                 {NOTICES.slice(0, 4).map((n) => (
@@ -175,7 +175,7 @@ export default function PortalHome() {
           </div>
 
           <div className="space-y-8">
-            <Section title="데이터 현황" action={<Link href="/stats" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 +</Link>}>
+            <Section title="데이터 현황" action={<Link href="/stats" className="inline-flex min-h-11 min-w-11 items-center justify-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 +</Link>}>
               <Panel>
                 <div className="grid grid-cols-2 gap-5">
                   <Stat label="작목" value={cropCount?.toString() ?? "—"} unit="종" />

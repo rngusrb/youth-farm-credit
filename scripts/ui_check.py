@@ -42,6 +42,42 @@ def write_record(results: list[dict]) -> None:
         "total": sum(r["count"] for r in results),
     }, ensure_ascii=False, indent=2))
 
+# ── 로그인 뒤 화면 (meta/project_state.yaml 의 ui_check.sessions / targets) ──
+#
+# 왜 필요한가: 세션을 못 심어서 로그인 뒤 화면을 **한 번도 검사한 적이 없었다.**
+# /bank, /bank/capacity, /bank/design 이 전부 로그인 게이트만 재고 있었고
+# (세 화면 모두 '내용 101단위' 로 동일하게 나온 것이 증거), 그 뒤에서 모바일 업무 탭이
+# 35×44 로 WCAG 2.5.5 를 어기고 있었다. 아무도 몰랐다.
+#
+# 여기 들어가는 것은 **데모 계정뿐**이다. 실제 인증이 붙으면 이 방식은 폐기한다.
+META_PATH = ROOT / "meta" / "project_state.yaml"
+
+
+def load_ui_config() -> dict:
+    """meta 의 ui_check 블록. 못 읽으면 죽는다 — 설정 없이 돌면 '0건 통과' 가 나온다."""
+    if not META_PATH.exists():
+        return {}
+    try:
+        import yaml
+    except ImportError:
+        sys.exit("❌ PyYAML 이 없어 meta/project_state.yaml 을 읽을 수 없다.\n"
+                 "   python3 -m pip install pyyaml")
+    try:
+        meta = yaml.safe_load(META_PATH.read_text()) or {}
+    except Exception as e:
+        sys.exit(f"❌ meta/project_state.yaml 파싱 실패: {e}")
+    return meta.get("ui_check") or {}
+
+
+def session_script(session: dict) -> str:
+    """localStorage 를 심는 init script. 페이지가 뜨기 전에 들어가야 한다."""
+    lines = []
+    for key, value in (session or {}).items():
+        raw = value if isinstance(value, str) else json.dumps(value, ensure_ascii=False)
+        lines.append(f"window.localStorage.setItem({json.dumps(key)}, {json.dumps(raw)});")
+    return "".join(lines)
+
+
 # 규칙 정의 — 숫자의 출처를 같이 적는다. 근거 없는 커트라인을 쌓지 않기 위해서다.
 RULES = {
     "contrast":      "본문 대비율 ≥ 4.5:1 (WCAG 2.1 AA, 큰 글씨는 3:1)",
@@ -121,9 +157,18 @@ PROBE = r"""
 
   // 2. 터치 대상 + 3. 겹침
   const INTERACTIVE = "a,button,input,select,textarea,[role=button],[onclick]";
+  // 포커스 전까지 보이지 않는 요소(스킵 링크 등)는 **터치 대상이 아니다.**
+  // .sr-only 패턴은 1px 로 접어 두었다가 :focus 에서 펼친다 — 44px 을 요구하면
+  // 매 실행 54건(대상 18 × 뷰포트 3)의 잡음이 나와 진짜 위반이 묻힌다.
+  // 판정 기준은 클래스 이름이 아니라 **실제 계산된 스타일**이다.
+  const focusOnly = (el) => {
+    const s = getComputedStyle(el), r = el.getBoundingClientRect();
+    const clipped = s.clip !== "auto" || s.clipPath !== "none" || s.overflow === "hidden";
+    return r.width <= 2 && r.height <= 2 && clipped && s.position === "absolute";
+  };
   const boxes = [];
   for (const el of document.querySelectorAll(INTERACTIVE)) {
-    if (!visible(el)) continue;
+    if (!visible(el) || focusOnly(el)) continue;
     const r = el.getBoundingClientRect();
     if (el.type !== "hidden" && (r.width < 44 || r.height < 44))
       out.push({ rule: "touch_target", where: sel(el),
@@ -194,7 +239,7 @@ CENSUS = r"""
 """
 
 
-def run(target: str, viewport: str, settle_ms: int) -> dict:
+def run(target: str, viewport: str, settle_ms: int, session: dict | None = None) -> dict:
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -216,7 +261,11 @@ def run(target: str, viewport: str, settle_ms: int) -> dict:
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
-        page = browser.new_page(viewport={"width": w, "height": h})
+        ctx = browser.new_context(viewport={"width": w, "height": h})
+        if session:
+            # 페이지가 뜨기 전에 심어야 한다 — 뜬 뒤에 넣으면 게이트가 이미 튕긴 뒤다.
+            ctx.add_init_script(session_script(session))
+        page = ctx.new_page()
         page.on("console", lambda m: console_errors.append(m.text) if m.type == "error" else None)
         page.on("pageerror", lambda e: console_errors.append(str(e)))
         page.on("requestfailed",
@@ -238,12 +287,16 @@ def run(target: str, viewport: str, settle_ms: int) -> dict:
     violations += [{"rule": "failed_request", "where": "network", "detail": f[:160]}
                    for f in failed]
     return {"target": target, "viewport": viewport, "count": len(violations),
-            "content_units": content_units, "violations": violations}
+            "content_units": content_units, "violations": violations,
+            "session": bool(session)}
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="UI 규칙 검사 (결정적)")
-    ap.add_argument("target", help="URL 또는 HTML 파일 경로")
+    ap.add_argument("target",
+                    help="URL·HTML 파일 경로, 또는 'all' (meta 의 ui_check.targets 전부)")
+    ap.add_argument("--as", dest="as_role", default=None,
+                    help="이 역할의 세션을 심고 검사 (meta 의 ui_check.sessions 키)")
     ap.add_argument("--viewport", choices=list(VIEWPORTS), default="desktop")
     ap.add_argument("--all-viewports", action="store_true", help="mobile+tablet+desktop 전부")
     ap.add_argument("--count", action="store_true", help="위반 수만 (loop metrics 용)")
@@ -254,7 +307,28 @@ def main() -> int:
     a = ap.parse_args()
 
     views = list(VIEWPORTS) if a.all_viewports else [a.viewport]
-    results = [run(a.target, v, a.settle_ms) for v in views]
+    cfg = load_ui_config()
+    sessions = cfg.get("sessions") or {}
+
+    def session_for(role: str | None) -> dict | None:
+        if not role:
+            return None
+        if role not in sessions:
+            sys.exit(f"❌ meta 의 ui_check.sessions 에 '{role}' 이 없다. "
+                     f"있는 것: {sorted(sessions) or '없음'}")
+        return sessions[role]
+
+    if a.target == "all":
+        targets = cfg.get("targets") or []
+        if not targets:
+            sys.exit("❌ meta 의 ui_check.targets 가 비어 있다 — 검사할 대상이 없다.\n"
+                     "   대상 없이 '0건 통과' 를 내지 않는다.")
+        base = (cfg.get("base_url") or "http://localhost:3000").rstrip("/")
+        jobs = [(base + t["path"], session_for(t.get("as"))) for t in targets]
+    else:
+        jobs = [(a.target, session_for(a.as_role))]
+
+    results = [run(url, v, a.settle_ms, sess) for url, sess in jobs for v in views]
     total = sum(r["count"] for r in results)
     write_record(results)          # 돌렸다는 사실을 남긴다
 
@@ -269,8 +343,15 @@ def main() -> int:
         return 0 if total == 0 else 1
 
     print(f"\n{'─'*58}\n  UI 검사: {a.target}")
+    last_target = None
     for r in results:
-        print(f"\n  [{r['viewport']} {VIEWPORTS[r['viewport']][0]}px]  위반 {r['count']}건")
+        if r["target"] != last_target:
+            last_target = r["target"]
+            if a.target == "all":
+                mark = " (로그인)" if r["session"] else ""
+                print(f"\n  ── {r['target']}{mark}")
+        print(f"\n  [{r['viewport']} {VIEWPORTS[r['viewport']][0]}px]  위반 {r['count']}건"
+              f"  · 내용 {r['content_units']}단위")
         by_rule: dict[str, list[dict]] = {}
         for v in r["violations"]:
             by_rule.setdefault(v["rule"], []).append(v)

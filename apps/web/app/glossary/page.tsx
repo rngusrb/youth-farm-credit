@@ -15,7 +15,7 @@ export default function GlossaryPage() {
       <nav aria-label="용어 목록" className="mb-6 flex flex-wrap gap-1.5">
         {GLOSSARY.map((t) => (
           <a key={t.term} href={`#${encodeURIComponent(t.term)}`}
-             className="rounded-lg border border-gov-line bg-white px-2.5 py-1 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+             className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-gov-line bg-white px-2.5 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
             {t.term.split(" ")[0]}
           </a>
         ))}
@@ -36,7 +36,7 @@ export default function GlossaryPage() {
                   {t.related.map((r, i) => (
                     <span key={r}>
                       {i > 0 && ", "}
-                      <a href={`#${encodeURIComponent(GLOSSARY.find((g) => g.term.startsWith(r))?.term ?? r)}`} className="lnk">
+                      <a href={`#${encodeURIComponent(GLOSSARY.find((g) => g.term.startsWith(r))?.term ?? r)}`} className="lnk inline-flex min-h-11 min-w-11 items-center justify-center">
                         {r}
                       </a>
                     </span>

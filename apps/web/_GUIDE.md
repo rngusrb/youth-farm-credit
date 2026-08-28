@@ -48,6 +48,21 @@
 | `bank/design` | 적정 여신 설계 — 금액별 위험, σ 밴드 | ② |
 | `bank/stress` | 여신 Stress Test | ③ |
 
+## 화면 검사
+
+```
+python3 scripts/ui_check.py all --all-viewports
+```
+
+`meta/project_state.yaml` 의 `ui_check.targets` 18개를 한 번에 돈다. `as: farmer|bank`
+가 붙은 12개는 **세션을 심고** 검사한다 — 2026-08-28 이전까지 로그인 뒤 화면을
+한 번도 검사하지 못했고, 그 뒤에 WCAG 위반 5건이 숨어 있었다.
+
+한 화면만: `python3 scripts/ui_check.py http://localhost:3000/bank --as bank`
+
+> 포커스 전까지 1×1 로 접혀 있는 스킵 링크는 터치 대상 검사에서 뺀다 (계산된
+> 스타일로 판정). 클래스 이름이 아니라 실제 스타일을 보므로 진짜 작은 링크는 그대로 잡힌다.
+
 ## 금지사항
 
 - **`limits.recommended` 를 "감당 가능한 금액" 이라고 부르지 않는다.** 셋의 뜻이 다르다.

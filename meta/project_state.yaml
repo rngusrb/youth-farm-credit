@@ -50,6 +50,44 @@ ui_check:
   # 화면을 바꾼 뒤 ui_check 를 안 돌리면 harness 가 알려준다 (자동 실행은 서버가 필요해서 불가).
   # level: FAIL 로 올리면 커밋을 막는다. 기본은 WARN — 기록이지 게이트가 아니다.
   level: WARN
+
+  base_url: "http://localhost:3000"
+
+  # 로그인 뒤 화면에 심을 localStorage.
+  # 2026-08-28 이전까지 세션을 못 심어서 /bank·/app/* 을 **한 번도 검사한 적이 없었다.**
+  # 세 화면이 전부 '내용 101단위' 로 같게 나온 것이 증거였고, 그 뒤에 모바일 업무 탭
+  # 35×44 (WCAG 2.5.5 위반)가 숨어 있었다.
+  #
+  # ⚠️ 여기 들어가는 것은 **코드에 이미 있는 데모 계정뿐**이다 (apps/web/lib/auth.ts).
+  #    실제 인증이 붙는 순간 이 블록은 폐기하고 다른 방법을 쓴다.
+  sessions:
+    farmer:
+      yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+    bank:
+      yfc.session.v1: '{"id":"222222","role":"bank","name":"박심사","org":"농협은행 여신심사부","at":1}'
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+
+  # `python3 scripts/ui_check.py all` 이 도는 대상. as 가 없으면 비로그인 상태.
+  targets:
+    - { path: "/" }
+    - { path: "/crops" }
+    - { path: "/market" }
+    - { path: "/library" }
+    - { path: "/policy" }
+    - { path: "/glossary" }
+    - { path: "/app",          as: farmer }
+    - { path: "/app/farm",     as: farmer }
+    - { path: "/app/revenue",  as: farmer }
+    - { path: "/app/safety",   as: farmer }
+    - { path: "/app/finance",  as: farmer }
+    - { path: "/app/relief",   as: farmer }
+    - { path: "/app/reports",  as: farmer }
+    - { path: "/bank",          as: bank }
+    - { path: "/bank/applicants", as: bank }
+    - { path: "/bank/capacity", as: bank }
+    - { path: "/bank/design",   as: bank }
+    - { path: "/bank/stress",   as: bank }
   watch:
     - "apps/web/app/**/*.tsx"
     - "apps/web/components/**/*.tsx"

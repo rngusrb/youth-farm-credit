@@ -193,7 +193,7 @@ export default function FarmPage() {
           <Btn type="submit">저장하고 홈으로</Btn>
           <button type="button"
                   onClick={() => { clearProfile(); setPyeong(""); setHistory(""); setDebt(""); }}
-                  className="text-[13px] text-gov-ink3 underline underline-offset-2 hover:text-gov-point">
+                  className="inline-flex min-h-11 items-center text-[13px] text-gov-ink3 underline underline-offset-2 hover:text-gov-point">
             저장된 정보 지우기
           </button>
         </div>
