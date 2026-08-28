@@ -82,6 +82,7 @@ maker-review-loop 스킬 사용 (Reviewer PASS 없이 sprint-close 금지)
 | 2026-08-26 | 리포트 한 장 → 정부 포털형 양면 서비스 — RAG 코퍼스 3종·월별 현금흐름·스트레스 테스트 (`docs/sprints/2026-08-26-service-buildout.md`) |
 | 2026-08-27 | 팀 피드백 2차 — 기준 시점 표시·근거 접기·출처 구분, 안 돌던 테스트 2개와 안 검사되던 심사 화면 발견 (`docs/sprints/2026-08-27-team-feedback-2.md`) |
 | 2026-08-28 | 농가가 읽기 쉽게 — 뜻이 앞·용어는 뒤, 내 조건 필터, 자격은 판정 대신 의견, 금액별 비교 (`docs/sprints/2026-08-28-readable-for-farmers.md`) |
+| 2026-08-28 | 남은 피드백과 검사 구멍 — ui_check 가 로그인 뒤 화면도 검사(숨어 있던 위반 24건), 자금 고른 근거, 지난 분석 대비 변화 (`docs/sprints/2026-08-28-remaining-feedback.md`) |
 
 > ⚠️ 여기에 상세 이력 bullet 을 쓰지 말 것. 한 줄, 상세는 아카이브에.
 

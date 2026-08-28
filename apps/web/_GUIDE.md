@@ -77,6 +77,9 @@ python3 scripts/ui_check.py all --all-viewports
   undefined 를 반환하지만 브라우저 확장이 그 메서드를 패치하면 값이 생긴다.
   내 환경에서는 재현이 안 돼 원인을 찾는 데 오래 걸렸다.
   `apps/web/tests/effects.test.ts` 가 간결 본문을 막는다.
+- **상품을 추천하지 않는다.** 이 프로젝트가 하지 않기로 한 것이다 (CLAUDE.md —
+  대출 알선·상품 추천 없음). 어느 자금이 유리하다는 판정도 하지 않는다. 조건과 숫자를
+  나란히 놓는 데서 멈춘다 (`apps/web/tests/why-this-loan.test.ts`).
 - **자격을 판정하지 않는다.** 자가진단이 낼 수 있는 말은 "○○조 기준으로는 해당하지
   않을 수 있어요" 까지다. "자격 없음"·"신청 불가" 는 쓰지 않는다 — 잘못 판정하면
   받을 수 있는 사람이 포기한다. 답하지 않은 요건에는 **아무 의견도 내지 않는다**.
@@ -221,4 +224,6 @@ apps/web/tests/fold.test.tsx
 apps/web/tests/particles.test.ts
 apps/web/tests/eligibility.test.ts
 apps/web/tests/amount-compare.test.ts
+apps/web/tests/why-this-loan.test.ts
+apps/web/tests/report-diff.test.ts
 ```

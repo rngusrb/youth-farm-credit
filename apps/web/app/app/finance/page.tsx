@@ -1,5 +1,6 @@
 "use client";
 
+import WhyThisLoan from "@/components/WhyThisLoan";
 import AmountCompare from "@/components/AmountCompare";
 import EligibilityCheck from "@/components/EligibilityCheck";
 import { useEffect, useState } from "react";
@@ -186,6 +187,21 @@ export default function FinancePage() {
             </div>
           </Section>
 
+          <Section title="왜 이 조건인가">
+            <Panel>
+              {profile && current ? (
+                <WhyThisLoan
+                  profile={profile}
+                  current={current}
+                  others={others}
+                  principal={headlineLimit(diag)}
+                />
+              ) : (
+                <p className="text-[13px] text-gov-ink3">자금 목록을 불러오는 중이에요.</p>
+              )}
+            </Panel>
+          </Section>
+
           <Section title="이용 가능한 정책자금">
             <div className="grid gap-4 sm:grid-cols-2">
               {current && (
@@ -218,7 +234,7 @@ export default function FinancePage() {
             </div>
           </Section>
 
-          <Section title="신청 자격 스스로 대보기">
+          <Section title="신청 자격 스스로 대보기" id="자격">
             {elig.length > 0 ? (
               <EligibilityCheck data={elig} note={eligNote} />
             ) : eligError === null ? (

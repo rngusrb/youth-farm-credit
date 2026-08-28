@@ -34,11 +34,13 @@ export function PageTitle({ title, lead, aside }: { title: string; lead?: string
   );
 }
 
-export function Section({ title, action, children }: {
+export function Section({ title, action, children, id }: {
   title: string; action?: React.ReactNode; children: React.ReactNode;
+  /** 화면 안에서 이 절로 건너뛰게 할 때. */
+  id?: string;
 }) {
   return (
-    <section className="mb-11">
+    <section id={id} className="mb-11 scroll-mt-24">
       <div className="mb-4 flex items-baseline justify-between gap-3">
         <h2 className="sec-title">{title}</h2>
         {action}

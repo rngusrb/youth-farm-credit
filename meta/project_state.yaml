@@ -64,6 +64,12 @@ ui_check:
     farmer:
       yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
       yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+    # 「지난 분석과 달라진 것」 은 기록이 2건 이상이어야 나온다.
+    # 세션만 심으면 그 블록이 영영 검사되지 않는다.
+    farmer_with_history:
+      yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+      yfc.reports.v1: '[{"id": "dg_new", "cropName": "딸기(시설,수경)", "pyeong": 1500, "productName": "후계농업경영인 육성자금", "riskLimit": 268000000, "crisisProb": 0.0812, "savedAt": 1787900000000}, {"id": "dg_old", "cropName": "딸기(시설,수경)", "pyeong": 1200, "productName": "후계농업경영인 육성자금", "riskLimit": 210815430, "crisisProb": 0.0999, "savedAt": 1787700000000}]'
     bank:
       yfc.session.v1: '{"id":"222222","role":"bank","name":"박심사","org":"농협은행 여신심사부","at":1}'
       yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
@@ -82,7 +88,7 @@ ui_check:
     - { path: "/app/safety",   as: farmer }
     - { path: "/app/finance",  as: farmer }
     - { path: "/app/relief",   as: farmer }
-    - { path: "/app/reports",  as: farmer }
+    - { path: "/app/reports",  as: farmer_with_history }
     - { path: "/bank",          as: bank }
     - { path: "/bank/applicants", as: bank }
     - { path: "/bank/capacity", as: bank }
