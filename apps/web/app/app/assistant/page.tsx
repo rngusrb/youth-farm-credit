@@ -126,8 +126,10 @@ export default function AssistantPage() {
               </div>
               <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">
                 제도상 {won(t.diag.limits.available)}까지 신청할 수 있어요. 소득이 해마다
-                흔들리는 것까지 넣어 계산하면 위 금액이고요. DSCR 중앙값은{" "}
-                {ratio(headlineScenario(t.diag)?.dscr_median ?? 0)}예요.
+                흔들리는 것까지 넣어 계산하면 위 금액이고요. 이 금액이면 보통 해에
+                버는 돈이 갚을 돈의{" "}
+                {ratio(headlineScenario(t.diag)?.dscr_median ?? 0)}배예요
+                <span className="text-gov-ink3"> (DSCR 중앙값)</span>.
               </p>
               <Link href={`/result/${t.diag.diagnosis_id}`} className="lnk mt-3 inline-block text-[13px]">
                 리포트 전체 보기 →

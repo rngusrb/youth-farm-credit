@@ -62,9 +62,9 @@ export default function FinancePage() {
               {[
                 ["제도상 신청 가능", diag.limits.available, "시행지침이 정한 세대당 한도", "plain",
                  "갚을 수 있는지와는 무관해요."],
-                ["은행 심사 관행", diag.limits.recommended, `DSCR ${ratio(diag.target_dscr)} 기준`, "warn",
+                ["은행이 보는 선", diag.limits.recommended, `버는 돈이 갚을 돈의 ${ratio(diag.target_dscr)}배 (DSCR ${ratio(diag.target_dscr)})`, "warn",
                  "소득이 흔들리지 않는다는 가정에서 나온 값이에요."],
-                ["AI 권장 차입", headlineLimit(diag), `2년연속 위기 ${pct(diag.limits.max_crisis_prob)} 이하`, "ok",
+                ["소득 변동까지 반영", headlineLimit(diag), `2년 연속 상환이 밀릴 확률 ${pct(diag.limits.max_crisis_prob)} 이하`, "ok",
                  "가격 변동과 재해까지 넣고 25년을 3만 번 돌린 결과예요."],
               ].map(([label, value, sub, tone, why]) => (
                 <div key={label as string} className="bg-white p-5">
@@ -81,8 +81,8 @@ export default function FinancePage() {
 
             {unsafeGap(diag) > 0 && (
               <div className="mt-4">
-                <Notice tone="warn" title={`두 금액 사이가 ${won(unsafeGap(diag))}예요`}>
-                  {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
+                <Notice tone="warn" title={`두 금액 사이가 ${won(unsafeGap(diag))}이에요`}>
+                  {won(diag.limits.available)}을 다 빌리면 2년 연속 위기 확률이{" "}
                   {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}, {won(headlineLimit(diag))}
                   에서는 {pct(diag.limits.max_crisis_prob)}예요. 거치가 끝나는{" "}
                   {diag.product.grace_years + 1}년차에 상환액이 {won(s?.grace_payment ?? 0)}에서{" "}
@@ -155,7 +155,7 @@ export default function FinancePage() {
                     ["상환", `${p.grace_years}년 거치 ${p.amort_years}년 원금 균등분할`],
                   ]} />
                   {p.note && <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">{p.note}</p>}
-                  <Link href="/app/farm" className="lnk mt-2.5 inline-block text-[12px]">
+                  <Link href="/app/farm" className="lnk mt-2.5 inline-flex min-h-11 items-center text-[12px]">
                     이 자금으로 다시 계산 →
                   </Link>
                 </Panel>

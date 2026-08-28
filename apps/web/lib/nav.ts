@@ -24,7 +24,7 @@ export const PORTAL: Group[] = [
       { href: "/policy", label: "제도 근거 검색", desc: "시행지침 원문에서 조항 찾기" },
       { href: "/library", label: "자료실", desc: "2026년 시행지침 원문" },
       { href: "/faq", label: "자주 묻는 질문", desc: "조항 인용이 붙는 답변" },
-      { href: "/glossary", label: "용어사전", desc: "DSCR·거치기간·영업레버리지" },
+      { href: "/glossary", label: "용어사전", desc: "은행에서 쓰는 말 풀이" },
     ],
   },
   {
@@ -46,7 +46,7 @@ export const FARMER: Item[] = [
   { href: "/app", label: "홈", desc: "내 농가 요약" },
   { href: "/app/farm", label: "내 농가 정보", desc: "작목·면적·부채" },
   { href: "/app/revenue", label: "수익 전망", desc: "월별 현금흐름" },
-  { href: "/app/safety", label: "금융 안전진단", desc: "스트레스 테스트" },
+  { href: "/app/safety", label: "금융 안전진단", desc: "값이 떨어지면 어떻게 되나" },
   { href: "/app/finance", label: "맞춤 금융지원", desc: "권장 차입 규모" },
   { href: "/app/relief", label: "구제제도", desc: "상환연기·회생자금" },
   { href: "/app/assistant", label: "AI 상담", desc: "계산과 조항을 함께" },

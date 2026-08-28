@@ -7,7 +7,7 @@ import StressTable from "@/components/gov/StressTable";
 import { fetchStress, runDiagnose, type Diagnosis, type StressReport } from "@/lib/api";
 import { headlineLimit } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
-import { won } from "@/lib/format";
+import { pct, won } from "@/lib/format";
 
 export default function SafetyPage() {
   const { profile, ready } = useFarm();
@@ -16,6 +16,8 @@ export default function SafetyPage() {
   const [principal, setPrincipal] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** 가격 하락 시나리오. 설명 문구와 소득 감소율 모두 엔진이 낸 값을 그대로 쓴다. */
+  const priceCase = report?.scenarios.find((s) => s.key === "price") ?? null;
 
   useEffect(() => {
     if (!profile) return;
@@ -81,7 +83,7 @@ export default function SafetyPage() {
               <div className="flex flex-wrap gap-2">
                 {[
                   ["권장", headlineLimit(diag)],
-                  ["DSCR 기준", diag.limits.recommended],
+                  ["은행이 보는 선", diag.limits.recommended],
                   ["제도 한도", diag.limits.available],
                 ].map(([l, v]) => (
                   <button key={l as string} onClick={() => setPrincipal(v as number)}
@@ -92,9 +94,12 @@ export default function SafetyPage() {
               </div>
               {report && (
                 <div className="ml-auto flex gap-6">
-                  <Stat label="영업레버리지" value={`${report.leverage.toFixed(2)}배`}
-                        note="총수입 ÷ 소득" />
-                  <Stat label="소득 변동성 σ" value={report.sigma.toFixed(3)} />
+                  {/* 규칙 4 — 뜻이 라벨, 용어는 note 로 남긴다 (지우지 않는다) */}
+                  <Stat label="수입이 줄면 소득은" value={`${report.leverage.toFixed(2)}배 줄어요`}
+                        note={`영업레버리지 ${report.leverage.toFixed(2)} · 총수입 ÷ 소득`} />
+                  <Stat label="보통 해에 얼마쯤"
+                        value={`${won(diag.income.band_p10_p90[0])}~${won(diag.income.band_p10_p90[1])}`}
+                        note={`10년 중 8년이 이 사이 · 소득 변동성 σ ${report.sigma.toFixed(3)}`} />
                 </div>
               )}
             </div>
@@ -119,13 +124,20 @@ export default function SafetyPage() {
 
           <Section title="왜 이렇게 크게 흔들리나">
             <Panel>
+              {/* 규칙 4 — 뜻을 먼저 말하고 용어는 끝에. 숫자·시나리오 설명은 엔진 값 그대로. */}
               <p className="text-[14px] leading-relaxed text-gov-ink2">
-                이 농가의 영업레버리지는 <b className="text-gov-ink">{report.leverage.toFixed(2)}배</b>입니다.
-                경영비는 매출이 줄어도 그대로 나가기 때문에, 가격이 20% 떨어지면 소득은 20%가
-                아니라 <b className="text-gov-point">
-                  {Math.abs((report.scenarios.find((s) => s.key === "price")?.income_change ?? 0) * 100).toFixed(0)}%
-                </b> 줄어들어요.
+                경영비는 매출이 줄어도 그대로 나가요. 그래서 수입이 줄면 소득은 그보다
+                크게 줄어요 — 이 농가는{" "}
+                <b className="text-gov-ink">{report.leverage.toFixed(2)}배</b>예요.
               </p>
+              {priceCase && (
+                <p className="mt-2 text-[13px] leading-relaxed text-gov-ink2">
+                  {priceCase.detail} 상황이면 소득이{" "}
+                  <b className="text-gov-point">{pct(Math.abs(priceCase.income_change))}</b>{" "}
+                  줄어요.
+                </p>
+              )}
+              <p className="mt-2 text-[12px] text-gov-ink3">영업레버리지 {report.leverage.toFixed(2)} · 총수입 ÷ 소득</p>
             </Panel>
 
             {/* 가정·한계는 결론이 아니다. 지우지 않고 접는다 (UX-001). */}
@@ -136,13 +148,13 @@ export default function SafetyPage() {
                 hint="펼쳐 보기"
               >
                 <p className="text-[13px] leading-relaxed text-gov-ink2">
-                  계산에서 경영비는 줄어들지 않는 것으로 둡니다. 실제로는 수확 관련 비용이 일부
+                  계산에서 경영비는 줄어들지 않는 것으로 둬요. 실제로는 수확 관련 비용이 일부
                   줄지만 그 비율에 대한 공개 근거가 없어 지어내지 않았어요. 그만큼 이 결과는
                   보수적이에요.
                 </p>
                 <p className="mt-2.5 text-[13px] leading-relaxed text-gov-ink2">
                   반대로 재해 시 이자 감면과 농신보 보증료는 넣지 않았어요. 앞의 것은 결과를
-                  나쁘게, 뒤의 것은 좋게 기울입니다. 어느 쪽이 더 큰지는 저희도 재보지
+                  나쁘게, 뒤의 것은 좋게 기울어요. 어느 쪽이 더 큰지는 저희도 재보지
                   않았어요.
                 </p>
               </Fold>

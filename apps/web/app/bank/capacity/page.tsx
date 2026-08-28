@@ -131,7 +131,7 @@ export default function CapacityPage() {
               <div className="mt-4">
                 <Notice tone="warn" title="연 단위 DSCR로는 보이지 않는 위험">
                   연간 순현금은 {won(cf.annual_net)}로 {cf.annual_net >= 0 ? "양(+)" : "음(−)"}이지만,
-                  {cf.trough_month}월 시점에 {won(cf.working_capital_need)}가 부족합니다. 운전자금
+                  {cf.trough_month}월 시점에 {won(cf.working_capital_need)}이 부족합니다. 운전자금
                   한도를 함께 설계하지 않으면 흑자 차주도 연체할 수 있습니다.
                 </Notice>
               </div>

@@ -121,7 +121,7 @@ export default function RevenuePage() {
                 <div className="mt-4">
                   <Notice tone="danger" title={`${cf.trough_month}월에 현금이 마릅니다`}>
                     연간으로는 {cf.annual_net >= 0 ? "흑자" : "적자"}지만, 수확 대금이 들어오기
-                    전까지 {won(cf.working_capital_need)}가 부족해요. 운전자금 대출이나 출하
+                    전까지 {won(cf.working_capital_need)}이 부족해요. 운전자금 대출이나 출하
                     시기 분산을 미리 검토해 두시는 것이 좋아요.
                   </Notice>
                 </div>

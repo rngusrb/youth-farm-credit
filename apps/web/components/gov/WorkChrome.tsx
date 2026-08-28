@@ -107,7 +107,7 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
                 return (
                   <li key={i.href}>
                     <Link href={i.href}
-                          className={`-mb-px flex min-h-11 items-center border-b-2 px-3 text-[13px] ${
+                          className={`-mb-px flex min-h-11 min-w-11 items-center justify-center border-b-2 px-3 text-[13px] ${
                             active ? "border-gov-head font-semibold text-gov-head"
                                    : "border-transparent text-gov-ink2"}`}>
                       {i.label}

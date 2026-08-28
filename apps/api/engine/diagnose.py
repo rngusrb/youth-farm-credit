@@ -13,7 +13,7 @@ from dataclasses import asdict as _asdict
 from estimators.shrinkage import explain, shrink
 
 from .dscr import TARGET_DSCR, capacity, limit_by_dscr, min_area
-from .income import annual_income
+from .income import annual_income, income_band
 from .params import get_crop, get_product, policy, sim_defaults
 from .risk_limit import (
     DEFAULT_MAX_CRISIS_PROB,
@@ -252,7 +252,13 @@ def diagnose(
             "amort_method": product.amort_method,
             "source": product.source,
         },
-        "income": {"annual": income, "capacity": cap},
+        "income": {
+            "annual": income,
+            "capacity": cap,
+            # 평년 소득이 흔들리는 범위(하위10%~상위10%). 화면이 σ 를 ±% 로
+            # 환산하지 않도록 엔진이 낸다 — 시뮬레이터와 같은 분포다.
+            "band_p10_p90": list(income_band(income, sigma)),
+        },
         "limits": {
             "available": available,
             "recommended": recommended,

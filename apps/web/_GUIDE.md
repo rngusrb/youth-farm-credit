@@ -62,6 +62,11 @@
   undefined 를 반환하지만 브라우저 확장이 그 메서드를 패치하면 값이 생긴다.
   내 환경에서는 재현이 안 돼 원인을 찾는 데 오래 걸렸다.
   `apps/web/tests/effects.test.ts` 가 간결 본문을 막는다.
+- **금액 뒤 조사를 기계적으로 붙이지 않는다.** `won()` 은 "원"(받침 O), `pct()` 는
+  "%"(퍼센트, 받침 X) 로 끝나서 조사가 갈린다 — `…원이에요`/`…원을` vs `…%예요`/`…%를`.
+  사고 이력: "2억 8,918만원예요", "5억원를 다 빌리면", "…원가 부족해요" 가 화면에 떠
+  있었다. 화법 규칙 6 이 "기계 치환만으로는 깨지니 사람이 본다" 고 적어 뒀는데 못 봤다.
+  `apps/web/tests/particles.test.ts` 가 막는다.
 - **심사 화면에서 값의 출처를 섞지 않는다.** 차주 입력 / 공개 통계 / 가정을
   `<SourceTag>` 로 구분하고, 표마다 `<SourceLegend>` 를 한 번 둔다. 배지는 **라벨 칸**에
   붙인다 — 심사 화면은 표가 주고, 숫자를 가리면 안 된다. σ 는 `sigmaSourceKind()` 로
@@ -193,4 +198,5 @@ apps/web/tests/auth.test.ts
 apps/web/tests/gap.test.ts
 apps/web/tests/asof.test.ts
 apps/web/tests/fold.test.tsx
+apps/web/tests/particles.test.ts
 ```

@@ -77,6 +77,7 @@ apps/api/tests/test_golden.py
 apps/api/tests/test_risk.py
 apps/api/tests/test_personalization.py
 apps/api/tests/test_as_of.py
+apps/api/tests/test_income_band.py
 ```
 > `test_core_is_pure.py` = **불변식**. core 가 네트워크·DB·환경변수 없이 도는지 검사한다.
 

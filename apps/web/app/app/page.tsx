@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Badge, Btn, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import RiskTriad from "@/components/gov/RiskTriad";
 import { fetchCashflow, fetchCrop, runDiagnose, type Cashflow, type CropDetail, type Diagnosis } from "@/lib/api";
-import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
+import { headlineLimit, headlineScenario, unsafeGap, DRIVER_LABEL } from "@/lib/diagnosis";
 import { saveReport } from "@/lib/profile";
 import { useFarm } from "@/lib/useFarm";
 import { pct, pyeong as fmtPyeong, won } from "@/lib/format";
@@ -61,7 +61,7 @@ export default function FarmerHome() {
         <PageTitle title="홈" lead="농가 정보를 넣으면 여기에 요약이 나와요." />
         <Empty
           title="아직 농가 정보가 없어요"
-          body="작목과 면적, 생활비 세 가지면 시작해요. 문장으로 적으셔도 알아듣습니다."
+          body="작목과 면적, 생활비 세 가지면 시작해요. 문장으로 적으셔도 알아들어요."
           cta={{ href: "/app/farm", label: "내 농가 정보 입력" }}
         />
       </>
@@ -81,7 +81,7 @@ export default function FarmerHome() {
       {diag && (
         <>
           <Section title="지금 조건에서 빌릴 수 있는 금액" action={
-            <Link href={`/result/${diag.diagnosis_id}`} className="text-[12px] text-gov-ink3 hover:text-gov-link">
+            <Link href={`/result/${diag.diagnosis_id}`} className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">
               전체 리포트 +
             </Link>
           }>
@@ -101,7 +101,7 @@ export default function FarmerHome() {
                 </p>
                 {unsafeGap(diag) > 0 && (
                   <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-gov-ink3">
-                    {won(diag.limits.available)}를 다 빌리면 2년 연속 위기 확률이{" "}
+                    {won(diag.limits.available)}을 다 빌리면 2년 연속 위기 확률이{" "}
                     <b className="text-gov-point">
                       {pct(diag.scenarios.at_available?.crisis_prob ?? 0)}
                     </b>
@@ -129,7 +129,7 @@ export default function FarmerHome() {
 
           <div className="grid gap-6 lg:grid-cols-2">
             <Section title="올해 현금 사정" action={
-              <Link href="/app/revenue" className="text-[12px] text-gov-ink3 hover:text-gov-link">수익 전망 +</Link>
+              <Link href="/app/revenue" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">수익 전망 +</Link>
             }>
               <Panel>
                 {cf ? (
@@ -157,19 +157,35 @@ export default function FarmerHome() {
             </Section>
 
             <Section title="이 작목의 소득이 흔들리는 이유" action={
-              <Link href="/app/safety" className="text-[12px] text-gov-ink3 hover:text-gov-link">안전진단 +</Link>
+              <Link href="/app/safety" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">안전진단 +</Link>
             }>
               <Panel>
                 {crop?.factors ? (
                   <DefTable
                     rows={[
-                      ["주 변동요인", <b key="a">{{ price: "가격", quantity: "수확량", cost: "경영비" }[crop.factors.driver]}</b>],
-                      ["소득 변동성 σ", <span key="b" className="tabular">{diag.sigma.toFixed(3)}
-                        <Badge tone={diag.sigma_personalized ? "info" : "plain"}>
-                          {diag.sigma_personalized ? "내 이력 반영" : "작목 평균"}
-                        </Badge></span>],
-                      ["영업레버리지", crop.leverage
-                        ? <span key="c" className="tabular">{crop.leverage.toFixed(2)}배</span>
+                      ["무엇이 흔드나",
+                        <b key="a">{DRIVER_LABEL[crop.factors.driver]}</b>],
+                      // 규칙 4 — 쉬운 말이 앞, 용어는 괄호로 뒤. 용어를 지우지는 않는다:
+                      // 농가가 은행 창구에서 같은 단어를 써야 한다.
+                      ["보통 해에 얼마쯤",
+                        <span key="b">
+                          <b className="tabular">{won(diag.income.band_p10_p90[0])}</b>
+                          {" ~ "}
+                          <b className="tabular">{won(diag.income.band_p10_p90[1])}</b>
+                          <Badge tone={diag.sigma_personalized ? "info" : "plain"}>
+                            {diag.sigma_personalized ? "내 이력 반영" : "작목 평균"}
+                          </Badge>
+                          <span className="mt-0.5 block text-[12px] text-gov-ink3">
+                            10년 중 8년이 이 사이 (소득 변동성 σ {diag.sigma.toFixed(3)})
+                          </span>
+                        </span>],
+                      ["수입이 줄면 소득은 몇 배로 줄까", crop.leverage
+                        ? <span key="c">
+                            <b className="tabular">{crop.leverage.toFixed(2)}배</b>
+                            <span className="mt-0.5 block text-[12px] text-gov-ink3">
+                              영업레버리지 {crop.leverage.toFixed(2)}
+                            </span>
+                          </span>
                         : "—"],
                     ]}
                   />
@@ -177,8 +193,8 @@ export default function FarmerHome() {
                   <p className="text-[13px] text-gov-ink3">요인분해 자료가 없어요.</p>
                 )}
                 <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
-                  영업레버리지가 크면 총수입이 조금만 빠져도 소득은 크게 빠져요.
-                  경영비는 매출이 줄어도 그대로 나가거든요.
+                  경영비는 매출이 줄어도 그대로 나가요. 그래서 총수입이 조금 빠져도
+                  소득은 그보다 크게 빠져요.
                 </p>
               </Panel>
             </Section>

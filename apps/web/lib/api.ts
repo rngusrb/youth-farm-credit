@@ -48,7 +48,12 @@ export type Diagnosis = {
     amort_method: string;
     source: string;
   };
-  income: { annual: number; capacity: number };
+  income: {
+    annual: number;
+    capacity: number;
+    /** 평년 소득이 흔들리는 범위 [하위10%, 상위10%]. 엔진이 낸다 — 화면에서 σ 를 환산하지 말 것. */
+    band_p10_p90: [number, number];
+  };
   /** 각 값이 언제 것인지. 엔진이 내려준다 — 화면에서 오늘 날짜로 채우지 말 것. */
   as_of?: AsOf;
   limits: {
