@@ -77,6 +77,11 @@ python3 scripts/ui_check.py all --all-viewports
   undefined 를 반환하지만 브라우저 확장이 그 메서드를 패치하면 값이 생긴다.
   내 환경에서는 재현이 안 돼 원인을 찾는 데 오래 걸렸다.
   `apps/web/tests/effects.test.ts` 가 간결 본문을 막는다.
+- **여는 것을 CSS 에만 맡기지 않는다.** 드롭다운·팝오버는 열린 것이 무엇인지
+  **상태 하나**로 쥔다. 사고 이력: 상단 메뉴를 `group-hover` 또는
+  `group-focus-within` 으로 열었더니, 클릭해 포커스가 남은 메뉴와 hover 한 메뉴가
+  **동시에 떠서 겹쳤다.** 버튼엔 클릭 핸들러조차 없었다. 닫는 길(Escape·바깥 클릭·
+  마우스 이탈·페이지 이동)도 같이 둔다 (`apps/web/tests/header-menu.test.tsx`).
 - **상품을 추천하지 않는다.** 이 프로젝트가 하지 않기로 한 것이다 (CLAUDE.md —
   대출 알선·상품 추천 없음). 어느 자금이 유리하다는 판정도 하지 않는다. 조건과 숫자를
   나란히 놓는 데서 멈춘다 (`apps/web/tests/why-this-loan.test.ts`).
@@ -226,4 +231,5 @@ apps/web/tests/eligibility.test.ts
 apps/web/tests/amount-compare.test.ts
 apps/web/tests/why-this-loan.test.ts
 apps/web/tests/report-diff.test.ts
+apps/web/tests/header-menu.test.tsx
 ```

@@ -27,6 +27,8 @@ export default function EligibilityCheck({
   const [age, setAge] = useState("");
   const [career, setCareer] = useState("");
   const [self, setSelf] = useState<Record<string, Answer>>({});
+  /** 종합에서 「원문 펴기」 를 누른 요건. 그 행의 접힘을 연다. */
+  const [opened, setOpened] = useState<string | null>(null);
 
   if (!data.length) return null;
 
@@ -50,11 +52,16 @@ export default function EligibilityCheck({
               <p className="mt-0.5 text-[12px] text-gov-ink3">{p.document}</p>
             )}
           </header>
+          <Summary
+            t={tally(p.requirements, { age, career, self }, (r) => `${p.product_id}:${r.key}`)}
+            onOpen={setOpened}
+          />
           <ul>
             {p.requirements.map((r) => (
               <Row
                 key={r.key}
                 req={r}
+                open={opened === `${p.product_id}:${r.key}`}
                 verdict={verdictFor(r, { age, career, self: self[`${p.product_id}:${r.key}`] ?? null })}
                 answer={self[`${p.product_id}:${r.key}`] ?? null}
                 onAnswer={(a) =>
@@ -110,16 +117,94 @@ function num(v: string): number {
   return v.trim() === "" ? NaN : Number(v);
 }
 
+
+/** 답한 것만 센다. 안 답한 것을 어느 쪽으로도 넣지 않는다 (UX-016). */
+export type Tally = {
+  inRange: number;
+  flagged: { key: string; label: string; section: string }[];
+  unanswered: number;
+  answered: number;
+  total: number;
+};
+
+export function tally(
+  reqs: Requirement[],
+  input: { age: string; career: string; self: Record<string, Answer> },
+  keyOf: (r: Requirement) => string,
+): Tally {
+  let inRange = 0, unanswered = 0;
+  const flagged: { key: string; label: string; section: string }[] = [];
+  for (const r of reqs) {
+    const v = verdictFor(r, { age: input.age, career: input.career, self: input.self[keyOf(r)] ?? null });
+    if (v.tone === "ok") inRange += 1;
+    else if (v.tone === "warn") flagged.push({ key: keyOf(r), label: r.label, section: r.section });
+    else unanswered += 1;
+  }
+  return { inRange, flagged, unanswered, answered: reqs.length - unanswered, total: reqs.length };
+}
+
+
+/**
+ * 종합 — **세기만 한다.** "자격이 있다/없다" 라고 말하지 않는다.
+ * 안 답한 항목은 따로 센다: 6개 중 2개만 답했는데 "5개 범위 안" 이라고 하면 거짓이다.
+ */
+function Summary({ t, onOpen }: { t: Tally; onOpen: (key: string) => void }) {
+  if (t.answered === 0) return null;   // 하나도 안 답하면 종합이 없다
+
+  return (
+    <div className="border-b border-gov-line2 bg-gov-sunk px-5 py-4">
+      <p className="text-[14px] leading-relaxed text-gov-ink">
+        답하신 <b>{t.answered}개</b> 중{" "}
+        <b className="text-gov-ok2">{t.inRange}개</b>는 기준 범위 안이에요.
+        {t.flagged.length > 0 && (
+          <>
+            {" "}
+            <b className="text-gov-warn2">{t.flagged.length}개</b>는 해당하지 않을 수 있어요.
+          </>
+        )}
+        {t.unanswered > 0 && (
+          <span className="text-gov-ink3"> 아직 안 답하신 것 {t.unanswered}개.</span>
+        )}
+      </p>
+
+      {t.flagged.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[13px]">
+          {t.flagged.map((f) => (
+            <li key={f.section}>
+              {/* 조항은 이미 손에 있다. RAG 로 다시 찾게 하지 않는다 —
+                  실측: "교육실적" 검색이 엉뚱한 Ⅲ-라 를 낸다. 그 자리에서 편다. */}
+              <button
+                type="button"
+                onClick={() => onOpen(f.key)}
+                className="lnk inline-flex min-h-11 items-center"
+              >
+                {f.label} ({f.section}) 원문 펴기 →
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <p className="mt-1.5 text-[12px] text-gov-ink3">
+        요건 확인과 최종 판단은 사업 시행기관(시·군·구)에서 해요.
+      </p>
+    </div>
+  );
+}
+
 function Row({
   req,
   verdict,
   answer,
   onAnswer,
+  open,
 }: {
   req: Requirement;
   verdict: Verdict;
   answer: Answer;
   onAnswer: (a: Answer) => void;
+  /** 종합에서 지목되면 원문을 펴 둔다. */
+  open?: boolean;
 }) {
   const tone = {
     ok: "border-gov-ok2/35 bg-gov-okbg text-gov-ok2",
@@ -155,7 +240,7 @@ function Row({
         )}
       </div>
 
-      <Fold tone="gov" summary={`근거 조항 ${req.section}`} hint="원문 보기" className="mt-3">
+      <Fold tone="gov" summary={`근거 조항 ${req.section}`} hint="원문 보기" className="mt-3" open={open}>
         <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-gov-ink2">
           {req.quote}
           {req.quote_truncated && <span className="text-gov-ink3"> …(이하 생략)</span>}
