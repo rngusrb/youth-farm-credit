@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "source": "농촌진흥청 농산물소득조사 (KOSIS) — 작목마다 조사연도가 다르다",
+  "source": "농촌진흥청 농산물소득조사 (KOSIS)",
   "unit_area_pyeong": 302.5,
   "crops": [
     {
