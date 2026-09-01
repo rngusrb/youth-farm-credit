@@ -81,3 +81,4 @@ apps/api/tests/test_data_integrity.py
 |---|---|
 | `main.py` | FastAPI 앱. 엔드포인트 7개. 계산은 하지 않고 core 를 부른다 |
 | `schemas.py` | 요청·응답 스키마. 입력 검증이 여기서 끝나야 core 가 방어 코드를 안 쓴다 |
+| `agent.py` | 상담 오케스트레이션 — 계획→실행→설명→검증, 예산 상한 |

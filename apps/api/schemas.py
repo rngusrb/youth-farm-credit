@@ -110,3 +110,23 @@ class StressRequest(BaseModel):
     principal: float | None = Field(default=None, ge=0, le=10_000_000_000)
     product_id: str = DEFAULT_PRODUCT_ID
     max_crisis_prob: float | None = Field(default=None, gt=0.005, le=0.5)
+
+
+class ConsultRequest(BaseModel):
+    """에이전트 상담. slots 는 이미 아는 값이고, 없으면 되묻는다."""
+
+    question: str = Field(min_length=1, max_length=500)
+    slots: dict = Field(default_factory=dict)
+    persona: str = Field(default="farmer", pattern="^(farmer|officer)$")
+
+
+class LeversRequest(BaseModel):
+    """원하는 금액을 감당하려면 무엇이 얼마나 달라져야 하는가."""
+
+    crop_id: str
+    pyeong: float = Field(gt=0)
+    living_cost: float = Field(ge=0)
+    other_debt_service: float = Field(default=0.0, ge=0)
+    target_principal: float = Field(gt=0)
+    movables: list[str] | None = None
+    product_id: str = DEFAULT_PRODUCT_ID

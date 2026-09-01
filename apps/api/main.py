@@ -14,10 +14,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dataclasses import asdict
 
+from agent import consult
 from engine.cashflow import cashflow_for
 from engine.diagnose import DiagnoseInput, diagnose
 from engine.loan import repayment_schedule
 from engine.errors import InsufficientCropData
+from engine.levers import solve_for
 from engine.stress import stress_for
 from engine.params import (
     crops,
@@ -42,6 +44,8 @@ from schemas import (
     RegulationRequest,
     RegulationResponse,
     StressRequest,
+    ConsultRequest,
+    LeversRequest,
 )
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -323,3 +327,42 @@ def data_stats() -> dict:
 @app.post("/api/v1/regulation/ask", response_model=RegulationResponse)
 def regulation(req: RegulationRequest) -> dict:
     return regulation_ask(req.question, req.context)
+
+
+@app.post("/api/v1/levers")
+def levers(req: LeversRequest) -> dict:
+    """원하는 금액을 감당하려면 무엇이 얼마나 달라져야 하는지 역으로 찾는다.
+
+    LLM 을 쓰지 않는다 — 탐색은 엔진 이분탐색이라 같은 입력에 같은 답이 나온다.
+    """
+    inp = DiagnoseInput(
+        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
+        other_debt_service=req.other_debt_service, product_id=req.product_id,
+    )
+    movables = tuple(req.movables) if req.movables else ("living_cost", "other_debt_service", "pyeong")
+    try:
+        levers = solve_for(inp, req.target_principal, movables=movables)
+        base = diagnose(inp)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from None
+
+    return {
+        "target_principal": req.target_principal,
+        "base_crisis_prob": levers[0].crisis_prob_before if levers else None,
+        "max_crisis_prob": base["limits"]["max_crisis_prob"],
+        "risk_based_limit": base["limits"]["risk_based"],
+        "levers": [vars(l) for l in levers],
+        "note": ("각 값은 계산 엔진이 이분탐색으로 찾은 최소 변화량입니다. "
+                 "탐색 범위(searched_from~searched_to)를 함께 표시합니다."),
+    }
+
+
+@app.post("/api/v1/consult")
+def consult_endpoint(req: ConsultRequest) -> dict:
+    """에이전트 상담 — 질문을 보고 도구를 골라 실행하고 설명한다.
+
+    되묻기는 정상 흐름이므로 4xx 가 아니라 kind="ask" 로 돌려준다.
+    """
+    return consult(req.question, req.slots, req.persona).to_dict()

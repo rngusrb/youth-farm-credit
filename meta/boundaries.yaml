@@ -11,8 +11,8 @@
 layers:
   # 순서가 곧 의존 방향이다. 위가 아래를 부른다. 역방향 금지.
   - name: api
-    path: [apps/api/main.py, apps/api/schemas.py]
-    modules: [main, schemas]
+    path: [apps/api/main.py, apps/api/schemas.py, apps/api/agent.py]
+    modules: [main, schemas, agent]
     owns:  "요청/응답, 입력 검증, 직렬화"
     never: "비즈니스 규칙, 외부 API 직접 호출"
 

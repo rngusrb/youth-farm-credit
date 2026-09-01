@@ -118,6 +118,7 @@ message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 �
 
 ```
 apps/api/tests/test_api.py
+apps/api/tests/test_agent.py
 ```
 
 > **계약 테스트와 품질 테스트를 절대 섞지 않는다.**
@@ -140,3 +141,4 @@ apps/api/tests/test_api.py
 | `rules.py` | 규칙기반 한국어 파서. LLM 없이도 동작하는 대체 경로 |
 | `narrate.py` | 계산 결과 → 문장. 템플릿 대체 경로 포함 |
 | `verify.py` | LLM 문장의 수치를 엔진 출력과 대조. 불일치 문장 제거 |
+| `planner.py` | 도구 선택 — LLM 출력을 스펙으로 검증, 키 없으면 키워드 폴백 |

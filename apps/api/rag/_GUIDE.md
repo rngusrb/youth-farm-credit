@@ -178,3 +178,4 @@ apps/api/tests/test_eligibility.py
   장으로 잡으면 출처 표기가 거짓이 된다. (실제로 그랬다 — test_rag_corpus.py 가 지킨다)
 - 검색 품질을 건드렸으면 `test_rag_corpus.py` 의 recall 하한을 확인한다.
   하한을 낮추는 커밋은 이유를 커밋 메시지에 적는다.
+| `tools.py` | 제도 검색을 ToolSpec 으로 노출 (엔진 도구와 같은 계약) |
