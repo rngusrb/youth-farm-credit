@@ -480,3 +480,48 @@ export async function solveFor(body: {
   }
   return res.json();
 }
+
+
+/** 에이전트 상담. Planner 가 도구를 골라 실행하고, 그 흔적까지 돌려준다.
+ *  화면은 분기를 판단하지 않는다 — 어떤 도구를 쓸지는 서버가 정한다. */
+export type TraceEntry = {
+  tool: string;
+  args: Record<string, unknown>;
+  ms: number;
+  ok: boolean;
+  error: string | null;
+};
+
+export type ConsultAnswer = {
+  kind: "answer" | "ask";
+  text: string;
+  /** kind==="ask" 일 때만 */
+  missing: string[];
+  question: string;
+  citations: Citation[];
+  /** 설명 문장에서 검증을 통과한 수치들 */
+  numbers_used: number[];
+  /** 엔진 값과 안 맞아 제거된 문장. 숨기지 않고 개수를 보여준다. */
+  dropped: string[];
+  trace: TraceEntry[];
+  warnings: string[];
+  budget: { llm_calls: number; tool_calls: number };
+  /** "llm" | "fallback" — 키가 없거나 계획이 실패하면 규칙기반으로 내려간다 */
+  method: string;
+  /** 도구 이름 → 결과. 숫자 카드는 설명 문장이 아니라 여기서 읽는다. */
+  results: Record<string, any>;
+};
+
+export async function consult(body: {
+  question: string;
+  slots?: Record<string, unknown>;
+  persona?: "farmer" | "officer";
+}): Promise<ConsultAnswer> {
+  const res = await fetch(`${API_BASE}/api/v1/consult`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ persona: "farmer", slots: {}, ...body }),
+  });
+  if (!res.ok) throw new Error((await res.text()) || "상담에 실패했습니다");
+  return res.json();
+}

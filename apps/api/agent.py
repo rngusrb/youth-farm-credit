@@ -67,6 +67,9 @@ class Answer:
     warnings: list[str] = field(default_factory=list)
     budget: Budget = field(default_factory=Budget)
     method: str = "llm"
+    #: 도구 이름 → 결과. 화면이 숫자 카드를 그릴 때 쓴다.
+    #: 설명 문장이 아니라 **이 값**이 근거다 — 화면은 여기서만 숫자를 읽는다.
+    results: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -139,7 +142,8 @@ def consult(question: str, slots: dict | None = None, persona: str = "farmer") -
     if set(results) == {"search_regulation"}:
         r = results["search_regulation"]
         return Answer(kind="answer", text=r.get("answer", ""), citations=citations,
-                      trace=trace, warnings=p.warnings, budget=budget, method=p.method)
+                      trace=trace, warnings=p.warnings, budget=budget, method=p.method,
+                      results=results)
 
     diagnosis = results.get("diagnose")
     text, dropped, used = "", [], []
@@ -153,7 +157,7 @@ def consult(question: str, slots: dict | None = None, persona: str = "farmer") -
 
     return Answer(kind="answer", text=text, citations=citations, numbers_used=used,
                   dropped=dropped, trace=trace, warnings=p.warnings,
-                  budget=budget, method=p.method)
+                  budget=budget, method=p.method, results=results)
 
 
 def _narrate_takes_persona() -> bool:

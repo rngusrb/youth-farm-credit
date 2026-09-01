@@ -1,35 +1,123 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+
 import { Badge, Notice, PageTitle, Panel } from "@/components/gov";
-import {
-  askRegulation, extractSlots, runDiagnose,
-  type Citation, type Diagnosis,
-} from "@/lib/api";
-import { headlineLimit, headlineScenario } from "@/lib/diagnosis";
+import { consult, type ConsultAnswer, type TraceEntry } from "@/lib/api";
+import { pct, won } from "@/lib/format";
 import { loadProfile } from "@/lib/profile";
-import { pct, pyeong as fmtPyeong, ratio, won } from "@/lib/format";
 
 /** AI 상담.
  *
- * 두 종류의 질문을 갈라 각각 다른 경로로 보낸다.
- *   "딸기 2000평이면 얼마 빌려도 되나" → 슬롯 추출 → 엔진 계산 (숫자)
- *   "거치기간 몇 년이냐"              → 지침 원문 검색 (조항)
- * **숫자는 언제나 엔진이 만든다.** 언어모델은 문장만 쓴다.
+ * **화면이 분기를 판단하지 않는다.** 어떤 계산 도구를 어떤 순서로 부를지는
+ * 서버의 Planner 가 정하고, 화면은 그 결과와 **무엇을 했는지(trace)** 를 보여준다.
+ *
+ * 숫자는 언제나 엔진이 만든다. 설명 문장의 수치는 엔진 값과 대조해 어긋난 문장을
+ * 걸러낸 뒤 오고, 걸러진 개수도 숨기지 않고 표시한다.
  */
 type Turn =
   | { role: "user"; text: string }
-  | { role: "calc"; diag: Diagnosis }
-  | { role: "cite"; text: string; citations: Citation[]; confidence: string }
+  | { role: "agent"; answer: ConsultAnswer }
   | { role: "error"; text: string };
 
 const EXAMPLES = [
-  "딸기 수경 2000평 하는데 얼마까지 빌려도 되나요?",
+  "3억 빌려도 되나요?",
   "재해가 나면 상환을 미룰 수 있나요?",
+  "얼마까지 빌릴 수 있어요?",
   "거치기간은 몇 년까지 고를 수 있나요?",
-  "생활비 3천만원이면 시금치 3000평으로 버틸 수 있나요?",
 ];
+
+const TOOL_LABEL: Record<string, string> = {
+  get_crop: "작목 데이터 조회",
+  diagnose: "상환여력·한도 계산",
+  cashflow: "월별 현금흐름",
+  stress: "스트레스 시나리오",
+  solve_for: "조건 역산(반사실 탐색)",
+  search_regulation: "시행지침 검색",
+  eligibility: "지원 요건 조회",
+};
+
+function TraceList({ trace, budget, method }: {
+  trace: TraceEntry[];
+  budget: { llm_calls: number; tool_calls: number };
+  method: string;
+}) {
+  if (trace.length === 0) return null;
+  return (
+    <details className="mt-3 border-t border-gov-line pt-3">
+      <summary className="cursor-pointer text-[12px] text-gov-ink2">
+        무엇을 했는지 보기 ({trace.length}단계)
+      </summary>
+      <ul className="mt-2 space-y-1">
+        {trace.map((t, i) => (
+          <li key={i} className="flex flex-wrap items-center gap-2 text-[12px]">
+            <span className={t.ok ? "text-gov-ink2" : "text-gov-warn"}>{t.ok ? "✓" : "✕"}</span>
+            <span className="text-gov-head">{TOOL_LABEL[t.tool] ?? t.tool}</span>
+            <span className="text-gov-ink3">{t.ms}ms</span>
+            {t.error && <span className="text-gov-warn">{t.error}</span>}
+          </li>
+        ))}
+      </ul>
+      <p className="mt-2 text-[12px] text-gov-ink3">
+        계획 {method === "fallback" ? "규칙기반" : "AI"} · 언어모델 {budget.llm_calls}회 · 도구 {budget.tool_calls}회
+      </p>
+    </details>
+  );
+}
+
+/** 숫자 카드는 설명 문장이 아니라 **도구 결과**에서 읽는다. */
+function Facts({ results }: { results: Record<string, any> }) {
+  const d = results.diagnose;
+  const s = results.solve_for;
+  if (!d && !s) return null;
+
+  return (
+    <div className="mt-3 space-y-3">
+      {d && (
+        <div className="grid gap-3 sm:grid-cols-3">
+          {[
+            ["권장 차입", won(d.limits.risk_based)],
+            ["상환 가용액", won(d.income.capacity)],
+            ["감내 기준", pct(d.limits.max_crisis_prob)],
+          ].map(([k, v]) => (
+            <div key={k} className="rounded-lg border border-gov-line bg-gov-sunk px-3 py-2">
+              <p className="text-[12px] text-gov-ink2">{k}</p>
+              <p className="text-[15px] font-semibold text-gov-head">{v}</p>
+            </div>
+          ))}
+        </div>
+      )}
+      {s && Array.isArray(s.levers) && (
+        <div className="rounded-lg border border-gov-line px-3 py-2">
+          <p className="mb-1 text-[12px] text-gov-ink2">
+            {won(s.target_principal)} 을 감당하려면
+          </p>
+          <ul className="space-y-1">
+            {s.levers.map((l: any) => (
+              <li key={l.variable} className="text-[13px]">
+                {l.reachable ? (
+                  <span className="text-gov-head">
+                    · {l.note}{" "}
+                    <span className="text-gov-ink2">
+                      ({pct(l.crisis_prob_before)} → {pct(l.crisis_prob_after)})
+                    </span>
+                  </span>
+                ) : (
+                  <span className="text-gov-ink3">· {l.label}: {l.note}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-2 text-[12px] text-gov-ink3">
+            <Link href="/app/levers" className="text-gov-link underline">얼마까지 받으려면</Link>
+            에서 탐색 범위까지 볼 수 있어요.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function AssistantPage() {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -37,39 +125,29 @@ export default function AssistantPage() {
   const [busy, setBusy] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
-  // 블록 본문으로 둔다. 간결 본문(`() => expr`)은 **식의 반환값이 그대로 새어 나가서**
-  // React 가 그것을 cleanup 으로 받는다. 보통은 undefined 지만, 브라우저 확장이나
-  // 폴리필이 scrollIntoView 를 패치해 뭔가 반환하게 만들면
-  // "useEffect must not return anything besides a function" 이 뜬다.
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [turns]);
 
   async function send(text: string) {
     if (!text.trim() || busy) return;
-    setQ(""); setBusy(true);
+    setQ("");
+    setBusy(true);
     setTurns((t) => [...t, { role: "user", text }]);
     try {
-      const profile = loadProfile();
-      const slots = await extractSlots(text, {
-        crop_id: profile?.cropId, pyeong: profile?.pyeong, living_cost: profile?.livingCost,
+      const p = loadProfile();
+      const answer = await consult({
+        question: text,
+        slots: p
+          ? {
+              crop_id: p.cropId,
+              pyeong: p.pyeong,
+              living_cost: p.livingCost,
+              other_debt_service: p.otherDebtService,
+            }
+          : {},
       });
-      const cropId = slots.slots.crop_id ?? profile?.cropId ?? null;
-      const py = slots.slots.pyeong ?? profile?.pyeong ?? null;
-
-      if (cropId && py) {
-        const diag = await runDiagnose({
-          crop_id: cropId, pyeong: py,
-          living_cost: slots.slots.living_cost ?? profile?.livingCost ?? 24_000_000,
-          other_debt_service: profile?.otherDebtService ?? 0,
-          product_id: profile?.productId ?? "successor_farmer",
-        });
-        setTurns((t) => [...t, { role: "calc", diag }]);
-        return;
-      }
-
-      const r = await askRegulation(text);
-      setTurns((t) => [...t, { role: "cite", text: r.answer, citations: r.citations, confidence: r.confidence }]);
+      setTurns((t) => [...t, { role: "agent", answer }]);
     } catch (e) {
       setTurns((t) => [...t, { role: "error", text: e instanceof Error ? e.message : "처리에 실패했어요." }]);
     } finally {
@@ -81,7 +159,7 @@ export default function AssistantPage() {
     <>
       <PageTitle
         title="AI 상담"
-        lead="농가 조건이 들어간 질문은 계산 엔진이 답하고, 제도 질문은 시행지침 원문에서 근거를 찾아요. 숫자를 지어내지 않습니다."
+        lead="질문을 보고 필요한 계산 도구를 골라 실행합니다. 숫자는 계산 엔진이 만들고, 설명에 쓰인 수치는 엔진 값과 대조해 어긋나면 걸러냅니다."
       />
 
       <div className="space-y-4">
@@ -90,8 +168,11 @@ export default function AssistantPage() {
             <p className="mb-3 text-[14px] text-gov-ink2">이런 걸 물어볼 수 있어요.</p>
             <div className="flex flex-wrap gap-1.5">
               {EXAMPLES.map((e) => (
-                <button key={e} onClick={() => void send(e)}
-                        className="inline-flex min-h-11 items-center rounded-md border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head">
+                <button
+                  key={e}
+                  onClick={() => void send(e)}
+                  className="inline-flex min-h-11 items-center rounded-md border border-gov-line px-3 text-[12px] text-gov-ink2 hover:border-gov-link hover:text-gov-head"
+                >
                   {e}
                 </button>
               ))}
@@ -102,82 +183,87 @@ export default function AssistantPage() {
         {turns.map((t, i) =>
           t.role === "user" ? (
             <div key={i} className="flex justify-end">
-              <p className="max-w-[80%] bg-gov-soft px-4 py-2.5 text-[14px] text-gov-ink">{t.text}</p>
+              <p className="max-w-[80%] rounded-lg bg-gov-soft px-4 py-2.5 text-[14px] text-gov-ink">{t.text}</p>
             </div>
-          ) : t.role === "calc" ? (
+          ) : t.role === "error" ? (
+            <Notice key={i} tone="warn" title="처리하지 못했어요">{t.text}</Notice>
+          ) : t.answer.kind === "ask" ? (
             <Panel key={i}>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Badge tone="info">계산 엔진</Badge>
-                <span className="text-[12px] text-gov-ink3">
-                  {t.diag.input.crop_name} · {fmtPyeong(t.diag.input.pyeong)} · {t.diag.product.name}
-                </span>
-              </div>
-              <div className="grid gap-5 sm:grid-cols-3">
-                {[
-                  [`위기확률 ${pct(t.diag.limits.max_crisis_prob)} 기준`, won(headlineLimit(t.diag))],
-                  ["상환 가용액", won(t.diag.income.capacity)],
-                  ["2년연속 위기확률", pct(headlineScenario(t.diag)?.crisis_prob ?? 0)],
-                ].map(([k, v]) => (
-                  <div key={k}>
-                    <div className="text-[12px] text-gov-ink3">{k}</div>
-                    <div className="tabular mt-1 text-[20px] font-extrabold text-gov-ink">{v}</div>
-                  </div>
-                ))}
-              </div>
-              <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">
-                제도상 {won(t.diag.limits.available)}까지 신청할 수 있어요. 소득이 해마다
-                흔들리는 것까지 넣어 계산하면 위 금액이고요. 이 금액이면 보통 해에
-                버는 돈이 갚을 돈의{" "}
-                {ratio(headlineScenario(t.diag)?.dscr_median ?? 0)}배예요
-                <span className="text-gov-ink3"> (DSCR 중앙값)</span>.
+              <Badge tone="info">되묻기</Badge>
+              <p className="mt-2 text-[15px] text-gov-head">{t.answer.question}</p>
+              <p className="mt-1 text-[13px] text-gov-ink2">
+                답을 지어내지 않으려고 여쭤봐요.{" "}
+                <Link href="/app/farm" className="text-gov-link underline">내 농가 정보</Link>
+                에 넣어 두시면 다음부터 안 물어봅니다.
               </p>
-              <Link href={`/result/${t.diag.diagnosis_id}`} className="lnk mt-3 inline-block text-[13px]">
-                리포트 전체 보기 →
-              </Link>
-            </Panel>
-          ) : t.role === "cite" ? (
-            <Panel key={i}>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Badge tone={t.confidence === "none" ? "danger" : "ok"}>지침 원문</Badge>
-                <span className="text-[12px] text-gov-ink3">근거 {t.citations.length}건</span>
-              </div>
-              <p className="text-[14px] leading-relaxed text-gov-ink">{t.text}</p>
-              {t.citations.slice(0, 2).map((c, j) => (
-                <figure key={j} className="mt-3 rounded-r-md border-l-4 border-gov-line bg-gov-sunk px-4 py-3">
-                  <figcaption className="mb-1.5 text-[12px] text-gov-ink3">{c.doc} · {c.section}</figcaption>
-                  <blockquote className="whitespace-pre-wrap text-[12px] leading-relaxed text-gov-ink2">
-                    {c.text.slice(0, 400)}{c.text.length > 400 ? "…" : ""}
-                  </blockquote>
-                </figure>
-              ))}
-              <Link href="/policy" className="lnk mt-3 inline-block text-[13px]">제도 근거에서 더 찾기 →</Link>
+              <TraceList trace={t.answer.trace} budget={t.answer.budget} method={t.answer.method} />
             </Panel>
           ) : (
-            <div key={i} className="rounded-r-md border-l-4 border-gov-point bg-gov-point/5 px-4 py-3 text-[13px] text-gov-point">
-              {t.text}
-            </div>
+            <Panel key={i}>
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <Badge tone={t.answer.method === "fallback" ? "plain" : "info"}>
+                  {t.answer.method === "fallback" ? "규칙기반" : "AI 상담"}
+                </Badge>
+                {t.answer.numbers_used.length > 0 && (
+                  <span className="text-[12px] text-gov-ink3">
+                    수치 {t.answer.numbers_used.length}개를 엔진 값과 대조했어요
+                  </span>
+                )}
+              </div>
+
+              {t.answer.text && (
+                <p className="whitespace-pre-line text-[14px] leading-7 text-gov-ink">{t.answer.text}</p>
+              )}
+
+              <Facts results={t.answer.results} />
+
+              {t.answer.dropped.length > 0 && (
+                <p className="mt-3 text-[12px] text-gov-warn">
+                  숫자가 엔진 값과 맞지 않아 {t.answer.dropped.length}문장을 뺐어요.
+                </p>
+              )}
+
+              {t.answer.citations.length > 0 && (
+                <div className="mt-3 space-y-2 border-t border-gov-line pt-3">
+                  {t.answer.citations.slice(0, 3).map((c, k) => (
+                    <details key={k}>
+                      <summary className="cursor-pointer text-[12px] text-gov-link">
+                        {c.doc} {c.section}
+                      </summary>
+                      <p className="mt-1 whitespace-pre-line text-[12px] leading-6 text-gov-ink2">{c.text}</p>
+                    </details>
+                  ))}
+                </div>
+              )}
+
+              <TraceList trace={t.answer.trace} budget={t.answer.budget} method={t.answer.method} />
+            </Panel>
           ),
         )}
         <div ref={endRef} />
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); void send(q); }} className="mt-5 flex gap-2">
-        <label htmlFor="ask" className="sr-only">질문</label>
-        <input id="ask" value={q} onChange={(e) => setQ(e.target.value)}
-               placeholder="농가 조건이나 제도 요건을 물어보세요"
-               className="flex-1 min-h-11 rounded-md border border-gov-line px-4 text-[14px] outline-none focus:border-gov-link" />
-        <button type="submit" disabled={busy}
-                className="shrink-0 rounded-md bg-gov-head px-6 text-[14px] font-bold text-white hover:bg-gov-navy disabled:opacity-50">
-          {busy ? "…" : "보내기"}
+      <form
+        onSubmit={(e) => { e.preventDefault(); void send(q); }}
+        className="mt-4 flex gap-2"
+      >
+        <label className="flex-1">
+          <span className="sr-only">질문</span>
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="궁금한 것을 물어보세요"
+            className="w-full rounded-lg border border-gov-line px-3 py-2.5 text-[14px]"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={busy}
+          className="inline-flex min-h-11 items-center rounded-md bg-gov-head px-5 text-[13px] font-semibold text-white disabled:opacity-50"
+        >
+          {busy ? "계산 중…" : "물어보기"}
         </button>
       </form>
-
-      <div className="mt-5">
-        <Notice tone="warn" title="상담의 한계">
-          제도 안내는 원문을 찾아 주는 것이지 유권해석이 아닙니다. 계산 결과는 참고자료이며
-          대출 심사 결과가 아닙니다.
-        </Notice>
-      </div>
     </>
   );
 }
