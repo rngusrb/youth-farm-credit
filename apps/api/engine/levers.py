@@ -208,9 +208,24 @@ def _fmt(v: float, unit: str) -> str:
     return f"{v:,.0f}{unit}"
 
 
+def _has_batchim(ch: str) -> bool:
+    """한글 음절에 받침이 있는가. 조사를 고르는 데 쓴다."""
+    if not ("가" <= ch <= "힣"):
+        return False
+    return (ord(ch) - 0xAC00) % 28 != 0
+
+
+def _josa(word: str, with_batchim: str, without: str) -> str:
+    """'생활비을(를)' 처럼 괄호를 남기지 않는다 — 농가가 읽는 문장이다."""
+    return with_batchim if word and _has_batchim(word[-1]) else without
+
+
 def _note(label: str, frm: float, to: float, unit: str) -> str:
     if abs(to - frm) < 1e-9:
-        return f"{label}은(는) 지금 그대로도 됩니다"
+        return f"{label}{_josa(label, '은', '는')} 지금 그대로도 됩니다"
+    target = _fmt(to, unit)
     direction = "줄이면" if to < frm else "늘리면"
     pct = abs(to / frm - 1.0) * 100 if frm else 0.0
-    return f"{label}을(를) {_fmt(to, unit)}로 {direction} 됩니다 ({pct:.0f}% {'감소' if to < frm else '증가'})"
+    change = "감소" if to < frm else "증가"
+    return (f"{label}{_josa(label, '을', '를')} {target}{_josa(target, '으로', '로')} "
+            f"{direction} 됩니다 ({pct:.0f}% {change})")

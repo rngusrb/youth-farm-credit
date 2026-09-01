@@ -432,3 +432,51 @@ export async function fetchEligibility(): Promise<{
   if (!res.ok) throw new Error("자격 요건을 불러오지 못했습니다");
   return res.json();
 }
+
+
+/** 원하는 금액을 감당하려면 무엇이 얼마나 달라져야 하는가.
+ *  탐색은 엔진 이분탐색이라 같은 입력에 같은 답이 나온다 — LLM 이 만든 숫자가 아니다. */
+export type Lever = {
+  variable: string;
+  label: string;
+  unit: string;
+  from_value: number;
+  to_value: number | null;
+  delta_ratio: number | null;
+  crisis_prob_before: number;
+  crisis_prob_after: number | null;
+  reachable: boolean;
+  /** 실제로 탐색한 범위. 커트라인을 숨기지 않기 위해 화면에 밝힌다. */
+  searched_from: number;
+  searched_to: number;
+  note: string;
+};
+
+export type LeversResult = {
+  target_principal: number;
+  base_crisis_prob: number | null;
+  max_crisis_prob: number;
+  risk_based_limit: number;
+  levers: Lever[];
+  note: string;
+};
+
+export async function solveFor(body: {
+  crop_id: string;
+  pyeong: number;
+  living_cost: number;
+  other_debt_service?: number;
+  target_principal: number;
+  movables?: string[];
+}): Promise<LeversResult> {
+  const res = await fetch(`${API_BASE}/api/v1/levers`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const detail = await res.text();
+    throw new Error(detail || "계산하지 못했습니다");
+  }
+  return res.json();
+}

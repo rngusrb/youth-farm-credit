@@ -233,3 +233,4 @@ apps/web/tests/why-this-loan.test.ts
 apps/web/tests/report-diff.test.ts
 apps/web/tests/header-menu.test.tsx
 ```
+| `app/app/levers/page.tsx` | 「얼마까지 받으려면」 — 반사실 탐색 결과와 **탐색 범위**를 함께 표시 |
