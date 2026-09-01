@@ -81,10 +81,14 @@ def _most_discriminative(terms: list[str], n: int) -> list[str]:
 
     흔한 말(‘선정’, ‘요건’)은 아무 문서나 끌어와 정답을 밀어낸다.
     """
-    if len(terms) <= n:
-        return terms
     from .retrieve import document_frequency
-    return sorted(terms, key=document_frequency)[:n]
+
+    # 코퍼스에 없는 말은 버린다. df=0 이라 '가장 드문 말'로 뽑혀 **노이즈가 1순위**가 된다.
+    # (2026-09-01 실측: LLM 이 낸 '만세' 같은 조어가 이 경로로 선택돼 recall@1 6→4)
+    present = [w for w in terms if document_frequency(w) > 0]
+    if len(present) <= n:
+        return present
+    return sorted(present, key=document_frequency)[:n]
 
 
 def _by_llm(question: str) -> tuple[str, ...] | None:
@@ -103,7 +107,11 @@ def _by_llm(question: str) -> tuple[str, ...] | None:
         logging.getLogger(__name__).warning("질의 확장 LLM 실패, 용어집으로 대체: %s", e)
         return None
     words = [w for w in re.split(r"\s+", text.strip()) if w and w not in question]
-    return tuple(dict.fromkeys(words))[:12] or None
+    words = list(dict.fromkeys(words))
+    # 용어집 경로와 **같은 상한**을 건다. 이게 빠져 있어서 LLM 이 10개를 붙였고,
+    # 위 MAX_ADDED 주석이 경고한 그대로 정답이 top-5 밖으로 밀렸다.
+    # (2026-09-01: 키를 켠 뒤 recall@1 6→5. 상한은 선언돼 있었지만 이 경로엔 배선되지 않았다)
+    return tuple(_most_discriminative(words, MAX_ADDED)) or None
 
 
 def expand(question: str, use_llm: bool = True) -> Expansion:

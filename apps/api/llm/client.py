@@ -7,8 +7,22 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 
 log = logging.getLogger(__name__)
+
+# apps/api/.env 를 읽는다. requirements 에 python-dotenv 가 있는데 아무도 부르지
+# 않아서, 키를 넣어도 preview 로 띄운 서버에는 안 넘어가고 있었다 (2026-09-01).
+# .env 는 .gitignore 에 있고, harness 의 시크릿 스캔이 커밋을 막는다.
+try:
+    from dotenv import load_dotenv
+
+    _ENV = Path(__file__).resolve().parent.parent / ".env"
+    if _ENV.exists():
+        load_dotenv(_ENV)
+        log.info(".env 로드: %s", _ENV)
+except ImportError:  # dotenv 없이도 셸 환경변수로 동작한다
+    log.debug("python-dotenv 없음 — 셸 환경변수만 읽습니다")
 
 MODEL = os.getenv("ANTHROPIC_MODEL", "claude-opus-5")
 

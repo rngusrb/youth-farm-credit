@@ -92,7 +92,14 @@ def test_answer_refuses_without_evidence(corpus):
 
 
 def test_empty_corpus_never_answers(tmp_path, monkeypatch):
+    """원문도 색인도 없으면 절대 답하지 않는다.
+
+    ⚠️ CORPUS_DIR 도 함께 비워야 한다. INDEX_PATH 만 바꾸면 load_index 의 지연생성이
+    **실제 코퍼스에서 색인을 새로 만들어** 답을 낸다 — 그러면 이 테스트가 주장하는
+    '빈 코퍼스' 상태가 애초에 만들어지지 않는다. (2026-09-01: 그 상태로 통과하고 있었다)
+    """
     monkeypatch.setattr(ingest, "INDEX_PATH", tmp_path / "missing.jsonl")
+    monkeypatch.setattr(ingest, "CORPUS_DIR", tmp_path)
     retrieve.reset_cache()
     r = answer_mod.ask("무엇이든 물어보세요")
     retrieve.reset_cache()

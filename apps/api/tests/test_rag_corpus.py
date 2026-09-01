@@ -40,6 +40,25 @@ def corpus() -> list[dict]:
     return load_index()
 
 
+@pytest.fixture(autouse=True)
+def _deterministic_expansion(monkeypatch):
+    """recall 회귀 측정은 **용어집 경로**로 고정한다.
+
+    LLM 질의확장은 같은 질문에 매번 다른 확장어를 낸다(실측: '지원 자격 나이 제한' →
+    ('신청자격','연령') / ('지원자격','신청자격') / ('우선순위','신청자격')).
+    그 경로로 recall 을 재면 기준선이 흔들려 **회귀인지 운인지 구분할 수 없다.**
+    LLM 경로의 검색 품질은 계약 테스트가 아니라 별도 평가에서 잰다
+    (계약 테스트는 무료·결정적이어야 한다는 원칙과 같은 이유).
+    """
+    from rag import expand as expand_mod
+    from rag import retrieve as retrieve_mod
+
+    monkeypatch.setattr(expand_mod, "get_client", lambda: None)
+    retrieve_mod.reset_cache()
+    yield
+    retrieve_mod.reset_cache()
+
+
 def _recall(k: int) -> int:
     return sum(any(g in h["text"] for h in search(q, top_k=k)) for q, g in GOLD)
 
@@ -118,3 +137,58 @@ def test_no_corpus_means_no_answer(tmp_path, monkeypatch):
     monkeypatch.setattr(ingest, "CORPUS_DIR", empty)
     monkeypatch.setattr(ingest, "INDEX_PATH", empty / "index.jsonl")
     assert ingest.load_index() == []
+
+
+# ── 질의 확장 가드 (2026-09-01 사고) ──────────────────────────────────────
+# 키를 켜자 recall@1 이 6→5→4 로 떨어졌다. 원인 두 가지가 겹쳤다.
+#   ① MAX_ADDED 상한이 용어집 경로에만 걸려 있고 LLM 경로엔 배선되지 않았다 (10개 부착)
+#   ② _most_discriminative 가 문서빈도 오름차순으로 고르는데, 코퍼스에 없는 조어는
+#      df=0 이라 '가장 드문 말'로 뽑혀 노이즈가 1순위로 선택됐다 ('만세')
+# 둘 다 고쳤고, 아래가 재발을 막는다.
+
+def test_expansion_respects_max_added():
+    """어느 경로든 확장어 상한을 넘지 않는다."""
+    from rag.expand import MAX_ADDED, expand
+
+    for q, _ in GOLD:
+        assert len(expand(q).added) <= MAX_ADDED, q
+
+
+def test_expansion_never_adds_terms_absent_from_corpus():
+    """코퍼스에 없는 말은 붙이지 않는다 — df=0 이라 노이즈가 최우선 선택된다."""
+    from rag.expand import expand
+    from rag.retrieve import document_frequency
+
+    for q, _ in GOLD:
+        for w in expand(q).added:
+            assert document_frequency(w) > 0, f"{q}: 코퍼스에 없는 확장어 {w!r}"
+
+
+def test_llm_output_is_filtered_not_trusted(monkeypatch):
+    """LLM 이 낸 확장어를 그대로 믿지 않는다 — 상한과 코퍼스 존재 검사를 통과한 것만 쓴다.
+
+    실제 모델을 부르지 않는다(비결정적·유료). 나쁜 출력을 **가짜 응답**으로 주입해
+    걸러지는지만 본다. 이번 사고의 두 원인을 그대로 재현한 입력이다:
+    조어('만세'·'만18세이상')와 과다 부착(10개).
+    """
+    from rag import expand as expand_mod
+
+    BAD = "지원대상 자격요건 연령 만18세이상 만40세미만 사업신청자격 연령기준 신청자격 만세 선정기준"
+
+    class _Msg:
+        content = [type("B", (), {"type": "text", "text": BAD})()]
+
+    class _FakeClient:
+        class messages:
+            @staticmethod
+            def create(**_):
+                return _Msg()
+
+    monkeypatch.setattr(expand_mod, "get_client", lambda: _FakeClient())
+    from rag.retrieve import document_frequency
+
+    e = expand_mod.expand("지원 자격 나이 제한")
+    assert e.method == "llm"
+    assert len(e.added) <= expand_mod.MAX_ADDED, f"상한 초과: {e.added}"
+    for w in e.added:
+        assert document_frequency(w) > 0, f"코퍼스에 없는 확장어가 통과했다: {w!r}"

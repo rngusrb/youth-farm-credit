@@ -80,16 +80,53 @@ def test_extract_unit_conversion():
     assert r["slots"]["living_cost"] == 24_000_000
 
 
-def test_explain_numbers_are_subset_of_diagnose():
-    from llm.verify import allowed_forms, collect_numbers
+def test_explain_numbers_are_subset_of_diagnose(monkeypatch):
+    """설명에 남은 수치는 전부 진단 결과의 값이어야 한다.
+
+    ⚠️ 템플릿(결정적) 경로로 고정한다. LLM 경로는 같은 입력에 매번 다른 문장을 내고,
+    그중 일부가 검증에서 걸러지는 것은 **정상 동작**이다. 그걸 계약 테스트에서 재면
+    회귀인지 그날 모델 기분인지 구분할 수 없고, 매 실행마다 과금된다.
+    LLM 이 틀린 수치를 썼을 때 걸러지는지는 아래 스텁 테스트가 본다.
+    """
+    from llm import narrate as narrate_mod
+    from llm.verify import _matches, allowed_forms, collect_numbers
+
+    # narrate 는 `from .client import get_client` 로 이름을 바인딩한다.
+    # llm.client 쪽을 패치하면 안 먹는다 — 쓰는 자리를 패치한다.
+    monkeypatch.setattr(narrate_mod, "get_client", lambda: None)
 
     d = client.post("/api/v1/diagnose", json=CASE_A).json()
     e = client.post("/api/v1/explain", json={"diagnosis": d}).json()
     forms = allowed_forms(collect_numbers(d))
+    # 허용 판정을 여기서 다시 구현하지 않는다 — 복사본이 갈라지면 검증 구멍을
+    # 테스트가 못 잡는다 (실제로 구조 상수 오차 구멍을 이 복사본이 가리고 있었다).
     for n in e["numbers_used"]:
-        assert any(abs(n - f) <= max(abs(f) * 0.005, 0.05) for f in forms), n
-    assert e["dropped_sentences"] == []
+        assert _matches(n, forms), n
+    assert e["dropped_sentences"] == [], "템플릿 경로는 버릴 문장이 없어야 한다"
     assert e["headline"] and e["body"] and e["actions"]
+
+
+def test_explain_drops_fabricated_numbers():
+    """지어낸 수치가 들어오면 그 문장을 버리고 **버렸다고 알린다**.
+
+    조용히 통과시키면 이 서비스의 제1원칙('숫자는 LLM 이 만들지 않는다')이
+    문장으로만 남는다. 실제 모델을 부르지 않고 검증기만 시험한다.
+    """
+    from llm.verify import _matches, allowed_forms, collect_numbers, verify_text
+
+    d = client.post("/api/v1/diagnose", json=CASE_A).json()
+    forms = allowed_forms(collect_numbers(d))
+
+    # 진단에는 수십 개 수치와 그 표기 변형이 있어 아무 숫자나 고르면 우연히 겹친다.
+    # 확실히 허용되지 않는 값을 찾아서 쓴다.
+    bogus = next(v for v in (77.77, 88.88, 66.66, 55.55, 44.44) if not _matches(v, forms))
+    real = f"권장 차입은 {d['limits']['risk_based'] / 100_000_000:.1f}억원입니다."
+    fake = f"권장 차입은 {bogus}억원입니다."
+
+    kept, dropped, used = verify_text(f"{real} {fake}", d)
+    assert any(str(bogus) in s for s in dropped), f"지어낸 수치 {bogus} 가 통과했다: {dropped}"
+    assert str(bogus) not in kept
+    assert used, "검증에 쓰인 수치가 기록돼야 한다"
 
 
 def test_explain_rejects_partial_payload():
