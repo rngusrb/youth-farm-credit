@@ -12,7 +12,7 @@ const serif = Noto_Serif_KR({
 });
 
 export const metadata: Metadata = {
-  title: "FarmFit — 농가 경영 · 여신설계 서비스",
+  title: "Seed Money — 농가 경영 · 여신설계 서비스",
   description:
     "얼마까지 받을 수 있는가가 아니라, 얼마까지 받아야 안전한가. 농가의 경영 데이터로 미래 현금흐름과 상환여력을 계산합니다.",
 };

@@ -1,7 +1,7 @@
 import { Badge, Crumb, Page, PageTitle, Panel } from "@/components/gov";
 import { NOTICES } from "@/lib/content";
 
-export const metadata = { title: "공지사항 | FarmFit" };
+export const metadata = { title: "공지사항 | Seed Money" };
 
 export default function NoticePage() {
   return (

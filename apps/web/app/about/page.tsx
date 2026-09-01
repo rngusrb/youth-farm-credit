@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Badge, Crumb, Notice, Page, PageTitle, Panel, Section } from "@/components/gov";
 
-export const metadata = { title: "서비스 소개 | FarmFit" };
+export const metadata = { title: "서비스 소개 | Seed Money" };
 
 const PROBLEMS = [
   {

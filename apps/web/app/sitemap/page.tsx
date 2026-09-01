@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Crumb, Page, PageTitle, Panel } from "@/components/gov";
 import { BANK, FARMER, PORTAL } from "@/lib/nav";
 
-export const metadata = { title: "사이트맵 | FarmFit" };
+export const metadata = { title: "사이트맵 | Seed Money" };
 
 export default function SitemapPage() {
   const groups = [

@@ -47,7 +47,7 @@ export default function Header() {
     <header className="no-print border-b border-gov-line bg-white">
       <div className="mx-auto flex max-w-6xl items-center gap-8 px-4 py-4">
         <Link href="/" className="flex min-h-11 items-center gap-2">
-          <span className="text-[19px] font-extrabold tracking-tight text-gov-head">FarmFit</span>
+          <span className="text-[19px] font-extrabold tracking-tight text-gov-head">Seed Money</span>
           <span className="text-[12px] font-medium text-gov-ink2">농가 경영 · 여신설계</span>
         </Link>
         <nav

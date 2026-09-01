@@ -1,7 +1,7 @@
 import { Crumb, Page, PageTitle, Panel } from "@/components/gov";
 import { GLOSSARY } from "@/lib/content";
 
-export const metadata = { title: "용어사전 | FarmFit" };
+export const metadata = { title: "용어사전 | Seed Money" };
 
 export default function GlossaryPage() {
   return (
