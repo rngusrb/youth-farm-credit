@@ -14,10 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from dataclasses import asdict
 
-from engine.cashflow import monthly_cashflow
+from engine.cashflow import cashflow_for
 from engine.diagnose import DiagnoseInput, diagnose
 from engine.loan import repayment_schedule
-from engine.stress import run_stress
+from engine.errors import InsufficientCropData
+from engine.stress import stress_for
 from engine.params import (
     crops,
     crops_source,
@@ -203,97 +204,43 @@ def get_diagnose(diagnosis_id: str) -> dict:
 
 @app.post("/api/v1/cashflow")
 def cashflow(req: CashflowRequest) -> dict:
-    """월별 현금흐름. 연 단위로는 안 보이는 운전자금 부족 시점을 짚는다."""
+    """월별 현금흐름. 연 단위로는 안 보이는 운전자금 부족 시점을 짚는다.
+
+    조립은 engine.cashflow.cashflow_for 가 한다 — 도구(engine/tools.py)와 같은 경로를
+    써야 두 벌이 갈라지지 않는다. 여기서는 도메인 예외를 상태코드로 번역만 한다.
+    """
+    inp = DiagnoseInput(
+        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
+        other_debt_service=req.other_debt_service, product_id=req.product_id,
+    )
     try:
-        crop, product = get_crop(req.crop_id), get_product(req.product_id)
+        return cashflow_for(inp, req.principal, req.year)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from None
-    if not crop.gross_per_10a or not crop.cost_per_10a:
+    except InsufficientCropData as exc:
         raise HTTPException(
             status_code=409,
-            detail=f"{crop.name}은 총수입·경영비가 없어 월별 현금흐름을 낼 수 없습니다. "
-                   "python -m stats.calibrate_cashflow --write 로 채우세요.",
-        )
-    units = req.pyeong / unit_area_pyeong()
-    due = repayment_schedule(req.principal, product)
-    year_idx = min(req.year, len(due)) - 1
-    cf = monthly_cashflow(
-        gross=crop.gross_per_10a * units,
-        operating_cost=crop.cost_per_10a * units,
-        living_cost=req.living_cost,
-        debt_payment=float(due[year_idx]) + req.other_debt_service,
-        harvest_months=crop.harvest_months,
-    )
-    return {
-        "crop": {"id": crop.id, "name": crop.name, "cashflow_year": crop.cashflow_year,
-                 "income_year": crop.income_year,
-                 "rescaled": bool(getattr(crop, "cashflow_rescaled", False))},
-        "year": year_idx + 1,
-        "is_grace_year": year_idx < product.grace_years,
-        "annual": {
-            "gross": crop.gross_per_10a * units,
-            "operating_cost": crop.cost_per_10a * units,
-            "income": (crop.gross_per_10a - crop.cost_per_10a) * units,
-            "living_cost": req.living_cost,
-            "debt_payment": float(due[year_idx]),
-            "other_debt_service": req.other_debt_service,
-        },
-        "harvest_known": cf.harvest_known,
-        "harvest_months": list(cf.harvest_months),
-        "trough_month": cf.trough_month,
-        "trough_balance": cf.trough_balance,
-        "working_capital_need": cf.working_capital_need,
-        "annual_net": cf.annual_net,
-        "months": [asdict(m) for m in cf.months],
-        "note": (
-            "총수입은 출하월에, 경영비·생활비는 12개월 균등으로 배분합니다. "
-            "월별 경영비 배분에 대한 공개 통계가 없어 균등으로 두며, 지어내지 않습니다. "
-            "상환은 시행지침 '이자는 연 1회 후취'에 따라 마지막 출하월 다음 달로 봅니다."
-        ),
-    }
+            detail=f"{exc} python -m stats.calibrate_cashflow --write 로 채우세요.",
+        ) from None
 
 
 @app.post("/api/v1/stress")
 def stress(req: StressRequest) -> dict:
-    """스트레스 테스트. 특정한 나쁜 일이 실제로 일어나면 버티는지 본다."""
-    try:
-        crop, product = get_crop(req.crop_id), get_product(req.product_id)
-    except KeyError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from None
-    if not crop.gross_per_10a or not crop.cost_per_10a:
-        raise HTTPException(status_code=409, detail=f"{crop.name}은 총수입·경영비가 없습니다.")
+    """스트레스 테스트. 특정한 나쁜 일이 실제로 일어나면 버티는지 본다.
 
-    units = req.pyeong / unit_area_pyeong()
-    base = diagnose(DiagnoseInput(
+    조립은 engine.stress.stress_for 가 한다 (도구와 공용).
+    """
+    inp = DiagnoseInput(
         crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
         other_debt_service=req.other_debt_service, product_id=req.product_id,
         max_crisis_prob=req.max_crisis_prob,
-    ))
-    principal = req.principal if req.principal is not None else base["limits"]["risk_based"]
-    tolerance = base["limits"]["max_crisis_prob"]
-
-    results = run_stress(
-        gross=crop.gross_per_10a * units,
-        operating_cost=crop.cost_per_10a * units,
-        fixed_outflow=req.living_cost + req.other_debt_service,
-        principal=principal,
-        product=product,
-        sigma=base["sigma"],
-        max_crisis_prob=tolerance,
-        p_disaster=policy()["simulation"]["p_disaster"],
     )
-    return {
-        "principal": principal,
-        "tolerance": tolerance,
-        "sigma": base["sigma"],
-        "leverage": (crop.gross_per_10a / (crop.gross_per_10a - crop.cost_per_10a)),
-        "scenarios": [asdict(r) for r in results],
-        "note": (
-            "판정은 crisis_prob 가 아니라 distress_prob 로 합니다. 재해가 잦아지면 "
-            "상환연기가 자주 걸려 '부족'으로 세지 않게 되는데, 상환연기는 제도가 "
-            "구해준 것이지 농가가 버틴 것이 아니기 때문입니다."
-        ),
-    }
+    try:
+        return stress_for(inp, req.principal)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    except InsufficientCropData as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
 
 
 @app.post("/api/v1/explain", response_model=ExplainResponse)

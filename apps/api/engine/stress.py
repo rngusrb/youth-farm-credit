@@ -147,3 +147,50 @@ def run_stress(
             )
         )
     return out
+
+
+# ── 고수준 조립 (엔드포인트와 도구가 공유한다) ─────────────────────────────
+
+def stress_for(inp, principal: float | None = None) -> dict:
+    """진단 입력 → 시나리오별 스트레스 결과 (화면·도구 공용).
+
+    principal 을 안 주면 위험기반 권장 한도를 대상으로 잡는다.
+    """
+    from dataclasses import asdict
+
+    from .diagnose import diagnose
+    from .errors import InsufficientCropData
+    from .params import get_crop, get_product, policy, unit_area_pyeong
+
+    crop = get_crop(inp.crop_id)
+    product = get_product(inp.product_id)
+    if not crop.gross_per_10a or not crop.cost_per_10a:
+        raise InsufficientCropData(crop.name, "총수입·경영비")
+
+    units = inp.pyeong / unit_area_pyeong()
+    base = diagnose(inp)
+    target = principal if principal is not None else base["limits"]["risk_based"]
+    tolerance = base["limits"]["max_crisis_prob"]
+
+    results = run_stress(
+        gross=crop.gross_per_10a * units,
+        operating_cost=crop.cost_per_10a * units,
+        fixed_outflow=inp.living_cost + inp.other_debt_service,
+        principal=target,
+        product=product,
+        sigma=base["sigma"],
+        max_crisis_prob=tolerance,
+        p_disaster=policy()["simulation"]["p_disaster"],
+    )
+    return {
+        "principal": target,
+        "tolerance": tolerance,
+        "sigma": base["sigma"],
+        "leverage": crop.gross_per_10a / (crop.gross_per_10a - crop.cost_per_10a),
+        "scenarios": [asdict(r) for r in results],
+        "note": (
+            "판정은 crisis_prob 가 아니라 distress_prob 로 합니다. 재해가 잦아지면 "
+            "상환연기가 자주 걸려 '부족'으로 세지 않게 되는데, 상환연기는 제도가 "
+            "구해준 것이지 농가가 버틴 것이 아니기 때문입니다."
+        ),
+    }

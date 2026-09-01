@@ -105,3 +105,61 @@ def monthly_cashflow(
         working_capital_need=max(0.0, -trough.balance),
         annual_net=flows[-1].balance,
     )
+
+
+# ── 고수준 조립 (엔드포인트와 도구가 공유한다) ─────────────────────────────
+# main.py 와 engine/tools.py 가 각자 조립하면 두 벌이 되고 반드시 갈라진다.
+# 계산 경로는 하나만 둔다.
+
+def cashflow_for(inp, principal: float, year: int = 1) -> dict:
+    """진단 입력 + 원금 → 그 해의 월별 현금흐름 (화면·도구 공용).
+
+    작목에 총수입·경영비가 없으면 InsufficientCropData 를 던진다. 추정해 넣지 않는다.
+    """
+    from .errors import InsufficientCropData
+    from .loan import repayment_schedule
+    from .params import get_crop, get_product, unit_area_pyeong
+
+    crop = get_crop(inp.crop_id)
+    product = get_product(inp.product_id)
+    if not crop.gross_per_10a or not crop.cost_per_10a:
+        raise InsufficientCropData(crop.name, "총수입·경영비")
+
+    units = inp.pyeong / unit_area_pyeong()
+    due = repayment_schedule(principal, product)
+    year_idx = min(max(year, 1), len(due)) - 1
+    cf = monthly_cashflow(
+        gross=crop.gross_per_10a * units,
+        operating_cost=crop.cost_per_10a * units,
+        living_cost=inp.living_cost,
+        debt_payment=float(due[year_idx]) + inp.other_debt_service,
+        harvest_months=crop.harvest_months,
+    )
+    from dataclasses import asdict
+    return {
+        "crop": {"id": crop.id, "name": crop.name, "cashflow_year": crop.cashflow_year,
+                 "income_year": crop.income_year,
+                 "rescaled": bool(getattr(crop, "cashflow_rescaled", False))},
+        "year": year_idx + 1,
+        "is_grace_year": year_idx < product.grace_years,
+        "annual": {
+            "gross": crop.gross_per_10a * units,
+            "operating_cost": crop.cost_per_10a * units,
+            "income": (crop.gross_per_10a - crop.cost_per_10a) * units,
+            "living_cost": inp.living_cost,
+            "debt_payment": float(due[year_idx]),
+            "other_debt_service": inp.other_debt_service,
+        },
+        "harvest_known": cf.harvest_known,
+        "harvest_months": list(cf.harvest_months),
+        "trough_month": cf.trough_month,
+        "trough_balance": cf.trough_balance,
+        "working_capital_need": cf.working_capital_need,
+        "annual_net": cf.annual_net,
+        "months": [asdict(m) for m in cf.months],
+        "note": (
+            "총수입은 출하월에, 경영비·생활비는 12개월 균등으로 배분합니다. "
+            "월별 경영비 배분에 대한 공개 통계가 없어 균등으로 두며, 지어내지 않습니다. "
+            "상환은 시행지침 '이자는 연 1회 후취'에 따라 마지막 출하월 다음 달로 봅니다."
+        ),
+    }
