@@ -80,6 +80,7 @@ apps/api/tests/test_as_of.py
 apps/api/tests/test_income_band.py
 apps/api/tests/test_levers.py
 apps/api/tests/test_tools.py
+apps/api/tests/test_prescribe.py
 ```
 > `test_core_is_pure.py` = **불변식**. core 가 네트워크·DB·환경변수 없이 도는지 검사한다.
 
@@ -101,3 +102,4 @@ apps/api/tests/test_tools.py
 > 이 성질이 "숫자는 LLM 이 만들지 않는다"는 원칙의 기계적 보장이다.
 | `tools.py` | 엔진을 **도구**로 노출 — ToolSpec 선언·실행·refs 좌표 |
 | `errors.py` | core 도메인 예외 (HTTP 를 모른다) |
+| `benchmark.py` | 전국 작목 평균 대비 — 실적이 없으면 비교하지 않는다 |

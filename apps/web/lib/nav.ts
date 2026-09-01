@@ -49,6 +49,7 @@ export const FARMER: Item[] = [
   { href: "/app/safety", label: "금융 안전진단", desc: "값이 떨어지면 어떻게 되나" },
   { href: "/app/finance", label: "맞춤 금융지원", desc: "권장 차입 규모" },
   { href: "/app/levers", label: "얼마까지 받으려면", desc: "무엇을 바꾸면 되는지" },
+  { href: "/app/prescribe", label: "AI 맞춤 처방", desc: "평균 대비·조정안·신청서 초안" },
   { href: "/app/relief", label: "구제제도", desc: "상환연기·회생자금" },
   { href: "/app/assistant", label: "AI 상담", desc: "계산과 조항을 함께" },
   { href: "/app/reports", label: "내 리포트", desc: "저장된 진단" },
@@ -67,6 +68,7 @@ export const QUICK: Item[] = [
   { href: "/app/revenue", label: "수익 전망" },
   { href: "/app/safety", label: "안전진단" },
   { href: "/app/levers", label: "얼마까지" },
+  { href: "/app/prescribe", label: "맞춤 처방" },
   { href: "/policy", label: "제도 근거" },
   { href: "/crops", label: "작목 데이터" },
 ];

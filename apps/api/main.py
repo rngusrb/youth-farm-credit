@@ -19,6 +19,7 @@ from engine.cashflow import cashflow_for
 from engine.diagnose import DiagnoseInput, diagnose
 from engine.loan import repayment_schedule
 from engine.errors import InsufficientCropData
+from engine.benchmark import benchmark
 from engine.levers import solve_for
 from engine.stress import stress_for
 from engine.params import (
@@ -46,6 +47,8 @@ from schemas import (
     StressRequest,
     ConsultRequest,
     LeversRequest,
+    BenchmarkRequest,
+    PrescribeRequest,
 )
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -366,3 +369,55 @@ def consult_endpoint(req: ConsultRequest) -> dict:
     되묻기는 정상 흐름이므로 4xx 가 아니라 kind="ask" 로 돌려준다.
     """
     return consult(req.question, req.slots, req.persona).to_dict()
+
+
+@app.post("/api/v1/benchmark")
+def benchmark_endpoint(req: BenchmarkRequest) -> dict:
+    """전국 작목 평균 대비 내 농장 위치.
+
+    실적이 없으면 비교를 만들지 않는다 — 추정치끼리 비교하면 언제나 100%가 나온다.
+    """
+    try:
+        return benchmark(req.crop_id, req.pyeong, tuple(req.actual_income))
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    except InsufficientCropData as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
+
+
+@app.post("/api/v1/prescribe")
+def prescribe(req: PrescribeRequest) -> dict:
+    """맞춤 처방 — 진단 + 평균비교 + 레버 + 신청서 초안.
+
+    숫자는 전부 엔진이 만들고, 초안 문장의 수치는 그 값과 대조해 어긋나면 뺀다.
+    """
+    from llm.advisor import draft
+    from rag.answer import ask as regulation_ask
+
+    inp = DiagnoseInput(
+        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
+        other_debt_service=req.other_debt_service, product_id=req.product_id,
+        income_history=tuple(req.actual_income),
+    )
+    try:
+        base = diagnose(inp)
+        bench = benchmark(req.crop_id, req.pyeong, tuple(req.actual_income))
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    except InsufficientCropData as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
+
+    levers = None
+    if req.target_principal:
+        levers = {
+            "target_principal": req.target_principal,
+            "levers": [vars(l) for l in solve_for(inp, req.target_principal)],
+        }
+
+    cites = regulation_ask(f"{base['product']['name']} 지원 요건").get("citations", [])
+    return {
+        "diagnosis": base,
+        "benchmark": bench,
+        "levers": levers,
+        "draft": draft(base, levers, bench, cites),
+    }

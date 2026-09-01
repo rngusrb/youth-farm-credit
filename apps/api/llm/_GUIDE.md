@@ -142,3 +142,4 @@ apps/api/tests/test_agent.py
 | `narrate.py` | 계산 결과 → 문장. 템플릿 대체 경로 포함 |
 | `verify.py` | LLM 문장의 수치를 엔진 출력과 대조. 불일치 문장 제거 |
 | `planner.py` | 도구 선택 — LLM 출력을 스펙으로 검증, 키 없으면 키워드 폴백 |
+| `advisor.py` | 처방·신청서 초안 — 숫자는 도구 값, 제도는 조항 인용만 |

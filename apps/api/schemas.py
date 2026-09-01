@@ -130,3 +130,23 @@ class LeversRequest(BaseModel):
     target_principal: float = Field(gt=0)
     movables: list[str] | None = None
     product_id: str = DEFAULT_PRODUCT_ID
+
+
+class BenchmarkRequest(BaseModel):
+    """전국 작목 평균 대비. 실적이 없으면 비교하지 않는다."""
+
+    crop_id: str
+    pyeong: float = Field(gt=0)
+    actual_income: list[float] = Field(default_factory=list)
+
+
+class PrescribeRequest(BaseModel):
+    """진단·레버·평균비교·조항을 묶어 처방과 신청서 초안을 만든다."""
+
+    crop_id: str
+    pyeong: float = Field(gt=0)
+    living_cost: float = Field(ge=0)
+    other_debt_service: float = Field(default=0.0, ge=0)
+    target_principal: float | None = Field(default=None, gt=0)
+    actual_income: list[float] = Field(default_factory=list)
+    product_id: str = DEFAULT_PRODUCT_ID

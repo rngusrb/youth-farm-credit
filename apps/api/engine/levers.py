@@ -71,6 +71,9 @@ class Lever:
     from_value: float
     to_value: float | None          # None = 탐색 범위 안에서 달성 불가
     delta_ratio: float | None       # to/from - 1 (음수면 감소)
+    #: 문장에 실제로 쓰는 값(부호 없는 퍼센트). 표시용 파생값을 도구가 내보내지 않으면
+    #: 검증기가 그 숫자를 '지어낸 것'으로 보고 문장을 버린다 (2026-09-01 실측).
+    delta_pct: float | None
     crisis_prob_before: float
     crisis_prob_after: float | None
     reachable: bool
@@ -178,8 +181,9 @@ def solve_for(
         label, unit = LABELS[var]
 
         if current <= 0 and lower_is_better:      # 이미 0이면 더 줄일 수 없다
-            out.append(Lever(var, label, unit, current, None, None, before, None, False,
-                             lo, hi, f"{label}이(가) 이미 0이라 더 줄일 수 없습니다"))
+            out.append(Lever(var, label, unit, current, None, None, None, before, None,
+                             False, lo, hi,
+                             f"{label}{_josa(label, '이', '가')} 이미 0이라 더 줄일 수 없습니다"))
             continue
 
         found = _bisect(lo, hi, TOLERANCE[var], prob_at, max_crisis_prob,
@@ -188,7 +192,7 @@ def solve_for(
         if found is None:
             edge = lo if lower_is_better else hi
             out.append(Lever(
-                var, label, unit, current, None, None, before, prob_at(edge), False,
+                var, label, unit, current, None, None, None, before, prob_at(edge), False,
                 lo, hi,
                 f"탐색 범위({_fmt(lo, unit)}~{_fmt(hi, unit)}) 안에서는 목표에 닿지 않습니다"))
             continue
@@ -196,8 +200,9 @@ def solve_for(
         after = prob_at(found)
         ratio = (found / current - 1.0) if current else None
         out.append(Lever(
-            var, label, unit, current, found, ratio, before, after, True,
-            lo, hi, _note(label, current, found, unit)))
+            var, label, unit, current, found, ratio,
+            None if ratio is None else abs(ratio) * 100.0,
+            before, after, True, lo, hi, _note(label, current, found, unit)))
 
     return out
 

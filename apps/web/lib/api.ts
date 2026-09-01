@@ -525,3 +525,64 @@ export async function consult(body: {
   if (!res.ok) throw new Error((await res.text()) || "상담에 실패했습니다");
   return res.json();
 }
+
+
+/** 전국 작목 평균 대비. 실적이 없으면 comparable=false 로 온다 — 화면이 입력을 유도한다. */
+export type CropTraits = {
+  cost_ratio: number | null;
+  sigma: number;
+  sigma_rank: number;
+  sigma_total: number;
+  driver: string | null;
+  driver_label: string | null;
+  income_year: number | null;
+};
+
+export type Benchmark = {
+  crop_id: string;
+  crop_name: string;
+  crop_traits: CropTraits;
+  comparable: boolean;
+  reason?: string;
+  message?: string;
+  years_required?: number;
+  my_income?: number;
+  average_income?: number;
+  ratio?: number;
+  years?: number;
+  source: string;
+  note: string;
+};
+
+export type Draft = {
+  body: string;
+  dropped: string[];
+  numbers_used: number[];
+  method: string;
+  citations: Citation[];
+  disclaimer: string;
+};
+
+export type Prescription = {
+  diagnosis: Diagnosis;
+  benchmark: Benchmark;
+  levers: { target_principal: number; levers: Lever[] } | null;
+  draft: Draft;
+};
+
+export async function prescribe(body: {
+  crop_id: string;
+  pyeong: number;
+  living_cost: number;
+  other_debt_service?: number;
+  target_principal?: number;
+  actual_income?: number[];
+}): Promise<Prescription> {
+  const res = await fetch(`${API_BASE}/api/v1/prescribe`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error((await res.text()) || "처방을 만들지 못했습니다");
+  return res.json();
+}
