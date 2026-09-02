@@ -20,6 +20,8 @@ from engine.diagnose import DiagnoseInput, diagnose
 from engine.loan import repayment_schedule
 from engine.errors import InsufficientCropData
 from engine.benchmark import benchmark
+from engine.fundingmap import funding_map
+from engine.switch import switch_candidates
 from engine.levers import solve_for
 from engine.stress import stress_for
 from engine.params import (
@@ -49,6 +51,8 @@ from schemas import (
     LeversRequest,
     BenchmarkRequest,
     PrescribeRequest,
+    FundingMapRequest,
+    SwitchRequest,
 )
 
 logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"))
@@ -421,3 +425,34 @@ def prescribe(req: PrescribeRequest) -> dict:
         "levers": levers,
         "draft": draft(base, levers, bench, cites),
     }
+
+
+@app.post("/api/v1/funding-map")
+def funding_map_endpoint(req: FundingMapRequest) -> dict:
+    """25년 자금지도 — 거치 종료·상환 급증·부족 시점을 연도별로."""
+    inp = DiagnoseInput(
+        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
+        other_debt_service=req.other_debt_service, product_id=req.product_id,
+    )
+    try:
+        principal = req.principal
+        if principal is None:
+            principal = diagnose(inp)["limits"]["risk_based"]
+        if principal <= 0:
+            raise HTTPException(
+                status_code=409,
+                detail="상환여력 기준 권장 차입이 0이라 자금지도를 그릴 수 없습니다. "
+                       "면적이나 생활비를 확인해 주세요.",
+            )
+        return funding_map(inp, principal)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+
+
+@app.post("/api/v1/switch")
+def switch_endpoint(req: SwitchRequest) -> dict:
+    """작목 전환 후보. **전환 비용 미반영** 을 응답이 명시한다."""
+    try:
+        return switch_candidates(req.crop_id, req.pyeong, req.top_n)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None

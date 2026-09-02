@@ -586,3 +586,77 @@ export async function prescribe(body: {
   if (!res.ok) throw new Error((await res.text()) || "처방을 만들지 못했습니다");
   return res.json();
 }
+
+
+/** 25년 자금지도 — 언제 부담이 커지는가. 화면은 그리기만 한다. */
+export type YearPoint = {
+  year: number;
+  due: number;
+  is_grace: boolean;
+  capacity: number;
+  coverage: number;
+  shortfall_prob: number;
+};
+
+export type FundingMapResult = {
+  principal: number;
+  crop_name: string;
+  grace_years: number;
+  term_years: number;
+  years: YearPoint[];
+  milestones: { year: number | null; kind: string; label: string }[];
+  note: string;
+};
+
+export async function fetchFundingMap(body: {
+  crop_id: string;
+  pyeong: number;
+  living_cost: number;
+  other_debt_service?: number;
+  principal?: number;
+}): Promise<FundingMapResult> {
+  const res = await fetch(`${API_BASE}/api/v1/funding-map`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error((await res.text()) || "자금지도를 만들지 못했습니다");
+  return res.json();
+}
+
+/** 작목 전환 후보. **전환 비용 미반영** — 화면이 반드시 밝힌다. */
+export type SwitchCandidate = {
+  crop_id: string;
+  crop_name: string;
+  income: number;
+  income_ratio: number;
+  sigma: number;
+  sigma_delta: number;
+  cost_ratio: number | null;
+  harvest_months: number[];
+  overlap_ratio: number;
+  blended_sigma: number | null;
+  has_market_data: boolean;
+};
+
+export type SwitchResult = {
+  current: { crop_id: string; crop_name: string; income: number; sigma: number; harvest_months: number[] };
+  replace: SwitchCandidate[];
+  diversify: SwitchCandidate[];
+  cost_not_modelled: boolean;
+  note: string;
+};
+
+export async function fetchSwitch(body: {
+  crop_id: string;
+  pyeong: number;
+  top_n?: number;
+}): Promise<SwitchResult> {
+  const res = await fetch(`${API_BASE}/api/v1/switch`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error((await res.text()) || "전환 후보를 만들지 못했습니다");
+  return res.json();
+}

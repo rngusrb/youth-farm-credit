@@ -150,3 +150,22 @@ class PrescribeRequest(BaseModel):
     target_principal: float | None = Field(default=None, gt=0)
     actual_income: list[float] = Field(default_factory=list)
     product_id: str = DEFAULT_PRODUCT_ID
+
+
+class FundingMapRequest(BaseModel):
+    """25년 자금지도 — 언제 부담이 커지는가."""
+
+    crop_id: str
+    pyeong: float = Field(gt=0)
+    living_cost: float = Field(ge=0)
+    other_debt_service: float = Field(default=0.0, ge=0)
+    principal: float | None = Field(default=None, gt=0)
+    product_id: str = DEFAULT_PRODUCT_ID
+
+
+class SwitchRequest(BaseModel):
+    """작목 전환 후보. 전환 비용은 반영하지 않는다."""
+
+    crop_id: str
+    pyeong: float = Field(gt=0)
+    top_n: int = Field(default=5, ge=1, le=10)

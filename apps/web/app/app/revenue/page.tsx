@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { Badge, Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import CashflowChart from "@/components/gov/CashflowChart";
-import { fetchCashflow, runDiagnose, type Cashflow, type Diagnosis } from "@/lib/api";
+import FundingMap from "@/components/FundingMap";
+import { fetchCashflow, runDiagnose, type Cashflow, type Diagnosis,
+  fetchFundingMap,
+  type FundingMapResult,
+} from "@/lib/api";
 import { headlineLimit } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
 import { won } from "@/lib/format";
@@ -15,6 +19,7 @@ export default function RevenuePage() {
   const [year, setYear] = useState<number | null>(null);
   const [principal, setPrincipal] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [map, setMap] = useState<FundingMapResult | null>(null);
 
   useEffect(() => {
     if (!profile) return;
@@ -41,6 +46,17 @@ export default function RevenuePage() {
       .then(setCf)
       .catch((e) => setError(e instanceof Error ? e.message : "현금흐름 계산 실패"));
   }, [profile, year, principal]);
+
+  // 25년 자금지도 — 연 단위 표로는 안 보이는 '언제부터 부담이 커지나' 를 한 장으로.
+  useEffect(() => {
+    if (!profile || principal == null || principal <= 0) return;
+    fetchFundingMap({
+      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
+      other_debt_service: profile.otherDebtService, principal,
+    })
+      .then(setMap)
+      .catch(() => undefined);   // 지도는 보조 정보다. 실패해도 본문은 보여준다
+  }, [profile, principal]);
 
   if (!ready) return null;
   if (!profile) {
@@ -80,6 +96,24 @@ export default function RevenuePage() {
               </div>
             </Panel>
           </Section>
+
+          {map && (
+            <Section title="25년 자금지도">
+              <Panel>
+                <p className="mb-3 text-[13px] text-gov-ink2">
+                  {won(map.principal)} 을 빌렸을 때, 해마다 얼마를 갚고 그게 상환여력에 견줘
+                  어느 정도인지 한 장으로 본 것이에요.
+                </p>
+                <FundingMap data={map} />
+                <ul className="mt-3 space-y-1">
+                  {map.milestones.filter((m) => m.label).map((m) => (
+                    <li key={m.kind} className="text-[13px] text-gov-head">· {m.label}</li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-[12px] text-gov-ink3">{map.note}</p>
+              </Panel>
+            </Section>
+          )}
 
           <Section title="월별 현금흐름">
             <Panel>

@@ -103,3 +103,5 @@ apps/api/tests/test_prescribe.py
 | `tools.py` | 엔진을 **도구**로 노출 — ToolSpec 선언·실행·refs 좌표 |
 | `errors.py` | core 도메인 예외 (HTTP 를 모른다) |
 | `benchmark.py` | 전국 작목 평균 대비 — 실적이 없으면 비교하지 않는다 |
+| `fundingmap.py` | 25년 자금지도 — 연도별 상환 부담과 분기점(거치 종료·원금 급증·부족 시점) |
+| `switch.py` | 작목 전환 후보 — 같은 면적 재계산·출하월 분산 효과. **전환비 미반영** |

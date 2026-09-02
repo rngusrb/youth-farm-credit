@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Badge, Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { prescribe, type Prescription } from "@/lib/api";
+import { fetchSwitch, prescribe, type Prescription, type SwitchResult } from "@/lib/api";
 import { pct, won } from "@/lib/format";
 import { useFarm } from "@/lib/useFarm";
 
@@ -21,6 +21,7 @@ export default function PrescribePage() {
   const [data, setData] = useState<Prescription | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sw, setSw] = useState<SwitchResult | null>(null);
 
   async function run(targetPrincipal?: number) {
     if (!profile) return;
@@ -45,7 +46,12 @@ export default function PrescribePage() {
   }
 
   useEffect(() => {
-    if (profile) void run();
+    if (!profile) return;
+    void run();
+    // 작목 전환은 보조 제안이다. 실패해도 본문은 보여준다.
+    fetchSwitch({ crop_id: profile.cropId, pyeong: profile.pyeong })
+      .then(setSw)
+      .catch(() => undefined);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile]);
 
@@ -167,6 +173,42 @@ export default function PrescribePage() {
               )}
             </Panel>
           </Section>
+
+          {sw && (sw.replace.length > 0 || sw.diversify.length > 0) && (
+            <Section title="작목을 바꾸거나 섞으면">
+              <Panel>
+                {sw.diversify.length > 0 && (
+                  <>
+                    <p className="text-[13px] font-semibold text-gov-head">절반씩 섞으면 더 안정적인 조합</p>
+                    <ul className="mt-1 space-y-1">
+                      {sw.diversify.slice(0, 3).map((c) => (
+                        <li key={c.crop_id} className="text-[13px] text-gov-ink">
+                          · {sw.current.crop_name} + {c.crop_name} — 변동성{" "}
+                          {sw.current.sigma.toFixed(3)} → <b>{c.blended_sigma?.toFixed(3)}</b>
+                          <span className="text-gov-ink2"> (출하월 겹침 {pct(c.overlap_ratio)})</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                {sw.replace.length > 0 && (
+                  <>
+                    <p className="mt-3 text-[13px] font-semibold text-gov-head">같은 면적으로 바꾼다면</p>
+                    <ul className="mt-1 space-y-1">
+                      {sw.replace.slice(0, 3).map((c) => (
+                        <li key={c.crop_id} className="text-[13px] text-gov-ink">
+                          · {c.crop_name} — 소득 {pct(c.income_ratio)} 수준, 변동성{" "}
+                          {c.sigma.toFixed(3)} ({c.sigma_delta >= 0 ? "+" : ""}
+                          {c.sigma_delta.toFixed(3)})
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                <Notice tone="warn" title="전환 비용은 반영하지 않았습니다">{sw.note}</Notice>
+              </Panel>
+            </Section>
+          )}
 
           <Section title="신청서 초안">
             <Panel>
