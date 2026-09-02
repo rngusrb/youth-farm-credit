@@ -7,7 +7,7 @@ type Props = {
   targetDscr: number;
 };
 
-/** 격차 카드 — 신청 가능 한도 vs 권장 한도. 결과 화면에서 가장 크게. */
+/** 격차 카드 — 신청 가능 한도 vs 은행이 보는 선(DSCR). 결과 화면에서 가장 크게. */
 export default function GapCard({ available, recommended, gap, targetDscr }: Props) {
   const share = available > 0 ? Math.max(0, Math.min(recommended / available, 1)) : 0;
   return (

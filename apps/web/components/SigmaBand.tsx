@@ -89,7 +89,7 @@ export default function SigmaBand({
             {" "}{Math.round((assumedShare ?? 0) * 100)}%가 가정</b>입니다.
           </>
         )}
-        {" "}σ를 어떻게 잡느냐에 따라 권장 한도({won(recommended)})의 위험이 이만큼
+        {" "}σ를 어떻게 잡느냐에 따라 은행이 보는 선({won(recommended)})의 위험이 이만큼
         달라집니다.
       </p>
       {sigmaReference && !personalized && (
@@ -194,9 +194,9 @@ export default function SigmaBand({
       <p className="mt-3 text-xs leading-relaxed text-paper-ink3">
         {breakEven === null ? (
           <>
-            가장 낙관적인 σ({data[0].sigma.toFixed(2)})에서도 권장 한도의 위기확률이
+            가장 낙관적인 σ({data[0].sigma.toFixed(2)})에서도 은행이 보는 선의 위기확률이
             목표 {pct(maxCrisisProb)}를 넘습니다. 변동성을 어떻게 잡든 이 조건에서
-            권장 한도는 부담스러운 금액입니다.
+            은행이 보는 선은 부담스러운 금액입니다.
           </>
         ) : (
           <>
@@ -204,7 +204,7 @@ export default function SigmaBand({
             <span className="tabular font-semibold text-paper-ink2">
               {breakEven.toFixed(2)}
             </span>
-            입니다. 실제 변동성이 이보다 작으면 권장 한도가 목표 위험 안에 들어오고,
+            입니다. 실제 변동성이 이보다 작으면 은행이 보는 선이 목표 위험 안에 들어오고,
             크면 벗어납니다.
           </>
         )}{" "}

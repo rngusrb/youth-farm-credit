@@ -35,6 +35,18 @@ except httpx.TimeoutException as e:
 
 ## 금지사항
 
+### ❌ 한도 이름을 흔들어 쓰기
+```
+# ❌ 문장은 recommended(4.07억)를 "권장 한도", 타일은 risk_based(2.7억)를 "권장 차입"
+# ✅ available=신청 가능 한도 / recommended=은행이 보는 선 / risk_based=권장 차입
+```
+**사고 이력**: 2026-09-02 상담사 화면 하나에서 "권장"이 두 금액에 붙었다.
+프롬프트가 "신청 가능 한도와 권장 한도의 격차"라고 시켜서 LLM 이 recommended 를
+권장이라 불렀는데, 화면 타일은 risk_based 를 권장 차입이라 부르고 있었다.
+농가는 어느 게 권장인지 알 수 없다. 프롬프트에 세 이름을 못박았다.
+
+
+
 ### ❌ `client.messages.create` 를 직접 부르기
 ```python
 # ❌ 금지 — 빈 응답이 조용히 넘어간다

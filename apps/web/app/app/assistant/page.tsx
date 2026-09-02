@@ -144,6 +144,10 @@ export default function AssistantPage() {
               pyeong: p.pyeong,
               living_cost: p.livingCost,
               other_debt_service: p.otherDebtService,
+              // 실적을 안 보내면 상담사만 작목 통계 추정치로 계산한다 —
+              // 건강검진·자금지도는 실적을 쓰는데 여기만 달라져서 상환 가용액이
+              // 1,833만원 / 3,304만원 두 값으로 갈렸다 (2026-09-02).
+              ...(p.incomeHistory?.length ? { income_history: p.incomeHistory } : {}),
             }
           : {},
       });
