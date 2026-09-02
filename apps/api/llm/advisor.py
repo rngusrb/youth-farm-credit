@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import logging
 
-from .client import MODEL, get_client
+from .client import complete, get_client
 from .verify import verify_text
 
 log = logging.getLogger(__name__)
@@ -124,17 +124,11 @@ def draft(diagnosis: dict, levers: dict | None = None, bench: dict | None = None
     text = ""
 
     if client is not None:
-        try:
-            msg = client.messages.create(
-                model=MODEL, max_tokens=900,
-                messages=[{"role": "user", "content": _PROMPT.format(
-                    facts=_facts_block(diagnosis, levers, bench),
-                    clauses=_clause_block(citations))}],
-            )
-            text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
-        except Exception as exc:
-            log.warning("초안 생성 실패, 템플릿으로 대체: %s", exc)
-            text = ""
+        text = complete(
+            _PROMPT.format(facts=_facts_block(diagnosis, levers, bench),
+                           clauses=_clause_block(citations)),
+            max_tokens=1600, purpose="신청서 초안", client=client,
+        )
 
     if not text.strip():
         text, method = _template(diagnosis, levers, bench, citations), "template"

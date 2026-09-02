@@ -70,6 +70,11 @@ ui_check:
       yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
       yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
       yfc.reports.v1: '[{"id": "dg_new", "cropName": "딸기(시설,수경)", "pyeong": 1500, "productName": "후계농업경영인 육성자금", "riskLimit": 268000000, "crisisProb": 0.0812, "savedAt": 1787900000000}, {"id": "dg_old", "cropName": "딸기(시설,수경)", "pyeong": 1200, "productName": "후계농업경영인 육성자금", "riskLimit": 210815430, "crisisProb": 0.0999, "savedAt": 1787700000000}]'
+    # 실적·계획을 넣은 농가. 이게 없으면 "실적 기반 소득"·"올해 계획대로" 블록이
+    # 영영 검사되지 않는다 — 기본 프로필의 incomeHistory 가 [] 라 항상 추정 경로로만 돈다.
+    farmer_with_actuals:
+      yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1300,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[48000000,52000000,45000000],"productId":"successor_farmer","plannedPyeong":1800,"targetPrincipal":300000000}'
     bank:
       yfc.session.v1: '{"id":"222222","role":"bank","name":"박심사","org":"농협은행 여신심사부","at":1}'
       yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
@@ -89,6 +94,14 @@ ui_check:
     - { path: "/app/finance",  as: farmer }
     - { path: "/app/relief",   as: farmer }
     - { path: "/app/reports",  as: farmer_with_history }
+    # 2026-09-02: 아래 다섯이 목록에 없어 **한 번도 검사된 적이 없었다.**
+    # levers·prescribe·assistant 는 만들어 놓고 대상에 안 넣었고,
+    # checkup·map 은 이번에 새로 만든 5단계 화면이다.
+    - { path: "/app/checkup",   as: farmer_with_actuals }
+    - { path: "/app/map",       as: farmer_with_actuals }
+    - { path: "/app/levers",    as: farmer_with_actuals }
+    - { path: "/app/prescribe", as: farmer_with_actuals }
+    - { path: "/app/assistant", as: farmer }
     - { path: "/bank",          as: bank }
     - { path: "/bank/applicants", as: bank }
     - { path: "/bank/capacity", as: bank }

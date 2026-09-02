@@ -41,18 +41,38 @@ export const PORTAL: Group[] = [
   },
 ];
 
-/** 농가용 업무 메뉴 */
-export const FARMER: Item[] = [
-  { href: "/app", label: "홈", desc: "내 농가 요약" },
-  { href: "/app/farm", label: "내 농가 정보", desc: "작목·면적·부채" },
-  { href: "/app/revenue", label: "수익 전망", desc: "월별 현금흐름" },
+/** 농가용 업무 메뉴 — 명세의 5단계가 그대로 메뉴다.
+ *
+ * 2026-09-02 이전에는 메뉴가 10개 평평하게 놓여 있었다. 기능은 다 있었는데
+ * **핵심 기능인 자금지도가 "수익 전망" 안 세 번째 섹션에 묻혀 있었고**,
+ * 건강검진이 "맞춤 처방" 안에 있었다. 순서를 봐도 무엇부터 해야 하는지 안 보였다.
+ *
+ * 그래서 다섯 단계를 앞에 두고 나머지는 "자세히 보기"로 내렸다.
+ * **지우지 않았다** — 여섯 개 다 채워져 있는 화면이다.
+ */
+export const FARMER_STEPS: Item[] = [
+  { href: "/app/farm", label: "내 농장 정보 입력", desc: "농장·경영·자금 계획" },
+  { href: "/app/checkup", label: "AI 농가 건강검진", desc: "평균 대비 내 농장 상태" },
+  { href: "/app/map", label: "AI 농사 자금지도", desc: "1년 현금흐름과 위험 시점" },
+  { href: "/app/assistant", label: "AI 농가 상담사", desc: "묻고 시뮬레이션하기" },
+  { href: "/app/prescribe", label: "AI 맞춤 처방", desc: "정책·신청서·작목전환" },
+];
+
+/** 단계 안에서 더 파고들 때 쓰는 화면들. 메뉴 아래쪽에 접어 둔다. */
+export const FARMER_DETAIL: Item[] = [
+  { href: "/app/revenue", label: "수익 전망", desc: "연간 수지와 월별 명세" },
   { href: "/app/safety", label: "금융 안전진단", desc: "값이 떨어지면 어떻게 되나" },
   { href: "/app/finance", label: "맞춤 금융지원", desc: "권장 차입 규모" },
   { href: "/app/levers", label: "얼마까지 받으려면", desc: "무엇을 바꾸면 되는지" },
-  { href: "/app/prescribe", label: "AI 맞춤 처방", desc: "평균 대비·조정안·신청서 초안" },
   { href: "/app/relief", label: "구제제도", desc: "상환연기·회생자금" },
-  { href: "/app/assistant", label: "AI 상담", desc: "계산과 조항을 함께" },
   { href: "/app/reports", label: "내 리포트", desc: "저장된 진단" },
+];
+
+/** 기존 소비자(WorkChrome 등)가 쓰는 평평한 목록. 홈이 맨 앞. */
+export const FARMER: Item[] = [
+  { href: "/app", label: "홈", desc: "내 농가 요약" },
+  ...FARMER_STEPS,
+  ...FARMER_DETAIL,
 ];
 
 /** 금융기관용 업무 메뉴 */
@@ -65,9 +85,9 @@ export const BANK: Item[] = [
 ];
 
 export const QUICK: Item[] = [
-  { href: "/app/revenue", label: "수익 전망" },
-  { href: "/app/safety", label: "안전진단" },
-  { href: "/app/levers", label: "얼마까지" },
+  { href: "/app/checkup", label: "건강검진" },
+  { href: "/app/map", label: "자금지도" },
+  { href: "/app/assistant", label: "AI 상담사" },
   { href: "/app/prescribe", label: "맞춤 처방" },
   { href: "/policy", label: "제도 근거" },
   { href: "/crops", label: "작목 데이터" },

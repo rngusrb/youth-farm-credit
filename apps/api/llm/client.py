@@ -61,3 +61,49 @@ def get_client():
 
 def available() -> bool:
     return get_client() is not None
+
+
+#: 응답에서 본문이 비어 돌아오는 흔한 원인이 **thinking 토큰이 max_tokens 를
+#: 다 먹는 것**이다. 그러면 예외도 없고 stop_reason 도 end_turn 인데 text 블록만
+#: 없다. 이 값 아래로는 본문이 안 남을 수 있어 하한을 둔다.
+MIN_MAX_TOKENS = 1200
+
+
+def complete(prompt: str, *, client, max_tokens: int = MIN_MAX_TOKENS,
+             purpose: str = "") -> str:
+    """프롬프트 하나 → 본문 텍스트. 실패·빈 응답은 **반드시 로그를 남긴다.**
+
+    사고 이력 2026-09-02: `answer_from_tools` 가 max_tokens=700 으로 부르면
+    thinking 이 예산을 다 써 text 블록이 비어 돌아왔다. 예외가 아니라서
+    `if not text: 템플릿` 갈래로 **조용히** 떨어졌고, 같은 질문에 어떤 때는 LLM
+    문장이, 어떤 때는 템플릿 문장이 나왔다. 이 프로젝트가 금지하는 silent
+    fallback 이 정확히 이 모양이다 — 예외가 없으니 아무도 모른다.
+
+    키가 없으면 빈 문자열을 돌려준다. 호출부는 그대로 규칙기반 경로로 간다.
+
+    `client` 는 **필수**다. 여기서 `get_client()` 를 부르지 않는다 — 호출부는 이미
+    키 유무를 판단한 뒤이고, 여기서 또 부르면 **스텁 지점이 둘로 갈라져** 테스트가
+    가짜(또는 None)를 꽂아도 진짜 호출이 나간다. 2026-09-02 두 번 그렇게 됐다:
+    한 번은 되가져오기를 넣어서, 한 번은 기본값 None 을 되가져오기로 되살려서.
+    """
+    if client is None:
+        return ""
+    budget = max(int(max_tokens), MIN_MAX_TOKENS)
+    try:
+        msg = client.messages.create(
+            model=MODEL, max_tokens=budget,
+            messages=[{"role": "user", "content": prompt}],
+        )
+    except Exception as exc:
+        log.warning("LLM 호출 실패%s: %s", f" ({purpose})" if purpose else "", exc)
+        return ""
+
+    text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+    if not text.strip():
+        log.warning(
+            "LLM 이 본문 없이 응답%s (stop_reason=%s, 블록=%s, max_tokens=%d). "
+            "thinking 이 예산을 다 썼을 가능성이 큽니다 — 규칙기반으로 대체합니다.",
+            f" ({purpose})" if purpose else "", getattr(msg, "stop_reason", "?"),
+            [getattr(b, "type", "?") for b in msg.content], budget,
+        )
+    return text

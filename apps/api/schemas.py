@@ -16,8 +16,12 @@ class DiagnoseRequest(BaseModel):
     other_debt_service: float = Field(default=0.0, ge=0, le=1_000_000_000)
     requested_principal: float | None = Field(default=None, ge=0)
     product_id: str = DEFAULT_PRODUCT_ID
-    # 연도순 농업소득 이력(원). 3개년 이상이면 σ 를 개인화한다.
+    # 연도순 농업소득 이력(원). 3개년 이상이면 σ 와 소득 수준을 개인화한다.
     income_history: list[float] = Field(default_factory=list, max_length=40)
+    # 그 실적을 낸 면적(평). **pyeong 과 다른 면적을 물을 때 반드시 보낸다** —
+    # 안 보내면 실적이 지금 묻는 면적에서 나온 것으로 잡혀, "1,800평으로 늘리면"
+    # 이 지금과 똑같은 값을 낸다 (2026-09-02 계획 비교 화면에서 그렇게 나왔다).
+    income_history_pyeong: float | None = Field(default=None, gt=0, le=1_000_000)
     # 감내할 2년연속 위기확률. 외부 근거가 없는 우리 기준값이라 사용자가 정하게 둔다.
     max_crisis_prob: float | None = Field(default=None, gt=0.005, le=0.5)
 
@@ -129,6 +133,9 @@ class LeversRequest(BaseModel):
     other_debt_service: float = Field(default=0.0, ge=0)
     target_principal: float = Field(gt=0)
     movables: list[str] | None = None
+    # 실적 이력. 진단과 같은 소득 기준으로 계산해야 화면마다 다른 답이 나오지 않는다.
+    # 2026-09-02: 이 화면만 이력을 안 넘겨서 홈과 다른 소득으로 레버를 풀고 있었다.
+    actual_income: list[float] = Field(default_factory=list)
     product_id: str = DEFAULT_PRODUCT_ID
 
 

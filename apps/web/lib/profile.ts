@@ -11,6 +11,15 @@ export type FarmProfile = {
   otherDebtService: number; // 원
   incomeHistory: number[];  // 원, 연도순
   productId: string;
+
+  // ── 올해 계획 ──────────────────────────────────────────────────────
+  // **엔진이 실제로 쓰는 것만 받는다.** '자금 용도'를 넣지 않은 이유가 이것이다 —
+  // 상품이 후계농 자금 2종뿐이라 용도로 갈리는 계산이 없다. 계산에 안 쓰이는
+  // 입력란은 채우게 만들어 놓고 아무것도 안 하는 장식이 된다.
+  /** 올해 하려는 면적(평). 없으면 현재 면적으로 본다. */
+  plannedPyeong?: number;
+  /** 빌리려는 금액(원). 없으면 각 화면이 권장 한도를 기본값으로 쓴다. */
+  targetPrincipal?: number;
 };
 
 export type SavedReport = {

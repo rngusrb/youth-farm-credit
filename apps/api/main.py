@@ -345,6 +345,7 @@ def levers(req: LeversRequest) -> dict:
     inp = DiagnoseInput(
         crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
         other_debt_service=req.other_debt_service, product_id=req.product_id,
+        income_history=tuple(req.actual_income),
     )
     movables = tuple(req.movables) if req.movables else ("living_cost", "other_debt_service", "pyeong")
     try:
@@ -396,7 +397,7 @@ def prescribe(req: PrescribeRequest) -> dict:
     숫자는 전부 엔진이 만들고, 초안 문장의 수치는 그 값과 대조해 어긋나면 뺀다.
     """
     from llm.advisor import draft
-    from rag.answer import ask as regulation_ask
+    from rag.answer import citations_for
 
     inp = DiagnoseInput(
         crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
@@ -418,7 +419,8 @@ def prescribe(req: PrescribeRequest) -> dict:
             "levers": [vars(l) for l in solve_for(inp, req.target_principal)],
         }
 
-    cites = regulation_ask(f"{base['product']['name']} 지원 요건").get("citations", [])
+    # 인용만 필요하다. ask() 를 부르면 아무도 안 읽는 답변 문장을 9초 걸려 만든다.
+    cites = citations_for(f"{base['product']['name']} 지원 요건")
     return {
         "diagnosis": base,
         "benchmark": bench,

@@ -22,11 +22,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable
 
+from .benchmark import benchmark
 from .cashflow import cashflow_for
 from .diagnose import DiagnoseInput, diagnose
+from .fundingmap import funding_map
 from .levers import solve_for
 from .params import get_crop as _get_crop
 from .stress import stress_for
+from .switch import switch_candidates
 
 
 @dataclass(frozen=True)
@@ -84,6 +87,25 @@ def _t_stress(**args) -> dict:
     return stress_for(_diag_input(args), float(principal) if principal else None)
 
 
+def _t_switch(**args) -> dict:
+    """작목 전환 후보. 전환 비용을 반영하지 못한다는 사실이 결과에 실려 나간다."""
+    return switch_candidates(str(args["crop_id"]), float(args["pyeong"]),
+                             int(args.get("top_n") or 5))
+
+
+def _t_funding_map(**args) -> dict:
+    inp = _diag_input(args)
+    principal = args.get("principal")
+    if not principal:
+        principal = diagnose(inp)["limits"]["risk_based"]
+    return funding_map(inp, float(principal))
+
+
+def _t_benchmark(**args) -> dict:
+    return benchmark(str(args["crop_id"]), float(args["pyeong"]),
+                     tuple(args.get("actual_income") or args.get("income_history") or ()))
+
+
 def _t_solve_for(**args) -> dict:
     inp = _diag_input(args)
     movables = tuple(args.get("movables") or ("living_cost", "other_debt_service", "pyeong"))
@@ -138,6 +160,34 @@ ENGINE_TOOLS: dict[str, ToolSpec] = {
             optional=("other_debt_service", "movables"),
             returns=("target_principal",),
             fn=_t_solve_for,
+        ),
+        ToolSpec(
+            name="switch_crop",
+            summary=("같은 면적으로 다른 작목을 하면 소득·변동성이 어떻게 되는지, "
+                     "두 작목을 절반씩 섞으면 얼마나 안정되는지 계산한다. "
+                     "전환 비용은 반영하지 못한다"),
+            required=("crop_id", "pyeong"),
+            optional=("top_n",),
+            returns=("current.income", "current.sigma"),
+            fn=_t_switch,
+        ),
+        ToolSpec(
+            name="funding_map",
+            summary=("거치 종료·원금 상환 시작·상환여력 초과·부족확률 초과가 "
+                     "각각 몇 년차인지 연도별로 계산한다"),
+            required=("crop_id", "pyeong", "living_cost"),
+            optional=("other_debt_service", "principal", "income_history"),
+            returns=("principal", "grace_years", "term_years"),
+            fn=_t_funding_map,
+        ),
+        ToolSpec(
+            name="benchmark",
+            summary="전국 같은 작목 평균과 견줘 내 소득이 어디쯤인지 계산한다",
+            required=("crop_id", "pyeong"),
+            optional=("actual_income", "income_history"),
+            returns=("crop_traits.sigma", "crop_traits.sigma_rank",
+                     "crop_traits.sigma_total"),
+            fn=_t_benchmark,
         ),
     )
 }

@@ -31,8 +31,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal
 
-from .diagnose import DiagnoseInput
-from .income import annual_income
+from .diagnose import DiagnoseInput, resolve_sigma
+from .income import resolve_income
 from .params import get_crop, get_product
 from .risk_limit import DEFAULT_MAX_CRISIS_PROB
 from .simulate import crisis_prob_at, draw_paths
@@ -95,11 +95,19 @@ def _crisis_at(
 
     생활비·부채만 바뀌면 소득 경로는 그대로다 — 경로 재생성을 건너뛴다.
     """
-    crop = get_crop(inp.crop_id)
     product = get_product(inp.product_id)
     use_pyeong = inp.pyeong if pyeong is None else pyeong
-    income = annual_income(inp.crop_id, use_pyeong)
-    sigma = sigma_override if sigma_override is not None else float(crop.sigma)
+    # 진단과 **같은 함수**로 소득을 정한다. 실적이 있으면 실적, 없으면 작목 통계.
+    # 2026-09-02 여기가 annual_income 을 직접 부르고 있어서, 실적을 넣은 농가는
+    # 진단과 레버가 서로 다른 소득으로 계산되고 있었다.
+    income, _ = resolve_income(inp.crop_id, use_pyeong, inp.income_history,
+                               inp.income_history_pyeong)
+    # σ 도 진단과 같은 경로로 정한다. 2026-09-02 여기가 작목 σ 를 그대로 써서,
+    # 실적을 넣은 농가는 진단(개인 σ)과 레버(작목 σ)가 다른 분포로 돌고 있었다.
+    if sigma_override is not None:
+        sigma = sigma_override
+    else:
+        sigma, _meta = resolve_sigma(get_crop(inp.crop_id), inp.income_history)
     paths = draw_paths(income, sigma, product)
     fixed = (inp.living_cost if living_cost is None else living_cost) + (
         inp.other_debt_service if other_debt is None else other_debt

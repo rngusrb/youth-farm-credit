@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Badge, Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import CashflowChart from "@/components/gov/CashflowChart";
@@ -101,16 +102,12 @@ export default function RevenuePage() {
             <Section title="25년 자금지도">
               <Panel>
                 <p className="mb-3 text-[13px] text-gov-ink2">
-                  {won(map.principal)} 을 빌렸을 때, 해마다 얼마를 갚고 그게 상환여력에 견줘
-                  어느 정도인지 한 장으로 본 것이에요.
+                  {won(map.principal)} 을 빌렸을 때 해마다 얼마를 갚는지 한 장으로 본 것이에요.
+                  분기점 설명과 연차별 조작은{" "}
+                  <Link href="/app/map" className="text-gov-link underline">AI 농사 자금지도</Link>
+                  에 있어요.
                 </p>
                 <FundingMap data={map} />
-                <ul className="mt-3 space-y-1">
-                  {map.milestones.filter((m) => m.label).map((m) => (
-                    <li key={m.kind} className="text-[13px] text-gov-head">· {m.label}</li>
-                  ))}
-                </ul>
-                <p className="mt-2 text-[12px] text-gov-ink3">{map.note}</p>
               </Panel>
             </Section>
           )}

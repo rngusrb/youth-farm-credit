@@ -86,6 +86,18 @@ def _llm_answer(question: str, hits: list[dict]) -> str | None:
         return None
 
 
+def citations_for(question: str, context: dict | None = None) -> list[dict]:
+    """조항 인용만 찾는다. **답변 문장은 만들지 않는다.**
+
+    사고 이력 2026-09-02: 처방(`/api/v1/prescribe`)이 `ask()` 를 부르고 `citations`
+    만 꺼내 쓰고 있었다. 답변 문장은 버리는데 그걸 만드느라 **9초**가 갔다.
+    처방 전체가 40초 걸리는데 그중 9초가 아무도 안 읽는 문장이었다.
+
+    인용은 검색(retrieval)이 만든다 — LLM 이 만드는 게 아니다. 그래서 그냥 뺀다.
+    """
+    return [_citation(h) for h in search(question, context)]
+
+
 def ask(question: str, context: dict | None = None) -> dict:
     hits = search(question, context)
     if not hits:

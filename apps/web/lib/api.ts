@@ -50,6 +50,15 @@ export type Diagnosis = {
   };
   income: {
     annual: number;
+    /** 이 소득이 어디서 왔나. ACTUAL=실적 평균, CROP_AVERAGE=작목 통계 추정.
+     *  화면은 반드시 이걸 밝힌다 — 밝히지 않으면 추정치를 실적처럼 읽는다. */
+    source: "ACTUAL" | "CROP_AVERAGE";
+    /** 실적이 있으면 그 평균, 없으면 null */
+    actual_mean: number | null;
+    /** 작목 통계로 추정한 값. 견주는 기준으로 항상 온다 */
+    crop_average: number;
+    history_years: number;
+    source_note: string;
     capacity: number;
     /** 평년 소득이 흔들리는 범위 [하위10%, 상위10%]. 엔진이 낸다 — 화면에서 σ 를 환산하지 말 것. */
     band_p10_p90: [number, number];
@@ -223,6 +232,8 @@ export const runDiagnose = (payload: {
   requested_principal?: number | null;
   product_id?: string;
   income_history?: number[];
+  /** 그 실적을 낸 면적(평). pyeong 과 다른 면적을 물을 때 반드시 보낸다. */
+  income_history_pyeong?: number | null;
   max_crisis_prob?: number | null;
 }) => post<Diagnosis>("/api/v1/diagnose", payload);
 
@@ -468,6 +479,7 @@ export async function solveFor(body: {
   other_debt_service?: number;
   target_principal: number;
   movables?: string[];
+  actual_income?: number[];
 }): Promise<LeversResult> {
   const res = await fetch(`${API_BASE}/api/v1/levers`, {
     method: "POST",
@@ -569,6 +581,21 @@ export type Prescription = {
   levers: { target_principal: number; levers: Lever[] } | null;
   draft: Draft;
 };
+
+/** 평균 비교만 따로 — 건강검진 화면이 처방 전체를 부르지 않아도 되게. */
+export async function fetchBenchmark(body: {
+  crop_id: string;
+  pyeong: number;
+  actual_income?: number[];
+}): Promise<Benchmark> {
+  const res = await fetch(`${API_BASE}/api/v1/benchmark`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error((await res.text()) || "평균 비교를 만들지 못했습니다");
+  return res.json();
+}
 
 export async function prescribe(body: {
   crop_id: string;

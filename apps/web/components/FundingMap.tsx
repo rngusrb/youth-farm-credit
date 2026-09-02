@@ -14,9 +14,13 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
   const years = data.years;
   if (years.length === 0) return null;
 
-  const W = 720;
-  const H = 240;
-  const PAD = { top: 16, right: 12, bottom: 28, left: 56 };
+  // viewBox 폭을 **최소 표시 폭과 같게** 맞춘다. 720 좌표계를 560px 로 줄여 그리면
+  // 12px 로 적은 글씨가 실제로는 9px 로 보인다 — 검사는 통과하는데 눈에는 안 보인다.
+  // 2026-09-02 ui_check 가 축 라벨 9~10px 를 잡았고, 폰트만 키우는 건 속임수라
+  // 좌표계 자체를 1:1 로 맞췄다.
+  const W = 600;
+  const H = 260;
+  const PAD = { top: 18, right: 12, bottom: 32, left: 68 };
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
 
@@ -36,7 +40,7 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
         aria-label={`${data.term_years}년 자금지도. 거치 ${graceEnd}년, ${
           risky.length ? `${risky[0]}년차부터 부족 위험` : "부족 위험 구간 없음"
         }.`}
-        className="w-full min-w-[560px]"
+        className="w-full min-w-[600px]"
       >
         {/* 거치 구간 음영 — 이자만 내는 기간 */}
         <rect
@@ -44,7 +48,7 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
           width={barW * graceEnd} height={plotH}
           className="fill-gov-sunk"
         />
-        <text x={PAD.left + 6} y={PAD.top + 14} className="fill-gov-ink3 text-[10px]">
+        <text x={PAD.left + 6} y={PAD.top + 14} className="fill-gov-ink3 text-[12px]">
           거치 {graceEnd}년 · 이자만
         </text>
 
@@ -92,20 +96,20 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
         />
         {[0, maxVal / 2, maxVal].map((v, i) => (
           <text key={i} x={PAD.left - 6} y={y(v) + 3} textAnchor="end"
-                className="fill-gov-ink3 text-[9px]">
+                className="fill-gov-ink3 text-[12px]">
             {Math.round(v / 10_000).toLocaleString()}만
           </text>
         ))}
         {years.filter((_, i) => i % 5 === 0 || i === years.length - 1).map((p) => (
           <text key={p.year} x={x(p.year - 1) + barW / 2} y={H - 10} textAnchor="middle"
-                className="fill-gov-ink3 text-[9px]">
+                className="fill-gov-ink3 text-[12px]">
             {p.year}년
           </text>
         ))}
       </svg>
 
       <figcaption className="mt-2 space-y-1">
-        <div className="flex flex-wrap gap-3 text-[11px] text-gov-ink2">
+        <div className="flex flex-wrap gap-3 text-[12px] text-gov-ink2">
           <span><span className="mr-1 inline-block h-2 w-3 bg-gov-line align-middle" />거치(이자만)</span>
           <span><span className="mr-1 inline-block h-2 w-3 bg-gov-head align-middle" />원금+이자</span>
           <span><span className="mr-1 inline-block h-2 w-3 bg-gov-warn align-middle" />그 해 부족확률 20%↑</span>

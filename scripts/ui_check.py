@@ -166,11 +166,26 @@ PROBE = r"""
     const clipped = s.clip !== "auto" || s.clipPath !== "none" || s.overflow === "hidden";
     return r.width <= 2 && r.height <= 2 && clipped && s.position === "absolute";
   };
+  // WCAG 2.5.5/2.5.8 의 **Inline 예외**: "대상이 문장 안에 있거나, 크기가 주변
+  // 본문의 행간에 묶여 있는 경우" 는 44×44 를 요구하지 않는다.
+  // 2026-09-02 이 예외가 없어서 "…<a>수익 전망</a>에서 볼 수 있어요" 같은 문장 속
+  // 링크가 전부 위반으로 잡혔다. 그걸 통과시키려면 문장을 비틀어야 하는데, 그건
+  // 규격이 요구하지도 않는 일이다. **검사를 규격에 맞춘다.**
+  //   조건 두 개를 모두 만족해야 한다 —
+  //   ① 계산된 display 가 inline (블록으로 만든 버튼·카드는 예외가 아니다)
+  //   ② 부모가 이 대상 말고도 실제 글자를 갖고 있다 (= 문장 안이다)
+  const inlineInSentence = (el) => {
+    if (getComputedStyle(el).display !== "inline") return false;
+    const p = el.parentElement;
+    if (!p) return false;
+    return Array.from(p.childNodes).some(
+      (n) => n.nodeType === 3 && n.textContent.trim().length > 0);
+  };
   const boxes = [];
   for (const el of document.querySelectorAll(INTERACTIVE)) {
     if (!visible(el) || focusOnly(el)) continue;
     const r = el.getBoundingClientRect();
-    if (el.type !== "hidden" && (r.width < 44 || r.height < 44))
+    if (el.type !== "hidden" && (r.width < 44 || r.height < 44) && !inlineInSentence(el))
       out.push({ rule: "touch_target", where: sel(el),
                  detail: `${Math.round(r.width)}×${Math.round(r.height)} < 44×44` });
     boxes.push({ el, r });

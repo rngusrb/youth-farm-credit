@@ -24,7 +24,21 @@ ARGS = {
     "cashflow": {**BASE, "principal": 200_000_000.0},
     "stress": {**BASE, "principal": 200_000_000.0},
     "solve_for": {**BASE, "target_principal": 280_000_000.0},
+    "switch_crop": {"crop_id": "strawberry_hydro", "pyeong": 1300.0},
+    "funding_map": {**BASE, "principal": 200_000_000.0},
+    "benchmark": {"crop_id": "strawberry_hydro", "pyeong": 1300.0,
+                  "actual_income": [48_000_000.0, 52_000_000.0, 45_000_000.0]},
 }
+
+
+def test_every_tool_has_test_args():
+    """도구를 추가하면 여기 인자도 추가해야 한다 — 안 그러면 좌표 검사를 안 받는다.
+
+    2026-09-02 switch_crop·funding_map·benchmark 를 추가하자 fixture 가 KeyError 로
+    죽으며 곧바로 잡혔다. 그 실패 방식에 기대지 않고 이유를 말해 주는 검사로 둔다.
+    """
+    missing = sorted(set(ENGINE_TOOLS) - set(ARGS))
+    assert not missing, f"tests/test_tools.py 의 ARGS 에 인자가 없는 도구: {missing}"
 
 
 @pytest.fixture(scope="module")

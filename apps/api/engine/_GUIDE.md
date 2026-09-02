@@ -89,6 +89,7 @@ apps/api/tests/test_prescribe.py
 | 모듈 | 역할 |
 |---|---|
 | `params.py` | crops/loan_products/policy 로더. 데이터 정의의 단일 출처 |
+| `income.py` | 소득 수준 결정 — 실적 3개년↑이면 실적(면적당 환산), 아니면 작목 통계 |
 | `loan.py` | 상환 스케줄·연금계수·최대상환액. 원금균등/원리금균등 분기 |
 | `income.py` | 작목·면적 → 연 소득 |
 | `dscr.py` | 상환여력, DSCR 한도 역산, 최소면적 |

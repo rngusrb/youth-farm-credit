@@ -37,7 +37,7 @@ def catalog() -> dict[str, ToolSpec]:
 
     return {**ENGINE_TOOLS, **RAG_TOOLS}
 
-from .client import MODEL, get_client
+from .client import complete, get_client
 
 log = logging.getLogger(__name__)
 
@@ -96,8 +96,14 @@ def _tool_lines() -> str:
 
 _MONEY = re.compile(r"(\d[\d,]*\.?\d*)\s*(억|천만|만)\s*원?")
 
+#: 위에서부터 먼저 걸리는 규칙이 이긴다. **더 구체적인 말이 위로 간다** —
+#: "자금지도"는 "자금"을 품고 있어서 아래에 두면 cashflow 로 새 버린다.
 _RULES: tuple[tuple[tuple[str, ...], tuple[str, ...]], ...] = (
     (("재해", "자격", "요건", "지침", "조항", "나이", "연령", "교육"), ("search_regulation",)),
+    (("자금지도", "년차", "언제부터", "절벽", "거치"), ("funding_map",)),
+    (("작목 전환", "작목전환", "바꾸", "전환", "섞", "분산", "다른 작목"),
+     ("switch_crop", "diagnose")),
+    (("평균", "견주", "남들", "다른 농가", "비교"), ("benchmark",)),
     (("현금", "자금", "부족", "달", "월별", "운전"), ("cashflow",)),
     (("가격", "하락", "금리", "시나리오", "스트레스", "버틸"), ("stress",)),
     (("얼마", "한도", "빌", "대출", "차입"), ("diagnose",)),
@@ -200,11 +206,9 @@ def plan(question: str, slots: dict | None = None) -> Plan:
     for attempt in range(MAX_PLAN_CALLS):
         calls += 1
         try:
-            msg = client.messages.create(
-                model=MODEL, max_tokens=700,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+            # complete() 가 빈 응답도 로그로 남긴다 — thinking 이 max_tokens 를
+            # 다 먹으면 예외 없이 본문만 비어 돌아온다 (2026-09-02).
+            text = complete(prompt, max_tokens=1600, purpose="계획 수립", client=client)
             raw = json.loads(_json_slice(text))
         except Exception as exc:                       # 조용히 넘어가지 않는다
             log.warning("계획 파싱 실패(%d회차): %s", attempt + 1, exc)

@@ -253,7 +253,7 @@ export default function AssistantPage() {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="궁금한 것을 물어보세요"
-            className="w-full rounded-lg border border-gov-line px-3 py-2.5 text-[14px]"
+            className="w-full min-h-11 rounded-lg border border-gov-line px-3 py-2.5 text-[14px]"
           />
         </label>
         <button

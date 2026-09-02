@@ -21,6 +21,8 @@ export default function FarmPage() {
   const [living, setLiving] = useState("2400");
   const [debt, setDebt] = useState("");
   const [history, setHistory] = useState("");
+  const [planPyeong, setPlanPyeong] = useState("");
+  const [planPrincipal, setPlanPrincipal] = useState("");
   const [sentence, setSentence] = useState("");
   const [reading, setReading] = useState(false);
   const [readNote, setReadNote] = useState<string | null>(null);
@@ -39,6 +41,10 @@ export default function FarmPage() {
           setLiving(String(prev.livingCost / MAN));
           setDebt(prev.otherDebtService ? String(prev.otherDebtService / MAN) : "");
           setHistory(prev.incomeHistory.map((v) => v / MAN).join(", "));
+          setPlanPyeong(prev.plannedPyeong ? String(prev.plannedPyeong) : "");
+          setPlanPrincipal(
+            prev.targetPrincipal ? String(prev.targetPrincipal / MAN) : "",
+          );
         }
       })
       .catch(() => setError("백엔드에 연결하지 못했어요."));
@@ -86,6 +92,8 @@ export default function FarmPage() {
       livingCost: Number(living || 0) * MAN,
       otherDebtService: Number(debt || 0) * MAN,
       incomeHistory: parsedHistory,
+      plannedPyeong: Number(planPyeong) || undefined,
+      targetPrincipal: Number(planPrincipal) ? Number(planPrincipal) * MAN : undefined,
     });
     setError(null);
     router.push("/app");
@@ -169,7 +177,8 @@ export default function FarmPage() {
           <Panel>
             <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
               연도순 농업소득을 만원 단위로, 쉼표로 구분해 넣어 주세요. 3개년 이상이면 작목
-              평균 대신 <b className="text-gov-ink">내 농가의 실제 변동성</b>으로 계산해요.
+              평균 대신 <b className="text-gov-ink">내 농가의 실제 소득과 변동성</b>으로 계산해요
+              — 평균보다 잘 벌면 한도가 올라가고, 못 벌면 내려가요.
             </p>
             <label htmlFor="history" className="sr-only">연도순 농업소득</label>
             <textarea id="history" rows={3} value={history} onChange={(e) => setHistory(e.target.value)}
@@ -189,10 +198,38 @@ export default function FarmPage() {
           </Panel>
         </Section>
 
+        <Section title="올해 농사·자금 계획 (선택)">
+          <Panel>
+            <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
+              올해 하려는 규모와 빌리려는 금액을 넣으면, 모든 화면이 <b className="text-gov-ink">그
+              계획대로 계산</b>해요. 넣지 않으면 지금 면적과 권장 한도로 봅니다.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className={label} htmlFor="planPyeong">올해 하려는 면적 (평)</label>
+                <input id="planPyeong" inputMode="numeric" value={planPyeong}
+                       onChange={(e) => setPlanPyeong(e.target.value)}
+                       placeholder="안 늘리면 비워 두세요" className={field} />
+              </div>
+              <div>
+                <label className={label} htmlFor="planPrincipal">빌리려는 금액 (만원)</label>
+                <input id="planPrincipal" inputMode="numeric" value={planPrincipal}
+                       onChange={(e) => setPlanPrincipal(e.target.value)}
+                       placeholder="아직 모르면 비워 두세요" className={field} />
+              </div>
+            </div>
+            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
+              자금 용도는 받지 않아요. 지금 제도가 후계농 자금 2종뿐이라 용도로 갈리는 계산이
+              없어서예요 — 채우게 해 놓고 아무것도 하지 않는 칸은 두지 않습니다.
+            </p>
+          </Panel>
+        </Section>
+
         <div className="flex flex-wrap items-center gap-3">
           <Btn type="submit">저장하고 홈으로</Btn>
           <button type="button"
-                  onClick={() => { clearProfile(); setPyeong(""); setHistory(""); setDebt(""); }}
+                  onClick={() => { clearProfile(); setPyeong(""); setHistory(""); setDebt("");
+                                 setPlanPyeong(""); setPlanPrincipal(""); }}
                   className="inline-flex min-h-11 items-center text-[13px] text-gov-ink3 underline underline-offset-2 hover:text-gov-point">
             저장된 정보 지우기
           </button>

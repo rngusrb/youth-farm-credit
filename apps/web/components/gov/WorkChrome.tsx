@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BANK, FARMER } from "@/lib/nav";
+import { BANK, FARMER, FARMER_DETAIL, FARMER_STEPS } from "@/lib/nav";
 import { ROLE_LABEL } from "@/lib/auth";
 import { useSession } from "@/lib/useSession";
 
@@ -68,7 +68,81 @@ export default function WorkChrome({ children }: { children: React.ReactNode }) 
 
       <div className="mx-auto flex max-w-6xl gap-7 px-4">
         <nav aria-label="업무 메뉴" className="hidden w-52 shrink-0 border-r border-gov-line2 py-6 lg:block">
-          <ul>
+          {/* 농가용은 명세의 5단계가 곧 메뉴다. 번호를 붙여 순서를 보이게 한다. */}
+          {session.role !== "bank" && (
+            <>
+              <Link
+                href="/app"
+                aria-current={path === "/app" ? "page" : undefined}
+                className={`flex min-h-11 items-center border-l-[3px] py-2.5 pl-3 pr-2 text-[13px] ${
+                  path === "/app"
+                    ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
+                    : "border-transparent text-gov-ink2 hover:bg-gov-sunk hover:text-gov-ink"
+                }`}
+              >
+                홈
+              </Link>
+              <ol className="mt-1">
+                {FARMER_STEPS.map((i, n) => {
+                  const active = path.startsWith(i.href);
+                  return (
+                    <li key={i.href}>
+                      <Link
+                        href={i.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`flex gap-2 border-l-[3px] py-2.5 pl-3 pr-2 ${
+                          active
+                            ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
+                            : "border-transparent text-gov-ink2 hover:bg-gov-sunk hover:text-gov-ink"
+                        }`}
+                      >
+                        <span
+                          aria-hidden
+                          className={`mt-px inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[12px] font-bold ${
+                            active ? "bg-gov-head text-white" : "bg-gov-sunk text-gov-ink2"
+                          }`}
+                        >
+                          {n + 1}
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[13px] leading-tight">{i.label}</span>
+                          {i.desc && (
+                            <span className="block text-[12px] text-gov-ink3">{i.desc}</span>
+                          )}
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ol>
+              <p className="mt-5 px-3 text-[12px] font-semibold tracking-wide text-gov-ink2">
+                자세히 보기
+              </p>
+              <ul>
+                {FARMER_DETAIL.map((i) => {
+                  const active = isReport
+                    ? i.href.endsWith("/reports")
+                    : path.startsWith(i.href);
+                  return (
+                    <li key={i.href}>
+                      <Link
+                        href={i.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`flex min-h-11 items-center border-l-[3px] py-2 pl-3 pr-2 text-[13px] ${
+                          active
+                            ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
+                            : "border-transparent text-gov-ink2 hover:bg-gov-sunk hover:text-gov-ink"
+                        }`}
+                      >
+                        {i.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+          <ul className={session.role === "bank" ? "" : "hidden"}>
             {menu.map((i) => {
               const active = isReport
                 ? i.href.endsWith("/reports")

@@ -23,6 +23,7 @@ from typing import Any
 from engine.errors import InsufficientCropData
 from llm.planner import catalog
 from llm import planner as planner_mod
+from llm.answer_tools import answer_from_tools
 from llm.narrate import narrate
 from llm.verify import verify_text
 from rag.answer import ask as regulation_ask
@@ -147,15 +148,21 @@ def consult(question: str, slots: dict | None = None, persona: str = "farmer") -
 
     diagnosis = results.get("diagnose")
     text, dropped, used = "", [], []
-    if diagnosis is not None and budget.llm_left() > 0:
+    if budget.llm_left() <= 0:
+        text = "설명 예산을 다 써서 계산 결과만 보여드려요."
+    elif diagnosis is not None:
         n = narrate(diagnosis, persona=persona) if _narrate_takes_persona() else narrate(diagnosis)
         budget.llm_calls += 1
         raw = n if isinstance(n, str) else n.get("body", "")
         # 허용 수치는 **쓴 도구 전부**에서 모은다. diagnosis 만 넘기면 stress·funding_map 이
         # 낸 값을 인용한 문장이 통째로 잘린다 — advisor 에서 같은 버그를 이미 겪었다 (2026-09-01).
         text, dropped, used = verify_text(raw, results)
-    elif diagnosis is not None:
-        text = "설명 예산을 다 써서 계산 결과만 보여드려요."
+    else:
+        # 진단 말고 다른 도구만 쓴 질문. narrate 는 진단 전용이라 여기로 온다.
+        # 2026-09-02: 이 갈래가 없어서 "가지로 바꾸면?" 에 도구를 정확히 골라
+        # 실행하고도 **본문이 빈 채로** 답했다.
+        text, dropped, used = answer_from_tools(question, results)
+        budget.llm_calls += 1
 
     return Answer(kind="answer", text=text, citations=citations, numbers_used=used,
                   dropped=dropped, trace=trace, warnings=p.warnings,

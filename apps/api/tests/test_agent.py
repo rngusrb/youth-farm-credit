@@ -145,7 +145,12 @@ def _stub_narrate(monkeypatch):
     검사하지 않는 것에 매 실행 돈을 쓸 이유가 없다.
     """
     import agent
+    from llm import answer_tools
+
     monkeypatch.setattr(agent, "narrate", lambda d, **k: {"body": "해설 스텁."})
+    # 도구 해설도 같은 이유로 막는다. 이쪽은 자기 모듈의 get_client 를 쓰므로
+    # 플래너를 스텁해도 그대로 실제 호출이 나간다.
+    monkeypatch.setattr(answer_tools, "get_client", lambda: None)
 
 
 def test_consult_respects_tool_budget(monkeypatch):
@@ -171,3 +176,35 @@ def test_consult_records_failed_tool_without_dying(monkeypatch):
     a = agent.consult("얼마까지?", {**SLOTS, "crop_id": "nope"})
     failed = [t for t in a.trace if not t.ok]
     assert failed and failed[0].error
+
+
+# ── 진단이 아닌 도구만 쓴 질문에도 답이 나온다 ─────────────────────────────
+#
+# 사고 이력 2026-09-02: switch_crop·funding_map·benchmark 를 도구로 추가했는데
+# consult 가 `results.get("diagnose")` 가 있을 때만 해설했다. 그래서
+# "가지로 바꾸면 안정될까요?" 에 도구를 **정확히 골라 실행하고도 본문이 비었다.**
+# 도구를 늘릴 때 그 결과를 말로 바꾸는 경로를 같이 만들지 않으면 이렇게 된다.
+
+
+def test_answer_without_diagnosis_is_not_empty(monkeypatch):
+    import agent
+
+    payload = {"ask": [], "steps": [{"tool": "switch_crop", "args": {
+        "crop_id": SLOTS["crop_id"], "pyeong": SLOTS["pyeong"]}}], "reason": ""}
+    monkeypatch.setattr(P, "get_client", lambda: _client(payload))
+    a = agent.consult("가지로 바꾸거나 섞으면 안정될까요?", SLOTS)
+
+    assert [t.tool for t in a.trace] == ["switch_crop"]
+    assert a.text.strip(), "도구는 돌았는데 본문이 비었다"
+    assert "switch_crop" not in a.text, "내부 도구·필드 이름이 답변에 새어 나왔다"
+
+
+def test_tool_answer_still_drops_fabricated_numbers(monkeypatch):
+    """다른 경로여도 검증은 똑같이 건다."""
+    from llm import answer_tools as AT
+
+    results = {"switch_crop": {"current": {"crop_name": "딸기", "sigma": 0.215}}}
+    monkeypatch.setattr(AT, "complete",
+                        lambda *a, **k: "변동성이 0.215에서 0.777로 낮아집니다.")
+    kept, dropped, _ = AT.answer_from_tools("바꾸면?", results)
+    assert dropped and not kept, f"지어낸 0.777 이 통과했다: {kept}"

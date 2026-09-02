@@ -39,6 +39,7 @@ export default function LeversPage() {
       pyeong: profile.pyeong,
       living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService,
+          income_history: profile.incomeHistory,
     })
       .then(setDiag)
       .catch(() => undefined);
@@ -64,6 +65,7 @@ export default function LeversPage() {
           pyeong: profile.pyeong,
           living_cost: profile.livingCost,
           other_debt_service: profile.otherDebtService,
+          actual_income: profile.incomeHistory,
           target_principal: target,
         }),
       );
@@ -110,7 +112,7 @@ export default function LeversPage() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder={safe ? String(Math.round(safe * 1.5)) : "300000000"}
-                className="w-full rounded-lg border border-gov-line px-3 py-2 text-[15px]"
+                className="w-full min-h-11 rounded-lg border border-gov-line px-3 py-2 text-[15px]"
               />
             </label>
             <Btn type="submit" disabled={loading}>

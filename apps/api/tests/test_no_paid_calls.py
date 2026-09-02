@@ -31,15 +31,27 @@ import pytest
 CALLS = Counter()
 
 
+#: 요금이 나가는 진입점을 **전부** 막는다.
+#: 2026-09-02 `create` 만 감시했더니 `messages.parse` 를 쓰는 슬롯 추출이 통째로
+#: 안 보였다. 검사가 0건이라 보고하는 동안 추출 테스트는 실제 LLM 을 타고 있었고,
+#: 모델이 다른 작목을 고른 날 하네스가 흔들렸다. **감시 목록을 좁게 잡으면
+#: 검사가 눈이 먼 채로 통과한다.**
+PAID_METHODS = ("create", "parse", "stream")
+
+
 @pytest.fixture(autouse=True)
 def _count_llm(monkeypatch, request):
     import anthropic.resources.messages as M
 
-    def spy(self, *a, **k):
-        CALLS[request.node.nodeid] += 1
-        raise RuntimeError("유료 호출 차단")   # 실제로 돈이 나가진 않게 막는다
+    for name in PAID_METHODS:
+        if not hasattr(M.Messages, name):
+            continue
 
-    monkeypatch.setattr(M.Messages, "create", spy)
+        def spy(self, *a, _n=name, **k):
+            CALLS[f"{request.node.nodeid} [{_n}]"] += 1
+            raise RuntimeError("유료 호출 차단")   # 실제로 돈이 나가진 않게 막는다
+
+        monkeypatch.setattr(M.Messages, name, spy)
 
 
 def pytest_sessionfinish(session, exitstatus):

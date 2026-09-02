@@ -55,7 +55,24 @@ def test_diagnose_rejects_bad_id():
     assert client.get("/api/v1/diagnose/not-an-id").status_code == 400
 
 
-def test_extract_blocks_calculation_when_slot_missing():
+@pytest.fixture
+def rules_only(monkeypatch):
+    """슬롯 추출을 규칙기반 경로로 고정한다.
+
+    사고 이력 2026-09-02: 이 세 개가 실제 LLM 을 타고 있었고, 어느 날 모델이
+    "부모님 하우스 딸기"를 strawberry_soil 로 골라 하네스가 깨졌다.
+    유료호출 검사가 `create` 만 보고 있어 **0건이라고 보고하는 동안** 계속
+    나가고 있었다 (추출은 `messages.parse` 를 쓴다).
+
+    계약은 "단위를 환산한다 · 없는 값을 지어내지 않는다 · 빠진 값을 되묻는다"이지
+    "모델이 딸기 품종을 맞힌다"가 아니다. 규칙기반 경로에서 그 계약을 잰다.
+    """
+    from llm import extract as E
+
+    monkeypatch.setattr(E, "get_client", lambda: None)
+
+
+def test_extract_blocks_calculation_when_slot_missing(rules_only):
     r = client.post(
         "/api/v1/extract",
         json={"text": "부모님 하우스 물려받아서 딸기 해보려는데 1000평쯤 되고 대출 얼마나 받을 수 있나요"},
@@ -68,13 +85,13 @@ def test_extract_blocks_calculation_when_slot_missing():
     assert r["followup_question"]
 
 
-def test_extract_never_invents_values():
+def test_extract_never_invents_values(rules_only):
     r = client.post("/api/v1/extract", json={"text": "안녕하세요"}).json()
     assert all(v is None for v in r["slots"].values())
     assert r["defaults_applied"] == []
 
 
-def test_extract_unit_conversion():
+def test_extract_unit_conversion(rules_only):
     r = client.post("/api/v1/extract", json={"text": "딸기 수경 1ha 생활비 연 2400만원"}).json()
     assert r["slots"]["pyeong"] == pytest.approx(3025, rel=0.001)
     assert r["slots"]["living_cost"] == 24_000_000

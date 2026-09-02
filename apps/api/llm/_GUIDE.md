@@ -35,6 +35,25 @@ except httpx.TimeoutException as e:
 
 ## 금지사항
 
+### ❌ `client.messages.create` 를 직접 부르기
+```python
+# ❌ 금지 — 빈 응답이 조용히 넘어간다
+msg = client.messages.create(model=MODEL, max_tokens=700, messages=[...])
+text = "".join(b.text for b in msg.content if b.type == "text")
+
+# ✅ 대신 — complete() 가 빈 응답도 로그로 남기고 max_tokens 하한을 건다
+text = complete(prompt, client=client, max_tokens=1600, purpose="도구 결과 해설")
+```
+**사고 이력**: 2026-09-02 `max_tokens=700` 로 부르니 thinking 이 예산을 다 써서
+text 블록이 **비어** 돌아왔다. 예외가 아니고 stop_reason 도 end_turn 이라 아무도
+몰랐고, 같은 질문에 어떤 때는 LLM 문장이 어떤 때는 템플릿 문장이 나왔다.
+이 프로젝트가 금지하는 silent fallback 이 정확히 이 모양이다.
+
+`complete()` 는 `client` 를 **필수 인자**로 받는다. 안에서 `get_client()` 를 부르면
+스텁 지점이 둘로 갈라져, 테스트가 가짜를 꽂아도 진짜 호출이 나간다 — 같은 날 두 번 겪었다.
+
+
+
 ### ❌ 내부 필드명을 답변에 노출
 ```
 # ❌ "…원금까지 합쳐 연 1,950만원으로 뛰는 구조입니다(cliff_multiple 약 4.3배)"
@@ -138,6 +157,8 @@ pattern: "except\s+\w*(APIError|Exception)[^:]*:\s*(pass|continue)"
 message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 즉시 중단"
 pattern: "model\s*=\s*.?claude"
 message: "모델명 하드코딩 금지 — client.MODEL 을 쓴다 (.env 로 바꿀 수 있어야 한다)"
+pattern: "client\.messages\.create\("
+message: "client.messages.create 직접 호출 금지 — complete() 를 쓴다 (빈 응답이 조용히 템플릿으로 떨어진 사고)"
 ```
 
 ---
@@ -168,10 +189,11 @@ apps/api/tests/test_no_paid_calls.py
 
 | 모듈 | 역할 |
 |---|---|
-| `client.py` | Anthropic 클라이언트. 키 없으면 None 을 돌려 규칙기반 경로로 내린다 |
+| `client.py` | Anthropic 클라이언트 + `complete()`. 키 없으면 None → 규칙기반 경로 |
 | `extract.py` | 자연어 → 슬롯. 명시되지 않은 값은 반드시 null |
 | `rules.py` | 규칙기반 한국어 파서. LLM 없이도 동작하는 대체 경로 |
 | `narrate.py` | 계산 결과 → 문장. 템플릿 대체 경로 포함 |
 | `verify.py` | LLM 문장의 수치를 엔진 출력과 대조. 불일치 문장 제거 |
 | `planner.py` | 도구 선택 — LLM 출력을 스펙으로 검증, 키 없으면 키워드 폴백 |
 | `advisor.py` | 처방·신청서 초안 — 숫자는 도구 값, 제도는 조항 인용만 |
+| `answer_tools.py` | **진단이 아닌** 도구 결과 → 문장. narrate 는 진단 전용이라 따로 있다 |

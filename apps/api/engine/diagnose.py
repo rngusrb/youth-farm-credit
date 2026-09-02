@@ -13,7 +13,7 @@ from dataclasses import asdict as _asdict
 from estimators.shrinkage import explain, shrink
 
 from .dscr import TARGET_DSCR, capacity, limit_by_dscr, min_area
-from .income import annual_income, income_band
+from .income import income_band, resolve_income
 from .params import get_crop, get_product, policy, sim_defaults
 from .risk_limit import (
     DEFAULT_MAX_CRISIS_PROB,
@@ -34,10 +34,24 @@ class DiagnoseInput:
     other_debt_service: float = 0.0
     requested_principal: float | None = None
     product_id: str = DEFAULT_PRODUCT_ID
-    # 농가 본인(또는 승계 전 부모)의 연도순 소득 이력. 있으면 σ 를 개인화한다.
+    # 농가 본인(또는 승계 전 부모)의 연도순 소득 이력. 있으면 σ 와 소득 수준을 개인화한다.
     income_history: tuple[float, ...] = ()
+    # 그 실적을 낸 면적. 비워 두면 pyeong 으로 못 박는다(__post_init__).
+    # **면적을 바꿔 가며 탐색할 때 기준이 같이 움직이면 안 되기 때문이다** —
+    # 그러면 면적을 두 배로 해도 소득이 그대로가 된다 (2026-09-02).
+    income_history_pyeong: float | None = None
     # 감내할 2년연속 위기확률. 링크로 공유해도 같은 기준이 재현돼야 한다.
     max_crisis_prob: float | None = None
+
+    def __post_init__(self) -> None:
+        """실적의 기준 면적을 지금 면적으로 못 박는다.
+
+        frozen dataclass 라 object.__setattr__ 을 쓴다. 이걸 여기서 하는 이유는
+        `replace(inp, pyeong=X)` 로 면적만 바꿔 탐색하는 코드가 여럿이기 때문이다 —
+        한 곳에서만 채우면 반드시 빠뜨리는 곳이 생긴다.
+        """
+        if self.income_history and self.income_history_pyeong is None:
+            object.__setattr__(self, "income_history_pyeong", self.pyeong)
 
     def encode(self) -> str:
         """입력을 그대로 담은 결정론적 id. 서버 저장 없이 결과 URL을 공유한다."""
@@ -215,7 +229,10 @@ def diagnose(
     if inp.max_crisis_prob is not None:
         max_crisis_prob = inp.max_crisis_prob
 
-    income = annual_income(inp.crop_id, inp.pyeong)
+    # 실적이 3개년 이상이면 실적 평균, 아니면 작목 통계 추정치. 섞지 않는다 —
+    # 섞을 비율의 근거가 데이터에 없다. 자세한 이유는 income.resolve_income 참조.
+    income, income_meta = resolve_income(inp.crop_id, inp.pyeong, inp.income_history,
+                                         inp.income_history_pyeong)
     fixed_outflow = inp.living_cost + inp.other_debt_service
     cap = capacity(income, inp.living_cost, inp.other_debt_service)
 
@@ -254,6 +271,14 @@ def diagnose(
         },
         "income": {
             "annual": income,
+            # 이 값이 어디서 왔는지 — 실적인지 통계 추정인지. 화면이 "내 소득"이라고
+            # 부를 수 있으려면 출처가 붙어 있어야 한다.
+            "source": income_meta["source"],
+            "actual_mean": income_meta["actual_mean"],
+            "crop_average": income_meta["crop_average"],
+            "actual_pyeong": income_meta["actual_pyeong"],
+            "history_years": income_meta["years"],
+            "source_note": income_meta["note"],
             "capacity": cap,
             # 평년 소득이 흔들리는 범위(하위10%~상위10%). 화면이 σ 를 ±% 로
             # 환산하지 않도록 엔진이 낸다 — 시뮬레이터와 같은 분포다.

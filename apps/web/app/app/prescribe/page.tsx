@@ -47,7 +47,9 @@ export default function PrescribePage() {
 
   useEffect(() => {
     if (!profile) return;
-    void run();
+    // 계획에 빌리려는 금액을 적어 뒀으면 그 금액으로 바로 조정안까지 낸다.
+    if (profile.targetPrincipal) setTarget(String(profile.targetPrincipal));
+    void run(profile.targetPrincipal);
     // 작목 전환은 보조 제안이다. 실패해도 본문은 보여준다.
     fetchSwitch({ crop_id: profile.cropId, pyeong: profile.pyeong })
       .then(setSw)
@@ -81,54 +83,46 @@ export default function PrescribePage() {
 
       {error && <Notice tone="warn" title="처방을 만들지 못했어요">{error}</Notice>}
       {loading && !data && (
-        <Panel><p className="text-[14px] text-gov-ink2">계산하고 있어요. 몇 초 걸립니다.</p></Panel>
+        <Panel><p className="text-[14px] text-gov-ink2">
+            계산하고 신청서 초안을 쓰고 있어요. <b>10초쯤</b> 걸립니다.
+          </p>
+          <p className="mt-1.5 text-[12px] text-gov-ink3">
+            초안 문장의 수치는 계산 엔진 값과 하나씩 대조한 뒤에 보여 드려요.
+          </p></Panel>
       )}
 
       {data && (
         <>
-          <Section title="전국 평균 대비">
+          {/* 평균 비교와 작목 특성은 2단계 건강검진이 소유한다.
+              여기선 결과만 한 줄로 받고 자세한 건 그쪽으로 보낸다 —
+              같은 내용을 두 화면이 각자 그리면 반드시 갈라진다. */}
+          <Section title="건강검진 결과">
             {b?.comparable ? (
-              <>
-                <div className="grid gap-3 sm:grid-cols-3">
-                  <Stat label="내 평균 소득" value={won(b.my_income ?? 0)} note={`최근 ${b.years}개년`} />
-                  <Stat label={`전국 ${b.crop_name} 평균`} value={won(b.average_income ?? 0)} />
-                  <Stat
-                    label="평균 대비"
-                    value={pct(b.ratio ?? 0)}
-                    tone={(b.ratio ?? 1) >= 1 ? "ok" : "warn"}
-                  />
-                </div>
-                <p className="mt-2 text-[12px] text-gov-ink3">{b.note} 출처: {b.source}</p>
-              </>
+              <Panel>
+                <p className="text-[14px] text-gov-ink">
+                  최근 {b.years}개년 실적 평균은 <b>{won(b.my_income ?? 0)}</b>으로, 같은 면적의
+                  전국 {b.crop_name} 평균 {won(b.average_income ?? 0)} 대비{" "}
+                  <b className={(b.ratio ?? 1) >= 1 ? "text-gov-ok" : "text-gov-warn"}>
+                    {pct(b.ratio ?? 0)}
+                  </b>{" "}
+                  수준이에요.
+                </p>
+                <p className="mt-2 text-[12px] text-gov-ink3">
+                  작목 특성과 소득 변동 범위는{" "}
+                  <Link href="/app/checkup" className="text-gov-link underline">
+                    AI 농가 건강검진
+                  </Link>
+                  에서 볼 수 있어요.
+                </p>
+              </Panel>
             ) : (
               <Notice tone="info" title="실적을 넣으면 견줘 드려요">
                 {b?.message}{" "}
-                <Link href="/app/farm" className="text-gov-link underline">내 농가 정보</Link>
+                <Link href="/app/farm" className="text-gov-link underline">내 농장 정보 입력</Link>
                 에서 연도별 농업소득을 넣을 수 있어요.
               </Notice>
             )}
           </Section>
-
-          {t && (
-            <Section title="이 작목은 어떤 작목인가">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <Stat
-                  label="경영비 비율"
-                  value={t.cost_ratio === null ? "—" : pct(t.cost_ratio)}
-                  note="총수입 중 경영비"
-                />
-                <Stat
-                  label="소득 변동성"
-                  value={t.sigma.toFixed(3)}
-                  note={`${t.sigma_total}개 작목 중 ${t.sigma_rank}번째로 안정`}
-                />
-                <Stat label="변동의 주범" value={t.driver_label ?? "—"} note="요인분해 기준" />
-              </div>
-              <p className="mt-2 text-[12px] text-gov-ink3">
-                실적을 안 넣으셔도 이 세 가지는 작목 자체의 성질이라 그대로 유효해요.
-              </p>
-            </Section>
-          )}
 
           <Section title="원하는 금액이 있으면">
             <Panel>
@@ -147,7 +141,7 @@ export default function PrescribePage() {
                     value={target}
                     onChange={(e) => setTarget(e.target.value)}
                     placeholder="300000000"
-                    className="w-full rounded-lg border border-gov-line px-3 py-2 text-[15px]"
+                    className="w-full min-h-11 rounded-lg border border-gov-line px-3 py-2 text-[15px]"
                   />
                 </label>
                 <Btn type="submit" disabled={loading}>{loading ? "계산 중…" : "조정안 보기"}</Btn>
