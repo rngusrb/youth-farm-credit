@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 import logging
 
-from .client import MODEL, get_client
+from .client import complete, get_client
 from .verify import verify_text
 
 log = logging.getLogger(__name__)
@@ -221,9 +221,10 @@ def _llm(d: dict) -> tuple[str, str, list[str]] | None:
     if client is None:
         return None
     try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=4000,
+        text = complete(
+            json.dumps(d, ensure_ascii=False, default=float),
+            client=client, max_tokens=4000, purpose="해설",
+            system=SYSTEM,
             output_config={
                 "effort": "low",
                 "format": {
@@ -240,15 +241,7 @@ def _llm(d: dict) -> tuple[str, str, list[str]] | None:
                     },
                 },
             },
-            system=SYSTEM,
-            messages=[
-                {
-                    "role": "user",
-                    "content": json.dumps(d, ensure_ascii=False, default=float),
-                }
-            ],
         )
-        text = "".join(b.text for b in response.content if b.type == "text")
         parsed = json.loads(text)
         # LLM 은 문자열만 낸다. 링크는 규칙기반 경로에서만 붙인다 —
         # 어느 화면으로 보낼지는 지어낼 수 있는 값이 아니다.

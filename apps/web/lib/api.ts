@@ -527,12 +527,11 @@ export type ConsultAnswer = {
 export async function consult(body: {
   question: string;
   slots?: Record<string, unknown>;
-  persona?: "farmer" | "officer";
 }): Promise<ConsultAnswer> {
   const res = await fetch(`${API_BASE}/api/v1/consult`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ persona: "farmer", slots: {}, ...body }),
+    body: JSON.stringify({ slots: {}, ...body }),
   });
   if (!res.ok) throw new Error((await res.text()) || "상담에 실패했습니다");
   return res.json();
@@ -641,6 +640,7 @@ export async function fetchFundingMap(body: {
   living_cost: number;
   other_debt_service?: number;
   principal?: number;
+  actual_income?: number[];
 }): Promise<FundingMapResult> {
   const res = await fetch(`${API_BASE}/api/v1/funding-map`, {
     method: "POST",

@@ -20,6 +20,7 @@ meta/project_state.yaml 과 각 폴더의 _GUIDE.md 에서 읽는다.
 from __future__ import annotations
 
 import argparse
+from urllib.parse import urlparse
 import json
 import re
 import subprocess
@@ -132,12 +133,19 @@ def parse_guide_tests(guide_path: Path) -> list[str]:
 
 
 def parse_guide_gc(guide_path: Path) -> list[tuple[str, str]]:
-    """_GUIDE.md 의 ```gc 펜스 블록에서 (정규식, 메시지) 쌍 파싱.
+    """_GUIDE.md 의 ```gc 펜스 블록에서 (정규식, 메시지, 제외정규식) 파싱.
 
         ```gc
         pattern: "except Exception:\\s*pass"
         message: "silent failure 금지 — 반드시 로깅"
+        exclude: "llm/client\\.py"
         ```
+
+    `exclude` 는 **파일 경로** 정규식이다. 규칙이 자기 구현을 잡는 경우에만 쓴다
+    (예: "messages.create 직접 호출 금지" 가 그 창구인 client.py 를 잡는다).
+    사고 이력 2026-09-02: 제외 수단이 없어 이 규칙이 항상 1건 오탐을 내고 있었고,
+    그래서 아무도 `--gc` 를 harness all 에 넣지 못했다 — 규칙이 배선되지 못한 이유가
+    규칙 자신이었다.
     """
     if not guide_path.exists():
         return []
@@ -146,12 +154,19 @@ def parse_guide_gc(guide_path: Path) -> list[tuple[str, str]]:
     if not blocks:
         m = re.search(rf"## {re.escape(CFG['gc_section'])}.*?```(.*?)```", text, re.DOTALL)
         blocks = [m.group(1)] if m else []
-    pairs: list[tuple[str, str]] = []
+    pairs: list[tuple[str, str, str]] = []
     for block in blocks:
-        pats = re.findall(r'pattern:\s*"([^"]+)"', block)
-        msgs = re.findall(r'message:\s*"([^"]+)"', block)
-        msgs += [""] * (len(pats) - len(msgs))
-        pairs.extend(zip(pats, msgs))
+        # pattern 단위로 잘라 각 항목의 message·exclude 를 짝지어 읽는다.
+        # exclude 가 없으면 빈 문자열 = 아무 파일도 제외하지 않음.
+        chunks = re.split(r'(?=pattern:\s*")', block)
+        for chunk in chunks:
+            m = re.search(r'pattern:\s*"([^"]+)"', chunk)
+            if not m:
+                continue
+            msg = re.search(r'message:\s*"([^"]+)"', chunk)
+            exc = re.search(r'exclude:\s*"([^"]+)"', chunk)
+            pairs.append((m.group(1), msg.group(1) if msg else "",
+                          exc.group(1) if exc else ""))
     return pairs
 
 
@@ -261,14 +276,17 @@ def run_gc(folder_key: str, guide_path: Path) -> list[dict]:
     files = [f for f in folder.rglob("*.py")
              if not any(s in f.parts for s in CFG["skip_dirs"])] if folder.is_dir() else []
 
-    for pattern, message in parse_guide_gc(guide_path):
+    for pattern, message, exclude in parse_guide_gc(guide_path):
         try:
             rx = re.compile(pattern)
+            ex = re.compile(exclude) if exclude else None
         except re.error as e:
             findings.append({"type": "bad_gc_pattern", "file": str(guide_path.relative_to(ROOT)),
                              "message": f"GC 정규식 오류 {pattern!r}: {e}"})
             continue
         for f in files:
+            if ex is not None and ex.search(str(f.relative_to(ROOT))):
+                continue
             content = f.read_text(errors="ignore")
             for m in rx.finditer(content):          # 줄바꿈 걸친 패턴도 잡히도록 전문 검색
                 line_no = content.count("\n", 0, m.start()) + 1
@@ -411,12 +429,25 @@ def check_anchors() -> list[dict]:
                       "message": "ui_check 를 한 번도 안 돌렸다 — "
                                  "python scripts/ui_check.py <URL> --all-viewports"})
         elif newest:
-            ts = json.loads(rec.read_text()).get("ts", 0)
+            import datetime as _dt
+            rr = json.loads(rec.read_text())
+            ts = rr.get("ts", 0)
+            when = _dt.datetime.fromtimestamp(ts).strftime("%m-%d %H:%M")
             if newest > ts:
-                import datetime as _dt
-                when = _dt.datetime.fromtimestamp(ts).strftime("%m-%d %H:%M")
                 f.append({"level": level, "type": "ui_check_stale", "file": str(newest_file.relative_to(ROOT)),
                           "message": f"마지막 ui_check({when}) 이후 화면이 바뀌었다 — 다시 돌릴 것"})
+            # 시각만 보면 **23개 중 1개만 돌려도** 게이트가 충족된다.
+            # 2026-09-02 적대적 리뷰 M4 가 실제로 그 상태를 잡아냈다 — 새로 추가된
+            # /app/checkup·/app/map·/app/levers·/app/prescribe 는 targets 에 올라가
+            # 있었지만 한 번도 검사된 적이 없는데 harness 는 깨끗하게 통과했다.
+            # 2026-08-28 에 "숨어 있던 위반 24건" 으로 고친 것과 같은 구멍의 다른 모양.
+            declared = {str(x.get("path", x)) for x in (ui.get("targets") or [])}
+            checked = {urlparse(u).path or "/" for u in (rr.get("targets") or [])}
+            if (missing := sorted(declared - checked)):
+                f.append({"level": level, "type": "ui_check_partial", "file": "(화면)",
+                          "message": (f"선언된 {len(declared)}개 중 {len(missing)}개가 "
+                                      f"마지막 실행({when})에 빠졌다: {missing[:6]}"
+                                      f"{' …' if len(missing) > 6 else ''}")})
 
     # ⑥ 깨진 문서 참조
     targets = [p for p in ROOT.glob("**/*.md")
@@ -705,7 +736,13 @@ def main() -> None:
 
     ok = True
     for folder in all_folders():
-        ok &= run_one(folder, args.gc, args.diff)
+        # all 은 gc 를 **항상** 켠다. CLAUDE.md 의 "완료" 정의가
+        # `harness all 통과 + 해당 _GUIDE.md 금지사항 위반 없음` 인데, gc 가 옵션이면
+        # 두 번째 조건을 기계가 아무도 안 본다. 바로 아래 주석이 2026-08-26 에
+        # deps_check 로 똑같은 교훈을 적어 뒀다 —
+        # **사람이 따로 쳐야만 도는 검사는 결국 안 도는 검사다.**
+        # (적대적 리뷰 M1, 2026-09-02: narrate.py 가 금지 패턴을 어긴 채 통과 중이었다)
+        ok &= run_one(folder, True, args.diff)
     for extra in CFG["always_run"]:
         if (ROOT / extra).exists():
             r = run_tests([extra])

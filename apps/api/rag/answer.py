@@ -7,7 +7,8 @@ from __future__ import annotations
 import json
 import logging
 
-from llm.client import MODEL, get_client
+from llm.client import complete, get_client
+from llm.verify import numbers_in_text, verify_text
 
 from .retrieve import search
 
@@ -56,9 +57,10 @@ def _llm_answer(question: str, hits: list[dict]) -> str | None:
         f"[{h['section_path']}] ({h['doc_title']})\n{h['text']}" for h in hits
     )
     try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=2000,
+        text = complete(
+            f"질문: {question}\n\n발췌문:\n{excerpts}",
+            client=client, max_tokens=1200, purpose="제도답변",
+            system=SYSTEM,
             output_config={
                 "effort": "low",
                 "format": {
@@ -74,12 +76,7 @@ def _llm_answer(question: str, hits: list[dict]) -> str | None:
                     },
                 },
             },
-            system=SYSTEM,
-            messages=[
-                {"role": "user", "content": f"질문: {question}\n\n발췌문:\n{excerpts}"}
-            ],
         )
-        text = "".join(b.text for b in response.content if b.type == "text")
         return json.loads(text)["answer"]
     except Exception as exc:
         log.warning("LLM 지침 응답 실패, 발췌 그대로 반환: %s", exc)
@@ -101,9 +98,20 @@ def citations_for(question: str, context: dict | None = None) -> list[dict]:
 def ask(question: str, context: dict | None = None) -> dict:
     hits = search(question, context)
     if not hits:
-        return {"answer": NO_EVIDENCE, "citations": [], "confidence": "none"}
+        # dropped 를 여기서 빼면 호출부가 키 유무로 갈린다 — 응답 모양은 하나여야 한다
+        return {"answer": NO_EVIDENCE, "citations": [], "confidence": "none", "dropped": []}
 
     answer = _llm_answer(question, hits)
+    dropped: list[str] = []
+    if answer is not None:
+        # 발췌문에 없는 수치를 쓴 문장은 뺀다. 여기까지는 "인용이 비지 않는 것" 만
+        # 강제됐고 **문장 속 숫자는 아무도 안 봤다** — 제도 답변의 금액·기간·비율이
+        # 검증 없이 화면까지 갔다. (적대적 리뷰 H3, 2026-09-02)
+        allowed = numbers_in_text(*[(h.get("text") or "") for h in hits])
+        answer, dropped, _used = verify_text(answer, sorted(allowed))
+        if not answer.strip():
+            log.warning("제도 답변의 모든 문장이 발췌문과 어긋나 제거됨 — 조항 안내로 대체")
+            answer = None
     if answer is None:
         # LLM 이 없으면 문장을 지어내지 않고 가장 관련 높은 조항을 그대로 안내한다.
         top = hits[0]
@@ -116,4 +124,6 @@ def ask(question: str, context: dict | None = None) -> dict:
         "answer": answer,
         "citations": [_citation(h) for h in hits],
         "confidence": _confidence(hits),
+        # 몇 문장을 뺐는지 밝힌다 — 조용히 지우면 검증이 있었는지 알 수 없다
+        "dropped": dropped,
     }

@@ -96,13 +96,16 @@ def _run_tool(name: str, args: dict, question: str) -> tuple[Any, TraceEntry]:
         result = spec.fn(**args)
         ms = int((time.perf_counter() - t0) * 1000)
         return result, TraceEntry(name, args, ms, ok=True)
-    except (KeyError, InsufficientCropData, ValueError) as exc:
+    except (KeyError, InsufficientCropData, ValueError, TypeError) as exc:
+        # TypeError 를 안 잡으면 LLM 이 pyeong 에 리스트를 넣는 순간 상담 전체가 500 이
+        # 된다. planner.validate 는 인자 **이름**만 거르고 타입은 안 본다.
+        # (적대적 리뷰 M6, 2026-09-02)
         ms = int((time.perf_counter() - t0) * 1000)
         log.warning("도구 %s 실패: %s", name, exc)
         return None, TraceEntry(name, args, ms, ok=False, error=str(exc))
 
 
-def consult(question: str, slots: dict | None = None, persona: str = "farmer") -> Answer:
+def consult(question: str, slots: dict | None = None) -> Answer:
     """질문 하나를 처리한다: 계획 → 실행 → 설명 → 검증."""
     slots = slots or {}
     budget = Budget()
@@ -151,7 +154,7 @@ def consult(question: str, slots: dict | None = None, persona: str = "farmer") -
     if budget.llm_left() <= 0:
         text = "설명 예산을 다 써서 계산 결과만 보여드려요."
     elif diagnosis is not None:
-        n = narrate(diagnosis, persona=persona) if _narrate_takes_persona() else narrate(diagnosis)
+        n = narrate(diagnosis)
         budget.llm_calls += 1
         raw = n if isinstance(n, str) else n.get("body", "")
         # 허용 수치는 **쓴 도구 전부**에서 모은다. diagnosis 만 넘기면 stress·funding_map 이
@@ -169,7 +172,8 @@ def consult(question: str, slots: dict | None = None, persona: str = "farmer") -
                   budget=budget, method=p.method, results=results)
 
 
-def _narrate_takes_persona() -> bool:
-    import inspect
-
-    return "persona" in inspect.signature(narrate).parameters
+# persona 는 여기 있었다가 지웠다 (2026-09-02, 적대적 리뷰 M2).
+# `narrate` 에 persona 파라미터가 없어 내성 검사가 **항상 False** 였고, API 는
+# persona="officer" 를 받아 패턴 검증까지 한 뒤 조용히 버렸다. 있지도 않은 기능을
+# 스키마가 광고하고 있었던 것 — WORKFLOW.md Silent Failure 의 "정상처럼 보이는 실패".
+# 농가/심사역 화법 분기가 정말 필요해지면 그때 narrate 에 만들고 여기서 넘긴다.

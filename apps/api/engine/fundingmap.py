@@ -20,8 +20,8 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .diagnose import DiagnoseInput
-from .income import annual_income
+from .diagnose import DiagnoseInput, resolve_sigma
+from .income import resolve_income
 from .loan import repayment_schedule
 from .params import get_crop, get_product
 from .simulate import draw_paths
@@ -56,8 +56,15 @@ def funding_map(inp: DiagnoseInput, principal: float,
 
     crop = get_crop(inp.crop_id)
     product = get_product(inp.product_id)
-    income = annual_income(inp.crop_id, inp.pyeong)
-    sigma = sigma_override if sigma_override is not None else float(crop.sigma)
+    # 진단과 **같은 경로**로 소득·σ 를 정한다. 여기서 annual_income 을 직접 부르면
+    # 실적을 넣은 농가가 진단과 다른 소득으로 25년 지도를 보게 된다 —
+    # levers.py 가 2026-09-02 에 고친 바로 그 버그를 여기만 안 고치고 있었다.
+    # (진단 9,100만원 / 자금지도 6,005만원. 적대적 리뷰 H1, 2026-09-02)
+    income, income_meta = resolve_income(inp.crop_id, inp.pyeong, inp.income_history)
+    if sigma_override is not None:
+        sigma = sigma_override
+    else:
+        sigma, _ = resolve_sigma(crop, inp.income_history)
     fixed = inp.living_cost + inp.other_debt_service
 
     due = repayment_schedule(principal, product)
@@ -100,6 +107,8 @@ def funding_map(inp: DiagnoseInput, principal: float,
     return {
         "principal": principal,
         "crop_name": crop.name,
+        # 어느 소득을 썼는지 밝힌다 — 화면이 진단과 같은 기준임을 보일 수 있어야 한다
+        "income": {"annual": income, **income_meta},
         "grace_years": product.grace_years,
         "term_years": len(points),
         "years": [vars(p) for p in points],

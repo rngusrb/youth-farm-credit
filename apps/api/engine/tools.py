@@ -11,11 +11,37 @@ LLM 은 도구 이름과 인자를 고를 뿐이고, 숫자는 전부 여기 있
 프롬프트가 없다. 외부 호출도 없다. **어떤 도구를 부를지 고르는 일도 여기서 하지 않는다**
 (그건 adapters/llm 의 일이다). 이 모듈은 *무엇을 부를 수 있는지 선언하고, 부르면 실행한다*.
 
-## refs — Verifier 가 대조할 좌표
+## returns — 도구가 무엇을 내는지의 선언
 
 각 도구는 `returns` 에 "이 도구가 만든 수치가 결과 dict 어디에 있는지"를 점 경로로 선언한다.
-설명 문장은 자기가 쓴 수치의 좌표(`refs`)를 달아야 하고, Verifier 가 그 좌표의 실제 값과
-문장 속 숫자를 대조한다. **좌표 없는 수치 문장은 통과할 수 없다.**
+`test_tools.py` 가 이 좌표를 **실제 출력과 대조**해, 선언과 구현이 어긋나면 실패한다.
+(그 검사가 실제로 잘못된 좌표를 잡는 것을 확인했다 — `income.expected` 오타를 잡았다.)
+
+### ⚠️ Verifier 는 이 좌표를 쓰지 않는다 — 실제 검증 강도는 이렇다
+
+한때 이 자리에 **"좌표 없는 수치 문장은 통과할 수 없다"** 고 적혀 있었다. **사실이 아니었다.**
+`known_refs()`·`pick()` 은 정의만 있고 **부르는 곳이 없다**(테스트 제외).
+실제 `llm/verify.py` 는 좌표를 안 보고, 결과 dict 의 **모든 수치 리프**를 모아
+단위 변형(÷1e4, ÷1e8, ×100, 반올림)까지 허용 집합에 넣은 뒤 ±0.5% 로 대조한다.
+
+그래서 이 검증기가 실제로 하는 일은 **"지어낸 큰 금액을 잡는 거친 체"** 다.
+작은 수치("5년차", "20%", "1.8배")는 사실상 전부 통과한다. 실측:
+
+    cd apps/api && python3 -c "
+    from engine.tools import ENGINE_TOOLS
+    from llm.verify import allowed_forms, collect_numbers, _matches
+    B={'crop_id':'strawberry_hydro','pyeong':1300.0,'living_cost':30_000_000.0}
+    r={'diagnose':ENGINE_TOOLS['diagnose'].fn(**B),
+       'funding_map':ENGINE_TOOLS['funding_map'].fn(**B,principal=200_000_000.0)}
+    f=allowed_forms(collect_numbers(r))
+    print(sum(1 for n in range(1,101) if _matches(float(n),f)), '/100')"
+    # → 65/100
+
+**이 문구를 약하게 적는 것이 이 파일의 목적이다.** 이 저장소가 가장 경계하는 상황은
+"감사 장치가 사라진 것을 감사 대상이 모르는" 것이고(CLAUDE.md), 주석이 실제보다 강한
+보장을 주장하면 정확히 그 상태가 된다. 좌표 대조를 진짜로 배선하기 전까지는
+제1원칙의 기계적 증거는 `core: []`(deps_check) 쪽이 본체이고, Verifier 는 보조다.
+(적대적 리뷰 H2, 2026-09-02)
 """
 from __future__ import annotations
 

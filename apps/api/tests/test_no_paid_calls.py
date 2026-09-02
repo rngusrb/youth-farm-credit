@@ -22,6 +22,9 @@ from pathlib import Path
 
 API = Path(__file__).resolve().parents[1]
 
+#: 프로브가 감시하는 이름 (오류 메시지용 — 프로브 안 정의와 같이 유지)
+_PAID_METHODS = ("create", "parse", "stream")
+
 _PROBE = """
 import json, os
 from collections import Counter
@@ -29,6 +32,9 @@ from collections import Counter
 import pytest
 
 CALLS = Counter()
+#: 실제로 가로챈 메서드. 비어 있으면 감시가 **아무 데도 안 붙은** 것이다 —
+#: 그 상태로 CALLS 가 {} 라서 검사는 조용히 통과한다 (적대적 리뷰 M5, 2026-09-02).
+PATCHED = []
 
 
 #: 요금이 나가는 진입점을 **전부** 막는다.
@@ -52,13 +58,16 @@ def _count_llm(monkeypatch, request):
             raise RuntimeError("유료 호출 차단")   # 실제로 돈이 나가진 않게 막는다
 
         monkeypatch.setattr(M.Messages, name, spy)
+        if name not in PATCHED:
+            PATCHED.append(name)
 
 
 def pytest_sessionfinish(session, exitstatus):
     # sessionfinish 의 print 는 pytest 가 삼킨다 (2026-09-02 그렇게 한 번 놓쳤다).
     # 파일로 남긴다.
     Path = __import__("pathlib").Path
-    Path(os.environ["PAID_CALL_REPORT"]).write_text(json.dumps(dict(CALLS), ensure_ascii=False))
+    Path(os.environ["PAID_CALL_REPORT"]).write_text(
+        json.dumps({"calls": dict(CALLS), "patched": PATCHED}, ensure_ascii=False))
 """
 
 
@@ -71,7 +80,7 @@ def test_suite_makes_no_real_llm_calls(tmp_path):
     report = tmp_path / "paid.json"
     probe.write_text(_PROBE)
     try:
-        subprocess.run(
+        r = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/", "-q", "-p", "tests._paid_probe",
              "--deselect", "tests/test_no_paid_calls.py"],
             cwd=API, capture_output=True, text=True, timeout=900,
@@ -81,8 +90,51 @@ def test_suite_makes_no_real_llm_calls(tmp_path):
         probe.unlink(missing_ok=True)
 
     assert report.exists(), "프로브가 결과를 남기지 않았다 — 검사가 죽은 채로 통과할 뻔했다"
-    offenders = json.loads(report.read_text())
+    rec = json.loads(report.read_text())
+    # 수집 오류(2)·내부 오류(3+)면 테스트가 아예 안 돌았을 수 있다. 0=전부 통과,
+    # 1=일부 실패 — 둘 다 '돌긴 했다'. 그 밖은 이 검사의 전제가 무너진 것이다.
+    assert r.returncode in (0, 1), (
+        f"프로브 실행이 비정상 종료했다 (exit {r.returncode}). "
+        f"테스트가 안 돌았을 수 있다:\n{r.stdout[-1500:]}")
+    assert rec["patched"], (
+        "감시를 아무 메서드에도 못 붙였다 — anthropic SDK 가 메서드를 옮겼을 수 있다. "
+        f"찾던 이름: {_PAID_METHODS}")
+    offenders = rec["calls"]
     assert not offenders, (
         "실제 LLM 을 부르는 테스트가 있다. 스텁하거나 eval 로 옮겨라:\n  "
         + "\n  ".join(f"{c}회  {n}" for n, c in offenders.items())
     )
+
+
+def test_the_detector_actually_detects(tmp_path):
+    """**양성 대조** — 감시기가 실제로 잡는지 매 실행 확인한다.
+
+    사고 이력 2026-09-02 (적대적 리뷰 M5): 위 검사는 "아무도 안 불렀다"를 주장하는데,
+    감시기가 고장 나도 똑같이 "아무도 안 불렀다"가 나온다. 두 상태를 구분할 방법이
+    없으면 그건 검사가 아니다. 그래서 **부르는 테스트를 일부러 하나 만들어** 잡히는지
+    본다. 안 잡히면 위 검사의 통과는 아무 의미가 없다.
+    """
+    probe = API / "tests" / "_paid_probe.py"
+    canary = API / "tests" / "_paid_canary.py"
+    report = tmp_path / "canary.json"
+    probe.write_text(_PROBE)
+    canary.write_text(
+        "def test_canary_calls_paid_api():\n"
+        "    import anthropic.resources.messages as M\n"
+        "    M.Messages.create(object(), model='x', max_tokens=1, messages=[])\n")
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "pytest", "tests/_paid_canary.py", "-q",
+             "-p", "tests._paid_probe"],
+            cwd=API, capture_output=True, text=True, timeout=120,
+            env={**os.environ, "PAID_CALL_REPORT": str(report)},
+        )
+    finally:
+        probe.unlink(missing_ok=True)
+        canary.unlink(missing_ok=True)
+
+    assert report.exists(), "양성 대조에서도 프로브가 결과를 안 남겼다"
+    rec = json.loads(report.read_text())
+    assert rec["calls"], (
+        "일부러 유료 호출을 하는 테스트를 감시기가 **못 잡았다**. "
+        "위 검사의 '0건' 은 신뢰할 수 없다.")

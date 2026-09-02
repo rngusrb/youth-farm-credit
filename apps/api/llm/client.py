@@ -70,7 +70,8 @@ MIN_MAX_TOKENS = 1200
 
 
 def complete(prompt: str, *, client, max_tokens: int = MIN_MAX_TOKENS,
-             purpose: str = "") -> str:
+             purpose: str = "", system: str | None = None,
+             output_config: dict | None = None) -> str:
     """프롬프트 하나 → 본문 텍스트. 실패·빈 응답은 **반드시 로그를 남긴다.**
 
     사고 이력 2026-09-02: `answer_from_tools` 가 max_tokens=700 으로 부르면
@@ -89,10 +90,20 @@ def complete(prompt: str, *, client, max_tokens: int = MIN_MAX_TOKENS,
     if client is None:
         return ""
     budget = max(int(max_tokens), MIN_MAX_TOKENS)
+    # system·output_config 는 있을 때만 넘긴다. narrate 처럼 구조화 출력이 필요한
+    # 호출부가 여기를 우회해 직접 messages.create 를 부르면, 아래 '본문 없이 응답'
+    # 로그를 못 받는다 — 그게 이 함수를 만든 사고의 원인이었다.
+    # (적대적 리뷰 M1, 2026-09-02: narrate.py 가 실제로 우회하고 있었다)
+    extra: dict = {}
+    if system is not None:
+        extra["system"] = system
+    if output_config is not None:
+        extra["output_config"] = output_config
     try:
         msg = client.messages.create(
             model=MODEL, max_tokens=budget,
             messages=[{"role": "user", "content": prompt}],
+            **extra,
         )
     except Exception as exc:
         log.warning("LLM 호출 실패%s: %s", f" ({purpose})" if purpose else "", exc)

@@ -373,7 +373,7 @@ def consult_endpoint(req: ConsultRequest) -> dict:
 
     되묻기는 정상 흐름이므로 4xx 가 아니라 kind="ask" 로 돌려준다.
     """
-    return consult(req.question, req.slots, req.persona).to_dict()
+    return consult(req.question, req.slots).to_dict()
 
 
 @app.post("/api/v1/benchmark")
@@ -435,6 +435,7 @@ def funding_map_endpoint(req: FundingMapRequest) -> dict:
     inp = DiagnoseInput(
         crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
         other_debt_service=req.other_debt_service, product_id=req.product_id,
+        income_history=tuple(req.actual_income),
     )
     try:
         principal = req.principal

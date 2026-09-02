@@ -189,8 +189,9 @@ def stress_for(inp, principal: float | None = None) -> dict:
         "leverage": crop.gross_per_10a / (crop.gross_per_10a - crop.cost_per_10a),
         "scenarios": [asdict(r) for r in results],
         "note": (
-            "판정은 crisis_prob 가 아니라 distress_prob 로 합니다. 재해가 잦아지면 "
-            "상환연기가 자주 걸려 '부족'으로 세지 않게 되는데, 상환연기는 제도가 "
-            "구해준 것이지 농가가 버틴 것이 아니기 때문입니다."
+            "판정(survives)은 2년 연속 위기확률(crisis_prob)로 합니다. 위험기반 한도가 "
+            "같은 정의로 역산되기 때문에, 다른 잣대를 쓰면 '기준 시나리오조차 탈락' "
+            "같은 결과가 나옵니다. 상환연기까지 실패로 세는 distress_prob 은 함께 "
+            "돌려주되 판정에는 쓰지 않습니다."
         ),
     }

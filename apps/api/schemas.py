@@ -121,7 +121,6 @@ class ConsultRequest(BaseModel):
 
     question: str = Field(min_length=1, max_length=500)
     slots: dict = Field(default_factory=dict)
-    persona: str = Field(default="farmer", pattern="^(farmer|officer)$")
 
 
 class LeversRequest(BaseModel):
@@ -167,6 +166,9 @@ class FundingMapRequest(BaseModel):
     living_cost: float = Field(ge=0)
     other_debt_service: float = Field(default=0.0, ge=0)
     principal: float | None = Field(default=None, gt=0)
+    # 실적을 안 받으면 자금지도만 작목 통계 추정치로 그린다. LeversRequest 에는
+    # 같은 사고로 이미 들어가 있었는데 여기만 빠져 있었다 (적대적 리뷰 H1, 2026-09-02).
+    actual_income: list[float] = Field(default_factory=list)
     product_id: str = DEFAULT_PRODUCT_ID
 
 

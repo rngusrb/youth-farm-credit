@@ -145,7 +145,12 @@ def test_clause_numbers_are_not_parsed_as_figures(bundle):
 def test_lever_percentage_is_a_tool_value(bundle):
     """문장에 쓰는 감소율(19%)이 도구 출력에 있어야 검증을 통과한다."""
     d, lv = bundle
-    for l in lv["levers"]:
-        if l["reachable"]:
+    reachable = [l for l in lv["levers"] if l["reachable"]]
+    # 가드: reachable 이 하나도 없으면 아래 루프가 통째로 비어 조용히 통과한다.
+    # 이 저장소에서 두 번 나온 사고 유형이라 test_levers.py 와 같은 가드를 둔다.
+    # (적대적 리뷰 Low, 2026-09-02)
+    assert reachable, "적어도 하나는 달성 가능해야 하는 사례다 — fixture 를 확인하라"
+    for l in reachable:
+        if True:
             assert l["delta_pct"] is not None
             assert l["delta_pct"] == pytest.approx(abs(l["delta_ratio"]) * 100)

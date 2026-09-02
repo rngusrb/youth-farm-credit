@@ -6,6 +6,7 @@ import json
 import pytest
 
 from rag import answer as answer_mod
+from llm.verify import numbers_in_text
 from rag import expand as expand_mod
 from rag import ingest, retrieve
 
@@ -119,3 +120,32 @@ def test_empty_corpus_never_answers(tmp_path, monkeypatch):
     retrieve.reset_cache()
     assert r["citations"] == []
     assert r["answer"] == answer_mod.NO_EVIDENCE
+
+def test_regulation_answer_drops_numbers_not_in_excerpts(corpus, monkeypatch):
+    """발췌문에 없는 수치를 쓴 문장은 제도 답변에서도 뺀다.
+
+    사고 이력 2026-09-02 (적대적 리뷰 H3): 제도 답변은 검증을 통째로 우회했다.
+    강제된 것은 *인용 목록이 비지 않는 것* 이었지 **문장 속 숫자가 발췌문에
+    있는지가 아니었다.** "한도 5억원", "3년 이내" 같은 값이 그냥 화면까지 갔다.
+    """
+    monkeypatch.setattr(
+        answer_mod, "_llm_answer",
+        lambda q, h: "한도는 7억 4천만원이며 상환기간은 17년입니다. 조항을 확인하세요.")
+    r = answer_mod.ask("직장 다니면서 신청할 수 있나요?")
+    assert r["dropped"], "지어낸 수치 문장이 그대로 통과했다"
+    assert "17년" not in r["answer"]
+
+
+def test_regulation_answer_keeps_numbers_that_are_in_excerpts(corpus, monkeypatch):
+    """반대로, 발췌문에 있는 수치는 지우지 않는다 — 검증이 과잉이면 답이 빈다."""
+    q = "융자금 상환은 어떻게 하나요?"          # SAMPLE IV-1 (5년 거치 20년) 을 노린다
+    hits = answer_mod.search(q)
+    assert hits, "전제: 검색 결과가 있어야 한다"
+    nums = sorted(numbers_in_text(*[(h.get("text") or "") for h in hits]))
+    assert nums, "전제: 발췌문에 숫자가 있어야 이 검사가 의미 있다"
+    n = nums[0]
+    shown = f"{int(n)}" if float(n).is_integer() else f"{n}"
+    monkeypatch.setattr(answer_mod, "_llm_answer",
+                        lambda q, h: f"관련 기준은 {shown} 입니다.")
+    r = answer_mod.ask(q)
+    assert not r["dropped"], f"발췌문에 있는 {shown} 을 지웠다"

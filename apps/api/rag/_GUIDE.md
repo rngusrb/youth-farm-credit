@@ -133,7 +133,16 @@ pattern: "(?i)(OpenAI|Anthropic|AsyncClient|httpx\.Client)\(\s*\)"
 message: "타임아웃 미지정 클라이언트 금지 — timeout·max_retries 명시 (연쇄 전멸 사고)"
 pattern: "except\s+\w*(APIError|Exception)[^:]*:\s*(pass|continue)"
 message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 즉시 중단"
+pattern: "model\s*=\s*.?claude"
+message: "모델명 하드코딩 금지 — client.MODEL 을 쓴다 (.env 로 바꿀 수 있어야 한다)"
+pattern: "client\.messages\.create\("
+message: "client.messages.create 직접 호출 금지 — complete() 를 쓴다 (빈 응답이 조용히 템플릿으로 떨어진 사고)"
 ```
+
+> 위 두 패턴은 원래 `llm/_GUIDE.md` 에만 있었다. 2026-09-02 적대적 리뷰가
+> **"규칙이 절반만 배선됐다"** 고 지적했다 — rag 도 같은 클라이언트를 같은 방식으로
+> 쓰는데 rag 쪽만 검사가 없어서, `answer.py`·`expand.py` 의 직접 호출이 무사통과했다.
+> 규칙을 한 폴더에만 걸면 나머지 폴더가 그 규칙의 사각지대가 된다.
 
 ---
 

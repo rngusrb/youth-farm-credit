@@ -171,6 +171,7 @@ pattern: "model\s*=\s*.?claude"
 message: "모델명 하드코딩 금지 — client.MODEL 을 쓴다 (.env 로 바꿀 수 있어야 한다)"
 pattern: "client\.messages\.create\("
 message: "client.messages.create 직접 호출 금지 — complete() 를 쓴다 (빈 응답이 조용히 템플릿으로 떨어진 사고)"
+exclude: "llm/client\.py"
 ```
 
 ---

@@ -67,6 +67,8 @@ export default function MapPage() {
       pyeong: profile.pyeong,
       living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService,
+      // 실적을 안 보내면 자금지도만 작목 통계 추정치로 그려진다 (적대적 리뷰 H1)
+      ...(profile.incomeHistory?.length ? { actual_income: profile.incomeHistory } : {}),
       principal,
     })
       .then(setMap)

@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from llm.client import MODEL, get_client
+from llm.client import complete, get_client
 
 # 지침 원문에서 실제로 쓰이는 표현만 넣는다. 지어낸 동의어는 검색을 망친다.
 # (각 우변은 코퍼스 grep 으로 존재를 확인한 어휘다)
@@ -96,12 +96,8 @@ def _by_llm(question: str) -> tuple[str, ...] | None:
     if client is None:
         return None
     try:
-        msg = client.messages.create(
-            model=MODEL,
-            max_tokens=120,
-            messages=[{"role": "user", "content": _PROMPT.format(q=question)}],
-        )
-        text = "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")
+        text = complete(_PROMPT.format(q=question), client=client,
+                        max_tokens=120, purpose="질의확장")
     except Exception as e:  # 조용히 넘어가지 않는다
         import logging
         logging.getLogger(__name__).warning("질의 확장 LLM 실패, 용어집으로 대체: %s", e)
