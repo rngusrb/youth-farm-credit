@@ -135,6 +135,19 @@ def test_consult_asks_when_slots_missing(monkeypatch):
     assert a.question and a.missing
 
 
+@pytest.fixture(autouse=True)
+def _stub_narrate(monkeypatch):
+    """해설은 결정론 스텁으로 고정한다.
+
+    사고 이력: 2026-09-02 전체 테스트가 실제 LLM 을 9회 때리고 있었다. 여기서 새던 건
+    narrate 다 — 플래너는 스텁했는데 해설은 `llm.client.get_client` 를 직접 불러
+    스텁 밖이었다. 이 파일의 어느 테스트도 해설 **문장**을 검사하지 않는다.
+    검사하지 않는 것에 매 실행 돈을 쓸 이유가 없다.
+    """
+    import agent
+    monkeypatch.setattr(agent, "narrate", lambda d, **k: {"body": "해설 스텁."})
+
+
 def test_consult_respects_tool_budget(monkeypatch):
     """도구 예산을 넘으면 중단하되 에러가 아니라 지금까지 결과로 답한다."""
     import agent

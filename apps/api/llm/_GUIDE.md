@@ -35,6 +35,32 @@ except httpx.TimeoutException as e:
 
 ## 금지사항
 
+### ❌ 내부 필드명을 답변에 노출
+```
+# ❌ "…원금까지 합쳐 연 1,950만원으로 뛰는 구조입니다(cliff_multiple 약 4.3배)"
+# ✅ "…원금까지 합쳐 연 1,950만원으로, 약 4.3배가 됩니다"
+```
+**사고 이력**: 2026-09-01 소넷 전환 후 첫 응답에 `cliff_multiple` 이 그대로 나왔다.
+JSON 을 그대로 넘기니 모델이 필드명을 인용해도 문법상 자연스러워 보인다.
+프롬프트 절대규칙 5번으로 막았다.
+
+
+
+### ❌ 모델명을 코드에 박기
+```python
+# ❌ 금지
+msg = client.messages.create(model="claude-opus-5", ...)
+
+# ✅ 대신 — client.MODEL 하나만 본다
+from .client import MODEL
+msg = client.messages.create(model=MODEL, ...)
+```
+**사고 이력**: 2026-09-01 `rag/expand.py` 만 모델명을 박고 있었다. 값이 우연히 같아
+티가 안 났는데, `.env` 로 모델을 바꾸면 **질의확장만 옛 모델을 쓰는** 상태가 된다.
+선언(MODEL)과 실제가 갈라지는데 아무도 모르는 형태다.
+
+
+
 > ⚠️ **아래 금지사항의 근거는 다른 프로젝트(LLM 파이프라인 운영)의 사고다.**
 > 규칙은 여기서도 유효하지만 **이 저장소에서 재현된 적은 없다** — 그래서 라벨이
 > `사고 이력` 이 아니라 `이식된 규칙` 이다. 겪지도 않은 일을 사고 이력으로 적으면
@@ -110,6 +136,8 @@ pattern: "(?i)(OpenAI|Anthropic|AsyncClient|httpx\.Client)\(\s*\)"
 message: "타임아웃 미지정 클라이언트 금지 — timeout·max_retries 명시 (연쇄 전멸 사고)"
 pattern: "except\s+\w*(APIError|Exception)[^:]*:\s*(pass|continue)"
 message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 즉시 중단"
+pattern: "model\s*=\s*.?claude"
+message: "모델명 하드코딩 금지 — client.MODEL 을 쓴다 (.env 로 바꿀 수 있어야 한다)"
 ```
 
 ---
@@ -119,8 +147,12 @@ message: "외부 호출 실패를 삼키지 않는다 — 소진성 오류는 �
 ```
 apps/api/tests/test_api.py
 apps/api/tests/test_agent.py
+apps/api/tests/test_no_paid_calls.py
 ```
 
+> `test_no_paid_calls.py` = **불변식**. 테스트가 실제 LLM 을 부르지 않는지 검사한다.
+> 2026-09-02 아무도 안 보는 사이 실행마다 9회씩 나가고 있었다.
+>
 > **계약 테스트와 품질 테스트를 절대 섞지 않는다.**
 >
 > | 축 | 언제 | 비용 | 무엇을 |

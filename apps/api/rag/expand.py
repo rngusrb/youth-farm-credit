@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from llm.client import get_client
+from llm.client import MODEL, get_client
 
 # 지침 원문에서 실제로 쓰이는 표현만 넣는다. 지어낸 동의어는 검색을 망친다.
 # (각 우변은 코퍼스 grep 으로 존재를 확인한 어휘다)
@@ -97,7 +97,7 @@ def _by_llm(question: str) -> tuple[str, ...] | None:
         return None
     try:
         msg = client.messages.create(
-            model="claude-opus-5",
+            model=MODEL,
             max_tokens=120,
             messages=[{"role": "user", "content": _PROMPT.format(q=question)}],
         )

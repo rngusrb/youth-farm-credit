@@ -6,6 +6,7 @@ import json
 import pytest
 
 from rag import answer as answer_mod
+from rag import expand as expand_mod
 from rag import ingest, retrieve
 
 SAMPLE = [
@@ -68,6 +69,19 @@ def test_text_chunking_builds_heading_path(tmp_path, monkeypatch):
     assert [c.section_path for c in rows] == ["제3조", "제4조"]
     assert rows[0].doc_title == "평문 지침"
     assert rows[0].doc_year == 2026
+
+
+@pytest.fixture(autouse=True)
+def _no_llm(monkeypatch):
+    """계약 테스트는 규칙기반 경로에서 돈다.
+
+    사고 이력: 2026-09-02 전체 테스트가 실제 LLM 을 9회 때리고 있었고 5회가 여기였다
+    (질의확장 + 답변생성). **이 파일의 단언은 하나도 생성 문장을 보지 않는다** —
+    인용 원문 일치, 근거 없을 때 거절, 검색 상위 조항뿐이다. 오히려 스텁이 더 정확하다:
+    LLM 이 답을 쓰든 말든 인용 강제가 걸리는지가 검사 대상이기 때문이다.
+    """
+    monkeypatch.setattr(expand_mod, "get_client", lambda: None)
+    monkeypatch.setattr(answer_mod, "get_client", lambda: None)
 
 
 def test_retrieve_finds_relevant_section(corpus):

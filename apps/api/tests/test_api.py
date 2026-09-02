@@ -134,12 +134,19 @@ def test_explain_rejects_partial_payload():
     assert r.status_code == 422
 
 
-def test_regulation_blocks_uncited_answer():
+def test_regulation_blocks_uncited_answer(monkeypatch):
+    """근거를 못 찾으면 LLM 이 뭐라 쓰든 답을 내보내지 않는다.
+
+    사고 이력: 2026-09-02 이 테스트는 `if not citations:` 분기라 **인용이 잡히면
+    아무것도 검사하지 않았고**, 그러면서 실제 LLM 을 매 실행 2회 때렸다.
+    검색을 빈 결과로 고정해 차단 경로를 반드시 지나가게 한다.
+    """
+    from rag import answer as answer_mod
+
+    monkeypatch.setattr(answer_mod, "search", lambda *a, **k: [])
     r = client.post(
         "/api/v1/regulation/ask", json={"question": "직장 다니면서 신청할 수 있나요?"}
     ).json()
-    if not r["citations"]:
-        assert r["answer"] == "확인된 근거를 찾지 못했습니다"
-        assert r["confidence"] == "none"
-    else:
-        assert all(c["text"] for c in r["citations"])
+    assert r["citations"] == []
+    assert r["answer"] == answer_mod.NO_EVIDENCE
+    assert r["confidence"] == "none"

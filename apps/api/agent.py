@@ -151,7 +151,9 @@ def consult(question: str, slots: dict | None = None, persona: str = "farmer") -
         n = narrate(diagnosis, persona=persona) if _narrate_takes_persona() else narrate(diagnosis)
         budget.llm_calls += 1
         raw = n if isinstance(n, str) else n.get("body", "")
-        text, dropped, used = verify_text(raw, diagnosis)
+        # 허용 수치는 **쓴 도구 전부**에서 모은다. diagnosis 만 넘기면 stress·funding_map 이
+        # 낸 값을 인용한 문장이 통째로 잘린다 — advisor 에서 같은 버그를 이미 겪었다 (2026-09-01).
+        text, dropped, used = verify_text(raw, results)
     elif diagnosis is not None:
         text = "설명 예산을 다 써서 계산 결과만 보여드려요."
 

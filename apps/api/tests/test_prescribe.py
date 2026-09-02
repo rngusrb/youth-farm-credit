@@ -82,6 +82,18 @@ def test_draft_numbers_are_all_from_tools(bundle):
     assert r["dropped"] == [], f"템플릿 경로에서 버려진 문장이 있다: {r['dropped']}"
 
 
+@pytest.fixture(autouse=True)
+def _no_llm(monkeypatch):
+    """계약 테스트는 결정론이어야 한다 — 기본은 템플릿 경로.
+
+    사고 이력: 2026-09-02 키를 켜 놓자 `test_clause_numbers_are_not_parsed_as_figures`
+    가 깨졌다. 테스트가 템플릿 문구("조항에 규정")를 확인하는데 LLM 이 다른 말을 썼기
+    때문이다. **키 유무로 결과가 갈리는 검사는 검사가 아니다** — 게다가 매 실행마다
+    돈이 나간다. 가짜 클라이언트가 필요한 테스트는 본문에서 다시 setattr 한다.
+    """
+    monkeypatch.setattr(A, "get_client", lambda: None)
+
+
 def test_draft_drops_fabricated_numbers(bundle, monkeypatch):
     """지어낸 수치가 들어오면 그 문장을 버린다. 실제 모델은 부르지 않는다."""
     from llm.verify import _matches, allowed_forms, collect_numbers
