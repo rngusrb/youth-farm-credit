@@ -75,6 +75,42 @@ features:
       web:      ["apps/web/app/policy/**", "apps/web/app/faq/**", "apps/web/app/library/**"]
     tests:      ["apps/api/tests/test_rag.py", "apps/api/tests/test_rag_corpus.py"]
 
+  - name: agent
+    label: AI 농가 상담사 (계획→도구→해설→검증)
+    paths:
+      core:     ["apps/api/engine/tools.py"]
+      adapters: ["apps/api/llm/planner.py", "apps/api/llm/narrate.py",
+                 "apps/api/llm/verify.py"]
+      api:      ["apps/api/agent.py"]
+      web:      ["apps/web/app/app/assistant/**"]
+    tests:      ["apps/api/tests/test_agent.py", "apps/api/tests/test_tools.py",
+                 "apps/api/tests/test_no_paid_calls.py"]
+
+  - name: levers
+    label: 반사실 탐색 (얼마까지 받으려면)
+    paths:
+      core:     ["apps/api/engine/levers.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/levers/**"]
+    tests:      ["apps/api/tests/test_levers.py"]
+
+  - name: fundingmap
+    label: AI 농사 자금지도 (1년 + 25년)
+    paths:
+      core:     ["apps/api/engine/fundingmap.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/map/**", "apps/web/components/FundingMap.tsx"]
+    tests:      ["apps/api/tests/test_tools.py"]
+
+  - name: prescribe
+    label: AI 맞춤 처방 (평균비교·작목전환·신청서 초안)
+    paths:
+      core:     ["apps/api/engine/benchmark.py", "apps/api/engine/switch.py"]
+      adapters: ["apps/api/llm/advisor.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/prescribe/**", "apps/web/app/app/checkup/**"]
+    tests:      ["apps/api/tests/test_prescribe.py"]
+
   - name: sigma
     label: σ 실측
     paths:

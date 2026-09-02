@@ -27,7 +27,8 @@
                          │  fetch
                          ▼
    ┌─────────────────────────────────────────────┐
-   │  api      apps/api/main.py · schemas.py     │  HTTP 경계·검증·직렬화
+   │  api      main.py · schemas.py · agent.py   │  HTTP 경계·검증·직렬화
+   │           agent.py = 계획→도구실행→해설→검증  │  (오케스트레이션만, 계산 안 함)
    └───────────────┬──────────────┬──────────────┘
                    │              │
         ┌──────────▼───────┐   ┌──▼───────────────────────────┐
@@ -67,6 +68,14 @@
 | 몬테카를로(소득충격·재해·상환연기) | `apps/api/engine/simulate.py` |
 | 위험기반 한도·σ 불확실성 밴드 | `apps/api/engine/risk_limit.py` |
 | 진단 오케스트레이션·결과 id | `apps/api/engine/diagnose.py` |
+| **에이전트 상담 루프**(계획→실행→해설→검증) | `apps/api/agent.py` |
+| **에이전트가 고를 수 있는 도구 목록** | `apps/api/engine/tools.py` (ToolSpec·ENGINE_TOOLS) |
+| **질문 → 도구 계획**(예산 상한·스키마 검증·키워드 대체) | `apps/api/llm/planner.py` |
+| 반사실 탐색 — "얼마까지 받으려면 무엇을 얼마나" | `apps/api/engine/levers.py` (`solve_for`) |
+| 25년 자금지도 — 거치 종료·상환 급증·부족 시점 | `apps/api/engine/fundingmap.py` |
+| 작목 전환·분산 후보 | `apps/api/engine/switch.py` |
+| 전국 평균 대비 위치 | `apps/api/engine/benchmark.py` |
+| 신청서 초안 | `apps/api/llm/advisor.py` |
 | 현금흐름 / 스트레스 시나리오 | `apps/api/engine/cashflow.py` · `stress.py` |
 | 작목 파라미터·대출상품·재해규칙 | `apps/api/data/` + `engine/params.py` |
 | σ 추정(GARCH·계층축소·부트스트랩) | `apps/api/estimators/` |
@@ -102,6 +111,26 @@ return verify_numbers(llm_explain(result), engine_output=result)
 
 ### 3. API 키 없는 경로를 깨뜨리기 금지
 키 부재 시 규칙기반 폴백으로 전체 플로우가 돌아야 한다. 데모·심사에서 이게 생명줄이다.
+
+### 4. 계약 테스트가 실제 LLM 을 부르기 금지
+계약 테스트는 **공짜이고 결정론**이어야 한다. 품질·확률 경로는 별도 eval 로 뺀다.
+**사고 이력**: 2026-09-02 키를 켜자 전체 테스트가 실행마다 실제 LLM 을 9회 부르고
+있던 것이 드러났다. 돈이 나가는 것보다 나쁜 건 **키 유무로 결과가 갈렸다**는 것이다 —
+템플릿 문구를 확인하는 테스트가 LLM 경로를 타면서 깨졌다.
+불변식 `apps/api/tests/test_no_paid_calls.py` 가 이제 이걸 막는다.
+
+### 5. 같은 개념에 두 이름 붙이기 금지
+특히 한도 3종. `available`=제도상 신청 가능 한도, `recommended`=은행이 보는 선(DSCR),
+`risk_based`=권장 차입. **'권장'은 risk_based 에만 붙인다.**
+**사고 이력**: 2026-09-02 상담사 화면 하나에서 타일은 risk_based(2.7억)를 "권장 차입",
+LLM 문장은 recommended(4.07억)를 "권장 한도"라 불렀다. 프롬프트가 그렇게 시켰다.
+농가는 어느 게 권장인지 알 수 없다.
+
+### 6. 화면마다 다른 소득 기준 쓰기 금지
+실적(`income_history`)이 있으면 모든 화면이 그것을 쓴다. 일부만 작목 통계 추정치로
+계산하면 같은 농가의 상환 가용액이 화면마다 달라진다.
+**사고 이력**: 2026-09-02 상담사만 실적을 안 보내 1,833만원 / 3,304만원으로 갈렸다.
+도구는 이미 `income_history` 를 받고 있었고 **화면이 안 보내고 있었을 뿐**이다.
 
 ---
 
