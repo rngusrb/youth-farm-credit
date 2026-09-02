@@ -78,7 +78,7 @@ export default function PrescribePage() {
     <>
       <PageTitle
         title="AI 맞춤 처방"
-        lead="전국 평균과 견주고, 원하는 금액을 감당할 조건을 찾고, 신청서 초안까지 만들어 드립니다."
+        lead="원하는 금액을 감당할 조건을 찾고, 작목 전환까지 견주고, 신청서 초안을 만들어 드립니다."
       />
 
       {error && <Notice tone="warn" title="처방을 만들지 못했어요">{error}</Notice>}

@@ -102,7 +102,7 @@ export default function FarmPage() {
   return (
     <>
       <PageTitle
-        title="내 농가 정보"
+        title="내 농장 정보 입력"
         lead="한 번 넣어 두면 모든 화면이 이 값으로 계산해요. 로그인 계정과 무관하게 이 브라우저에만 저장되며 서버로 보내지 않아요."
       />
 

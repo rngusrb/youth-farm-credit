@@ -232,6 +232,10 @@ apps/web/tests/amount-compare.test.ts
 apps/web/tests/why-this-loan.test.ts
 apps/web/tests/report-diff.test.ts
 apps/web/tests/header-menu.test.tsx
+apps/web/tests/farmer-steps.test.ts
 ```
 | `app/app/levers/page.tsx` | 「얼마까지 받으려면」 — 반사실 탐색 결과와 **탐색 범위**를 함께 표시 |
-| `app/app/prescribe/page.tsx` | 「AI 맞춤 처방」 — 평균 대비·조정안·신청서 초안 |
+| `app/app/prescribe/page.tsx` | 「AI 맞춤 처방」(5단계) — 조정안·작목전환·신청서 초안 |
+| `app/app/checkup/page.tsx` | 「AI 농가 건강검진」(2단계) — 소득 출처·평균 대비·작목 특성·계획 비교 |
+| `app/app/map/page.tsx` | 「AI 농사 자금지도」(3단계) — 25년 지도 + 월별 현금흐름 |
+| `components/IncomeSource.tsx` | 이 진단의 '내 소득'이 실적인지 추정인지 밝힌다 |

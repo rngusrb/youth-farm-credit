@@ -158,7 +158,7 @@ export default function AssistantPage() {
   return (
     <>
       <PageTitle
-        title="AI 상담"
+        title="AI 농가 상담사"
         lead="질문을 보고 필요한 계산 도구를 골라 실행합니다. 숫자는 계산 엔진이 만들고, 설명에 쓰인 수치는 엔진 값과 대조해 어긋나면 걸러냅니다."
       />
 
