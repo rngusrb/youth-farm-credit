@@ -175,3 +175,29 @@ def test_documented_verifier_looseness_matches_reality():
         assert int(m.group(1)) == actual, (
             f"{rel} 에 적힌 {m.group(1)} 이 실측 {actual} 과 다르다. "
             f"문서를 실측값으로 고쳐라 (재현: 이 테스트의 본문 그대로)")
+
+
+def test_every_diagnose_backed_tool_accepts_income_history():
+    """진단 입력을 만드는 도구는 **전부** 실적을 받는다.
+
+    사고 이력 2026-09-02 (적대적 리뷰 H2): HTTP 스키마는 `FarmHistory` 로 구조화해
+    막았는데 **도구 스펙은 안 고쳤다.** planner 가 `required + optional` 로 인자를
+    거르므로, 상담사가 실적을 실어 보내도 cashflow·stress 에서 조용히 버려졌다 —
+    같은 누락의 네 번째 사례다. 한 곳을 구조로 막으면 다른 곳이 남는다.
+    """
+    backed = [n for n, s in ENGINE_TOOLS.items()
+              if {"crop_id", "pyeong", "living_cost"} <= set(s.required)]
+    missing = [n for n in backed if "income_history" not in ENGINE_TOOLS[n].optional]
+    assert not missing, f"이 도구들이 실적을 못 받는다 — optional 에 넣어라: {missing}"
+
+
+def test_income_history_actually_changes_tool_output():
+    """선언만 하고 버리지 않는지 — 값이 실제로 바뀌어야 한다."""
+    base = {"crop_id": "strawberry_hydro", "pyeong": 1300.0, "living_cost": 30_000_000.0}
+    hist = {"income_history": [90_000_000.0, 95_000_000.0, 88_000_000.0]}
+    a = ENGINE_TOOLS["cashflow"].fn(**base, principal=3e8, year=6)["annual"]["income"]
+    b = ENGINE_TOOLS["cashflow"].fn(**base, **hist, principal=3e8, year=6)["annual"]["income"]
+    assert a != b, "cashflow 가 실적을 선언만 하고 버린다"
+    c = ENGINE_TOOLS["stress"].fn(**base, principal=3e8)["scenarios"][0]["income"]
+    d = ENGINE_TOOLS["stress"].fn(**base, **hist, principal=3e8)["scenarios"][0]["income"]
+    assert c != d, "stress 가 실적을 선언만 하고 버린다"

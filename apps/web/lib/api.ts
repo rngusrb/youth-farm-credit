@@ -368,8 +368,19 @@ export type MonthFlow = {
   living: number; debt: number; net: number; balance: number;
 };
 
+/** 무엇을 기준으로 계산했는지. 실적이 있으면 연간 수준을 실적에 맞추므로
+ *  총수입·경영비는 **공표값이 아니라 파생값**이 된다 — 화면이 배지를 바꿔야 한다. */
+export type IncomeBasis = {
+  source: "ACTUAL" | "CROP_AVERAGE";
+  scale: number;
+  crop_average?: number;
+  annual?: number;
+  note: string;
+};
+
 export type Cashflow = {
   crop: { id: string; name: string; cashflow_year: number | null; rescaled: boolean };
+  income_basis: IncomeBasis;
   year: number;
   is_grace_year: boolean;
   annual: {
@@ -406,12 +417,15 @@ export type StressScenario = {
 export type StressReport = {
   principal: number; tolerance: number; sigma: number; leverage: number;
   scenarios: StressScenario[]; note: string;
+  income_basis: IncomeBasis;
 };
 
 export const fetchStress = (p: {
   crop_id: string; pyeong: number; living_cost: number;
   other_debt_service?: number; principal?: number | null;
   product_id?: string; max_crisis_prob?: number | null;
+  /** 실적. 안 보내면 시나리오 소득만 작목 통계로 계산돼 진단과 갈린다. */
+  income_history?: number[];
 }) => post<StressReport>("/api/v1/stress", p);
 
 // ── 정책자금 자격 요건 ──────────────────────────────────────
@@ -632,6 +646,11 @@ export type YearPoint = {
 export type FundingMapResult = {
   principal: number;
   crop_name: string;
+  income: {
+    annual: number; source: "ACTUAL" | "CROP_AVERAGE"; actual_mean: number | null;
+    crop_average: number; actual_pyeong: number | null;
+    history_years: number; source_note: string;
+  };
   grace_years: number;
   term_years: number;
   years: YearPoint[];

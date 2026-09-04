@@ -18,7 +18,7 @@ from agent import consult
 from engine.cashflow import cashflow_for
 from engine.diagnose import DiagnoseInput, diagnose
 from engine.loan import repayment_schedule
-from engine.errors import InsufficientCropData
+from engine.errors import InsufficientCropData, InsufficientRepaymentCapacity
 from engine.benchmark import benchmark
 from engine.fundingmap import funding_map
 from engine.switch import switch_candidates
@@ -239,6 +239,8 @@ def stress(req: StressRequest) -> dict:
         return stress_for(inp, req.principal)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from None
+    except InsufficientRepaymentCapacity as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
     except InsufficientCropData as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from None
 

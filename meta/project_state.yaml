@@ -68,12 +68,18 @@ ui_check:
   sessions:
     farmer:
       yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
-      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+      # 실적을 넣어 둔다 — 심사 화면은 **실적이 있을 때** 총수입·경영비가 파생값이
+      # 되고 배지가 바뀐다. 빈 배열이면 그 조합을 한 번도 검사하지 않는다
+      # (적대적 리뷰 H3, 2026-09-02: 파생값에 "통계" 배지가 붙은 채로 통과했다).
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[90000000,95000000,88000000],"productId":"successor_farmer"}'
     # 「지난 분석과 달라진 것」 은 기록이 2건 이상이어야 나온다.
     # 세션만 심으면 그 블록이 영영 검사되지 않는다.
     farmer_with_history:
       yfc.session.v1: '{"id":"000000","role":"farmer","name":"김청년","org":"청년후계농","at":1}'
-      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+      # 실적을 넣어 둔다 — 심사 화면은 **실적이 있을 때** 총수입·경영비가 파생값이
+      # 되고 배지가 바뀐다. 빈 배열이면 그 조합을 한 번도 검사하지 않는다
+      # (적대적 리뷰 H3, 2026-09-02: 파생값에 "통계" 배지가 붙은 채로 통과했다).
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[90000000,95000000,88000000],"productId":"successor_farmer"}'
       yfc.reports.v1: '[{"id": "dg_new", "cropName": "딸기(시설,수경)", "pyeong": 1500, "productName": "후계농업경영인 육성자금", "riskLimit": 268000000, "crisisProb": 0.0812, "savedAt": 1787900000000}, {"id": "dg_old", "cropName": "딸기(시설,수경)", "pyeong": 1200, "productName": "후계농업경영인 육성자금", "riskLimit": 210815430, "crisisProb": 0.0999, "savedAt": 1787700000000}]'
     # 실적·계획을 넣은 농가. 이게 없으면 "실적 기반 소득"·"올해 계획대로" 블록이
     # 영영 검사되지 않는다 — 기본 프로필의 incomeHistory 가 [] 라 항상 추정 경로로만 돈다.
@@ -82,7 +88,10 @@ ui_check:
       yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1300,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[48000000,52000000,45000000],"productId":"successor_farmer","plannedPyeong":1800,"targetPrincipal":300000000}'
     bank:
       yfc.session.v1: '{"id":"222222","role":"bank","name":"박심사","org":"농협은행 여신심사부","at":1}'
-      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[],"productId":"successor_farmer"}'
+      # 실적을 넣어 둔다 — 심사 화면은 **실적이 있을 때** 총수입·경영비가 파생값이
+      # 되고 배지가 바뀐다. 빈 배열이면 그 조합을 한 번도 검사하지 않는다
+      # (적대적 리뷰 H3, 2026-09-02: 파생값에 "통계" 배지가 붙은 채로 통과했다).
+      yfc.profile.v1: '{"cropId":"strawberry_hydro","pyeong":1200,"livingCost":30000000,"otherDebtService":0,"incomeHistory":[90000000,95000000,88000000],"productId":"successor_farmer"}'
 
   # `python3 scripts/ui_check.py all` 이 도는 대상. as 가 없으면 비로그인 상태.
   targets:

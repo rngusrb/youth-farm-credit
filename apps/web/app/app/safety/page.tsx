@@ -36,6 +36,9 @@ export default function SafetyPage() {
     fetchStress({
       crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService, product_id: profile.productId, principal,
+      // 진단에만 실적을 보내고 여기 안 보내면 한 화면에서 소득이 갈린다
+      // (적대적 리뷰 H1, 2026-09-02: 진단 9,100만원 / 시나리오 6,304만원).
+      income_history: profile.incomeHistory,
     })
       .then(setReport)
       .catch((e) => setError(e instanceof Error ? e.message : "스트레스 테스트 실패"))

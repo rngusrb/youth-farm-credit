@@ -179,7 +179,12 @@ export default function MapPage() {
                   </li>
                 ))}
             </ol>
-            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">{map.note}</p>
+            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
+              {map.income.source === "ACTUAL"
+                ? `최근 ${map.income.history_years}개년 실적 평균(${won(map.income.annual)})으로 그렸어요. `
+                : `작목 통계 추정치(${won(map.income.annual)})로 그렸어요. `}
+              {map.note}
+            </p>
           </Panel>
         </Section>
       )}
@@ -236,6 +241,10 @@ export default function MapPage() {
                 </Notice>
               </div>
             )}
+
+            <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
+              {cf.income_basis.note}
+            </p>
 
             <p className="mt-3 text-[12px] text-gov-ink3">
               월별 수입·지출 표는{" "}

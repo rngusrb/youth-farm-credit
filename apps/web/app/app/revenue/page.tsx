@@ -42,6 +42,8 @@ export default function RevenuePage() {
     fetchCashflow({
       crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService, product_id: profile.productId,
+      // 진단과 같은 소득 기준으로 그린다 (적대적 리뷰 F4·H1)
+      income_history: profile.incomeHistory,
       principal, year,
     })
       .then(setCf)

@@ -49,6 +49,9 @@ export default function CapacityPage() {
     );
   }
 
+  // 실적에 맞춰 총수입·경영비를 조정했는가. 조정했다면 그 값은 공표 통계가 아니다.
+  const scaled = !!cf && cf.income_basis.scale !== 1;
+
   return (
     <>
       <PageTitle
@@ -64,12 +67,23 @@ export default function CapacityPage() {
             <Panel>
               <SourceLegend className="mb-4" />
               <DefTable rows={[
+                // 실적이 있으면 총수입·경영비는 **공표값이 아니라 파생값**이다
+                // (공표값 × 실적/작목평균). 그런데 배지는 "통계" 그대로였다 —
+                // SourceTag 를 만든 이유("가정값을 통계처럼 읽는 순간 심사가 틀어진다")를
+                // 정면으로 어기고 있었다. (적대적 리뷰 H3, 2026-09-02)
                 ["연 총수입", <span key="a" className="tabular">{cf ? won(cf.annual.gross) : "—"}</span>,
-                  { src: "public", note: "공표 10a당 총수입 × 차주 신고 면적." }],
+                  scaled
+                    ? { src: "assumed", note: `공표 10a당 총수입 × 차주 신고 면적을, 차주 실적에 맞춰 ${cf!.income_basis.scale.toFixed(2)}배 조정했습니다. 경영비 비율은 공표값 그대로입니다.` }
+                    : { src: "public", note: "공표 10a당 총수입 × 차주 신고 면적." }],
                 ["경영비", <span key="b" className="tabular">{cf ? `− ${won(cf.annual.operating_cost)}` : "—"}</span>,
-                  { src: "public", note: "같은 조사의 경영비입니다. 조사연도는 작목마다 다릅니다." }],
+                  scaled
+                    ? { src: "assumed", note: `같은 조사의 경영비를 총수입과 같은 비율(${cf!.income_basis.scale.toFixed(2)}배)로 조정했습니다. 실제 경영비 구조는 다를 수 있습니다.` }
+                    : { src: "public", note: "같은 조사의 경영비입니다. 조사연도는 작목마다 다릅니다." }],
+                // 실적을 쓰면 이 값은 **차주가 낸 숫자**다. 공표 통계가 아니다.
                 ["농업소득", <b key="c" className="tabular">{won(diag.income.annual)}</b>,
-                  { src: "public" }],
+                  diag.income.source === "ACTUAL"
+                    ? { src: "input", note: `차주가 제출한 최근 ${diag.income.history_years}개년 실적의 평균입니다. 검증 대상입니다.` }
+                    : { src: "public", note: "공표 통계로 추정한 값입니다. 차주 실적이 제출되지 않았습니다." }],
                 ["생활비", <span key="d" className="tabular">− {won(diag.input.living_cost)}</span>,
                   { src: "input", note: "차주가 적어 낸 값입니다. 검증 대상입니다." }],
                 ["기존 부채상환", <span key="e" className="tabular">

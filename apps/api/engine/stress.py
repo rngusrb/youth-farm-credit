@@ -159,7 +159,7 @@ def stress_for(inp, principal: float | None = None) -> dict:
     from dataclasses import asdict
 
     from .diagnose import diagnose
-    from .errors import InsufficientCropData
+    from .errors import InsufficientCropData, InsufficientRepaymentCapacity
     from .params import get_crop, get_product, policy, unit_area_pyeong
 
     crop = get_crop(inp.crop_id)
@@ -169,8 +169,20 @@ def stress_for(inp, principal: float | None = None) -> dict:
 
     units = inp.pyeong / unit_area_pyeong()
     base = diagnose(inp)
-    target = principal if principal is not None else base["limits"]["risk_based"]
-    tolerance = base["limits"]["max_crisis_prob"]
+    # 상환여력이 0 이하면 diagnose 가 limits 를 축약해 돌려준다 — risk_based·
+    # max_crisis_prob 이 아예 없다. 그대로 읽으면 KeyError 가 404 로 번역되면서
+    # **파이썬 키 이름이 응답에 새어 나갔다** ({"detail":"'max_crisis_prob'"}).
+    # 실적을 받기 시작하면서 "소득이 생활비 이하인 실제 농가" 경로가 새로 열렸다.
+    # (적대적 리뷰 M2, 2026-09-02)
+    limits = base["limits"]
+    if "max_crisis_prob" not in limits:
+        raise InsufficientRepaymentCapacity(
+            f"상환에 쓸 수 있는 돈이 없어 시나리오를 돌릴 수 없습니다 "
+            f"(연 농업소득 {base['income']['annual']:,.0f}원, "
+            f"생활비·기존부채 {inp.living_cost + inp.other_debt_service:,.0f}원). "
+            f"생활비나 면적을 확인해 주세요.")
+    target = principal if principal is not None else limits["risk_based"]
+    tolerance = limits["max_crisis_prob"]
 
     # σ 는 진단에서 (개인화된 값을) 가져오면서 소득만 작목평균이면 한 응답 안에서
     # 기준이 갈린다. cashflow 와 같은 방식으로 **연간 수준을 진단에 맞춘다** —
@@ -193,6 +205,18 @@ def stress_for(inp, principal: float | None = None) -> dict:
         p_disaster=policy()["simulation"]["p_disaster"],
     )
     return {
+        # 무엇을 어떻게 계산했는지 밝힌다. cashflow 는 밝히는데 stress 만 없어서
+        # "실적을 쓴다" 는 주장이 응답에서 확인되지 않았다 (적대적 리뷰 M1, 2026-09-02).
+        "income_basis": {
+            "source": base["income"]["source"],
+            "annual": base["income"]["annual"],
+            "scale": scale,
+            "note": ("연간 수준은 내 실적에 맞추고, 경영비 비율은 작목 통계를 그대로 "
+                     "썼습니다. 총수입과 경영비를 같은 비율로 조정하므로 "
+                     "**영업레버리지는 작목 평균 그대로**입니다."
+                     if scale != 1.0 else
+                     "작목 통계 추정치입니다."),
+        },
         "principal": target,
         "tolerance": tolerance,
         "sigma": base["sigma"],
