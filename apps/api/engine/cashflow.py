@@ -126,11 +126,33 @@ def cashflow_for(inp, principal: float, year: int = 1) -> dict:
         raise InsufficientCropData(crop.name, "총수입·경영비")
 
     units = inp.pyeong / unit_area_pyeong()
+    gross = crop.gross_per_10a * units
+    op_cost = crop.cost_per_10a * units
+
+    # 실적이 있으면 **연간 수준을 실적에 맞춘다.** 계절성(월별 비중)은 작목에서 빌린다.
+    #
+    # 왜 이렇게 하나 (적대적 리뷰 F4, 2026-09-02): 자금지도를 실적 기준으로 고쳤더니
+    # `/app/map` 한 화면에서 자금지도 9,100만원 / 현금흐름 6,304만원으로 **1.45배가
+    # 갈렸다.** 고치기 전에는 둘 다 일관되게 틀렸고, 고친 뒤 한 화면이 모순됐다.
+    #
+    # 총수입·경영비를 따로 알 방법은 없다. 하지만 **연 농업소득은 안다**(실적).
+    # 그래서 순소득이 실적과 같아지도록 총수입·경영비를 같은 비율로 늘린다 —
+    # 경영비 비율과 출하월 분포는 작목 통계를 그대로 쓴다. 지어낸 값이 아니라
+    # **가진 값(실적 수준)과 없는 값(계절성)을 구분해서 쓴 것**이고, 그 사실을
+    # income_basis 로 밝힌다.
+    from .income import resolve_income
+    resolved, meta = resolve_income(inp.crop_id, inp.pyeong, inp.income_history,
+                                    inp.income_history_pyeong)
+    crop_net = gross - op_cost
+    scale = (resolved / crop_net) if (crop_net and meta["source"] == "ACTUAL") else 1.0
+    gross *= scale
+    op_cost *= scale
+
     due = repayment_schedule(principal, product)
     year_idx = min(max(year, 1), len(due)) - 1
     cf = monthly_cashflow(
-        gross=crop.gross_per_10a * units,
-        operating_cost=crop.cost_per_10a * units,
+        gross=gross,
+        operating_cost=op_cost,
         living_cost=inp.living_cost,
         debt_payment=float(due[year_idx]) + inp.other_debt_service,
         harvest_months=crop.harvest_months,
@@ -142,10 +164,19 @@ def cashflow_for(inp, principal: float, year: int = 1) -> dict:
                  "rescaled": bool(getattr(crop, "cashflow_rescaled", False))},
         "year": year_idx + 1,
         "is_grace_year": year_idx < product.grace_years,
+        "income_basis": {
+            "source": meta["source"],
+            "scale": scale,
+            "crop_average": crop_net,
+            "note": ("연간 수준은 내 실적에 맞추고, 월별 비중(계절성)과 경영비 비율은 "
+                     "작목 통계를 그대로 썼습니다."
+                     if scale != 1.0 else
+                     "작목 통계 추정치입니다. 실적을 넣으면 연간 수준이 실적에 맞춰집니다."),
+        },
         "annual": {
-            "gross": crop.gross_per_10a * units,
-            "operating_cost": crop.cost_per_10a * units,
-            "income": (crop.gross_per_10a - crop.cost_per_10a) * units,
+            "gross": gross,
+            "operating_cost": op_cost,
+            "income": gross - op_cost,
             "living_cost": inp.living_cost,
             "debt_payment": float(due[year_idx]),
             "other_debt_service": inp.other_debt_service,

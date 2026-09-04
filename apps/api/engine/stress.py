@@ -172,9 +172,19 @@ def stress_for(inp, principal: float | None = None) -> dict:
     target = principal if principal is not None else base["limits"]["risk_based"]
     tolerance = base["limits"]["max_crisis_prob"]
 
+    # σ 는 진단에서 (개인화된 값을) 가져오면서 소득만 작목평균이면 한 응답 안에서
+    # 기준이 갈린다. cashflow 와 같은 방식으로 **연간 수준을 진단에 맞춘다** —
+    # 경영비 비율은 작목 통계 그대로. (적대적 리뷰 F4, 2026-09-02)
+    gross = crop.gross_per_10a * units
+    op_cost = crop.cost_per_10a * units
+    crop_net = gross - op_cost
+    scale = (base["income"]["annual"] / crop_net) if crop_net else 1.0
+    gross *= scale
+    op_cost *= scale
+
     results = run_stress(
-        gross=crop.gross_per_10a * units,
-        operating_cost=crop.cost_per_10a * units,
+        gross=gross,
+        operating_cost=op_cost,
         fixed_outflow=inp.living_cost + inp.other_debt_service,
         principal=target,
         product=product,

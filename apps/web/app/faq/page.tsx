@@ -99,6 +99,11 @@ export default function FaqPage() {
                         {a && a !== "loading" && a !== "error" && (
                           <>
                             <p className="text-[14px] leading-relaxed text-gov-ink">{a.answer}</p>
+                            {a.dropped.length > 0 && (
+                              <p className="mt-1 text-[12px] text-gov-warn">
+                                발췌문에 없는 숫자를 쓴 문장 {a.dropped.length}개를 뺐어요.
+                              </p>
+                            )}
                             {a.citations.slice(0, 2).map((c, i) => (
                               <figure key={i} className="mt-3 border-l-4 border-gov-line bg-white px-4 py-3">
                                 <figcaption className="mb-1.5 flex flex-wrap items-center gap-2 text-[12px] text-gov-ink3">

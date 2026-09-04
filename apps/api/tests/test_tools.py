@@ -142,3 +142,36 @@ def test_tool_matches_endpoint_assembly():
     via_tool = ENGINE_TOOLS["cashflow"].fn(**ARGS["cashflow"])
     assert direct["trough_month"] == via_tool["trough_month"]
     assert direct["working_capital_need"] == via_tool["working_capital_need"]
+
+
+def test_documented_verifier_looseness_matches_reality():
+    """문서에 적은 "1~100 정수의 N%가 통과" 가 실제와 맞는지 매번 확인한다.
+
+    사고 이력 2026-09-02 (적대적 리뷰 F3): 검증 강도를 정직하게 적겠다며 실측치를
+    주석에 넣었는데, **리뷰어가 준 숫자를 그대로 옮기고 내 수정 뒤에 다시 재보지
+    않았다.** 65 라고 적었지만 실제는 59 였다. 과장을 고치는 커밋이 새 과장을 심었다.
+
+    숫자를 문서에 적으려면 그 숫자를 기계가 지켜야 한다. 도구가 늘거나 출력이 바뀌면
+    값이 움직이는데, 그때 문서만 옛날 값으로 남는 것이 정확히 위 사고다.
+    """
+    import re
+    from pathlib import Path
+
+    from llm.verify import _matches, allowed_forms, collect_numbers
+
+    base = {"crop_id": "strawberry_hydro", "pyeong": 1300.0, "living_cost": 30_000_000.0}
+    results = {
+        "diagnose": ENGINE_TOOLS["diagnose"].fn(**base),
+        "funding_map": ENGINE_TOOLS["funding_map"].fn(**base, principal=200_000_000.0),
+    }
+    forms = allowed_forms(collect_numbers(results))
+    actual = sum(1 for n in range(1, 101) if _matches(float(n), forms))
+
+    api = Path(__file__).resolve().parents[1]
+    for rel, pattern in [("engine/tools.py", r"# → (\d+)/100"),
+                         ("llm/verify.py", r"1~100 정수의 (\d+)%")]:
+        m = re.search(pattern, (api / rel).read_text())
+        assert m, f"{rel} 에서 문서화된 수치를 찾지 못했다 — 문구가 바뀌었으면 이 검사도 고쳐라"
+        assert int(m.group(1)) == actual, (
+            f"{rel} 에 적힌 {m.group(1)} 이 실측 {actual} 과 다르다. "
+            f"문서를 실측값으로 고쳐라 (재현: 이 테스트의 본문 그대로)")

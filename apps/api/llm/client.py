@@ -89,7 +89,13 @@ def complete(prompt: str, *, client, max_tokens: int = MIN_MAX_TOKENS,
     """
     if client is None:
         return ""
+    # 하한은 유지한다 — thinking 이 예산을 다 써 본문이 비는 사고가 실제로 있었다.
+    # 다만 **조용히** 올리지는 않는다. 호출부가 120 을 적었는데 1200 이 나가면
+    # 그 사실을 아무도 모른 채 비용이 10배가 된다 (적대적 리뷰 F8, 2026-09-02).
     budget = max(int(max_tokens), MIN_MAX_TOKENS)
+    if budget != int(max_tokens):
+        log.info("max_tokens %d → %d 로 올림 (하한)%s", int(max_tokens), budget,
+                 f" ({purpose})" if purpose else "")
     # system·output_config 는 있을 때만 넘긴다. narrate 처럼 구조화 출력이 필요한
     # 호출부가 여기를 우회해 직접 messages.create 를 부르면, 아래 '본문 없이 응답'
     # 로그를 못 받는다 — 그게 이 함수를 만든 사고의 원인이었다.

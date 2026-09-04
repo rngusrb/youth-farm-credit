@@ -22,8 +22,11 @@ export default function CapacityPage() {
     const base = {
       crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService, product_id: profile.productId,
+      // 실적을 base 에 둔다 — 진단에만 넣고 현금흐름에 안 넣으면 한 화면에서
+      // 소득이 갈린다 (적대적 리뷰 F4, 2026-09-02).
+      income_history: profile.incomeHistory,
     };
-    runDiagnose({ ...base, income_history: profile.incomeHistory })
+    runDiagnose(base)
       .then((d) => {
         setDiag(d);
         return Promise.all([

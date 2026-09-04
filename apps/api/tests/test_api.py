@@ -167,3 +167,45 @@ def test_regulation_blocks_uncited_answer(monkeypatch):
     assert r["citations"] == []
     assert r["answer"] == answer_mod.NO_EVIDENCE
     assert r["confidence"] == "none"
+
+
+def test_every_farm_request_carries_income_history():
+    """농가 요청 모델은 **전부** 실적을 받는다.
+
+    사고 이력 2026-09-02: 같은 누락을 하루에 세 번 고쳤다 — levers, funding-map,
+    cashflow. 매번 엔진은 고쳤는데 HTTP 스키마에 필드가 없어 실적이 버려졌다.
+    게다가 이름이 둘이었다(`income_history` / `actual_income`).
+    `FarmHistory` 를 상속하면 자동으로 받는다. 새 엔드포인트가 그걸 잊으면 여기서 걸린다.
+    """
+    import inspect
+
+    import schemas as S
+
+    missing = [
+        name for name, cls in vars(S).items()
+        if inspect.isclass(cls) and name.endswith("Request")
+        and "crop_id" in getattr(cls, "model_fields", {})
+        and "income_history" not in cls.model_fields
+    ]
+    # 작목 전환은 면적만으로 후보를 견주므로 실적을 쓰지 않는다 (switch.py 참조)
+    missing = [m for m in missing if m != "SwitchRequest"]
+    assert not missing, (
+        f"이 요청 모델들이 실적을 못 받는다 — schemas.FarmHistory 를 상속하라: {missing}")
+
+
+def test_actual_income_alias_still_accepted():
+    """기존 화면이 보내던 이름도 계속 받는다 — 이름을 바꾸면서 화면을 깨지 않는다."""
+    from schemas import CashflowRequest
+
+    r = CashflowRequest(crop_id="strawberry_hydro", pyeong=1300, living_cost=3e7,
+                        actual_income=[9e7, 9.5e7, 8.8e7])
+    assert r.to_diagnose_input().income_history == (9e7, 9.5e7, 8.8e7)
+
+
+def test_zero_income_entries_are_not_counted_as_history():
+    """빈 칸(0)을 실적 1개년으로 세지 않는다. 이 거르기가 진단에만 있었다."""
+    from schemas import FundingMapRequest
+
+    r = FundingMapRequest(crop_id="strawberry_hydro", pyeong=1300, living_cost=3e7,
+                          actual_income=[0, 5e7, 0])
+    assert r.to_diagnose_input().income_history == (5e7,)

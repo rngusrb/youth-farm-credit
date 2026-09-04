@@ -49,17 +49,28 @@ def _citation(hit: dict) -> dict:
     }
 
 
+def _excerpts(hits: list[dict]) -> str:
+    """LLM 에 넘길 발췌문. **검증의 허용 집합도 이 문자열에서 뽑는다.**
+
+    사고 이력 2026-09-02 (적대적 리뷰 F2): 허용 집합을 `h["text"]` 에서만 뽑았더니,
+    LLM 이 본 조항 번호·문서 제목의 숫자가 빠졌다. SYSTEM 이 "어느 조항을 근거로
+    삼았는지 밝혀라" 고 시켜 놓고, 시키는 대로 쓴 문장을 **'2026' 때문에 통째로
+    지웠다.** LLM 이 본 것과 검증이 보는 것이 다르면 그건 검증이 아니라 사고다.
+    """
+    return "\n\n".join(
+        f"[{h['section_path']}] ({h['doc_title']})\n{h['text']}" for h in hits
+    )
+
+
 def _llm_answer(question: str, hits: list[dict]) -> str | None:
     client = get_client()
     if client is None:
         return None
-    excerpts = "\n\n".join(
-        f"[{h['section_path']}] ({h['doc_title']})\n{h['text']}" for h in hits
-    )
+    excerpts = _excerpts(hits)
     try:
         text = complete(
             f"질문: {question}\n\n발췌문:\n{excerpts}",
-            client=client, max_tokens=1200, purpose="제도답변",
+            client=client, max_tokens=2000, purpose="제도답변",
             system=SYSTEM,
             output_config={
                 "effort": "low",
@@ -107,7 +118,7 @@ def ask(question: str, context: dict | None = None) -> dict:
         # 발췌문에 없는 수치를 쓴 문장은 뺀다. 여기까지는 "인용이 비지 않는 것" 만
         # 강제됐고 **문장 속 숫자는 아무도 안 봤다** — 제도 답변의 금액·기간·비율이
         # 검증 없이 화면까지 갔다. (적대적 리뷰 H3, 2026-09-02)
-        allowed = numbers_in_text(*[(h.get("text") or "") for h in hits])
+        allowed = numbers_in_text(_excerpts(hits))
         answer, dropped, _used = verify_text(answer, sorted(allowed))
         if not answer.strip():
             log.warning("제도 답변의 모든 문장이 발췌문과 어긋나 제거됨 — 조항 안내로 대체")

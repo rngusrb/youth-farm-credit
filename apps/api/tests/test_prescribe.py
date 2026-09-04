@@ -151,6 +151,5 @@ def test_lever_percentage_is_a_tool_value(bundle):
     # (적대적 리뷰 Low, 2026-09-02)
     assert reachable, "적어도 하나는 달성 가능해야 하는 사례다 — fixture 를 확인하라"
     for l in reachable:
-        if True:
-            assert l["delta_pct"] is not None
-            assert l["delta_pct"] == pytest.approx(abs(l["delta_ratio"]) * 100)
+        assert l["delta_pct"] is not None
+        assert l["delta_pct"] == pytest.approx(abs(l["delta_ratio"]) * 100)

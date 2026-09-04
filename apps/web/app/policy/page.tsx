@@ -83,6 +83,11 @@ function Body() {
               <span className="text-[12px] text-gov-ink3">근거 {result.citations.length}건</span>
             </div>
             <p className="text-[15px] leading-relaxed text-gov-ink">{result.answer}</p>
+            {result.dropped.length > 0 && (
+              <p className="mt-2 text-[12px] text-gov-warn">
+                발췌문에 없는 숫자를 쓴 문장 {result.dropped.length}개를 뺐어요.
+              </p>
+            )}
           </Panel>
 
           <h2 className="sec-title mb-3 mt-7">근거 조항 원문</h2>

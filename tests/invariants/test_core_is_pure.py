@@ -13,7 +13,23 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-CORE = ROOT / "core"
+
+#: core 가 어디인지는 **경계 선언이 유일한 출처**다. 여기 경로를 박지 않는다.
+#:
+#: 사고 이력 2026-09-02: 이 파일은 킷 템플릿 그대로 `ROOT/core` 를 보고 있었다.
+#: 이 저장소의 core 는 `apps/api/engine`·`apps/api/estimators` 다(모노레포).
+#: 그래서 `core/ 없음` 으로 **항상 skip** 됐다 — 제1원칙의 기계적 증거라고 부르던
+#: 파일이 한 번도 아무것도 검사하지 않았다. 게다가 `meta/project_state.yaml` 의
+#: `always_run: []` 이 기본값을 덮고 있어 **실행조차 되지 않았다.**
+#: 적대적 리뷰 두 번도 이걸 못 봤다 — 한 리뷰어는 "always_run 이 잡는다" 고 적었다.
+def core_dirs() -> list[Path]:
+    import yaml
+
+    b = yaml.safe_load((ROOT / "meta" / "boundaries.yaml").read_text())
+    for layer in b.get("layers") or []:
+        if layer.get("name") == "core":
+            return [ROOT / p for p in (layer.get("path") or [])]
+    return []
 
 NETWORK_MODULES = {"requests", "httpx", "urllib", "aiohttp", "socket", "openai", "anthropic"}
 DB_MODULES = {"sqlalchemy", "psycopg2", "asyncpg", "pymongo", "redis", "sqlite3"}
@@ -21,9 +37,14 @@ ENV_CALLS = {"getenv", "environ"}
 
 
 def core_files() -> list[Path]:
-    if not CORE.is_dir():
-        pytest.skip("core/ 없음")
-    return [p for p in CORE.rglob("*.py") if "__pycache__" not in p.parts]
+    dirs = [d for d in core_dirs() if d.is_dir()]
+    assert dirs, (
+        "meta/boundaries.yaml 의 core 레이어 경로가 실제로 없다. "
+        "예전엔 여기서 skip 했는데, **검사 대상이 없다는 것 자체가 실패다** — "
+        "그렇게 이 파일이 몇 달간 조용히 통과했다 (2026-09-02).")
+    out = [p for d in dirs for p in d.rglob("*.py") if "__pycache__" not in p.parts]
+    assert out, f"core 에 검사할 .py 가 없다: {dirs}"
+    return out
 
 
 def imports_of(py: Path) -> set[str]:

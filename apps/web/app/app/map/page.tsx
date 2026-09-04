@@ -69,6 +69,9 @@ export default function MapPage() {
       other_debt_service: profile.otherDebtService,
       // 실적을 안 보내면 자금지도만 작목 통계 추정치로 그려진다 (적대적 리뷰 H1)
       ...(profile.incomeHistory?.length ? { actual_income: profile.incomeHistory } : {}),
+      // 상품을 안 보내면 기본값(후계농 20년)으로 그려진다. 우수후계농은 10년 상환이라
+      // 15년짜리 대출을 25년 지도로 보게 된다 (적대적 리뷰 F5, 2026-09-02).
+      product_id: profile.productId,
       principal,
     })
       .then(setMap)
@@ -83,6 +86,8 @@ export default function MapPage() {
       living_cost: profile.livingCost,
       other_debt_service: profile.otherDebtService,
       product_id: profile.productId,
+      // 자금지도와 같은 소득 기준으로 그린다 (적대적 리뷰 F4)
+      ...(profile.incomeHistory?.length ? { actual_income: profile.incomeHistory } : {}),
       principal,
       year,
     })

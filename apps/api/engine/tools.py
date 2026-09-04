@@ -35,7 +35,7 @@ LLM 은 도구 이름과 인자를 고를 뿐이고, 숫자는 전부 여기 있
        'funding_map':ENGINE_TOOLS['funding_map'].fn(**B,principal=200_000_000.0)}
     f=allowed_forms(collect_numbers(r))
     print(sum(1 for n in range(1,101) if _matches(float(n),f)), '/100')"
-    # → 65/100
+    # → 59/100
 
 **이 문구를 약하게 적는 것이 이 파일의 목적이다.** 이 저장소가 가장 경계하는 상황은
 "감사 장치가 사라진 것을 감사 대상이 모르는" 것이고(CLAUDE.md), 주석이 실제보다 강한

@@ -73,6 +73,11 @@ export default function RegulationAsk({ context }: { context: Record<string, unk
       {result && (
         <div className="mt-5">
           <p className="text-sm leading-relaxed text-paper-ink">{result.answer}</p>
+          {result.dropped.length > 0 && (
+            <p className="mt-2 text-xs text-gov-warn">
+              발췌문에 없는 숫자를 쓴 문장 {result.dropped.length}개를 뺐어요.
+            </p>
+          )}
           <div className="mt-4">
             <CitationBlock citations={result.citations} />
           </div>

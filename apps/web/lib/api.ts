@@ -209,6 +209,8 @@ export type RegulationAnswer = {
   answer: string;
   citations: Citation[];
   confidence: "high" | "medium" | "low" | "none";
+  /** 발췌문과 어긋나 제거된 문장. 화면이 반드시 밝힌다 — 조용히 지우지 않는다. */
+  dropped: string[];
 };
 
 async function post<T>(path: string, body: unknown): Promise<T> {
@@ -387,6 +389,9 @@ export type Cashflow = {
 export const fetchCashflow = (p: {
   crop_id: string; pyeong: number; living_cost: number;
   other_debt_service?: number; principal?: number; product_id?: string; year?: number;
+  /** 실적. 안 보내면 현금흐름만 작목 통계 추정치로 그려져 자금지도와 갈린다. */
+  actual_income?: number[];
+  income_history?: number[];
 }) => post<Cashflow>("/api/v1/cashflow", p);
 
 // ── 스트레스 테스트 ──────────────────────────────────
@@ -641,6 +646,7 @@ export async function fetchFundingMap(body: {
   other_debt_service?: number;
   principal?: number;
   actual_income?: number[];
+  product_id?: string;
 }): Promise<FundingMapResult> {
   const res = await fetch(`${API_BASE}/api/v1/funding-map`, {
     method: "POST",

@@ -83,3 +83,15 @@ def test_shortfall_prob_is_a_probability():
 def test_rejects_nonpositive_principal():
     with pytest.raises(ValueError):
         funding_map(DiagnoseInput(**BASE), 0)
+
+
+def test_respects_product_choice():
+    """상품을 바꾸면 지도의 길이가 바뀐다.
+
+    사고 이력 2026-09-02 (적대적 리뷰 F5): 웹이 `product_id` 를 안 보내 우수후계농
+    (10년 상환)을 고른 농가가 **15년짜리 대출을 25년 지도로** 보고 있었다.
+    """
+    a = funding_map(DiagnoseInput(**BASE, product_id="successor_farmer"), 200_000_000.0)
+    b = funding_map(DiagnoseInput(**BASE, product_id="excellent_successor"), 200_000_000.0)
+    assert a["term_years"] != b["term_years"], "상품이 달라도 지도 길이가 같다"
+    assert b["term_years"] < a["term_years"]

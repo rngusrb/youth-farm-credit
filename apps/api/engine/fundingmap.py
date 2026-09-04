@@ -60,7 +60,8 @@ def funding_map(inp: DiagnoseInput, principal: float,
     # 실적을 넣은 농가가 진단과 다른 소득으로 25년 지도를 보게 된다 —
     # levers.py 가 2026-09-02 에 고친 바로 그 버그를 여기만 안 고치고 있었다.
     # (진단 9,100만원 / 자금지도 6,005만원. 적대적 리뷰 H1, 2026-09-02)
-    income, income_meta = resolve_income(inp.crop_id, inp.pyeong, inp.income_history)
+    income, income_meta = resolve_income(inp.crop_id, inp.pyeong, inp.income_history,
+                                        inp.income_history_pyeong)
     if sigma_override is not None:
         sigma = sigma_override
     else:
@@ -107,8 +108,19 @@ def funding_map(inp: DiagnoseInput, principal: float,
     return {
         "principal": principal,
         "crop_name": crop.name,
-        # 어느 소득을 썼는지 밝힌다 — 화면이 진단과 같은 기준임을 보일 수 있어야 한다
-        "income": {"annual": income, **income_meta},
+        # 어느 소득을 썼는지 밝힌다 — 화면이 진단과 같은 기준임을 보일 수 있어야 한다.
+        # **키 이름을 진단과 똑같이 맞춘다** — 다르면 화면이 두 벌을 다뤄야 하고,
+        # 그러면 결국 한쪽만 쓰이고 다른 쪽은 죽은 표면이 된다
+        # (적대적 리뷰 F7, 2026-09-02: 실제로 웹이 이 필드를 안 읽고 있었다).
+        "income": {
+            "annual": income,
+            "source": income_meta["source"],
+            "actual_mean": income_meta["actual_mean"],
+            "crop_average": income_meta["crop_average"],
+            "actual_pyeong": income_meta["actual_pyeong"],
+            "history_years": income_meta["years"],
+            "source_note": income_meta["note"],
+        },
         "grace_years": product.grace_years,
         "term_years": len(points),
         "years": [vars(p) for p in points],

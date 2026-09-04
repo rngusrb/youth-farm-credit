@@ -186,12 +186,8 @@ def extract(req: ExtractRequest) -> dict:
 
 @app.post("/api/v1/diagnose")
 def run_diagnose(req: DiagnoseRequest) -> dict:
-    payload = req.model_dump()
-    payload["income_history"] = tuple(
-        v for v in payload.pop("income_history", []) if v and v > 0
-    )
     try:
-        result = diagnose(DiagnoseInput(**payload))
+        result = diagnose(req.to_diagnose_input())
     except KeyError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from None
     result["disclaimer"] = DISCLAIMER
@@ -220,10 +216,7 @@ def cashflow(req: CashflowRequest) -> dict:
     조립은 engine.cashflow.cashflow_for 가 한다 — 도구(engine/tools.py)와 같은 경로를
     써야 두 벌이 갈라지지 않는다. 여기서는 도메인 예외를 상태코드로 번역만 한다.
     """
-    inp = DiagnoseInput(
-        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
-        other_debt_service=req.other_debt_service, product_id=req.product_id,
-    )
+    inp = req.to_diagnose_input()
     try:
         return cashflow_for(inp, req.principal, req.year)
     except KeyError as exc:
@@ -241,11 +234,7 @@ def stress(req: StressRequest) -> dict:
 
     조립은 engine.stress.stress_for 가 한다 (도구와 공용).
     """
-    inp = DiagnoseInput(
-        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
-        other_debt_service=req.other_debt_service, product_id=req.product_id,
-        max_crisis_prob=req.max_crisis_prob,
-    )
+    inp = req.to_diagnose_input()
     try:
         return stress_for(inp, req.principal)
     except KeyError as exc:
@@ -342,11 +331,7 @@ def levers(req: LeversRequest) -> dict:
 
     LLM 을 쓰지 않는다 — 탐색은 엔진 이분탐색이라 같은 입력에 같은 답이 나온다.
     """
-    inp = DiagnoseInput(
-        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
-        other_debt_service=req.other_debt_service, product_id=req.product_id,
-        income_history=tuple(req.actual_income),
-    )
+    inp = req.to_diagnose_input()
     movables = tuple(req.movables) if req.movables else ("living_cost", "other_debt_service", "pyeong")
     try:
         levers = solve_for(inp, req.target_principal, movables=movables)
@@ -383,7 +368,7 @@ def benchmark_endpoint(req: BenchmarkRequest) -> dict:
     실적이 없으면 비교를 만들지 않는다 — 추정치끼리 비교하면 언제나 100%가 나온다.
     """
     try:
-        return benchmark(req.crop_id, req.pyeong, tuple(req.actual_income))
+        return benchmark(req.crop_id, req.pyeong, tuple(req.income_history))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from None
     except InsufficientCropData as exc:
@@ -399,14 +384,10 @@ def prescribe(req: PrescribeRequest) -> dict:
     from llm.advisor import draft
     from rag.answer import citations_for
 
-    inp = DiagnoseInput(
-        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
-        other_debt_service=req.other_debt_service, product_id=req.product_id,
-        income_history=tuple(req.actual_income),
-    )
+    inp = req.to_diagnose_input()
     try:
         base = diagnose(inp)
-        bench = benchmark(req.crop_id, req.pyeong, tuple(req.actual_income))
+        bench = benchmark(req.crop_id, req.pyeong, tuple(req.income_history))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from None
     except InsufficientCropData as exc:
@@ -432,11 +413,7 @@ def prescribe(req: PrescribeRequest) -> dict:
 @app.post("/api/v1/funding-map")
 def funding_map_endpoint(req: FundingMapRequest) -> dict:
     """25년 자금지도 — 거치 종료·상환 급증·부족 시점을 연도별로."""
-    inp = DiagnoseInput(
-        crop_id=req.crop_id, pyeong=req.pyeong, living_cost=req.living_cost,
-        other_debt_service=req.other_debt_service, product_id=req.product_id,
-        income_history=tuple(req.actual_income),
-    )
+    inp = req.to_diagnose_input()
     try:
         principal = req.principal
         if principal is None:
