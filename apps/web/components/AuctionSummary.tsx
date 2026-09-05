@@ -7,7 +7,7 @@ import { fetchMarketCompare, fetchRealtimeAuction, type MarketCompare, type Real
 import { loadProfile } from "@/lib/profile";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-const won = (value: number | null) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
+const won = (value: number | null | undefined) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
 
 export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: string } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
@@ -69,7 +69,7 @@ export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: st
             </div>
           </div>
         ) : null}
-        {(cropIdOverride || cropId) && compare?.items.length ? <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">전일·전년 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{compare.items.slice(0, 3).map((item, i) => <div key={`${item.item}-${item.market}-${i}`} className="rounded-md bg-gov-sunk px-3 py-3"><p className="truncate text-[12px] text-gov-ink2">{item.market || item.item}</p><p className="mt-1 text-[17px] font-bold tabular text-gov-ink">{won(item.price)}</p><p className="mt-1 text-[11px] text-gov-ink3">전일 {won(item.previous_day_price)} · 전년 같은 시기 {won(item.year_price)}</p></div>)}</div><p className="mt-2 text-[11px] text-gov-ink3">공판장 평균가 기준이에요. 자료 날짜: {compare.items[0].date || "—"}</p></div> : null}
+        {(cropIdOverride || cropId) && compare?.items.length ? <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{compare.items.slice(0, 3).map((item, i) => <div key={`${item.item}-${item.market}-${i}`} className="rounded-md bg-gov-sunk px-3 py-3"><p className="truncate text-[12px] text-gov-ink2">{item.item} · 공판장 {item.market || "—"}</p><p className="mt-1 text-[17px] font-bold tabular text-gov-ink">현재 {won(item.price)}</p><p className="mt-1 text-[11px] leading-relaxed text-gov-ink3">1일 전 {won(item.previous_day_price)}<br />7일 전 {won(item.seven_day_price)} · 1년 전 {won(item.year_price)}</p></div>)}</div><p className="mt-2 text-[11px] text-gov-ink3">공판장 평균가 기준이에요. 자료 날짜: {compare.items[0].date || "—"}</p></div> : null}
         <p className="mt-3 text-[11px] text-gov-ink3">공공데이터포털 농산물 실시간 경매가 · 2분마다 새로 확인해요. 참고용으로만 봐 주세요.</p>
       </Panel>
     </Section>

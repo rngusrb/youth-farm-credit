@@ -30,7 +30,7 @@ export async function fetchRealtimeAuction(cropId?: string, limit = 5): Promise<
   return res.json();
 }
 
-export type MarketCompareItem = { item: string; market: string; date: string; price: number | null; previous_day_price: number | null; year_price: number | null; year_change?: string | number | null };
+export type MarketCompareItem = { item: string; market: string; date: string; price: number | null; previous_day_price: number | null; seven_day_price?: number | null; year_price: number | null; year_change?: string | number | null };
 export type MarketCompare = { status: "ok" | "empty" | "unavailable"; crop?: string | null; items: MarketCompareItem[] };
 export async function fetchMarketCompare(cropId?: string): Promise<MarketCompare> {
   const query = cropId ? `?crop_id=${encodeURIComponent(cropId)}` : "";

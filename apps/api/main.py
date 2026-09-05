@@ -266,10 +266,27 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
             return round(value) if value > 0 else None
         except (TypeError, ValueError):
             return None
+    def seven_days_before(row: dict) -> float | None:
+        try:
+            target = datetime.strptime(str(row.get("가격날짜")), "%Y-%m-%d").date() - timedelta(days=7)
+        except (TypeError, ValueError):
+            return None
+        candidates = []
+        for other in matched:
+            try:
+                day = datetime.strptime(str(other.get("가격날짜")), "%Y-%m-%d").date()
+            except (TypeError, ValueError):
+                continue
+            if day <= target and other.get("품목명") == row.get("품목명"):
+                value = number(other, "평균가격")
+                if value is not None:
+                    candidates.append((day, value))
+        return max(candidates, default=(None, None), key=lambda x: x[0] or datetime.min.date())[1]
+
     items = [{
         "item": r.get("품목명", ""), "market": r.get("시장구분", ""), "date": r.get("가격날짜", ""),
         "price": number(r, "평균가격"), "previous_day_price": number(r, "전일평균가격"),
-        "year_price": number(r, "전년가격"), "year_change": r.get("전년대비등락율"),
+        "year_price": number(r, "전년가격"), "seven_day_price": seven_days_before(r), "year_change": r.get("전년대비등락율"),
     } for r in matched[:20]]
     return {"status": "ok" if items else "empty", "crop": crop_name, "items": items}
 
