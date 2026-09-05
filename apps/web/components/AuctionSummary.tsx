@@ -44,6 +44,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               {data.average_price != null && <div className={compact ? "flex flex-col gap-1 border-l border-gov-link/20 pl-3" : "flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"}><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
             </div>
             <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market} · 상품(상) · {data.items[0].unit || "단위"}</p>
+            <p className="text-right text-[11px] text-gov-ink3">자료 시각: {data.items[0].auction_at || "확인 시각 없음"}</p>
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
             <table className="w-full min-w-[520px] text-[13px]">
