@@ -34,16 +34,18 @@ export default function FarmPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchCrops(), fetchProducts()])
-      .then(([c, p]) => {
+    Promise.allSettled([fetchCrops(), fetchProducts()])
+      .then(([cropResult, productResult]) => {
+        if (cropResult.status !== "fulfilled") { setError("작목 목록을 불러오지 못했어요."); return; }
+        const c = cropResult.value;
         setCrops(c.crops);
         setCategories(RECENT_PRICE_CATEGORIES);
-        setProducts(p.products);
+        if (productResult.status === "fulfilled") setProducts(productResult.value.products);
         const prev = loadProfile();
-        setCropId(prev?.cropId ?? c.crops[0]?.id ?? "");
-        const initial = c.crops.find((x) => x.id === (prev?.cropId ?? c.crops[0]?.id));
-        setLargeCode(initial?.price_category_code ?? "");
-        setMiddleCode(initial?.price_item_code ?? "");
+        const initial = c.crops.find((x) => x.id === prev?.cropId) ?? c.crops.find((x) => x.price_category_code === "200" && x.price_item_code === "226") ?? c.crops.find((x) => x.name.includes("딸기")) ?? c.crops[0];
+        setCropId(initial?.id ?? "");
+        setLargeCode(initial?.price_category_code ?? "200");
+        setMiddleCode(initial?.price_item_code ?? "226");
         if (prev) {
           setProductId(prev.productId);
           setPyeong(String(prev.pyeong));
