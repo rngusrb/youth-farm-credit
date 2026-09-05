@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Badge, Crumb, DefTable, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchCrop, fetchCrops, type CropDetail, type CropRow, type RealtimeAuction } from "@/lib/api";
+import { fetchCrop, fetchCrops, fetchMarketQuarterly, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 
@@ -19,6 +19,7 @@ function Body() {
   const [id, setId] = useState("");
   const [detail, setDetail] = useState<CropDetail | null>(null);
   const [auction, setAuction] = useState<RealtimeAuction | null>(null);
+  const [quarterly, setQuarterly] = useState<QuarterlyMarket["items"]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ function Body() {
   useEffect(() => {
     if (!id) return;
     fetchCrop(id).then(setDetail).catch(() => setError("작목 정보를 불러오지 못했어요."));
+    fetchMarketQuarterly(id).then((d) => setQuarterly(d.items)).catch(() => setQuarterly([]));
   }, [id]);
 
   const m = detail?.market;
@@ -86,7 +88,7 @@ function Body() {
                 </div>
               )}
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 분기별 가격 비교</h3>
-              <QuarterlyAuctionChart series={auction?.daily_series} />
+              <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
               <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">
                 위 경매가 요약에서 <b className="text-gov-ink">최근 낙찰가</b>와 <b className="text-gov-ink">최근 30일 평균</b>을 비교해 보세요.
                 분기별 평균 낙찰가 그래프는 연도별 가격 수준을 비교할 때 참고해요.

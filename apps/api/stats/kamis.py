@@ -77,7 +77,8 @@ def codes() -> dict:
 
 
 def service_key() -> str:
-    key = os.getenv("DATA_GO_KR_SERVICE_KEY", "").strip()
+    # 같은 공공데이터포털 인증키를 운영 API에서도 사용할 수 있게 한다.
+    key = (os.getenv("DATA_GO_KR_SERVICE_KEY") or os.getenv("DATA_GO_KR_API_KEY") or "").strip()
     if not key:
         raise KamisError(
             "DATA_GO_KR_SERVICE_KEY 가 설정되지 않았습니다.\n"

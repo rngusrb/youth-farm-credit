@@ -30,8 +30,8 @@ const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
   }));
 };
 
-export function QuarterlyAuctionChart({ series }: { series?: RealtimeAuction["daily_series"] }) {
-  const quarterly = quarterSeries(series);
+export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?: RealtimeAuction["daily_series"]; quarterly?: { quarter: string; price: number; days?: number }[] }) {
+  const quarterly = provided ?? quarterSeries(series);
   if (!quarterly.length) return <p className="text-[12px] text-gov-ink3">분기별 원천 가격 자료를 아직 모으고 있어요.</p>;
   return (
     <div className="h-44 w-full min-w-0">

@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import os
 import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from urllib.parse import unquote
 
 import httpx
@@ -43,6 +43,7 @@ from engine.params import (
     products,
     unit_area_pyeong,
 )
+from stats.kamis import fetch_prices, daily_national_average, KamisError
 from llm import extract as extract_mod
 from llm.client import available as llm_available
 from llm.narrate import narrate
@@ -346,6 +347,42 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
         "grade": "상품(상) 기준", "unit": latest_records[0].get("거래단위", "자료 단위 기준"), "unit_qty": latest_records[0].get("거래단위수량", ""),
     }] if latest_records else []
     return {"status": "ok" if items else "empty", "crop": crop_name, "items": items}
+
+
+_quarterly_cache: dict[str, tuple[float, list[dict]]] = {}
+
+
+@app.get("/api/v1/market/quarterly")
+async def market_quarterly(crop_id: str = Query(...)) -> dict:
+    """KAMIS 일별 가격 원자료를 분기별 평균으로 묶는다."""
+    try:
+        crop = get_crop(crop_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+    now = datetime.now().timestamp()
+    cached = _quarterly_cache.get(crop_id)
+    if cached and now - cached[0] < 900:
+        return {"status": "ok", "crop": crop.name, "items": cached[1]}
+    market = crop.market or {}
+    window = market.get("window") or []
+    try:
+        start = date.fromisoformat(window[0])
+        end = date.fromisoformat(window[1])
+    except (IndexError, TypeError, ValueError):
+        end = date.today()
+        start = end - timedelta(days=365 * 4)
+    try:
+        rows = await asyncio.to_thread(fetch_prices, crop_id, start, end)
+    except KamisError as exc:
+        return {"status": "unavailable", "crop": crop.name, "items": [], "message": str(exc)}
+    groups: dict[str, list[float]] = {}
+    for day, price in daily_national_average(rows):
+        parsed = datetime.strptime(day, "%Y%m%d")
+        key = f"{parsed.year}년 {((parsed.month - 1) // 3) + 1}분기"
+        groups.setdefault(key, []).append(price)
+    items = [{"quarter": key, "price": round(sum(values) / len(values)), "days": len(values)} for key, values in groups.items()]
+    _quarterly_cache[crop_id] = (now, items)
+    return {"status": "ok" if items else "empty", "crop": crop.name, "items": items}
 
 
 @app.get("/api/v1/crops/{crop_id}")
