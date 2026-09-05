@@ -364,7 +364,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     if not key or not mapping.get("item_cd"):
         return {"status": "unavailable", "items": []}
     endpoint = "https://apis.data.go.kr/B552845/katOrigin/trades"
-    params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "cond[gds_mclsf_cd::EQ]": mapping["item_cd"]}
+    params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "cond[gds_sclsf_cd::EQ]": mapping["item_cd"]}
     try:
         async with httpx.AsyncClient(timeout=20) as client:
             response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
