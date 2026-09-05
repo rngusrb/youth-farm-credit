@@ -102,26 +102,10 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
             <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market || "전국 일별 평균"} · {data.items[0].unit || "kg"}</p>
             <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
-          {showComparison && compare?.items[0] && (() => {
-            const item = compare.items[0];
-            const series = data.daily_series?.filter((x) => x.price != null) ?? [];
-            const first = series[0]?.price;
-            const last = series[series.length - 1]?.price;
-            const dayTrend = first && last && Math.abs(last - first) / first >= 0.03
-              ? `최근 30일은 가격이 ${last > first ? "오르는" : "내리는"} 흐름이에요.`
-              : null;
-            return (
-              <div className="mt-3 rounded-md border border-gov-line2 bg-white px-3 py-2.5 text-[13px] text-gov-ink2">
-                <span className="font-semibold text-gov-ink">한눈에 보기</span>
-                <span className="ml-2">{trendSentence(item.price, item.year_price) ?? "전년 같은 시기와 비교할 자료를 확인 중이에요."}</span>
-                {dayTrend && <span className="ml-2 text-gov-link">{dayTrend}</span>}
-              </div>
-            );
-          })()}
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
             <table className="w-full min-w-[520px] text-[13px]">
-              <thead className="bg-gov-sunk text-left text-[12px] text-gov-ink2"><tr><th className="px-3 py-2">시장</th><th className="px-3 py-2">품목</th><th className="px-3 py-2 text-right">도매가</th><th className="px-3 py-2">단위</th><th className="px-3 py-2">시간</th></tr></thead>
-              <tbody>{data.items.map((item, i) => <tr key={`${item.market}-${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-3 py-2">{item.market}</td><td className="px-3 py-2">{item.item || "—"}</td><td className="px-3 py-2 text-right font-semibold tabular">{won(item.price)}</td><td className="px-3 py-2">{item.unit || "—"}</td><td className="px-3 py-2 text-gov-ink3">{item.auction_at || "—"}</td></tr>)}</tbody>
+              <thead className="bg-gov-sunk text-left text-[12px] text-gov-ink2"><tr><th className="px-3 py-2">시간</th><th className="px-3 py-2">품목</th><th className="px-3 py-2 text-right">도매가</th><th className="px-3 py-2">단위</th></tr></thead>
+              <tbody>{data.items.slice(0, 5).map((item, i) => <tr key={`${item.market}-${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-3 py-2 text-gov-ink3">{item.auction_at || "—"}</td><td className="px-3 py-2">{item.item || "—"}</td><td className="px-3 py-2 text-right font-semibold tabular">{won(item.price)}</td><td className="px-3 py-2">{item.unit || "—"}</td></tr>)}</tbody>
             </table>
           </div>}
           </>
