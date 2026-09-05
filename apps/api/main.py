@@ -153,21 +153,24 @@ async def realtime_auction(
     if crop_id and crop:
         try:
             start_day, end_day = date.today() - timedelta(days=400), date.today()
-            daily_rows = await asyncio.to_thread(fetch_prices, crop_id, start_day, end_day, "110001")
+            daily_rows = await asyncio.wait_for(asyncio.to_thread(fetch_prices, crop_id, start_day, end_day, "110001"), timeout=8)
             market_label = "서울가락"
             if not daily_rows:
                 # perDay의 시장코드가 별도 체계인 경우 시장 조건 없이 품목 전국 평균을 사용한다.
-                daily_rows = await asyncio.to_thread(fetch_prices, crop_id, start_day, end_day)
+                daily_rows = await asyncio.wait_for(asyncio.to_thread(fetch_prices, crop_id, start_day, end_day), timeout=8)
                 market_label = "전국 일별 평균(가락시장 우선 조회)"
             daily = daily_national_average(daily_rows, use_kg=False)
             if daily:
                 recent = daily[-30:]
                 items = [{"market": "서울가락", "item": crop.name, "price": round(price), "unit": "일별 평균", "quantity": None, "auction_at": day} for day, price in daily[-limit:]]
                 return {"status": "ok", "source": f"한국농수산식품유통공사 perDay 일별 도·소매 가격정보 · {market_label}", "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name, "match_level": "품목코드", "items": [{**x, "market": market_label} for x in list(reversed(items))], "daily_series": [{"date": d, "price": round(p), "count": 1} for d, p in recent], "average_price": round(sum(p for _, p in recent) / len(recent)), "average_label": "최근 30일 평균"}
-        except KamisError:
+        except (KamisError, asyncio.TimeoutError):
             pass
     if crop_id:
-        recent = await market_recent(crop_id, 1)
+        try:
+            recent = await asyncio.wait_for(market_recent(crop_id, 1), timeout=8)
+        except asyncio.TimeoutError:
+            recent = {"items": []}
         if recent.get("items"):
             r = recent["items"][0]
             return {"status": "ok", "crop": crop.name, "items": [{"item": crop.name, "market": "서울가락", "auction_at": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "month_price": r.get("month_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
