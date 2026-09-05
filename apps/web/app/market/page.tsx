@@ -54,9 +54,13 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
-  const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0).map((value) => value > 1 ? value / 100 : value);
+  const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0);
   const avgMonthlyCv = monthlyCv.length ? monthlyCv.reduce((sum, value) => sum + value, 0) / monthlyCv.length : null;
   const latestMonthlyCv = monthlyCv.length ? monthlyCv[monthlyCv.length - 1] : null;
+  const recentCvs = monthlyCv.slice(-12);
+  const lowerCvCount = latestMonthlyCv != null ? recentCvs.filter((value) => value < latestMonthlyCv).length : 0;
+  const cvRiskScore = recentCvs.length && latestMonthlyCv != null ? Math.round((lowerCvCount / recentCvs.length) * 100) : null;
+  const cvRiskLabel = cvRiskScore == null ? "—" : cvRiskScore >= 75 ? "위험" : cvRiskScore >= 50 ? "주의" : cvRiskScore >= 25 ? "보통" : "안정";
   const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
   const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
@@ -114,10 +118,11 @@ function Body() {
               <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="mb-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <Stat label="최근 월 변동계수" value={latestMonthlyCv != null ? latestMonthlyCv.toFixed(3) : "—"} note="월별 표준편차 ÷ 월별 평균가" />
-                  <Stat label="자료 기간 평균 변동계수" value={avgMonthlyCv != null ? avgMonthlyCv.toFixed(3) : "—"} note={`${monthlyCv.length}개월의 월별 CV 평균`} />
+                  <Stat label="최근 월 변동계수" value={latestMonthlyCv != null ? `${latestMonthlyCv.toFixed(3)}%` : "—"} note="월별 표준편차 ÷ 월별 평균가 × 100" />
+                  <Stat label="자료 기간 평균 변동계수" value={avgMonthlyCv != null ? `${avgMonthlyCv.toFixed(3)}%` : "—"} note={`${monthlyCv.length}개월의 월별 CV 평균`} />
                 </div>
-                <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">보조 해석 기준: CV 0.10 미만은 변화가 작은 편, 0.10~0.30은 보통, 0.30 초과는 큰 편으로 봐요. 작목·계절에 따라 기준이 달라질 수 있어요.</p>
+                <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2 border-t border-gov-line2 pt-3 text-[13px] text-gov-ink2"><span><b className="text-gov-ink">이번 달 가격 위험도: {cvRiskLabel}</b>{cvRiskScore != null && ` · ${cvRiskScore}점`}</span><span className="text-[11px] text-gov-ink3">최근 12개월 중 나보다 CV가 낮은 달 {lowerCvCount}개</span></div>
+                <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">위험도 계산: (현재 월 CV보다 낮은 월의 수 ÷ 비교 가능한 최근 12개월 수) × 100. 월별 평균가가 아니라 해당 월의 일별 가격 표준편차와 평균으로 계산된 CV를 사용해요. 일별 관측이 충분하지 않은 달은 비교에서 빠질 수 있어요.</p>
               </div>
               <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}

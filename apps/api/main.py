@@ -678,8 +678,8 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
     def ratio(v):
         try:
             value = float(str(v).replace(",", ""))
-            # 공공데이터가 %로 주는 경우(예: 25.4)는 비율로 변환한다.
-            return round(value / 100 if value > 1 else value, 4)
+            # API의 변동계수 원값은 퍼센트로 보존한다(예: 28.650%).
+            return round(value, 3)
         except (TypeError, ValueError): return None
     grouped: dict[tuple[int, int], list[dict[str, int | None]]] = {}
     for x in raw:
