@@ -370,12 +370,22 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
         date_start = (date.fromisoformat(date_end) - timedelta(days=365)).isoformat()
     except ValueError:
         date_start = "2025-01-01"
-    # katOrigin 품목 코드는 KAMIS 코드와 다르다. 딸기는 상품 중분류 04,
-    # 서울가락 도매시장 110001로 조회한다.
+    # 표준코드 API에서 선택 작목의 대·중·소분류를 찾아 대치한다.
+    code_map = {}
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            code_response = await client.get("https://apis.data.go.kr/B552845/katCode/goods", params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000})
+            code_response.raise_for_status()
+            code_raw = code_response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+            if isinstance(code_raw, dict): code_raw = [code_raw]
+            match = next((r for r in code_raw if crop.name.replace("(시설,수경)", "") in str(r.get("gds_mclsf_nm", "")) or crop.name.split("(")[0] in str(r.get("gds_mclsf_nm", ""))), None)
+            if match: code_map = match
+    except (httpx.HTTPError, ValueError):
+        pass
     if "딸기" in crop.name:
         params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": "08", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     else:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_mclsf_cd,qty,unit_tot_qty", "cond[gds_mclsf_cd::EQ]": mapping["item_cd"]}
+        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_lclsf_cd::EQ]": code_map.get("gds_lclsf_cd") or "08", "cond[gds_mclsf_cd::EQ]": code_map.get("gds_mclsf_cd") or mapping["item_cd"], "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     try:
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
