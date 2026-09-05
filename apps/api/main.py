@@ -370,7 +370,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     # katOrigin 품목 코드는 KAMIS 코드와 다르다. 딸기는 상품 중분류 04,
     # 서울가락 도매시장 110001로 조회한다.
     if "딸기" in crop.name:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_mclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
+        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": "08", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     else:
         params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_mclsf_cd,qty,unit_tot_qty", "cond[gds_mclsf_cd::EQ]": mapping["item_cd"]}
     try:
