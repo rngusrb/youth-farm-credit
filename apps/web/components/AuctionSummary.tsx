@@ -32,7 +32,7 @@ const monthlyFromDaily = (series: RealtimeAuction["daily_series"]) => {
 
 export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?: RealtimeAuction["daily_series"]; quarterly?: { year: number; month: number; price: number; days?: number }[] }) {
   const monthly = provided?.length ? provided : monthlyFromDaily(series);
-  if (!monthly.length) return <p className="text-[12px] text-gov-ink3">최근 1년 월별 도매가격 자료를 아직 모으고 있어요.</p>;
+  if (!monthly.length) return <p className="text-[12px] text-gov-ink3">최근 3년 월별 도매가격 자료를 아직 모으고 있어요.</p>;
   const years = [...new Set(monthly.map((x) => x.year))].sort();
   const months = [...new Set(monthly.map((x) => x.month))];
   const startMonth = months.includes(12) ? 12 : Math.min(...months);
