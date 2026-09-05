@@ -45,7 +45,7 @@ from engine.params import (
     products,
     unit_area_pyeong,
 )
-from stats.kamis import fetch_prices, fetch_recent, daily_national_average, KamisError
+from stats.kamis import fetch_prices, fetch_recent, fetch_recent_records, daily_national_average, KamisError
 from llm import extract as extract_mod
 from llm.client import available as llm_available
 from llm.narrate import narrate
@@ -147,12 +147,18 @@ async def realtime_auction(
     # 전국 요약은 실시간 경매 원천자료 대신 일별 도·소매 가격 API를 사용한다.
     if crop_id and crop:
         try:
-            daily_rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today(), "110001")
+            start_day, end_day = date.today() - timedelta(days=400), date.today()
+            daily_rows = await asyncio.to_thread(fetch_prices, crop_id, start_day, end_day, "110001")
+            market_label = "서울가락"
+            if not daily_rows:
+                # perDay의 시장코드가 별도 체계인 경우 시장 조건 없이 품목 전국 평균을 사용한다.
+                daily_rows = await asyncio.to_thread(fetch_prices, crop_id, start_day, end_day)
+                market_label = "전국 일별 평균(가락시장 우선 조회)"
             daily = daily_national_average(daily_rows, use_kg=False)
             if daily:
                 recent = daily[-30:]
                 items = [{"market": "서울가락", "item": crop.name, "price": round(price), "unit": "일별 평균", "quantity": None, "auction_at": day} for day, price in daily[-limit:]]
-                return {"status": "ok", "source": "한국농수산식품유통공사 perDay 일별 도·소매 가격정보 · 서울가락", "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name, "match_level": "품목코드", "items": list(reversed(items)), "daily_series": [{"date": d, "price": round(p), "count": 1} for d, p in recent], "average_price": round(sum(p for _, p in recent) / len(recent)), "average_label": "최근 30일 평균"}
+                return {"status": "ok", "source": f"한국농수산식품유통공사 perDay 일별 도·소매 가격정보 · {market_label}", "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name, "match_level": "품목코드", "items": [{**x, "market": market_label} for x in list(reversed(items))], "daily_series": [{"date": d, "price": round(p), "count": 1} for d, p in recent], "average_price": round(sum(p for _, p in recent) / len(recent)), "average_label": "최근 30일 평균"}
         except KamisError:
             pass
     if crop_id:
@@ -428,6 +434,20 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
         return {"status": "unavailable", "items": [], "message": str(exc)}
     key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
     name = crop.name.split("(")[0].strip()
+    try:
+        records = await asyncio.to_thread(fetch_recent_records, crop_id)
+        records = sorted(records, key=lambda r: str(r.get("exmn_ymd", "")), reverse=True)
+        if records:
+            def num(v):
+                try: return round(float(str(v).replace(",", ""))) if v not in (None, "", "-1") else None
+                except (TypeError, ValueError): return None
+            r = records[0]
+            current = num(r.get("exmn_dd_prc"));
+            if current is not None:
+                item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": f"{r.get('unit_sz','')}{r.get('unit','')}".strip(), "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_prc")), "seven_day_price": num(r.get("ww1_bfr_prc")), "year_price": num(r.get("yy1_bfr_prc"))}
+                return {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": [item], "average_price": current, "average_label": "조사일 평균"}
+    except KamisError:
+        pass
     code = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
     large = str(code.get("대분류코드") or "08"); middle = str(code.get("중분류코드") or "04")
     large_values = list(dict.fromkeys([large, large.zfill(2), large.lstrip("0") or "0"]))

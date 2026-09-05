@@ -232,6 +232,15 @@ def fetch_recent(crop_id: str, max_pages: int = 20) -> list[PriceRow]:
     rows.sort(key=lambda r: r.date, reverse=True)
     return rows
 
+def fetch_recent_records(crop_id: str) -> list[dict]:
+    """최근일자 API 원문 행을 반환한다(전일·전주·전년 필드 포함)."""
+    crop = get_crop(crop_id); mapping = getattr(crop, "kamis", None)
+    if not mapping: raise KamisError(f"crops.json 의 '{crop_id}' 에 매핑이 없습니다")
+    base = {"serviceKey": service_key(), "returnType": "JSON", "pageNo": 1, "numOfRows": MAX_ROWS,
+            "cond[ctgry_cd::EQ]": mapping["ctgry_cd"], "cond[item_cd::EQ]": mapping["item_cd"]}
+    payload = _request(base); body = payload.get("response", {}).get("body", {}) or {}; items = (body.get("items") or {}).get("item") or []
+    return [items] if isinstance(items, dict) else items
+
 
 def parse_rows(items: list[dict]) -> list[PriceRow]:
     """응답 item 배열 → PriceRow. 숫자로 못 읽는 행은 조용히 건너뛴다."""
