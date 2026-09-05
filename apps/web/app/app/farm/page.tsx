@@ -64,8 +64,9 @@ export default function FarmPage() {
     .map((v) => v * MAN);
 
   const crop = crops.find((c) => c.id === cropId);
-  const largeGroups = Array.from(new Map(categories.map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = categories.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
+  const categoryRows = categories.length ? categories : DEFAULT_MARKET_CATEGORIES;
+  const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
+  const middleGroups = categoryRows.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
 
   /** 대화형 인테이크 — 자연어를 슬롯으로 바꾼다. 채워진 칸만 알려 준다. */
   async function readSentence() {

@@ -30,11 +30,14 @@ function Body() {
     Promise.all([fetchCrops(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
       .then(([d, cat]) => {
         setRows(d.crops);
-        setCategories(cat.items.length ? cat.items : DEFAULT_MARKET_CATEGORIES);
+        const available = cat.items.length ? cat.items : DEFAULT_MARKET_CATEGORIES;
+        setCategories(available);
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
-        setId(initial?.id ?? ""); setLargeCode(initial?.large_code ?? ""); setMiddleCode(initial?.middle_code ?? "");
+        const category = available.find((x) => x.large_code === initial?.large_code || x.large_code.endsWith(initial?.large_code ?? "") || (initial?.large_code ?? "").endsWith(x.large_code));
+        const middle = available.find((x) => x.middle_code === initial?.middle_code || x.middle_code.endsWith(initial?.middle_code ?? ""));
+        setId(initial?.id ?? ""); setLargeCode(category?.large_code ?? ""); setMiddleCode(middle?.middle_code ?? "");
       })
       .catch(() => setError("작목 목록을 불러오지 못했어요."));
   }, [params]);
@@ -48,8 +51,9 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
-  const largeGroups = Array.from(new Map(categories.map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = categories.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
+  const categoryRows = categories.length ? categories : DEFAULT_MARKET_CATEGORIES;
+  const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
+  const middleGroups = categoryRows.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
 
   return (
     <>
