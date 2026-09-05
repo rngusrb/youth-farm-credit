@@ -451,9 +451,20 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
             if current is not None:
                 item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": "kg", "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_cnvs_prc")), "seven_day_price": num(r.get("ww1_bfr_cnvs_prc")), "month_price": num(r.get("mm1_bfr_cnvs_prc")), "year_price": num(r.get("yy1_bfr_cnvs_prc"))}
                 series = []
+                # 최근일자 응답에 여러 조사일이 포함된 경우 이를 우선 사용한다.
+                by_date = {}
+                for record in records:
+                    day = str(record.get("exmn_ymd", ""))
+                    value = num(record.get("exmn_dd_cnvs_prc"))
+                    if day and value is not None:
+                        by_date.setdefault(day, []).append(value)
+                if by_date:
+                    series = [{"date": day, "price": round(sum(values) / len(values)), "count": len(values)} for day, values in sorted(by_date.items())[-5:]]
                 try:
                     rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today())
-                    series = [{"date": d, "price": round(p), "count": 1} for d, p in daily_national_average(rows, use_kg=True)[-5:]]
+                    fetched = [{"date": d, "price": round(p), "count": 1} for d, p in daily_national_average(rows, use_kg=True)[-5:]]
+                    if fetched:
+                        series = fetched
                 except KamisError:
                     pass
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
