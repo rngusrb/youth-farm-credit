@@ -54,6 +54,9 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
+  const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0);
+  const avgMonthlyCv = monthlyCv.length ? monthlyCv.reduce((sum, value) => sum + value, 0) / monthlyCv.length : null;
+  const latestMonthlyCv = monthlyCv.length ? monthlyCv[monthlyCv.length - 1] : null;
   const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
   const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
@@ -109,6 +112,13 @@ function Body() {
               <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 보여드려요.</p>
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
               <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
+              <div className="mb-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Stat label="최근 월 변동계수" value={latestMonthlyCv != null ? latestMonthlyCv.toFixed(3) : "—"} note="월별 표준편차 ÷ 월별 평균가" />
+                  <Stat label="자료 기간 평균 변동계수" value={avgMonthlyCv != null ? avgMonthlyCv.toFixed(3) : "—"} note={`${monthlyCv.length}개월의 월별 CV 평균`} />
+                </div>
+                <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">보조 해석 기준: CV 0.10 미만은 변화가 작은 편, 0.10~0.30은 보통, 0.30 초과는 큰 편으로 봐요. 작목·계절에 따라 기준이 달라질 수 있어요.</p>
+              </div>
               <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}
                       value={g.regime ? (REGIME[g.regime]?.label ?? g.regime) : "판정 보류"}
