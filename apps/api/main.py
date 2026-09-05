@@ -309,12 +309,24 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
                     candidates.append((day, value))
         return max(candidates, default=(None, None), key=lambda x: x[0] or datetime.min.date())[1]
 
+    latest_date = max((str(r.get("가격날짜", "")) for r in matched), default="")
+    latest_records = [r for r in matched if str(r.get("가격날짜", "")) == latest_date] or matched
+    def average_field(records: list[dict], field: str) -> int | None:
+        values = [number(r, field) for r in records]
+        values = [v for v in values if v is not None]
+        return round(sum(values) / len(values)) if values else None
+    seven_date = ""
+    try:
+        seven_date = (datetime.strptime(latest_date, "%Y-%m-%d").date() - timedelta(days=7)).strftime("%Y-%m-%d")
+    except ValueError:
+        pass
+    seven_records = [r for r in matched if str(r.get("가격날짜", "")) == seven_date]
     items = [{
-        "item": r.get("품목명", ""), "market": r.get("시장구분", ""), "date": r.get("가격날짜", ""),
-        "price": number(r, "평균가격"), "previous_day_price": number(r, "전일평균가격"),
-        "year_price": number(r, "전년가격"), "seven_day_price": seven_days_before(r), "year_change": r.get("전년대비등락율"),
-        "grade": r.get("등급", ""), "unit": r.get("거래단위", ""), "unit_qty": r.get("거래단위수량", ""),
-    } for r in matched[:20]]
+        "item": crop_name or latest_records[0].get("품목명", ""), "market": "전국 평균", "date": latest_date,
+        "price": average_field(latest_records, "평균가격"), "previous_day_price": average_field(latest_records, "전일평균가격"),
+        "year_price": average_field(latest_records, "전년가격"), "seven_day_price": average_field(seven_records, "평균가격"), "year_change": None,
+        "grade": "전체 등급 평균", "unit": "자료 단위 기준", "unit_qty": "",
+    }] if latest_records else []
     return {"status": "ok" if items else "empty", "crop": crop_name, "items": items}
 
 
