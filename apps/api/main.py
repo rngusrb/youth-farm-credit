@@ -474,7 +474,8 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
             def num(v):
                 try: return round(float(str(v).replace(",", ""))) if v not in (None, "", "-1") else None
                 except (TypeError, ValueError): return None
-            r = records[0]
+            # 화면 기준(상품·상)에 맞춰 상품 등급을 우선 사용한다.
+            r = next((record for record in records if "상품" in str(record.get("grd_nm", ""))), records[0])
             current = num(r.get("exmn_dd_cnvs_prc"));
             if current is not None:
                 item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": "kg", "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_cnvs_prc")), "seven_day_price": num(r.get("ww1_bfr_cnvs_prc")), "month_price": num(r.get("mm1_bfr_cnvs_prc")), "year_price": num(r.get("yy1_bfr_cnvs_prc"))}
@@ -492,13 +493,16 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                     rows = await asyncio.wait_for(asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today()), timeout=8)
                     all_daily = daily_national_average(rows, use_kg=True)
                     fetched = [{"date": d, "price": round(p), "count": 1} for d, p in all_daily[-5:]]
-                    if fetched:
+                    if len(fetched) >= 2:
                         series = fetched
                         # 조사일(최신일)은 recent API의 대표값과 동일하게 맞춘다.
                         series[-1]["price"] = current
                 except (KamisError, asyncio.TimeoutError):
                     cached = _market_cache_read(crop_id)
                     if cached and len(cached.get("daily_series", [])) >= 2:
+                        series = cached["daily_series"]
+                        current = series[-1]["price"]
+                    elif (cached := _market_cache_read(crop_id)) and len(cached.get("daily_series", [])) >= 2:
                         series = cached["daily_series"]
                         current = series[-1]["price"]
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
