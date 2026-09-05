@@ -447,7 +447,13 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
             current = num(r.get("exmn_dd_prc"));
             if current is not None:
                 item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": f"{r.get('unit_sz','')}{r.get('unit','')}".strip(), "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_prc")), "seven_day_price": num(r.get("ww1_bfr_prc")), "year_price": num(r.get("yy1_bfr_prc"))}
-                return {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": [item], "average_price": current, "average_label": "조사일 평균"}
+                series = []
+                try:
+                    rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today())
+                    series = [{"date": d, "price": round(p), "count": 1} for d, p in daily_national_average(rows, use_kg=False)[-30:]]
+                except KamisError:
+                    pass
+                return {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": [item], "daily_series": series, "average_price": current, "average_label": "조사일 평균"}
     except KamisError:
         pass
     code = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
