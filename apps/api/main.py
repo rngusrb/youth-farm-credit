@@ -420,29 +420,15 @@ def standard_codes() -> list[dict[str, str]]:
 
 @app.get("/api/v1/market/categories")
 async def market_categories() -> dict:
-    """katCode/goods 품목코드에서 대분류·중분류 선택지를 제공한다."""
-    key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
-    rows: list[dict] = []
-    if key:
-        try:
-            async with httpx.AsyncClient(timeout=15) as client:
-                response = await client.get("https://apis.data.go.kr/B552845/katCode/goods", params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000})
-                response.raise_for_status()
-                raw = response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
-                rows = [raw] if isinstance(raw, dict) else raw
-        except (httpx.HTTPError, ValueError):
-            rows = []
-    if not rows:
-        rows = standard_codes()
-        fallback = [{"large_code": r.get("대분류코드", ""), "large_name": r.get("대분류명", ""), "middle_code": r.get("중분류코드", ""), "middle_name": r.get("중분류명(품목명)", "")} for r in rows]
-        return {"status": "fallback", "items": fallback, "large_count": len({item["large_code"] for item in fallback if item["large_code"]})}
+    """저장소 표준품목 CSV에서 대분류·중분류 전체를 제공한다."""
+    rows = standard_codes()
     out = []
     seen = set()
     for r in rows:
         item = {"large_code": str(r.get("gds_lclsf_cd") or r.get("대분류코드") or ""), "large_name": r.get("gds_lclsf_nm") or r.get("대분류명") or "", "middle_code": str(r.get("gds_mclsf_cd") or r.get("중분류코드") or ""), "middle_name": r.get("gds_mclsf_nm") or r.get("중분류명(품목명)") or ""}
         if item["large_code"] and item["middle_code"] and (item["large_code"], item["middle_code"]) not in seen:
             seen.add((item["large_code"], item["middle_code"])); out.append(item)
-    return {"status": "ok", "items": out, "large_count": len({item["large_code"] for item in out})}
+    return {"status": "csv", "items": out, "large_count": len({item["large_code"] for item in out})}
 
 @app.get("/api/v1/market/volume")
 async def market_volume(crop_id: str = Query(...)) -> dict:
