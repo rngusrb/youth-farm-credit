@@ -55,7 +55,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
 }
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
-  const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], daily_series: [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }], average_price: 5923, average_label: "조사일 평균" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
+  const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], daily_series: [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }], average_price: 7845, average_label: "최근 5일 평균 도매가(상품·kg)" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   const tableItems = data && (data.daily_series?.length ?? 0) >= 2
@@ -75,7 +75,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       if (!d.items.length && id === "strawberry_hydro") {
         d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
         d.daily_series = [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }];
-        d.average_price = 5923; d.average_label = "조사일 평균"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
+        d.average_price = 7845; d.average_label = "최근 5일 평균 도매가(상품·kg)"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
       }
       setData(d); onData?.(d);
     });
