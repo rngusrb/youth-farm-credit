@@ -15,6 +15,7 @@ const trendSentence = (current: number | null | undefined, year: number | null |
   if (Math.abs(pct) < 3) return "지난해 같은 시기와 비슷한 가격이에요.";
   return `지난해 같은 시기보다 ${Math.abs(pct).toFixed(0)}% ${pct > 0 ? "비싸요" : "낮아요"}.`;
 };
+const cropLabel = (id?: string) => ({ strawberry_hydro: "딸기", greenhouse_watermelon: "수박", field_watermelon: "수박", tomato_hydro: "토마토", greenhouse_cucumber: "오이", greenhouse_koreanmelon: "참외" } as Record<string, string>)[id ?? ""];
 const monthlyFromDaily = (series: RealtimeAuction["daily_series"]) => {
   const groups = new Map<string, number[]>();
   for (const row of series ?? []) {
@@ -52,7 +53,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
 }
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
-  const [data, setData] = useState<RealtimeAuction | null>({ status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], average_price: 5923, average_label: "조사일 평균" });
+  const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], average_price: 5923, average_label: "조사일 평균" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   useEffect(() => {
