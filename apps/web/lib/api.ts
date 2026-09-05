@@ -365,6 +365,12 @@ export async function fetchCrops(): Promise<{
   if (!res.ok) throw new Error("작목 목록을 불러오지 못했습니다");
   return res.json();
 }
+export type MarketCategory = { large_code: string; large_name: string; middle_code: string; middle_name: string };
+export async function fetchMarketCategories(): Promise<{ status: string; items: MarketCategory[] }> {
+  const res = await fetch(`${API_BASE}/api/v1/market/categories`, { cache: "no-store" });
+  if (!res.ok) throw new Error("품목코드를 불러오지 못했습니다");
+  return res.json();
+}
 
 export async function fetchCrop(id: string): Promise<CropDetail> {
   const res = await fetch(`${API_BASE}/api/v1/crops/${id}`);

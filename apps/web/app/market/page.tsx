@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Crumb, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchCrop, fetchCrops, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket } from "@/lib/api";
+import { fetchCrop, fetchCrops, fetchMarketCategories, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 
@@ -16,6 +16,7 @@ const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> =
 function Body() {
   const params = useSearchParams();
   const [rows, setRows] = useState<CropRow[]>([]);
+  const [categories, setCategories] = useState<MarketCategory[]>([]);
   const [id, setId] = useState("");
   const [largeCode, setLargeCode] = useState("");
   const [middleCode, setMiddleCode] = useState("");
@@ -26,9 +27,10 @@ function Body() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCrops()
-      .then((d) => {
+    Promise.all([fetchCrops(), fetchMarketCategories()])
+      .then(([d, cat]) => {
         setRows(d.crops);
+        setCategories(cat.items);
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
@@ -46,8 +48,8 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
-  const largeGroups = Array.from(new Map(rows.filter((c) => c.large_code).map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = rows.filter((c) => c.large_code === largeCode).filter((c, i, a) => a.findIndex((x) => x.middle_code === c.middle_code) === i);
+  const largeGroups = Array.from(new Map(categories.map((c) => [c.large_code, c.large_name])).entries());
+  const middleGroups = categories.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
 
   return (
     <>
@@ -60,7 +62,7 @@ function Body() {
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
           </select>
-          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); setId(rows.find((c) => c.large_code === largeCode && c.middle_code === code)?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const found = rows.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "")); setId(found?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={c.middle_code} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
           </select>
           <span className="text-[12px] text-gov-ink3">
