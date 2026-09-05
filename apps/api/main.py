@@ -653,7 +653,7 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
         one_year_ago = today.replace(year=today.year - 1, day=28)
     try:
         async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 100, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": one_year_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 100, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": one_year_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "selectable": "exmn_ym,ctgry_cd,item_cd,pmm_avgprc,pmm_hgprc,pmm_lwprc,pmm_stddvtn,pmm_cfcntvrtn,pmm_cfcntrng"}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
             raw = [raw] if isinstance(raw, dict) else raw
     except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
     def n(v):
