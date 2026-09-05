@@ -431,6 +431,14 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                     raw.extend([items] if isinstance(items, dict) else items)
     except (httpx.HTTPError, ValueError):
         raw = []
+    # 원천 경매자료가 비어 있는 품목은 일별 도·소매 가격(perDay)을 사용한다.
+    if not raw:
+        try:
+            daily_rows = await asyncio.to_thread(fetch_prices, crop_id, date_start - timedelta(days=400), date_end)
+            daily_values = daily_national_average(daily_rows, use_kg=False)
+            raw = [{"trd_clcln_ymd": day, "scsbd_prc": value, "whsl_mrkt_nm": "전국 일별 평균", "gds_mclsf_nm": name} for day, value in daily_values]
+        except KamisError:
+            raw = []
     by_day: dict[str, list[float]] = {}
     for row in raw:
         try:
