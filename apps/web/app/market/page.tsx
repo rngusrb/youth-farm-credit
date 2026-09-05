@@ -130,7 +130,6 @@ function Body() {
                   지금 가격은 평소보다 <b className="tabular text-gov-ink">{g.current_over_longrun.toFixed(2)}배</b> 크게 오르내리고 있어요.
                   가격이 비싼지 싼지가 아니라, 최근 변화가 얼마나 큰지를 보여줘요.
                 </p>
-              <p className="mt-1 text-[11px] text-gov-ink3">분석에 사용한 가격 자료 {m.trading_days.toLocaleString("ko-KR")}거래일 · {m.window?.join(" ~ ") ?? "기간 확인 중"}</p>
               </div>
               <div className="mt-4 rounded-lg border border-gov-line2 bg-white p-4">
                 <h3 className="mb-2 text-[13px] font-bold text-gov-ink">비교 검증 자료</h3>
