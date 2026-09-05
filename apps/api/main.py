@@ -143,6 +143,11 @@ async def realtime_auction(
             crop = get_crop(crop_id)
         except KeyError:
             raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+    if crop_id:
+        recent = await market_recent(crop_id, 1)
+        if recent.get("items"):
+            r = recent["items"][0]
+            return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "서울가락", "date": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
 
     # API는 코드·명칭 조건을 모두 지원한다. 작목 매핑에 코드가 없는 경우에도
     # 별칭으로 중분류를 먼저 찾고, 결과가 없으면 대분류로 다시 찾는다.
@@ -389,18 +394,44 @@ _volume_cache: dict[str, tuple[float, list[dict]]] = {}
 
 @app.get("/api/v1/market/recent")
 async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5, ge=1, le=20)) -> dict:
-    """최근일자 도·소매 가격정보 API를 품목별로 제공한다."""
+    """CSV 품목코드와 가락시장 기준의 최근 도매가·기간 비교를 제공한다."""
     try:
         crop = get_crop(crop_id)
-        rows = await asyncio.to_thread(fetch_recent, crop_id)
-    except (KeyError, KamisError) as exc:
+    except KeyError as exc:
         return {"status": "unavailable", "items": [], "message": str(exc)}
-    def clean(row):
-        return {"market": row.market or "전국", "item": row.item_name or crop.name,
-                "price": round(row.price) if row.price else None, "unit": row.unit,
-                "quantity": None, "auction_at": row.date}
-    items = [clean(r) for r in rows[:limit]]
-    prices = [r.price for r in rows if r.price > 0]
+    key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
+    name = crop.name.split("(")[0].strip()
+    code = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
+    large = str(code.get("대분류코드") or "08"); middle = str(code.get("중분류코드") or "04")
+    large_values = list(dict.fromkeys([large, large.zfill(2), large.lstrip("0") or "0"]))
+    middle_values = list(dict.fromkeys([middle, middle.zfill(2), middle.lstrip("0") or "0", middle[-2:]]))
+    date_end = date.today(); date_start = date_end - timedelta(days=400)
+    raw: list[dict] = []
+    try:
+        async with httpx.AsyncClient(timeout=30) as client:
+            for lc in large_values:
+                for mc in middle_values:
+                    response = await client.get("https://apis.data.go.kr/B552845/katOrigin/trades", params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,whsl_mrkt_nm,gds_lclsf_nm,gds_mclsf_nm,scsbd_prc,unit_nm,qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": lc, "cond[gds_mclsf_cd::EQ]": mc, "cond[trd_clcln_ymd::GTE]": date_start.isoformat(), "cond[trd_clcln_ymd::LTE]": date_end.isoformat()})
+                    response.raise_for_status(); body = response.json().get("response", {}).get("body", {}); items = (body.get("items") or {}).get("item", [])
+                    raw.extend([items] if isinstance(items, dict) else items)
+    except (httpx.HTTPError, ValueError):
+        raw = []
+    by_day: dict[str, list[float]] = {}
+    for row in raw:
+        try:
+            value = float(str(row.get("scsbd_prc", "")).replace(",", "")); day = str(row.get("trd_clcln_ymd", "")).replace("-", "")[:8]
+            if value > 0 and len(day) == 8: by_day.setdefault(day, []).append(value)
+        except (TypeError, ValueError): pass
+    dates = sorted(by_day)
+    def avg(day): return round(sum(by_day[day]) / len(by_day[day])) if day in by_day else None
+    def nearest(days):
+        if not dates: return None
+        target = datetime.strptime(dates[-1], "%Y%m%d").date() - timedelta(days=days)
+        candidates = [d for d in dates if datetime.strptime(d, "%Y%m%d").date() <= target]
+        return avg(max(candidates)) if candidates else None
+    latest = dates[-1] if dates else ""
+    items = [{"market": "서울가락", "item": name, "price": avg(latest), "unit": "자료 단위 기준", "quantity": None, "auction_at": latest, "previous_day_price": nearest(1), "seven_day_price": nearest(7), "year_price": nearest(365)}] if latest else []
+    prices = [v for values in by_day.values() for v in values]
     return {"status": "ok" if items else "empty", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보(recent)",
             "crop": crop.name, "match_level": "품목코드", "items": items,
             "average_price": round(sum(prices) / len(prices)) if prices else None,
