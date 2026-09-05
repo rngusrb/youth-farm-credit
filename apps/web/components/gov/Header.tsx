@@ -50,7 +50,7 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6 sm:py-4">
         <Link href="/" className="flex min-h-11 min-w-0 flex-col items-start justify-center sm:flex-row sm:items-center sm:gap-2">
           <span className="text-[19px] font-extrabold tracking-tight text-gov-head">Seed Money</span>
-          <span className="text-[12px] font-medium text-gov-ink2">농장 살림 · 대출 계획</span>
+          <span className="text-[12px] font-medium text-gov-ink2">농가 AI 금융 파트너</span>
         </Link>
         <nav
           ref={navRef}
