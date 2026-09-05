@@ -188,7 +188,7 @@ async def realtime_auction(
                 target = latest_day - timedelta(days=days)
                 candidates = [d for d in dates if datetime.strptime(d, "%Y%m%d").date() <= target]
                 return daily[max(candidates)] if candidates else None
-            return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "전국 평균", "date": latest, "price": round(daily[latest]), "previous_day_price": round(nearest(1)) if nearest(1) else None, "seven_day_price": round(nearest(7)) if nearest(7) else None, "year_price": round(nearest(365)) if nearest(365) else None, "grade": "상품(상) 기준", "unit": "자료 단위 기준", "unit_qty": ""}]}
+            return {"status": "ok", "crop": crop.name, "items": [{"item": crop.name, "market": "전국 평균", "auction_at": latest, "price": round(daily[latest]), "previous_day_price": round(nearest(1)) if nearest(1) else None, "seven_day_price": round(nearest(7)) if nearest(7) else None, "year_price": round(nearest(365)) if nearest(365) else None, "grade": "상품(상) 기준", "unit": "자료 단위 기준", "unit_qty": ""}]}
 
     # API는 코드·명칭 조건을 모두 지원한다. 작목 매핑에 코드가 없는 경우에도
     # 별칭으로 중분류를 먼저 찾고, 결과가 없으면 대분류로 다시 찾는다.
