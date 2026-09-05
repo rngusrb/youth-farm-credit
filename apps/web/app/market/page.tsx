@@ -166,7 +166,7 @@ function Body() {
                 <h3 className="mb-2 text-[15px] font-bold text-gov-ink">3. 수확량</h3>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
                 <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const amount = volume.filter((x) => x.month === month).reduce((s, x) => s + x.quantity, 0); const max = Math.max(...Array.from({ length: 12 }, (_, m) => volume.filter((x) => x.month === m + 1).reduce((s, x) => s + x.quantity, 0)), 1); const active = detail.harvest_months.includes(month); const opacity = amount ? Math.min(1, 0.2 + (amount / max) * 0.8) : active ? 0.65 : 0.12; return <div key={month} className="text-center"><div className="h-10 rounded-sm bg-gov-link" style={{ opacity }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
-                <p className="mt-3 text-[11px] text-gov-ink3">katOrigin `qty(물량)` 월평균 기준 · 자료가 있는 달의 평균을 기준으로 상대적인 색 농도를 표시해요.</p>
+                <p className="mt-3 text-[11px] text-gov-ink3">서울가락 도매시장(110001) katOrigin `qty(물량)` 월평균 기준 · 자료가 있는 달의 평균을 기준으로 상대적인 색 농도를 표시해요.</p>
               </div>
             </Panel>
           </Section>

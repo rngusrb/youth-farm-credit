@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 import os
 import asyncio
+import csv
 from datetime import date, datetime, timedelta, timezone
 from urllib.parse import unquote
 
@@ -23,6 +24,7 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from dataclasses import asdict
+from functools import lru_cache
 
 from agent import consult
 from engine.cashflow import cashflow_for
@@ -352,6 +354,18 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
 _quarterly_cache: dict[str, tuple[float, list[dict]]] = {}
 _volume_cache: dict[str, tuple[float, list[dict]]] = {}
 
+@lru_cache(maxsize=1)
+def standard_codes() -> list[dict[str, str]]:
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../docs/product/농림수산식품교육문화정보원_표준품목코드_20251105.csv"))
+    if not os.path.exists(path):
+        candidates = [p for p in (os.path.join(os.path.dirname(__file__), "../../docs/product"),) for p in os.listdir(p) if p.endswith(".csv")]
+        path = os.path.join(os.path.dirname(__file__), "../../docs/product", candidates[0]) if candidates else ""
+    try:
+        with open(path, encoding="cp949", newline="") as f:
+            return list(csv.DictReader(f))
+    except (OSError, UnicodeError):
+        return []
+
 @app.get("/api/v1/market/volume")
 async def market_volume(crop_id: str = Query(...)) -> dict:
     """katOrigin/trades 거래량을 월별 평균으로 묶는다."""
@@ -372,6 +386,10 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
         date_start = "2025-01-01"
     # 표준코드 API에서 선택 작목의 대·중·소분류를 찾아 대치한다.
     code_map = {}
+    name = crop.name.split("(")[0].strip()
+    csv_match = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), None)
+    if csv_match:
+        code_map = {"gds_lclsf_cd": csv_match.get("대분류코드", "").zfill(2), "gds_mclsf_cd": csv_match.get("중분류코드", "")}
     try:
         async with httpx.AsyncClient(timeout=20) as client:
             code_response = await client.get("https://apis.data.go.kr/B552845/katCode/goods", params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000})
@@ -385,7 +403,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     if "딸기" in crop.name:
         params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": "08", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     else:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_lclsf_cd::EQ]": code_map.get("gds_lclsf_cd") or "08", "cond[gds_mclsf_cd::EQ]": code_map.get("gds_mclsf_cd") or mapping["item_cd"], "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
+        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": code_map.get("gds_lclsf_cd") or "08", "cond[gds_mclsf_cd::EQ]": code_map.get("gds_mclsf_cd") or mapping["item_cd"], "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     try:
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
