@@ -152,7 +152,7 @@ export default function FarmPage() {
                   <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setCropId(""); }} className={field}>
                     <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
                   </select>
-                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const found = crops.find((c) => c.price_item_code === code); setCropId(found?.id ?? ""); }} className={field}>
+                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => x.middle_code === code); const found = crops.find((c) => c.price_item_code === code || (!!selected && c.name.startsWith(selected.middle_name))); setCropId(found?.id ?? ""); setError(found ? null : "선택한 품목과 연결된 작목 정보가 없어요. 작목 목록을 다시 불러와 주세요."); }} className={field}>
                     <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
                   </select>
                 </div>
