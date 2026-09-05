@@ -151,6 +151,7 @@ function Body() {
                 <p className="mb-2 text-[12px] text-gov-ink3">서로 다른 기관의 가격 자료가 비슷한 방향을 가리키는지 확인해요.</p>
                 <div className="grid grid-cols-3 gap-2 text-center text-[12px]"><div className="rounded bg-gov-sunk px-2 py-2"><b>KAMIS</b><br />{m.annual_price_sigma?.toFixed(3) ?? "—"}</div><div className="rounded bg-gov-sunk px-2 py-2"><b>KOSIS</b><br />{m.kosis_price_sigma?.toFixed(3) ?? "—"}</div><div className="rounded bg-gov-sunk px-2 py-2"><b>차이</b><br />{m.annual_price_sigma != null && m.kosis_price_sigma != null ? Math.abs(m.annual_price_sigma - m.kosis_price_sigma).toFixed(3) : "—"}</div></div>
               </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">계산 방법: 월별 변동계수(CV = 월별 표준편차 ÷ 월별 평균가)를 구한 뒤, 로그(CV²)에 월별 계절효과와 전월·전년 동월 변동성을 반영해요. 월별 최고가·최저가 진폭도 보조 지표로 사용해요.</p>
               </Fold>
               <div className="mt-4">
                 <Notice tone="info" title="가격 그래프는 참고용이에요">
