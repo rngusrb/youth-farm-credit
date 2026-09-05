@@ -647,8 +647,8 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
     crop = get_crop(crop_id); mapping = crop.kamis or {}; key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
     if not key or not mapping: return {"status": "unavailable", "items": []}
     try:
-        async with httpx.AsyncClient(timeout=20) as client:
-            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 1000, "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+        async with httpx.AsyncClient(timeout=60) as client:
+            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 1000, "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "cond[exmn_ym::GTE]": (date.today() - timedelta(days=365 * 3)).strftime("%Y%m"), "cond[exmn_ym::LTE]": date.today().strftime("%Y%m")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
             raw = [raw] if isinstance(raw, dict) else raw
     except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
     def n(v):
