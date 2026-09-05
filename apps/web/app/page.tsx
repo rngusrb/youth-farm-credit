@@ -121,11 +121,12 @@ export default function PortalHome() {
           <div className="mt-4 rounded-lg border border-gov-line bg-white p-4">
             <h2 className="text-[14px] font-bold text-gov-ink">이렇게 이용해요</h2>
             <ol className="mt-3 flex min-w-[680px] items-stretch gap-1">
-              {STEPS.map(([n, t], i) => (
+              {STEPS.map(([n, t, d], i) => (
                 <li key={n} className="flex min-w-0 flex-1 items-center gap-1">
                   <div className="flex min-h-16 flex-1 flex-col justify-center rounded-md border border-gov-line2 bg-gov-soft px-2.5">
                     <span className="tabular text-[12px] font-extrabold text-gov-link">{n}</span>
                     <span className="mt-1 truncate text-[12px] font-semibold text-gov-ink">{t}</span>
+                    <span className="mt-1 line-clamp-2 text-[11px] leading-snug text-gov-ink2">{d}</span>
                   </div>
                   {i < STEPS.length - 1 && <span aria-hidden className="shrink-0 text-[18px] font-bold text-gov-warn">›</span>}
                 </li>
