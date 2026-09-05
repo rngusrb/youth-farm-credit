@@ -379,11 +379,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
         return {"status": "unavailable", "items": []}
     endpoint = "https://apis.data.go.kr/B552845/katOrigin/trades"
     window = (crop.market or {}).get("window") or []
-    date_end = window[1] if len(window) > 1 else date.today().isoformat()
-    try:
-        date_start = (date.fromisoformat(date_end) - timedelta(days=365)).isoformat()
-    except ValueError:
-        date_start = "2025-01-01"
+    date_start, date_end = "2025-01-01", "2025-12-31"
     # 표준코드 API에서 선택 작목의 대·중·소분류를 찾아 대치한다.
     code_map = {}
     name = crop.name.split("(")[0].strip()
