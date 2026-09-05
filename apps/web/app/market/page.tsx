@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Badge, Crumb, DefTable, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchCrop, fetchCrops, type CropDetail, type CropRow } from "@/lib/api";
 import AuctionSummary from "@/components/AuctionSummary";
+import Fold from "@/components/Fold";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
   calm: { label: "평소보다 조용함", tone: "ok" },
@@ -106,6 +107,7 @@ function Body() {
           </Section>
 
           <Section title="교차검증">
+            <Fold tone="gov" summary="자료를 다시 비교해 보기" hint="KAMIS · KOSIS">
             <div className="grid gap-5 lg:grid-cols-2">
               <Panel>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
@@ -153,6 +155,7 @@ function Body() {
                 </p>
               </Panel>
             </div>
+            </Fold>
           </Section>
         </>
       )}
