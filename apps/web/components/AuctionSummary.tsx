@@ -9,7 +9,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 
 const won = (value: number | null | undefined) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
 
-export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true }: { cropId?: string; showComparison?: boolean } = {}) {
+export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false }: { cropId?: string; showComparison?: boolean; compact?: boolean } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
@@ -38,23 +38,22 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
         </div>
         {data?.items.length ? (
           <>
-          <div className="mt-4 rounded-md border border-gov-link/30 bg-gov-soft px-4 py-3">
-            <p className="text-[12px] text-gov-ink2">가장 최근 낙찰가</p>
-            <p className="mt-1 text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p>
-            <p className="mt-1 text-[12px] text-gov-ink3">{data.items[0].market} · {data.items[0].auction_at || "최근 경매"}</p>
+          <div className={`mt-4 rounded-md border border-gov-link/30 bg-gov-soft px-4 py-3 ${compact ? "space-y-2" : ""}`}>
+            <div className="flex items-baseline justify-between gap-3"><p className="text-[12px] text-gov-ink2">가장 최근 낙찰가</p><p className="text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p></div>
+            {data.average_price != null && <div className="flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
+            <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market} · 상품(상) · {data.items[0].unit || "단위"}</p>
           </div>
-          {data.average_price != null && <div className="mt-3 rounded-md border border-gov-line2 px-4 py-3"><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="mt-1 text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p><p className="mt-1 text-[11px] text-gov-ink3">현재 API가 제공하는 최근 1개월 경매 자료 기준이에요.</p></div>}
-          <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
+          {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
             <table className="w-full min-w-[520px] text-[13px]">
               <thead className="bg-gov-sunk text-left text-[12px] text-gov-ink2"><tr><th className="px-3 py-2">시장</th><th className="px-3 py-2">품목</th><th className="px-3 py-2 text-right">낙찰가</th><th className="px-3 py-2">단위</th><th className="px-3 py-2">시간</th></tr></thead>
               <tbody>{data.items.map((item, i) => <tr key={`${item.market}-${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-3 py-2">{item.market}</td><td className="px-3 py-2">{item.item || "—"}</td><td className="px-3 py-2 text-right font-semibold tabular">{won(item.price)}</td><td className="px-3 py-2">{item.unit || "—"}</td><td className="px-3 py-2 text-gov-ink3">{item.auction_at || "—"}</td></tr>)}</tbody>
             </table>
-          </div>
+          </div>}
           </>
         ) : (
           <p className="mt-4 rounded-md bg-gov-sunk px-4 py-5 text-center text-[13px] text-gov-ink2">지금은 보여드릴 경매 자료가 없어요. 잠시 후 다시 확인해 주세요.</p>
         )}
-        {data?.items.filter((item) => item.price != null).length ? (
+        {!compact && data?.items.filter((item) => item.price != null).length ? (
           <div className="mt-5 border-t border-gov-line2 pt-4">
             <p className="mb-2 text-[13px] font-semibold text-gov-ink">최근 30일 일평균 낙찰가 흐름</p>
             <div className="h-44 w-full min-w-0">

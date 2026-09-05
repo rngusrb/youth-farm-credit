@@ -138,7 +138,7 @@ export default function PortalHome() {
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-9">
-        <AuctionSummary showComparison={false} />
+        <AuctionSummary showComparison={false} compact />
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <div>
             {/* ── 공지사항 ───────────────────────────── */}
