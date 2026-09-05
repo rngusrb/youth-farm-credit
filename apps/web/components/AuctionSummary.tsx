@@ -61,7 +61,8 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
     const load = () => Promise.allSettled([fetchRealtimeAuction(id, 5, !compact), id ? fetchMarketRecent(id, 5) : Promise.reject()]).then(([live, recent]) => {
       const base = live.status === "fulfilled" ? live.value : { status: "empty" as const, items: [] };
       const latest = recent.status === "fulfilled" && recent.value.items.length ? recent.value : null;
-      const d = latest ? { ...base, ...latest, daily_series: base.daily_series } : base;
+      // 최근일자 API는 비교 필드용 대표 행이고, 화면 목록·흐름은 perDay 일별 자료를 유지한다.
+      const d = latest ? { ...base, ...latest, items: base.items.length ? base.items : latest.items, average_price: base.average_price ?? latest.average_price, average_label: base.average_label ?? latest.average_label, daily_series: base.daily_series?.length ? base.daily_series : latest.daily_series } : base;
       setData(d); onData?.(d);
     });
     load().catch(() => setData({ status: "empty", items: [] }));
@@ -136,6 +137,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
                 </LineChart>
               </ResponsiveContainer>
             </div>
+            {data.daily_series?.length ? <details className="mt-3 rounded-md border border-gov-line2 bg-gov-sunk/40 px-3 py-2"><summary className="cursor-pointer text-[12px] font-semibold text-gov-ink2">일별 값 {data.daily_series.length}건 보기</summary><div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-gov-ink3 sm:grid-cols-3">{data.daily_series.map((x) => <div key={x.date} className="flex justify-between gap-2"><span>{x.date}</span><b className="tabular text-gov-ink">{won(x.price)}</b></div>)}</div></details> : null}
             {showQuarterly && data.daily_series?.length ? (() => {
               const monthly = monthlyFromDaily(data.daily_series);
               return monthly.length ? (
