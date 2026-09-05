@@ -474,7 +474,9 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
                 items = [item] + [row for row in daily_items if row["auction_at"] != item["auction_at"]]
                 return {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": items[:5], "daily_series": series, "average_price": current, "average_label": "조사일 평균"}
-    except (KamisError, asyncio.TimeoutError):
+    except asyncio.TimeoutError:
+        return {"status": "unavailable", "crop": name, "items": [], "message": "최근 도매가 API 응답이 늦어 마지막 확인값을 표시합니다."}
+    except KamisError:
         pass
     code = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
     large = str(code.get("대분류코드") or "08"); middle = str(code.get("중분류코드") or "04")
