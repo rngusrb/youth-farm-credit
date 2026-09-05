@@ -435,21 +435,14 @@ async def market_categories() -> dict:
     if not rows:
         rows = standard_codes()
         fallback = [{"large_code": r.get("대분류코드", ""), "large_name": r.get("대분류명", ""), "middle_code": r.get("중분류코드", ""), "middle_name": r.get("중분류명(품목명)", "")} for r in rows]
-        counts: dict[str, int] = {}
-        for item in fallback: counts[item["large_code"]] = counts.get(item["large_code"], 0) + 1
-        top = {code for code, _ in sorted(counts.items(), key=lambda x: (-x[1], x[0]))[:5]}
-        return {"status": "fallback", "items": [item for item in fallback if item["large_code"] in top], "large_count": len(top)}
+        return {"status": "fallback", "items": fallback, "large_count": len({item["large_code"] for item in fallback if item["large_code"]})}
     out = []
     seen = set()
     for r in rows:
         item = {"large_code": str(r.get("gds_lclsf_cd") or r.get("대분류코드") or ""), "large_name": r.get("gds_lclsf_nm") or r.get("대분류명") or "", "middle_code": str(r.get("gds_mclsf_cd") or r.get("중분류코드") or ""), "middle_name": r.get("gds_mclsf_nm") or r.get("중분류명(품목명)") or ""}
         if item["large_code"] and item["middle_code"] and (item["large_code"], item["middle_code"]) not in seen:
             seen.add((item["large_code"], item["middle_code"])); out.append(item)
-    # 품목코드 API의 대분류별 중분류 개수를 기준으로 상위 5개를 우선 노출한다.
-    counts: dict[str, int] = {}
-    for item in out: counts[item["large_code"]] = counts.get(item["large_code"], 0) + 1
-    top = {code for code, _ in sorted(counts.items(), key=lambda x: (-x[1], x[0]))[:5]}
-    return {"status": "ok", "items": [item for item in out if item["large_code"] in top], "large_count": len(top)}
+    return {"status": "ok", "items": out, "large_count": len({item["large_code"] for item in out})}
 
 @app.get("/api/v1/market/volume")
 async def market_volume(crop_id: str = Query(...)) -> dict:
