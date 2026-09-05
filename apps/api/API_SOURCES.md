@@ -10,6 +10,7 @@
 | 한국농수산식품유통공사 최근일자 도·소매 가격정보 | `https://apis.data.go.kr/B552845/recent` | 최근 가격·전일·전년 비교 | `DATA_GO_KR_API_KEY` |
 | 한국농수산식품유통공사 전국 공영도매시장 경매원천정보 | `https://apis.data.go.kr/B552845/katOrigin/trades` | 거래정산일자·물량(`qty`)·낙찰 원자료 | `DATA_GO_KR_API_KEY` |
 | 한국농수산식품유통공사 농축수산물 표준코드 | `https://apis.data.go.kr/B552845/katCode/goods` | 작목의 대분류·중분류·소분류 코드 매핑 | `DATA_GO_KR_API_KEY` |
+| 농산물 시장 코드 목록 | `https://api.agromarket.kr/samples/public/katCode/wholesalemarkets` | 전국 도매시장 코드·명칭 조회 | 공개 샘플 API |
 
 ## 현재 주요 조회 조건
 
