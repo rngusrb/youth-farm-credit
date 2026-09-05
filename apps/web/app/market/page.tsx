@@ -149,7 +149,7 @@ function Body() {
                   <table className="w-full min-w-[420px] text-[12px]">
                     <tbody>
                       <tr className="border-b border-gov-link/15"><th className="w-1/3 py-2 text-left font-semibold text-gov-ink2">분석 기간</th><td className="py-2 text-gov-ink2">{m.window?.join(" ~ ") ?? "—"} · {m.trading_days.toLocaleString("ko-KR")}거래일</td></tr>
-                      <tr className="border-b border-gov-link/15"><th className="py-2 text-left font-semibold text-gov-ink2">가격 자료</th><td className="py-2 text-gov-ink2">KAMIS 일별 평균 가격</td></tr>
+                      <tr className="border-b border-gov-link/15"><th className="py-2 text-left font-semibold text-gov-ink2">가격 자료</th><td className="py-2 text-gov-ink2">한국농수산식품유통공사 일별 도·소매 가격정보 (perDay)</td></tr>
                       <tr><th className="py-2 text-left font-semibold text-gov-ink2">수확기</th><td className="py-2 text-gov-ink2">3개월 기준</td></tr>
                     </tbody>
                   </table>

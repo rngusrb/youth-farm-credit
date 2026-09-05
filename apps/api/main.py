@@ -354,7 +354,7 @@ _quarterly_cache: dict[str, tuple[float, list[dict]]] = {}
 
 @app.get("/api/v1/market/quarterly")
 async def market_quarterly(crop_id: str = Query(...)) -> dict:
-    """KAMIS 일별 가격 원자료를 분기별 평균으로 묶는다."""
+    """한국농수산식품유통공사 perDay 일별 도·소매 가격 원자료를 월별 평균으로 묶는다."""
     try:
         crop = get_crop(crop_id)
     except KeyError:
