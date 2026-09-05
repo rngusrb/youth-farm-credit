@@ -58,7 +58,7 @@ function Body() {
         </div>
       </Panel>
 
-      {id && <AuctionSummary cropId={id} title="요즘 가격 흐름" />}
+      {id && <AuctionSummary cropId={id} />}
 
       {detail && !m && (
         <Empty
