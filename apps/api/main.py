@@ -642,6 +642,23 @@ async def market_quarterly(crop_id: str = Query(...)) -> dict:
     _quarterly_cache[crop_id] = (now, items)
     return {"status": "ok" if items else "empty", "crop": crop.name, "items": items}
 
+@app.get("/api/v1/market/monthly")
+async def market_monthly(crop_id: str = Query(...)) -> dict:
+    crop = get_crop(crop_id); mapping = crop.kamis or {}; key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
+    if not key or not mapping: return {"status": "unavailable", "items": []}
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 1000, "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+            raw = [raw] if isinstance(raw, dict) else raw
+    except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
+    def n(v):
+        try: return round(float(str(v).replace(",", "")))
+        except (TypeError, ValueError): return None
+    items=[]
+    for x in raw:
+        ym=str(x.get("exmn_ym", x.get("exmn_ymd", ""))).replace("-", "")
+        if len(ym)>=6 and n(x.get("pmm_avgprc")) is not None: items.append({"year":int(ym[:4]),"month":int(ym[4:6]),"price":n(x.get("pmm_avgprc")),"high":n(x.get("pmm_hgprc")),"low":n(x.get("pmm_lwprc")),"stddev":n(x.get("pmm_stddvtn")),"cv":n(x.get("pmm_cfcntvrtn")),"range_cv":n(x.get("pmm_cfcntrng"))})
+    return {"status":"ok" if items else "empty","crop":crop.name,"items":items[-36:]}
 
 @app.get("/api/v1/crops/{crop_id}")
 def crop_detail(crop_id: str) -> dict:

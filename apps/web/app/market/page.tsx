@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Crumb, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchCrop, fetchCrops, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
+import { fetchCrop, fetchCrops, fetchMarketMonthly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
@@ -47,7 +47,7 @@ function Body() {
   useEffect(() => {
     if (!id) return;
     fetchCrop(id).then(setDetail).catch(() => setError("작목 정보를 불러오지 못했어요."));
-    fetchMarketQuarterly(id).then((d) => setQuarterly(d.items)).catch(() => setQuarterly([]));
+    fetchMarketMonthly(id).then((d) => setQuarterly(d.items)).catch(() => setQuarterly([]));
     fetchMarketVolume(id).then((d) => setVolume(d.items)).catch(() => setVolume([]));
   }, [id]);
 
