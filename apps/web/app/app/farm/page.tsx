@@ -80,8 +80,10 @@ export default function FarmPage() {
     try {
       const r = await extractSlots(sentence, {});
       const filled: string[] = [];
-      if (r.slots.crop_id && crops.some((c) => c.id === r.slots.crop_id)) {
-        setCropId(r.slots.crop_id); filled.push("작목");
+      if (r.slots.crop_id) {
+        const requested = String(r.slots.crop_id).replace(/[()]/g, "").trim();
+        const matched = crops.find((c) => c.id === requested || c.name.includes(requested) || requested.includes(c.name.split("(")[0]) || c.name.split("(")[0].includes(requested));
+        if (matched) { setCropId(matched.id); setLargeCode(matched.price_category_code ?? "200"); setMiddleCode(matched.price_item_code ?? "226"); filled.push("작목"); }
       }
       if (r.slots.pyeong) { setPyeong(String(r.slots.pyeong)); filled.push("면적"); }
       if (r.slots.living_cost) { setLiving(String(r.slots.living_cost / MAN)); filled.push("생활비"); }
