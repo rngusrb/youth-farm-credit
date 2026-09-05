@@ -38,9 +38,11 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
         </div>
         {data?.items.length ? (
           <>
-          <div className={`mt-4 rounded-md border border-gov-link/30 bg-gov-soft px-4 py-3 ${compact ? "space-y-2" : ""}`}>
-            <div className="flex items-baseline justify-between gap-3"><p className="text-[12px] text-gov-ink2">가장 최근 낙찰가</p><p className="text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p></div>
-            {data.average_price != null && <div className="flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
+          <div className={`mt-4 rounded-md border border-gov-link/30 bg-gov-soft px-4 py-3 ${compact ? "" : "space-y-2"}`}>
+            <div className={compact ? "grid grid-cols-2 gap-3" : "space-y-2"}>
+              <div className="flex flex-col gap-1"><p className="text-[12px] text-gov-ink2">가장 최근 낙찰가</p><p className="text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p></div>
+              {data.average_price != null && <div className={compact ? "flex flex-col gap-1 border-l border-gov-link/20 pl-3" : "flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"}><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
+            </div>
             <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market} · 상품(상) · {data.items[0].unit || "단위"}</p>
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
