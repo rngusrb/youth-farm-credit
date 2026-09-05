@@ -30,6 +30,15 @@ export async function fetchRealtimeAuction(cropId?: string, limit = 5): Promise<
   return res.json();
 }
 
+export type MarketCompareItem = { item: string; market: string; date: string; price: number | null; previous_day_price: number | null; year_price: number | null; year_change?: string | number | null };
+export type MarketCompare = { status: "ok" | "empty" | "unavailable"; crop?: string | null; items: MarketCompareItem[] };
+export async function fetchMarketCompare(cropId?: string): Promise<MarketCompare> {
+  const query = cropId ? `?crop_id=${encodeURIComponent(cropId)}` : "";
+  const res = await fetch(`${API_BASE}/api/v1/market/compare${query}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("공판장 가격을 불러오지 못했습니다");
+  return res.json();
+}
+
 export type Scenario = {
   dscr_median: number;
   dscr_p10: number;

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge, Panel, Section } from "@/components/gov";
-import { fetchRealtimeAuction, type RealtimeAuction } from "@/lib/api";
+import { fetchMarketCompare, fetchRealtimeAuction, type MarketCompare, type RealtimeAuction } from "@/lib/api";
 import { loadProfile } from "@/lib/profile";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -11,12 +11,14 @@ const won = (value: number | null) => value == null ? "—" : `${value.toLocaleS
 
 export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: string } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
+  const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   useEffect(() => {
     const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
     fetchRealtimeAuction(id, 5).then(setData).catch(() => setData({ status: "empty", items: [] }));
-    const timer = window.setInterval(() => fetchRealtimeAuction(id, 5).then(setData).catch(() => {}), 120_000);
+    fetchMarketCompare(id).then(setCompare).catch(() => setCompare({ status: "empty", items: [] }));
+    const timer = window.setInterval(() => { fetchRealtimeAuction(id, 5).then(setData).catch(() => {}); fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 120_000);
     return () => window.clearInterval(timer);
   }, [cropIdOverride]);
 
@@ -67,6 +69,7 @@ export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: st
             </div>
           </div>
         ) : null}
+        {(cropIdOverride || cropId) && compare?.items.length ? <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">오늘 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{compare.items.slice(0, 3).map((item, i) => <div key={`${item.item}-${item.market}-${i}`} className="rounded-md bg-gov-sunk px-3 py-3"><p className="truncate text-[12px] text-gov-ink2">{item.market || item.item}</p><p className="mt-1 text-[17px] font-bold tabular text-gov-ink">{won(item.price)}</p><p className="mt-1 text-[11px] text-gov-ink3">전일 {won(item.previous_day_price)} · 전년 {won(item.year_price)}</p></div>)}</div><p className="mt-2 text-[11px] text-gov-ink3">공판장 평균가 기준으로 전일과 전년 같은 시기 가격을 함께 보여드려요.</p></div> : null}
         <p className="mt-3 text-[11px] text-gov-ink3">공공데이터포털 농산물 실시간 경매가 · 2분마다 새로 확인해요. 참고용으로만 봐 주세요.</p>
       </Panel>
     </Section>

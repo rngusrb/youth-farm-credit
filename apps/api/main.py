@@ -229,6 +229,46 @@ async def realtime_auction(
     }
 
 
+@app.get("/api/v1/market/compare")
+async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
+    """공판장 최신 평균가와 전일·전년 가격 비교."""
+    key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
+    if not key:
+        return {"status": "unavailable", "items": []}
+    aliases: list[str] = []
+    crop_name = None
+    if crop_id:
+        try:
+            crop = get_crop(crop_id)
+            crop_name = crop.name
+            aliases = [crop.name, *crop.aliases]
+        except KeyError:
+            raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+    endpoint = "https://api.odcloud.kr/api/15134477/v1/uddi:f79ced3e-9e53-424e-8682-e2a294f81c58"
+    try:
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            response = await client.get(endpoint, params={"serviceKey": unquote(key), "page": 1, "perPage": 1000})
+            response.raise_for_status()
+            payload = response.json()
+    except (httpx.HTTPError, ValueError):
+        return {"status": "unavailable", "items": []}
+    records = payload.get("data", []) if isinstance(payload, dict) else []
+    needles = [a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases]
+    matched = [r for r in records if not needles or any(n and n in str(r.get("품목명", "")) for n in needles)]
+    def number(row: dict, key_name: str) -> float | None:
+        try:
+            value = float(str(row.get(key_name, "")).replace(",", ""))
+            return round(value) if value > 0 else None
+        except (TypeError, ValueError):
+            return None
+    items = [{
+        "item": r.get("품목명", ""), "market": r.get("시장구분", ""), "date": r.get("가격날짜", ""),
+        "price": number(r, "평균가격"), "previous_day_price": number(r, "전일평균가격"),
+        "year_price": number(r, "전년가격"), "year_change": r.get("전년대비등락율"),
+    } for r in matched[:20]]
+    return {"status": "ok" if items else "empty", "crop": crop_name, "items": items}
+
+
 @app.get("/api/v1/crops/{crop_id}")
 def crop_detail(crop_id: str) -> dict:
     """작목 한 건의 전체 근거. 대시보드의 작목·시세 화면이 쓴다."""
