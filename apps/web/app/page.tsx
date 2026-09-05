@@ -32,13 +32,13 @@ export default function PortalHome() {
           <div>
             <Badge tone="info">2026 금융 AI 챌린지 출품작</Badge>
             <h1 className="mt-4 text-[34px] font-extrabold leading-[1.25] tracking-tight text-gov-ink">
-              얼마까지 받을 수 있는가가 아니라,
+              심은 대로 거두는 농사,
               <br />
-              <span className="text-gov-head">얼마까지 받아야 안전한가.</span>
+              <span className="text-gov-head">데이터대로 빌려주는 Seed Money.</span>
             </h1>
             <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-gov-ink2">
-              농장 정보를 넣으면 <b className="text-gov-ink">안전하게 받아야 할 금액</b>을 먼저 보여드려요.
-              필요한 기능만 골라서 바로 확인할 수 있어요.
+              농가의 경영 데이터를 금융의 언어로 바꾸는 AI 금융 파트너예요.
+              농장 정보를 넣으면 내 농장에 맞는 안전한 대출 계획을 살펴볼 수 있어요.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Btn href={ready && session ? ROLE_HOME[session.role] : "/app"}>
