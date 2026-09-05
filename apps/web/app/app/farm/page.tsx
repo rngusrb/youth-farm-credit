@@ -3,9 +3,10 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge, Btn, Notice, PageTitle, Panel, Section } from "@/components/gov";
-import { DEFAULT_MARKET_CATEGORIES, extractSlots, fetchCrops, fetchMarketCategories, fetchProducts, type CropRow, type ProductRow, type MarketCategory } from "@/lib/api";
+import { extractSlots, fetchCrops, fetchProducts, type CropRow, type ProductRow, type MarketCategory } from "@/lib/api";
 import { clearProfile, loadProfile, saveProfile } from "@/lib/profile";
 import { won } from "@/lib/format";
+import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
 
 const MAN = 10_000;
 const field = "w-full min-h-11 rounded-md border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
@@ -32,11 +33,10 @@ export default function FarmPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchCrops(), fetchProducts(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
-      .then(([c, p, cat]) => {
+    Promise.all([fetchCrops(), fetchProducts()])
+      .then(([c, p]) => {
         setCrops(c.crops);
-        const localCategories = c.crops.filter((x) => x.large_code && x.middle_code).map((x) => ({ large_code: x.large_code!, large_name: x.large_name ?? "", middle_code: x.middle_code!, middle_name: x.middle_name ?? x.name }));
-        setCategories(cat.items.length ? cat.items : (localCategories.length ? localCategories : DEFAULT_MARKET_CATEGORIES));
+        setCategories(CSV_MARKET_CATEGORIES);
         setProducts(p.products);
         const prev = loadProfile();
         setCropId(prev?.cropId ?? c.crops[0]?.id ?? "");
@@ -65,9 +65,9 @@ export default function FarmPage() {
     .map((v) => v * MAN);
 
   const crop = crops.find((c) => c.id === cropId);
-  const categoryRows = categories.length ? categories : DEFAULT_MARKET_CATEGORIES;
+  const categoryRows = categories.length ? categories : CSV_MARKET_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = categoryRows.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
+  const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
 
   /** 대화형 인테이크 — 자연어를 슬롯으로 바꾼다. 채워진 칸만 알려 준다. */
   async function readSentence() {

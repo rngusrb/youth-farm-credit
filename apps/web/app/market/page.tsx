@@ -3,9 +3,10 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Crumb, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { DEFAULT_MARKET_CATEGORIES, fetchCrop, fetchCrops, fetchMarketCategories, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
+import { fetchCrop, fetchCrops, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
+import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
   calm: { label: "가격 변화가 작아요", tone: "ok" },
@@ -27,12 +28,10 @@ function Body() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchCrops(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
-      .then(([d, cat]) => {
+    fetchCrops().then((d) => {
         setRows(d.crops);
-        const available = cat.items.length ? cat.items : DEFAULT_MARKET_CATEGORIES;
-        const localCategories = d.crops.filter((c) => c.large_code && c.middle_code).map((c) => ({ large_code: c.large_code!, large_name: c.large_name ?? "", middle_code: c.middle_code!, middle_name: c.middle_name ?? c.name }));
-        setCategories(available.length ? available : (localCategories.length ? localCategories : DEFAULT_MARKET_CATEGORIES));
+        const available = CSV_MARKET_CATEGORIES;
+        setCategories(available);
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
@@ -52,9 +51,9 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
-  const categoryRows = categories.length ? categories : DEFAULT_MARKET_CATEGORIES;
+  const categoryRows = categories.length ? categories : CSV_MARKET_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = categoryRows.filter((c) => c.large_code === largeCode || c.large_code.endsWith(largeCode) || largeCode.endsWith(c.large_code));
+  const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
 
   return (
     <>
