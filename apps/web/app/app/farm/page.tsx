@@ -15,7 +15,7 @@ const label = "mb-1.5 block text-[13px] font-semibold text-gov-ink2";
 export default function FarmPage() {
   const router = useRouter();
   const [crops, setCrops] = useState<CropRow[]>([]);
-  const [categories, setCategories] = useState<MarketCategory[]>([]);
+  const [categories, setCategories] = useState<MarketCategory[]>(CSV_MARKET_CATEGORIES);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [cropId, setCropId] = useState("");
   const [largeCode, setLargeCode] = useState("");

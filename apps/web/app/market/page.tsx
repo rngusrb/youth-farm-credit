@@ -17,7 +17,7 @@ const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> =
 function Body() {
   const params = useSearchParams();
   const [rows, setRows] = useState<CropRow[]>([]);
-  const [categories, setCategories] = useState<MarketCategory[]>([]);
+  const [categories, setCategories] = useState<MarketCategory[]>(CSV_MARKET_CATEGORIES);
   const [id, setId] = useState("");
   const [largeCode, setLargeCode] = useState("");
   const [middleCode, setMiddleCode] = useState("");
