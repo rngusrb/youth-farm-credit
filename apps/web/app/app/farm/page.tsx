@@ -97,12 +97,13 @@ export default function FarmPage() {
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const area = Number(pyeong.replace(/,/g, ""));
-    if (!cropId || !area) {
-      setError("작목과 재배 면적은 반드시 필요해요.");
+    const effectiveCropId = cropId || crops.find((c) => c.price_category_code === "200" && c.price_item_code === "226")?.id || crops.find((c) => c.name.includes("딸기"))?.id || crops[0]?.id || "";
+    if (!effectiveCropId || !area) {
+      setError(!area ? "재배 면적을 입력해 주세요." : "작목 목록을 불러오는 중이에요. 잠시 후 다시 시도해 주세요.");
       return;
     }
     saveProfile({
-      cropId, productId,
+      cropId: effectiveCropId, productId,
       pyeong: area,
       livingCost: Number(living || 0) * MAN,
       otherDebtService: Number(debt || 0) * MAN,
