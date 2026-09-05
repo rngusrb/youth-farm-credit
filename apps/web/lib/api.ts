@@ -8,6 +8,9 @@ export type AuctionItem = {
   unit: string;
   quantity?: string | number | null;
   auction_at: string;
+  previous_day_price?: number | null;
+  seven_day_price?: number | null;
+  year_price?: number | null;
 };
 
 export type RealtimeAuction = {
