@@ -653,16 +653,25 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
         three_years_ago = today.replace(year=today.year - 3, day=28)
     try:
         async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 36, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": three_years_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "cond[vrty_cd::EQ]": mapping.get("vrty_cd", "01"), "cond[grd_cd::EQ]": mapping.get("grd_cd", "04")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 500, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": three_years_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
             raw = [raw] if isinstance(raw, dict) else raw
     except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
     def n(v):
         try: return round(float(str(v).replace(",", "")))
         except (TypeError, ValueError): return None
-    items=[]
+    grouped: dict[tuple[int, int], list[dict[str, int | None]]] = {}
     for x in raw:
         ym=str(x.get("exmn_ym", x.get("exmn_ymd", ""))).replace("-", "")
-        if len(ym)>=6 and n(x.get("pmm_avgprc")) is not None: items.append({"year":int(ym[:4]),"month":int(ym[4:6]),"price":n(x.get("pmm_avgprc")),"high":n(x.get("pmm_hgprc")),"low":n(x.get("pmm_lwprc")),"stddev":n(x.get("pmm_stddvtn")),"cv":n(x.get("pmm_cfcntvrtn")),"range_cv":n(x.get("pmm_cfcntrng"))})
+        price = n(x.get("pmm_avgprc"))
+        if len(ym) >= 6 and price is not None:
+            row = {"price": price, "high": n(x.get("pmm_hgprc")), "low": n(x.get("pmm_lwprc")), "stddev": n(x.get("pmm_stddvtn")), "cv": n(x.get("pmm_cfcntvrtn")), "range_cv": n(x.get("pmm_cfcntrng"))}
+            grouped.setdefault((int(ym[:4]), int(ym[4:6])), []).append(row)
+    items=[]
+    for (year, month), rows in grouped.items():
+        def avg(field):
+            values = [int(row[field]) for row in rows if row[field] is not None]
+            return round(sum(values) / len(values)) if values else None
+        items.append({"year": year, "month": month, "price": avg("price"), "high": max((row["high"] for row in rows if row["high"] is not None), default=None), "low": min((row["low"] for row in rows if row["low"] is not None), default=None), "stddev": avg("stddev"), "cv": avg("cv"), "range_cv": avg("range_cv")})
     items = sorted(items, key=lambda x: (x["year"], x["month"]))[-36:]
     return {"status":"ok" if items else "empty","crop":crop.name,"from":three_years_ago.isoformat(),"to":today.isoformat(),"latest":items[-1] if items else None,"items":items}
 
