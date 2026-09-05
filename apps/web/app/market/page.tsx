@@ -19,7 +19,7 @@ function Body() {
   const params = useSearchParams();
   const [rows, setRows] = useState<CropRow[]>([]);
   const [categories, setCategories] = useState<MarketCategory[]>(RECENT_PRICE_CATEGORIES);
-  const [id, setId] = useState("");
+  const [id, setId] = useState("strawberry_hydro");
   const [largeCode, setLargeCode] = useState("");
   const [middleCode, setMiddleCode] = useState("");
   const [detail, setDetail] = useState<CropDetail | null>(null);
