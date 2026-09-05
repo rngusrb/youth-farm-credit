@@ -45,7 +45,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
           <XAxis dataKey="month" interval={0} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
           <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "월별 평균 도매가"]} labelFormatter={(v) => `${v}`} />
+          <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원/kg`, "월별 평균 도매가"]} labelFormatter={(v) => `${v}`} />
           {years.map((year, i) => <Line key={year} type="monotone" dataKey={`y${year}`} name={`${year}년`} stroke={["#2f6b4f", "#7a4e2d", "#6b7280"][i % 3]} strokeWidth={2.5} dot={{ r: 2 }} activeDot={{ r: 5 }} />)}
         </LineChart>
       </ResponsiveContainer>
@@ -68,7 +68,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       const base = live.status === "fulfilled" ? live.value : { status: "empty" as const, items: [] };
       const latest = recent.status === "fulfilled" && recent.value.items.length ? recent.value : null;
       // 최근일자 API는 비교 필드용 대표 행이고, 화면 목록·흐름은 perDay 일별 자료를 유지한다.
-      const d = latest ? { ...base, ...latest, items: latest.items.length ? [latest.items[0], ...base.items] : base.items, average_price: latest.average_price ?? base.average_price, average_label: latest.average_label ?? base.average_label, daily_series: base.daily_series?.length ? base.daily_series : latest.daily_series } : base;
+      const d = latest ? { ...base, ...latest, items: latest.items.length ? [latest.items[0], ...base.items] : base.items, average_price: latest.average_price ?? base.average_price, average_label: latest.average_label ?? base.average_label, daily_series: (latest.daily_series?.length ?? 0) >= (base.daily_series?.length ?? 0) ? latest.daily_series : base.daily_series } : base;
       if (!d.items.length && id === "strawberry_hydro") {
         d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
         d.average_price = 5923; d.average_label = "조사일 평균"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";

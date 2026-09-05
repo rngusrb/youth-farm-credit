@@ -92,7 +92,7 @@ function Body() {
           <Panel>
             <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
             <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
-            <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 보여드려요.</p>
+            <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 kg당으로 보여드려요.</p>
           </Panel>
         </Section>
       )}
@@ -123,7 +123,7 @@ function Body() {
               )}
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
               <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
-              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 보여드려요.</p>
+              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 kg당으로 보여드려요.</p>
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
               <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="mb-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
