@@ -31,7 +31,9 @@ const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
 };
 
 export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?: RealtimeAuction["daily_series"]; quarterly?: { year: number; month: number; price: number; days?: number }[] }) {
-  const monthly = provided ?? quarterSeries(series).map((x) => ({ year: Number(x.quarter.slice(0, 4)), month: 1, price: x.price }));
+  const monthly = provided?.length
+    ? provided
+    : quarterSeries(series).map((x) => ({ year: Number(x.quarter.slice(0, 4)), month: 1, price: x.price }));
   if (!monthly.length) return <p className="text-[12px] text-gov-ink3">최근 3년 원천 가격 자료를 아직 모으고 있어요.</p>;
   const years = [...new Set(monthly.map((x) => x.year))].sort();
   const chartData = Array.from({ length: 12 }, (_, i) => ({ month: `${i + 1}월`, ...Object.fromEntries(years.map((year) => [`y${year}`, monthly.find((x) => x.year === year && x.month === i + 1)?.price ?? null])) }));
