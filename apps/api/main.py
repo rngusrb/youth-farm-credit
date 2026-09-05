@@ -375,12 +375,13 @@ async def market_quarterly(crop_id: str = Query(...)) -> dict:
         rows = await asyncio.to_thread(fetch_prices, crop_id, start, end)
     except KamisError as exc:
         return {"status": "unavailable", "crop": crop.name, "items": [], "message": str(exc)}
-    groups: dict[str, list[float]] = {}
+    groups: dict[tuple[int, int], list[float]] = {}
     for day, price in daily_national_average(rows):
         parsed = datetime.strptime(day, "%Y%m%d")
-        key = f"{parsed.year}년 {((parsed.month - 1) // 3) + 1}분기"
-        groups.setdefault(key, []).append(price)
-    items = [{"quarter": key, "price": round(sum(values) / len(values)), "days": len(values)} for key, values in groups.items()]
+        groups.setdefault((parsed.year, parsed.month), []).append(price)
+    years = sorted({year for year, _ in groups})[-3:]
+    items = [{"year": year, "month": month, "price": round(sum(values) / len(values)), "days": len(values)} for (year, month), values in groups.items() if year in years]
+    items.sort(key=lambda x: (x["year"], x["month"]))
     _quarterly_cache[crop_id] = (now, items)
     return {"status": "ok" if items else "empty", "crop": crop.name, "items": items}
 

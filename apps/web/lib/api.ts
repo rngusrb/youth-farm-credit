@@ -40,7 +40,7 @@ export async function fetchMarketCompare(cropId?: string): Promise<MarketCompare
   if (!res.ok) throw new Error("공판장 가격을 불러오지 못했습니다");
   return res.json();
 }
-export type QuarterlyMarket = { status: "ok" | "empty" | "unavailable"; crop?: string; items: { quarter: string; price: number; days: number }[]; message?: string };
+export type QuarterlyMarket = { status: "ok" | "empty" | "unavailable"; crop?: string; items: { year: number; month: number; price: number; days: number }[]; message?: string };
 export async function fetchMarketQuarterly(cropId: string): Promise<QuarterlyMarket> {
   const res = await fetch(`${API_BASE}/api/v1/market/quarterly?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
   if (!res.ok) throw new Error("분기별 가격을 불러오지 못했습니다");

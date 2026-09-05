@@ -30,17 +30,19 @@ const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
   }));
 };
 
-export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?: RealtimeAuction["daily_series"]; quarterly?: { quarter: string; price: number; days?: number }[] }) {
-  const quarterly = provided ?? quarterSeries(series);
-  if (!quarterly.length) return <p className="text-[12px] text-gov-ink3">분기별 원천 가격 자료를 아직 모으고 있어요.</p>;
+export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?: RealtimeAuction["daily_series"]; quarterly?: { year: number; month: number; price: number; days?: number }[] }) {
+  const monthly = provided ?? quarterSeries(series).map((x) => ({ year: Number(x.quarter.slice(0, 4)), month: 1, price: x.price }));
+  if (!monthly.length) return <p className="text-[12px] text-gov-ink3">최근 3년 원천 가격 자료를 아직 모으고 있어요.</p>;
+  const years = [...new Set(monthly.map((x) => x.year))].sort();
+  const chartData = Array.from({ length: 12 }, (_, i) => ({ month: `${i + 1}월`, ...Object.fromEntries(years.map((year) => [`y${year}`, monthly.find((x) => x.year === year && x.month === i + 1)?.price ?? null])) }));
   return (
     <div className="h-44 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart data={quarterly} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
-          <XAxis dataKey="quarter" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={18} />
+        <LineChart data={chartData} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
+          <XAxis dataKey="month" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
           <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
           <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "분기 평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
-          <Line type="monotone" dataKey="price" stroke="#7a4e2d" strokeWidth={2.5} dot={{ r: 3, fill: "#7a4e2d" }} activeDot={{ r: 5 }} />
+          {years.map((year, i) => <Line key={year} type="monotone" dataKey={`y${year}`} name={`${year}년`} stroke={["#2f6b4f", "#7a4e2d", "#6b7280"][i % 3]} strokeWidth={2.5} dot={{ r: 2 }} activeDot={{ r: 5 }} />)}
         </LineChart>
       </ResponsiveContainer>
     </div>
