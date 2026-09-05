@@ -105,7 +105,7 @@ function Body() {
               )}
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
               <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
-              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">1월부터 12월까지 같은 달의 가격을 최근 3개 연도 선으로 비교해요.</p>
+              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">최근 1년의 월별 평균 가격을 보여드려요.</p>
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
               <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="grid gap-6 sm:grid-cols-2">
