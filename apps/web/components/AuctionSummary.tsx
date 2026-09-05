@@ -58,6 +58,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
   const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], average_price: 5923, average_label: "조사일 평균" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
+  const tableItems = data && data.items.length > 1 ? data.items.slice(0, 7) : (data?.daily_series ?? []).slice(-7).reverse().map((row) => ({ market: "전국 일별 평균", item: data?.crop ?? "선택 품목", price: row.price, unit: "kg", auction_at: row.date }));
   useEffect(() => {
     const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
@@ -103,9 +104,11 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
             <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
-            <table className="w-full min-w-[520px] text-[13px]">
-              <thead className="bg-gov-sunk text-left text-[12px] text-gov-ink2"><tr><th className="px-3 py-2">시간</th><th className="px-3 py-2">품목</th><th className="px-3 py-2 text-right">도매가</th><th className="px-3 py-2">단위</th></tr></thead>
-              <tbody>{data.items.slice(0, 5).map((item, i) => <tr key={`${item.market}-${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-3 py-2 text-gov-ink3">{item.auction_at || "—"}</td><td className="px-3 py-2">{item.item || "—"}</td><td className="px-3 py-2 text-right font-semibold tabular">{won(item.price)}</td><td className="px-3 py-2">{item.unit || "—"}</td></tr>)}</tbody>
+            <table className="w-full min-w-[700px] table-fixed text-[13px]">
+              <thead className="bg-gov-sunk text-center text-[12px] text-gov-ink2"><tr><th className="w-20 px-2 py-2">구분</th>{tableItems.map((item, i) => <th key={`${item.auction_at}-${i}`} className="px-2 py-2">{item.auction_at || "—"}</th>)}</tr></thead>
+              <tbody>
+                {(["시간", "품목", "도매가", "단위"] as const).map((label) => <tr key={label} className="border-t border-gov-line2"><th className="bg-gov-sunk px-2 py-2 text-center text-[12px] font-semibold text-gov-ink2">{label}</th>{tableItems.map((item, i) => <td key={`${label}-${item.auction_at}-${i}`} className={`px-2 py-2 text-center ${label === "도매가" ? "font-semibold tabular" : ""}`}>{label === "시간" ? (item.auction_at || "—") : label === "품목" ? (item.item || "—") : label === "도매가" ? won(item.price) : (item.unit || "kg")}</td>)}</tr>)}
+              </tbody>
             </table>
           </div>}
           </>
