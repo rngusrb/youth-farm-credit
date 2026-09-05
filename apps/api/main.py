@@ -397,9 +397,9 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     except (httpx.HTTPError, ValueError):
         pass
     if "딸기" in crop.name:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": "08", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
+        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_lclsf_cd::EQ]": "08", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     else:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[whsl_mrkt_cd::EQ]": "110001", "cond[gds_lclsf_cd::EQ]": code_map.get("gds_lclsf_cd") or "08", "cond[gds_mclsf_cd::EQ]": code_map.get("gds_mclsf_cd") or mapping["item_cd"], "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
+        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_lclsf_cd::EQ]": code_map.get("gds_lclsf_cd") or "08", "cond[gds_mclsf_cd::EQ]": code_map.get("gds_mclsf_cd") or mapping["item_cd"], "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
     try:
         async with httpx.AsyncClient(timeout=60) as client:
             response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()

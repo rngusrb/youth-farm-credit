@@ -157,7 +157,7 @@ function Body() {
                     <tbody>
                       <tr className="border-b border-gov-link/15"><th className="w-1/3 py-2 text-left font-semibold text-gov-ink2">분석 기간</th><td className="py-2 text-gov-ink2">{m.window?.join(" ~ ") ?? "—"} · {m.trading_days.toLocaleString("ko-KR")}거래일</td></tr>
                       <tr className="border-b border-gov-link/15"><th className="py-2 text-left font-semibold text-gov-ink2">가격 자료</th><td className="py-2 text-gov-ink2">한국농수산식품유통공사 일별 도·소매 가격정보 (perDay)</td></tr>
-                      <tr><th className="py-2 text-left font-semibold text-gov-ink2">수확기</th><td className="py-2 text-gov-ink2">3개월 기준</td></tr>
+                      <tr><th className="py-2 text-left font-semibold text-gov-ink2">수확기</th><td className="py-2 text-gov-ink2">{detail.harvest_months.length ? `${detail.harvest_months.join("·")}월` : "자료 없음"}</td></tr>
                     </tbody>
                   </table>
                 </div>
@@ -166,7 +166,7 @@ function Body() {
                 <h3 className="mb-2 text-[15px] font-bold text-gov-ink">3. 출하량</h3>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산된 출하량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
                 <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const amount = volume.filter((x) => x.month === month).reduce((s, x) => s + x.quantity, 0); const max = Math.max(...Array.from({ length: 12 }, (_, m) => volume.filter((x) => x.month === m + 1).reduce((s, x) => s + x.quantity, 0)), 1); const ratio = amount / max; const opacity = amount ? (ratio > 0.75 ? 1 : ratio > 0.5 ? 0.75 : ratio > 0.25 ? 0.5 : 0.25) : 0.1; return <div key={month} className="text-center"><div className="h-10 rounded-sm bg-gov-link" style={{ opacity }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
-                <p className="mt-3 text-[11px] text-gov-ink3">서울가락 도매시장(110001) katOrigin `qty(물량)` 2025년 월평균 기준 · 출하량 색상은 4단계예요.</p>
+                <p className="mt-3 text-[11px] text-gov-ink3">전국 공영도매시장 katOrigin `qty(물량)` 2025년 월평균 기준 · 출하량 색상은 4단계예요.</p>
               </div>
             </Panel>
           </Section>
@@ -218,6 +218,7 @@ function Body() {
                     ? "출하가 몇 달에 몰릴수록 그 시점의 시세 하나에 한 해 소득이 걸려요."
                     : "이 작목은 출하월 정보를 아직 확보하지 못했어요. 월별 들어오고 나가는 돈은 12개월 균등으로 펼쳐 계산해요."}
                 </p>
+                <p className="mt-2 text-[11px] leading-relaxed text-gov-ink3">참고자료: 농촌진흥청 농사로 작목별 재배력·수확시기 안내와 농산물소득조사 작목 자료를 바탕으로 정리했어요.</p>
               </Panel>
             </div>
             </Fold>
