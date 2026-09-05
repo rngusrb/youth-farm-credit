@@ -58,7 +58,10 @@ export async function fetchMarketQuarterly(cropId: string): Promise<QuarterlyMar
 export async function fetchMarketMonthly(cropId: string): Promise<QuarterlyMarket> {
   try {
     const res = await fetch(`${API_BASE}/api/v1/market/monthly?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
-    if (res.ok) return res.json();
+    if (res.ok) {
+      const data = (await res.json()) as QuarterlyMarket;
+      if (data.items?.length) return data;
+    }
   } catch { /* 일별 API로 대체 */ }
   return fetchMarketQuarterly(cropId);
 }
