@@ -32,7 +32,9 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
   const monthly = provided?.length ? provided : monthlyFromDaily(series);
   if (!monthly.length) return <p className="text-[12px] text-gov-ink3">최근 3년 원천 가격 자료를 아직 모으고 있어요.</p>;
   const years = [...new Set(monthly.map((x) => x.year))].sort();
-  const chartData = [...new Set(monthly.map((x) => x.month))].sort((a, b) => a - b).map((month) => ({ month: `${month}월`, ...Object.fromEntries(years.map((year) => [`y${year}`, monthly.find((x) => x.year === year && x.month === month)?.price ?? null])) }));
+  const months = [...new Set(monthly.map((x) => x.month))];
+  const startMonth = months.includes(12) ? 12 : Math.min(...months);
+  const chartData = months.sort((a, b) => ((a - startMonth + 12) % 12) - ((b - startMonth + 12) % 12)).map((month) => ({ month: `${month}월`, ...Object.fromEntries(years.map((year) => [`y${year}`, monthly.find((x) => x.year === year && x.month === month)?.price ?? null])) }));
   return (
     <div className="h-44 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
