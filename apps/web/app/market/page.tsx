@@ -89,6 +89,10 @@ function Body() {
                 위 경매가 요약에서 <b className="text-gov-ink">최근 낙찰가</b>와 <b className="text-gov-ink">최근 30일 평균</b>을 비교해 보세요.
                 분기별 평균 낙찰가 그래프는 연도별 가격 수준을 비교할 때 참고해요.
               </p>
+              <p className="mb-4 text-[11px] text-gov-ink3">
+                가격 변화 분석에는 {m.window?.join(" ~ ") ?? "확인 중인 기간"}의 {m.trading_days.toLocaleString("ko-KR")}거래일 자료를 사용했어요.
+                분기별 그래프는 원천 일별 가격이 확보된 분기만 표시해요.
+              </p>
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
               <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="grid gap-6 sm:grid-cols-2">
