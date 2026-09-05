@@ -143,6 +143,18 @@ async def realtime_auction(
             crop = get_crop(crop_id)
         except KeyError:
             raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+
+    # 전국 요약은 실시간 경매 원천자료 대신 일별 도·소매 가격 API를 사용한다.
+    if crop_id and crop:
+        try:
+            daily_rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today(), "110001")
+            daily = daily_national_average(daily_rows, use_kg=False)
+            if daily:
+                recent = daily[-30:]
+                items = [{"market": "서울가락", "item": crop.name, "price": round(price), "unit": "일별 평균", "quantity": None, "auction_at": day} for day, price in daily[-limit:]]
+                return {"status": "ok", "source": "한국농수산식품유통공사 perDay 일별 도·소매 가격정보 · 서울가락", "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name, "match_level": "품목코드", "items": list(reversed(items)), "daily_series": [{"date": d, "price": round(p), "count": 1} for d, p in recent], "average_price": round(sum(p for _, p in recent) / len(recent)), "average_label": "최근 30일 평균"}
+        except KamisError:
+            pass
     if crop_id:
         recent = await market_recent(crop_id, 1)
         if recent.get("items"):
@@ -474,8 +486,20 @@ def standard_codes() -> list[dict[str, str]]:
 
 @app.get("/api/v1/market/categories")
 async def market_categories() -> dict:
-    """저장소 표준품목 CSV에서 대분류·중분류 전체를 제공한다."""
-    rows = standard_codes()
+    """katCode/goods API에서 대분류·중분류 전체를 제공한다."""
+    key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
+    rows: list[dict] = []
+    if key:
+        try:
+            async with httpx.AsyncClient(timeout=20) as client:
+                response = await client.get("https://apis.data.go.kr/B552845/katCode/goods", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 10000})
+                response.raise_for_status()
+                raw = response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+                rows = [raw] if isinstance(raw, dict) else raw
+        except (httpx.HTTPError, ValueError):
+            rows = []
+    if not rows:
+        rows = standard_codes()
     out = []
     seen = set()
     for r in rows:

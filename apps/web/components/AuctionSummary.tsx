@@ -78,7 +78,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               {data?.crop ? `${data.crop} 최근 도매가` : cropId ? "내 작물 최근 도매가" : "내 작물 도매가를 확인해 보세요"}
             </h3>
             <p className="mt-1 text-[13px] leading-relaxed text-gov-ink2">
-              {data?.match_level === "전국" ? "전국 공영도매시장의 최신 경매 자료예요." : data?.match_level ? `같은 ${data.match_level} 품목의 전국 공영도매시장 자료예요.` : "농장 정보를 입력하면 같은 품목의 경매가를 보여드려요."}
+              {data?.source?.includes("서울가락") ? "서울가락시장 일별 도매가 자료예요." : data?.match_level ? `같은 ${data.match_level} 품목의 전국 공영도매시장 자료예요.` : "농장 정보를 입력하면 같은 품목의 도매가를 보여드려요."}
             </p>
           </div>
           {data?.status === "ok" && <Badge tone="ok">최근 자료</Badge>}
