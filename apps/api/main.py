@@ -230,7 +230,11 @@ async def realtime_auction(
                         except (TypeError, ValueError): pass
                     return {"date": target, "price": round(sum(prices) / len(prices)), "count": len(prices)} if prices else None
                 except (httpx.HTTPError, ValueError): return None
-            daily_series = [x for x in await asyncio.gather(*(fetch_day(i) for i in range(30))) if x]
+            daily_series = []
+            for i in range(30):
+                value = await fetch_day(i)
+                if value: daily_series.append(value)
+                await asyncio.sleep(0.35)
             daily_series.sort(key=lambda x: x["date"])
 
     def clean(row: dict) -> dict:
