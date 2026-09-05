@@ -104,9 +104,9 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
             <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
-            <table className="w-full min-w-[560px] table-fixed text-[13px]">
-              <thead className="bg-gov-sunk text-center text-[12px] text-gov-ink2"><tr><th className="px-2 py-2">구분</th><th className="px-2 py-2">시간</th><th className="px-2 py-2">품목</th><th className="px-2 py-2">도매가</th><th className="px-2 py-2">단위</th></tr></thead>
-              <tbody>{tableItems.slice(0, 5).map((item, i) => <tr key={`${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-2 py-2 text-center">전국 평균</td><td className="px-2 py-2 text-center text-gov-ink3">{item.auction_at || "—"}</td><td className="px-2 py-2 text-center">{item.item || "—"}</td><td className="px-2 py-2 text-center font-semibold tabular">{won(item.price)}</td><td className="px-2 py-2 text-center">{item.unit || "kg"}</td></tr>)}</tbody>
+            <table className="w-full min-w-[460px] table-fixed text-[13px]">
+              <thead className="bg-gov-sunk text-center text-[12px] text-gov-ink2"><tr><th className="px-2 py-2">시간</th><th className="px-2 py-2">품목</th><th className="px-2 py-2">도매가</th><th className="px-2 py-2">단위</th></tr></thead>
+              <tbody>{tableItems.slice(0, 5).map((item, i) => <tr key={`${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-2 py-2 text-center text-gov-ink3">{item.auction_at || "—"}</td><td className="px-2 py-2 text-center">{item.item || "—"}</td><td className="px-2 py-2 text-center font-semibold tabular">{won(item.price)}</td><td className="px-2 py-2 text-center">{item.unit || "kg"}</td></tr>)}</tbody>
             </table>
           </div>}
           </>
