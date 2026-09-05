@@ -8,6 +8,12 @@ import { loadProfile } from "@/lib/profile";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const won = (value: number | null | undefined) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
+const trendSentence = (current: number | null | undefined, year: number | null | undefined) => {
+  if (current == null || year == null || year <= 0) return null;
+  const pct = ((current - year) / year) * 100;
+  if (Math.abs(pct) < 3) return "지난해 같은 시기와 비슷한 가격이에요.";
+  return `지난해 같은 시기보다 ${Math.abs(pct).toFixed(0)}% ${pct > 0 ? "비싸요" : "낮아요"}.`;
+};
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false }: { cropId?: string; showComparison?: boolean; compact?: boolean } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
@@ -46,6 +52,22 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
             <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market} · 상품(상) · {data.items[0].unit || "단위"}</p>
             <p className="text-right text-[11px] text-gov-ink3">자료 시각: {data.items[0].auction_at || "확인 시각 없음"}</p>
           </div>
+          {showComparison && compare?.items[0] && (() => {
+            const item = compare.items[0];
+            const series = data.daily_series?.filter((x) => x.price != null) ?? [];
+            const first = series[0]?.price;
+            const last = series[series.length - 1]?.price;
+            const dayTrend = first && last && Math.abs(last - first) / first >= 0.03
+              ? `최근 30일은 가격이 ${last > first ? "오르는" : "내리는"} 흐름이에요.`
+              : null;
+            return (
+              <div className="mt-3 rounded-md border border-gov-line2 bg-white px-3 py-2.5 text-[13px] text-gov-ink2">
+                <span className="font-semibold text-gov-ink">한눈에 보기</span>
+                <span className="ml-2">{trendSentence(item.price, item.year_price) ?? "전년 같은 시기와 비교할 자료를 확인 중이에요."}</span>
+                {dayTrend && <span className="ml-2 text-gov-link">{dayTrend}</span>}
+              </div>
+            );
+          })()}
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
             <table className="w-full min-w-[520px] text-[13px]">
               <thead className="bg-gov-sunk text-left text-[12px] text-gov-ink2"><tr><th className="px-3 py-2">시장</th><th className="px-3 py-2">품목</th><th className="px-3 py-2 text-right">낙찰가</th><th className="px-3 py-2">단위</th><th className="px-3 py-2">시간</th></tr></thead>
