@@ -52,7 +52,8 @@ export default function PortalHome() {
             </div>
           </div>
 
-          <Panel className="self-start">
+          <div className="self-start">
+          <Panel>
             {ready && session ? (
               <>
                 <h2 className="sec-title mb-3">{session.name}님</h2>
@@ -117,24 +118,23 @@ export default function PortalHome() {
               </>
             )}
           </Panel>
+          <div className="mt-4 rounded-lg border border-gov-line bg-white p-4">
+            <h2 className="text-[14px] font-bold text-gov-ink">이렇게 이용해요</h2>
+            <ol className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-1">
+              {STEPS.map(([n, t]) => (
+                <li key={n} className="flex min-w-0 items-center gap-2 text-[12px] text-gov-ink2">
+                  <span className="tabular w-6 shrink-0 font-bold text-gov-link">{n}</span>
+                  <span className="truncate">{t}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+          </div>
         </div>
       </div>
 
       <div className="mx-auto max-w-6xl px-4 py-9">
         <AuctionSummary />
-        {/* ── 이용 절차 ────────────────────────────────── */}
-        <Section title="농장 정보부터 맞춤 처방까지">
-          <ol className="grid gap-px bg-gov-line sm:grid-cols-2 lg:grid-cols-5">
-            {STEPS.map(([n, t, d]) => (
-              <li key={n} className="bg-white p-5">
-                <span className="tabular text-[13px] font-extrabold text-gov-link">{n}</span>
-                <h3 className="mt-1.5 text-[15px] font-bold text-gov-ink">{t}</h3>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-gov-ink2">{d}</p>
-              </li>
-            ))}
-          </ol>
-        </Section>
-
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <div>
             {/* ── 공지사항 ───────────────────────────── */}
