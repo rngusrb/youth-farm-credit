@@ -26,11 +26,11 @@ export default function StatsPage() {
           <>
             <Section title="수록 데이터">
               <Panel>
-                <div className="grid gap-6 sm:grid-cols-4">
+                <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
                   <Stat label="작목" value={d.crops.total.toString()} unit="종"
                         note={`전부 변동성 실측 (${d.crops.sigma_measured}종)`} />
                   <Stat label="변동성 범위" value={`${d.crops.sigma_min.toFixed(2)}–${d.crops.sigma_max.toFixed(2)}`}
-                        note="작목별 소득 변동성 σ" />
+                        note="작목별 소득이 흔들리는 정도 σ" />
                   <Stat label="지침 조항" value={d.corpus.chunks.toLocaleString("ko-KR")} unit="개" />
                   <Stat label="시뮬레이션" value={(d.simulation.n_sim / 10000).toString()} unit="만회"
                         note={`난수 시드 ${d.simulation.seed} 고정 — 같은 입력이면 같은 결과`} />
@@ -39,7 +39,7 @@ export default function StatsPage() {
             </Section>
 
             <Section title="아직 채우는 중">
-              <div className="overflow-x-auto">
+              <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
                 <table className="w-full min-w-[560px] border-t border-gov-ink/70 text-[14px]">
                   <thead>
                     <tr className="bg-gov-sunk text-left text-[12px] font-semibold text-gov-ink2">
@@ -55,7 +55,7 @@ export default function StatsPage() {
                       ["KAMIS 품목 매핑", `${d.crops.with_kamis_mapping} / ${d.crops.total}`,
                        "매핑이 있는 작목부터 순차로 도매가를 수집해요"],
                       ["출하월", `${d.crops.with_harvest_months} / ${d.crops.total}`,
-                       "월별 현금흐름을 12개월 균등으로 펼치고 ‘출하월 미상’으로 표시해요"],
+                       "월별 들어오고 나가는 돈을 12개월 균등으로 펼치고 ‘출하월 미상’으로 표시해요"],
                     ].map(([k, v, how]) => (
                       <tr key={k} className="border-b border-gov-line2">
                         <td className="px-4 py-3 font-medium text-gov-ink">{k}</td>
@@ -77,8 +77,8 @@ export default function StatsPage() {
                       rows={[
                         ["한도", won(p.limit)],
                         ["금리", `연 ${(p.rate * 100).toFixed(1)}% 고정`],
-                        ["상환", `${p.grace_years}년 거치 ${p.amort_years}년 원금 균등분할`],
-                        ["1억당 연 최대상환액", won((1 / p.amort_years + p.rate) * 100_000_000)],
+                        ["갚는 방법", `${p.grace_years}년 동안 이자만 · ${p.amort_years}년 동안 원금을 같은 금액으로 나눠 갚기`],
+                        ["1억당 연 가장 많이 갚는 돈", won((1 / p.amort_years + p.rate) * 100_000_000)],
                       ]}
                     />
                     <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">{p.source}</p>

@@ -63,7 +63,7 @@ export default function SigmaBand({
         {personalized ? "내 소득 이력 기준 변동성" : "변동성을 모른다는 사실의 값어치"}
       </h3>
       <p className="mt-1 text-xs leading-relaxed text-paper-ink3">
-        소득 변동성 σ는{" "}
+        소득이 흔들리는 정도 σ는{" "}
         {personalized ? (
           <span className="text-paper-ok">
             입력하신 소득 이력으로 계산한 {sigma.toFixed(2)}
@@ -209,7 +209,7 @@ export default function SigmaBand({
           </>
         )}{" "}
         {!personalized &&
-          "지난 3개년 이상의 농업소득을 입력하면 남은 가정(농가 고유 변동)도 사라집니다."}
+          "지난 3개년 이상의 농사로 번 돈을 입력하면 남은 가정(농가 고유 변동)도 사라집니다."}
       </p>
     </section>
   );

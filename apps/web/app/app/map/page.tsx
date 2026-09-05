@@ -103,7 +103,7 @@ export default function MapPage() {
         <Empty
           title="농가 정보가 없어요"
           body="작목과 면적을 먼저 입력해 주세요."
-          cta={{ href: "/app/farm", label: "내 농장 정보 입력" }}
+          cta={{ href: "/app/farm", label: "내 농장정보 입력" }}
         />
       </>
     );
@@ -118,7 +118,7 @@ export default function MapPage() {
     <>
       <PageTitle
         title="AI 농사 자금지도"
-        lead="언제 무엇이 바뀌는지 두 개의 시간으로 봅니다. 1년 안에서는 어느 달에 현금이 마르는지, 25년 안에서는 어느 해에 부담이 뛰는지."
+        lead="어느 달에 돈이 부족할지 살펴보세요. 대출을 갚는 동안 해마다 부담이 어떻게 달라지는지도 볼 수 있어요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -133,7 +133,7 @@ export default function MapPage() {
         <Panel>
           <div className="flex flex-wrap items-center gap-3">
             <label htmlFor="principal" className="text-[13px] font-semibold text-gov-ink2">
-              차입 원금
+              빌릴 금액
             </label>
             <input
               id="principal"
@@ -158,12 +158,76 @@ export default function MapPage() {
         </Panel>
       </Section>
 
+      {cf && (
+        <Section title="한 해 동안 들어오고 나가는 돈">
+          <Panel>
+            <div className="mb-5 flex flex-wrap items-center gap-1.5 border-b border-gov-line2 pb-4">
+              <span className="mr-1 text-[13px] font-semibold text-gov-ink2">연차</span>
+              {yearTabs.map((y) => (
+                <button
+                  key={y}
+                  onClick={() => setYear(y)}
+                  aria-pressed={year === y}
+                  className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
+                    year === y
+                      ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
+                      : "border-gov-line text-gov-ink2 hover:border-gov-link"
+                  }`}
+                >
+                  {y}년차{y === grace + 1 ? " (원금도 갚기 시작)" : y <= grace ? " (이자만)" : ""}
+                </button>
+              ))}
+            </div>
+
+            <CashflowChart months={cf.months} troughMonth={cf.trough_month} />
+
+            <div className="mt-5 grid gap-5 border-t border-gov-line2 pt-4 sm:grid-cols-3">
+              <Stat
+                label="가장 빠듯한 달"
+                value={`${cf.trough_month}월`}
+                tone={cf.working_capital_need > 0 ? "danger" : "plain"}
+              />
+              <Stat
+                label={cf.working_capital_need > 0 ? "미리 준비할 돈" : "그때 남는 돈"}
+                value={won(
+                  cf.working_capital_need > 0 ? cf.working_capital_need : cf.trough_balance,
+                )}
+                tone={cf.working_capital_need > 0 ? "danger" : "ok"}
+              />
+              <Stat
+                label="그해 갚을 대출금과 이자"
+                value={won(cf.annual.debt_payment)}
+                note={cf.is_grace_year ? "이자만 내는 기간" : "원금 + 이자"}
+              />
+            </div>
+
+            {cf.working_capital_need > 0 && (
+              <div className="mt-4">
+                <Notice tone="danger" title={`${cf.trough_month}월에 돈이 부족할 수 있어요`}>
+                  수확한 돈이 들어오기 전까지 {won(cf.working_capital_need)}이 부족할 수 있어요.
+                  한 해 전체로는 돈이 {cf.annual_net >= 0 ? "남는" : "모자라는"} 계산이에요.
+                  미리 쓸 돈을 마련하거나 판매 시기를 나눌 수 있는지 살펴보세요.
+                </Notice>
+              </div>
+            )}
+
+            <p className="mt-3 text-[12px] text-gov-ink3">
+              월별 수입·지출 표는{" "}
+              <Link href="/app/revenue" className="text-gov-link underline">
+                농사 수입과 지출
+              </Link>
+              에서 볼 수 있어요.
+            </p>
+          </Panel>
+        </Section>
+      )}
+
       {map && (
         <Section title={`${map.term_years}년 자금지도`}>
           <Panel>
             <p className="mb-3 text-[13px] text-gov-ink2">
-              {won(map.principal)}을 빌렸을 때, 해마다 얼마를 갚고 그게 상환여력에 견줘 어느
-              정도인지 한 장으로 본 것이에요.
+              {won(map.principal)}을 빌리면 해마다 갚을 돈이 얼마나 될까요?
+              대출을 갚는 데 쓸 돈과 나란히 비교해요.
             </p>
             <FundingMap data={map} />
             <ol className="mt-4 space-y-2 border-t border-gov-line2 pt-3">
@@ -180,70 +244,6 @@ export default function MapPage() {
                 ))}
             </ol>
             <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">{map.note}</p>
-          </Panel>
-        </Section>
-      )}
-
-      {cf && (
-        <Section title="그 해 안에서 — 월별 현금흐름">
-          <Panel>
-            <div className="mb-5 flex flex-wrap items-center gap-1.5 border-b border-gov-line2 pb-4">
-              <span className="mr-1 text-[13px] font-semibold text-gov-ink2">연차</span>
-              {yearTabs.map((y) => (
-                <button
-                  key={y}
-                  onClick={() => setYear(y)}
-                  aria-pressed={year === y}
-                  className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
-                    year === y
-                      ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
-                      : "border-gov-line text-gov-ink2 hover:border-gov-link"
-                  }`}
-                >
-                  {y}년차{y === grace + 1 ? " (절벽)" : y <= grace ? " (거치)" : ""}
-                </button>
-              ))}
-            </div>
-
-            <CashflowChart months={cf.months} troughMonth={cf.trough_month} />
-
-            <div className="mt-5 grid gap-5 border-t border-gov-line2 pt-4 sm:grid-cols-3">
-              <Stat
-                label="가장 빠듯한 달"
-                value={`${cf.trough_month}월`}
-                tone={cf.working_capital_need > 0 ? "danger" : "plain"}
-              />
-              <Stat
-                label={cf.working_capital_need > 0 ? "필요한 운전자금" : "그때 남는 돈"}
-                value={won(
-                  cf.working_capital_need > 0 ? cf.working_capital_need : cf.trough_balance,
-                )}
-                tone={cf.working_capital_need > 0 ? "danger" : "ok"}
-              />
-              <Stat
-                label="그 해 상환액"
-                value={won(cf.annual.debt_payment)}
-                note={cf.is_grace_year ? "거치기간 — 이자만" : "원금 + 이자"}
-              />
-            </div>
-
-            {cf.working_capital_need > 0 && (
-              <div className="mt-4">
-                <Notice tone="danger" title={`${cf.trough_month}월에 현금이 마릅니다`}>
-                  연간으로는 {cf.annual_net >= 0 ? "흑자" : "적자"}지만, 수확 대금이 들어오기
-                  전까지 {won(cf.working_capital_need)}이 부족해요. 운전자금 대출이나 출하 시기
-                  분산을 미리 검토해 두시는 것이 좋아요.
-                </Notice>
-              </div>
-            )}
-
-            <p className="mt-3 text-[12px] text-gov-ink3">
-              월별 수입·지출 표는{" "}
-              <Link href="/app/revenue" className="text-gov-link underline">
-                수익 전망
-              </Link>
-              에서 볼 수 있어요.
-            </p>
           </Panel>
         </Section>
       )}

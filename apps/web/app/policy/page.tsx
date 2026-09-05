@@ -121,17 +121,17 @@ function Body() {
 export default function PolicyPage() {
   return (
     <Page>
-      <Crumb trail={[{ label: "제도 · 자료" }, { label: "제도 근거 검색" }]} />
+      <Crumb trail={[{ label: "제도 · 자료" }, { label: "지원 제도 찾아보기" }]} />
       <PageTitle
-        title="제도 근거 검색"
-        lead="농림축산식품부 2026년 시행지침 3종의 원문에서 근거 조항을 찾습니다. 조항을 찾지 못하면 답변을 만들어내지 않습니다."
+        title="지원 제도 찾아보기"
+        lead="궁금한 지원 제도를 검색해 보세요. 2026년 공식 안내에서 답변의 근거를 찾아 함께 보여 드려요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>
           <Body />
         </Suspense>
         <div className="mt-8">
-          <Notice tone="warn" title="안내의 한계">
+          <Notice tone="warn" title="신청 전에 확인해 주세요">
             검색 결과는 원문을 찾아 주는 것이지 유권해석이 아닙니다. 자격·의무·환수처럼
             불이익이 걸린 사항은 관할 시·군·구 담당자에게 확인하시기 바랍니다.
           </Notice>

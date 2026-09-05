@@ -25,7 +25,7 @@ type Row = {
 export default function AmountCompare({ d }: { d: Diagnosis }) {
   const rows: Row[] = [
     { key: "at_risk_based", label: "소득 변동까지 반영", amount: d.limits.risk_based,
-      sub: `2년 연속 상환이 밀릴 확률 ${pct(d.limits.max_crisis_prob)} 이하` },
+      sub: `2년 연속 대출을 제때 갚지 못할 확률 ${pct(d.limits.max_crisis_prob)} 이하` },
     { key: "at_recommended", label: "은행이 보는 선", amount: d.limits.recommended,
       sub: "소득이 흔들리지 않는다는 가정" },
     { key: "at_available", label: "제도상 신청 가능", amount: d.limits.available,
@@ -42,19 +42,19 @@ export default function AmountCompare({ d }: { d: Diagnosis }) {
   const grace = d.product.grace_years;
 
   return (
-    <div className="overflow-x-auto">
+    <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
       <table className="w-full min-w-[620px] border-t border-gov-ink/70 text-[14px]">
         <caption className="sr-only">
-          차입 금액별 상환액과 위험. 값은 모두 엔진 계산 결과입니다.
+          빌리는 금액별 갚을 돈과 위험. 값은 모두 엔진 계산 결과입니다.
         </caption>
         <thead>
           <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
             <th scope="col" className="border-b border-gov-line px-4 py-3 text-left">기준</th>
             <th scope="col" className="border-b border-gov-line px-4 py-3">금액</th>
-            <th scope="col" className="border-b border-gov-line px-4 py-3">거치 중 연이자</th>
-            <th scope="col" className="border-b border-gov-line px-4 py-3">{grace + 1}년차 상환액</th>
+            <th scope="col" className="border-b border-gov-line px-4 py-3">이자만 낼 때의 한 해 이자</th>
+            <th scope="col" className="border-b border-gov-line px-4 py-3">{grace + 1}년차에 갚을 돈</th>
             <th scope="col" className="border-b border-gov-line px-4 py-3">2년 연속 위기</th>
-            <th scope="col" className="border-b border-gov-line px-4 py-3">첫 위험 연차</th>
+            <th scope="col" className="border-b border-gov-line px-4 py-3">처음 돈이 부족할 수 있는 해</th>
           </tr>
         </thead>
         <tbody className="tabular text-right">
@@ -91,7 +91,7 @@ export default function AmountCompare({ d }: { d: Diagnosis }) {
       </table>
       <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
         거치 {grace}년 동안은 이자만 내고, {grace + 1}년차부터 원금이 붙어요.
-        「첫 위험 연차」는 상환이 밀릴 확률이 처음으로 기준을 넘는 해예요 — 없으면 —로 둬요.
+        「처음 돈이 부족할 수 있는 해」는 대출을 제때 갚지 못할 확률이 처음으로 기준을 넘는 해예요 — 없으면 —로 둬요.
       </p>
     </div>
   );

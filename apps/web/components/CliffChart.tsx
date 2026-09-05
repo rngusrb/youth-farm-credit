@@ -78,14 +78,14 @@ export default function CliffChart({
               fontSize: 12,
             }}
             labelFormatter={(y) => `${y}년차`}
-            formatter={(v) => [manwon(Number(v)), "연 상환액"]}
+            formatter={(v) => [manwon(Number(v)), "한 해 갚을 돈"]}
           />
           <ReferenceLine
             y={capacity}
             stroke="#525a68"
             strokeDasharray="4 4"
             label={{
-              value: `상환여력 ${manwon(capacity)}`,
+              value: `갚는 데 쓸 돈 ${manwon(capacity)}`,
               position: "insideTopLeft",
               fill: "#525a68",
               fontSize: 12,

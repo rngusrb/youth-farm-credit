@@ -62,7 +62,7 @@ export default function LibraryPage() {
               <span className="font-semibold">기준 시점</span> · 발행 연도는 각 문서 행에, 원문 대조는 {checkedOn} 기준이에요.
             </p>
           )}
-          <div className="overflow-x-auto">
+          <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
             <table className="w-full min-w-[760px] border-t border-gov-ink/70 text-[14px]">
               <thead>
                 <tr className="bg-gov-sunk text-left text-[12px] font-semibold text-gov-ink2">

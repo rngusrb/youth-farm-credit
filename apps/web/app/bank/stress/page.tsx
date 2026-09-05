@@ -43,7 +43,7 @@ export default function BankStressPage() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="여신 Stress Test" lead="차주 정보가 필요합니다." />
+        <PageTitle title="대출 위험 점검" lead="차주 정보가 필요합니다." />
         <Empty title="차주 정보가 없습니다" body="농가 정보를 먼저 입력해 주세요."
                cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
       </>
@@ -56,8 +56,8 @@ export default function BankStressPage() {
   return (
     <>
       <PageTitle
-        title="여신 Stress Test"
-        lead="실행 예정 금액에 악조건을 얹어 상환가능성을 다시 계산합니다. 통과하지 못하는 시나리오가 있으면 금액이나 상환방식을 조정할 근거가 됩니다."
+        title="대출 위험 점검"
+        lead="가격 하락이나 재해가 생겼을 때 대출을 갚을 수 있을지 계산해요. 금액이나 갚는 계획을 바꿔볼 근거로 활용하세요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -101,10 +101,10 @@ export default function BankStressPage() {
             {!baseOk ? (
               <Notice tone="danger" title="기준 시나리오부터 통과하지 못합니다">
                 악조건을 얹기 전에도 {won(report.principal)} 실행 시 2년연속 위기확률이
-                감내 기준 {pct(report.tolerance)}를 넘습니다. 금액 조정이 선행돼야 합니다.
+                위험 기준 {pct(report.tolerance)}를 넘습니다. 금액 조정이 선행돼야 합니다.
               </Notice>
             ) : failed.length > 0 ? (
-              <Notice tone="warn" title={`${failed.length}개 시나리오에서 상환여력 부족`}>
+              <Notice tone="warn" title={`${failed.length}개 시나리오에서 갚는 데 쓸 돈 부족`}>
                 {failed.map((f) => `${f.label}(위기확률 ${pct(f.crisis_prob)})`).join(", ")}.
                 해당 조건 발생 시 상환이 어려워집니다.
               </Notice>
@@ -116,18 +116,18 @@ export default function BankStressPage() {
             )}
           </div>
 
-          <Section title={busy ? "다시 계산 중…" : "시나리오별 상환가능성"}>
+          <Section title={busy ? "다시 계산 중…" : "상황별로 대출을 갚을 수 있는지"}>
             <StressTable scenarios={report.scenarios} tolerance={report.tolerance} audience="bank" />
           </Section>
 
-          <Section title="상환방식 제안">
+          <Section title="갚는 방법 살펴보기">
             <div className="grid gap-px bg-gov-line sm:grid-cols-3">
               {[
                 ["실행 금액 조정", failed.length > 0
                   ? `${won(headlineLimit(diag ?? ({} as Diagnosis)) || 0)} 수준으로 낮추면 기준 시나리오를 통과합니다.`
                   : "현재 금액에서 기준 시나리오를 통과합니다."],
                 ["거치기간 단축 검토", "지침상 거치기간은 최대 5년 이내에서 선택 가능합니다. 3년을 고르면 절벽이 앞당겨지지만 총이자와 잔액 축소 속도가 달라집니다."],
-                ["운전자금 한도 병행", "수확기 편중으로 연중 특정 시점에 현금이 마르는 차주는 정책자금만으로 설계하면 흑자 연체가 발생할 수 있습니다."],
+                ["운전자금 한도 병행", "수확기 편중으로 연중 특정 시점에 돈이 부족해지는 차주는 정책자금만으로 설계하면 흑자 연체가 발생할 수 있습니다."],
               ].map(([t, d]) => (
                 <div key={t} className="bg-white p-5">
                   <h3 className="text-[14px] font-bold text-gov-ink">{t}</h3>
@@ -141,9 +141,9 @@ export default function BankStressPage() {
             <Panel>
               <ul className="space-y-2 text-[13px] leading-relaxed text-gov-ink2">
                 {[
-                  `영업레버리지 ${report.leverage.toFixed(2)}배 기준입니다. 총수입 대비 경영비 비율은 KOSIS 농산물소득조사 실측값을 씁니다.`,
-                  "충격 시 경영비는 줄어들지 않는 것으로 둡니다. 실제로는 수확 관련 비용이 일부 줄지만 공개 근거가 없어 보수적으로 계산합니다.",
-                  "농신보 보증료는 지침에 요율이 명시돼 있지 않아 반영하지 않았습니다. 그만큼 상환여력이 과대평가됩니다.",
+                  `영업레버리지 ${report.leverage.toFixed(2)}배 기준입니다. 들어온 돈 대비 농사 비용 비율은 KOSIS 농산물소득조사 실측값을 씁니다.`,
+                  "충격 시 농사 비용는 줄어들지 않는 것으로 둡니다. 실제로는 수확 관련 비용이 일부 줄지만 공개 근거가 없어 보수적으로 계산합니다.",
+                  "농신보 보증료는 지침에 요율이 명시돼 있지 않아 반영하지 않았습니다. 그만큼 갚는 데 쓸 돈이 과대평가됩니다.",
                   `난수 시드를 고정해 같은 입력이면 같은 결과가 나옵니다. σ = ${report.sigma.toFixed(3)}.`,
                 ].map((t) => (
                   <li key={t} className="flex gap-2.5">
@@ -158,7 +158,7 @@ export default function BankStressPage() {
           {diag && (
             <div className="flex gap-2">
               <Btn href={`/result/${diag.diagnosis_id}`}>심사 리포트 출력</Btn>
-              <Btn href="/bank/design" variant="ghost">여신 설계로 돌아가기</Btn>
+              <Btn href="/bank/design" variant="ghost">대출 계획으로 돌아가기</Btn>
             </div>
           )}
         </>

@@ -48,7 +48,7 @@ export default function SafetyPage() {
       <>
         <PageTitle title="금융 안전진단" lead="농가 정보가 있어야 계산해요." />
         <Empty title="농가 정보가 없어요" body="작목과 면적을 먼저 입력해 주세요."
-               cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
+               cta={{ href: "/app/farm", label: "내 농장정보 입력" }} />
       </>
     );
   }
@@ -70,7 +70,7 @@ export default function SafetyPage() {
             <div className="flex flex-wrap items-end gap-6">
               <div>
                 <label htmlFor="principal" className="mb-1.5 block text-[13px] font-semibold text-gov-ink2">
-                  차입 원금
+                  빌릴 금액
                 </label>
                 <div className="flex items-center gap-2">
                   <input id="principal" inputMode="numeric"
@@ -96,10 +96,10 @@ export default function SafetyPage() {
                 <div className="ml-auto flex gap-6">
                   {/* 규칙 4 — 뜻이 라벨, 용어는 note 로 남긴다 (지우지 않는다) */}
                   <Stat label="수입이 줄면 소득은" value={`${report.leverage.toFixed(2)}배 줄어요`}
-                        note={`영업레버리지 ${report.leverage.toFixed(2)} · 총수입 ÷ 소득`} />
+                        note={`영업레버리지 ${report.leverage.toFixed(2)} · 들어온 돈 ÷ 소득`} />
                   <Stat label="보통 해에 얼마쯤"
                         value={`${won(diag.income.band_p10_p90[0])}~${won(diag.income.band_p10_p90[1])}`}
-                        note={`10년 중 8년이 이 사이 · 소득 변동성 σ ${report.sigma.toFixed(3)}`} />
+                        note={`10년 중 8년이 이 사이 · 소득이 흔들리는 정도 σ ${report.sigma.toFixed(3)}`} />
                 </div>
               )}
             </div>
@@ -111,14 +111,14 @@ export default function SafetyPage() {
         <>
           {failed.length > 0 && (
             <div className="mb-5">
-              <Notice tone="danger" title={`${failed.length}개 시나리오에서 상환이 어려워요`}>
+              <Notice tone="danger" title={`${failed.length}개 시나리오에서 대출 갚기가 어려울 수 있어요`}>
                 {failed.map((f) => f.label).join(", ")} 상황에서 2년 연속 위기 확률이 감내
-                기준을 넘어요. 차입 규모를 줄이거나, 아래 대응을 미리 준비해 두시기 바라요.
+                기준을 넘어요. 빌리는 금액을 줄이거나, 아래 대응을 미리 준비해 두시기 바라요.
               </Notice>
             </div>
           )}
 
-          <Section title={busy ? "다시 계산 중…" : "시나리오별 상환가능성"}>
+          <Section title={busy ? "다시 계산 중…" : "상황별로 대출을 갚을 수 있는지"}>
             <StressTable scenarios={report.scenarios} tolerance={report.tolerance} />
           </Section>
 
@@ -126,7 +126,7 @@ export default function SafetyPage() {
             <Panel>
               {/* 규칙 4 — 뜻을 먼저 말하고 용어는 끝에. 숫자·시나리오 설명은 엔진 값 그대로. */}
               <p className="text-[14px] leading-relaxed text-gov-ink2">
-                경영비는 매출이 줄어도 그대로 나가요. 그래서 수입이 줄면 소득은 그보다
+                농사 비용는 매출이 줄어도 그대로 나가요. 그래서 수입이 줄면 소득은 그보다
                 크게 줄어요 — 이 농가는{" "}
                 <b className="text-gov-ink">{report.leverage.toFixed(2)}배</b>예요.
               </p>
@@ -137,7 +137,7 @@ export default function SafetyPage() {
                   줄어요.
                 </p>
               )}
-              <p className="mt-2 text-[12px] text-gov-ink3">영업레버리지 {report.leverage.toFixed(2)} · 총수입 ÷ 소득</p>
+              <p className="mt-2 text-[12px] text-gov-ink3">영업레버리지 {report.leverage.toFixed(2)} · 들어온 돈 ÷ 소득</p>
             </Panel>
 
             {/* 가정·한계는 결론이 아니다. 지우지 않고 접는다 (UX-001). */}
@@ -148,7 +148,7 @@ export default function SafetyPage() {
                 hint="펼쳐 보기"
               >
                 <p className="text-[13px] leading-relaxed text-gov-ink2">
-                  계산에서 경영비는 줄어들지 않는 것으로 둬요. 실제로는 수확 관련 비용이 일부
+                  계산에서 농사 비용는 줄어들지 않는 것으로 둬요. 실제로는 수확 관련 비용이 일부
                   줄지만 그 비율에 대한 공개 근거가 없어 지어내지 않았어요. 그만큼 이 결과는
                   보수적이에요.
                 </p>
@@ -164,7 +164,7 @@ export default function SafetyPage() {
           <Section title="대응">
             <ol className="border-t border-gov-ink/70">
               {[
-                ["차입 규모를 줄인다", `현재 평가 중인 ${won(report.principal)} 대신 권장 금액으로 낮추면 모든 시나리오의 위험이 함께 내려가요.`],
+                ["빌리는 금액을 줄인다", `현재 평가 중인 ${won(report.principal)} 대신 권장 금액으로 낮추면 모든 시나리오의 위험이 함께 내려가요.`],
                 ["출하 시기를 나눈다", "한 시점의 시세에 한 해 소득이 걸리지 않게 해요. 계약재배나 수매 약정으로 판매가를 미리 묶는 방법도 있어요."],
                 ["재해 대응을 미리 확인한다", "피해율 30% 이상이면 상환기한 연기가 가능해요. 요건과 신청 경로를 미리 알아 두는 것과 사후에 알아보는 것은 다릅니다."],
               ].map(([t, d], i) => (
@@ -180,8 +180,8 @@ export default function SafetyPage() {
           </Section>
 
           <div className="flex gap-2">
-            <Btn href="/app/finance">적정 차입 규모 보기</Btn>
-            <Btn href="/app/relief" variant="ghost">구제제도 확인</Btn>
+            <Btn href="/app/finance">대출 계획 보기</Btn>
+            <Btn href="/app/relief" variant="ghost">어려울 때 받을 도움 확인</Btn>
           </div>
         </>
       )}

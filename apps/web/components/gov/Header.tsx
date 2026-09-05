@@ -9,6 +9,8 @@ import { useSession } from "@/lib/useSession";
 
 export default function Header() {
   const path = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => { setMobileOpen(false); }, [path]);
   const { session, ready } = useSession();
   const home = ready && session ? ROLE_HOME[session.role] : "/app";
 
@@ -45,10 +47,10 @@ export default function Header() {
   }, [open, close]);
   return (
     <header className="no-print border-b border-gov-line bg-white">
-      <div className="mx-auto flex max-w-6xl items-center gap-8 px-4 py-4">
-        <Link href="/" className="flex min-h-11 items-center gap-2">
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 sm:gap-6 sm:py-4">
+        <Link href="/" className="flex min-h-11 min-w-0 flex-col items-start justify-center sm:flex-row sm:items-center sm:gap-2">
           <span className="text-[19px] font-extrabold tracking-tight text-gov-head">Seed Money</span>
-          <span className="text-[12px] font-medium text-gov-ink2">농가 경영 · 여신설계</span>
+          <span className="text-[12px] font-medium text-gov-ink2">농장 살림 · 대출 계획</span>
         </Link>
         <nav
           ref={navRef}
@@ -113,17 +115,26 @@ export default function Header() {
           {ready && session ? "업무 화면" : "진단 시작"}
         </Link>
       </div>
-      {/* 좁은 화면용 가로 스크롤 메뉴 */}
-      <nav aria-label="주요 메뉴 (모바일)" className="overflow-x-auto border-t border-gov-line2 lg:hidden">
-        <ul className="flex min-w-max px-2">
-          {PORTAL.flatMap((g) => g.items).map((i) => (
-            <li key={i.href}>
-              <Link href={i.href} className="inline-flex min-h-11 items-center px-3 text-[13px] text-gov-ink2">
-                {i.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <nav aria-label="주요 메뉴 (모바일)" className="border-t border-gov-line2 lg:hidden">
+        <button type="button" aria-expanded={mobileOpen} aria-controls="mobile-portal-menu"
+          onClick={() => setMobileOpen((v) => !v)}
+          className="flex min-h-11 w-full items-center justify-between px-4 py-2 text-[14px] text-gov-ink2">
+          서비스 안내 · 제도와 자료 <span>{mobileOpen ? "닫기 −" : "메뉴 +"}</span>
+        </button>
+        <div id="mobile-portal-menu" hidden={!mobileOpen} className="border-t border-gov-line2 px-4 py-3">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {PORTAL.map((group) => (
+              <div key={group.label}>
+                <p className="mb-1 text-[13px] font-semibold text-gov-head">{group.label}</p>
+                <ul>{group.items.map((i) => (
+                  <li key={i.href}><Link href={i.href} onClick={() => setMobileOpen(false)}
+                    aria-current={path === i.href ? "page" : undefined}
+                    className="flex min-h-11 items-center rounded-md px-2 py-2 text-[14px] text-gov-ink2 hover:bg-gov-soft">{i.label}</Link></li>
+                ))}</ul>
+              </div>
+            ))}
+          </div>
+        </div>
       </nav>
     </header>
   );

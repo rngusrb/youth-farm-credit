@@ -13,7 +13,7 @@ export default function SitemapPage() {
   return (
     <Page>
       <Crumb trail={[{ label: "사이트맵" }]} />
-      <PageTitle title="사이트맵" lead="전체 메뉴를 한눈에 봅니다." />
+      <PageTitle title="사이트맵" lead="원하는 화면을 찾아 바로 이동해 보세요." />
       <div id="main" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {groups.map((g) => (
           <Panel key={g.label}>

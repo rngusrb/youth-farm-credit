@@ -99,14 +99,14 @@ export default function LeversPage() {
     <>
       <PageTitle
         title="얼마까지 받으려면"
-        lead="원하는 금액이 지금 조건에서 무리라면, 무엇을 얼마나 바꾸면 되는지 역으로 찾습니다."
+        lead="빌리고 싶은 금액을 넣어 보세요. 농장 면적이나 생활비를 얼마나 바꿔야 할지 비교해요."
       />
 
       <Section title="원하는 금액">
         <Panel>
           <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-3">
-            <label className="flex-1 min-w-[220px]">
-              <span className="mb-1 block text-[13px] font-medium text-gov-ink2">차입 희망 금액 (원)</span>
+            <label className="min-w-0 w-full flex-1 sm:min-w-[220px]">
+              <span className="mb-1 block text-[13px] font-medium text-gov-ink2">빌리고 싶은 금액 (원)</span>
               <input
                 inputMode="numeric"
                 value={amount}
@@ -121,7 +121,7 @@ export default function LeversPage() {
           </form>
           {safe !== null && (
             <p className="mt-3 text-[13px] text-gov-ink2">
-              지금 조건의 권장 차입은 <b>{won(safe)}</b> 이에요. 그보다 큰 금액을 넣어 보세요.
+              지금 조건의 권장 대출금은 <b>{won(safe)}</b> 이에요. 그보다 큰 금액을 넣어 보세요.
             </p>
           )}
           {error && <Notice tone="warn" title="계산하지 못했어요">{error}</Notice>}
@@ -147,16 +147,16 @@ export default function LeversPage() {
                 label="이 금액의 2년연속 부족확률"
                 value={result.base_crisis_prob === null ? "—" : pct(result.base_crisis_prob)}
                 tone={alreadyOk ? "ok" : "warn"}
-                note={`감내 기준 ${pct(result.max_crisis_prob)}`}
+                note={`위험 기준 ${pct(result.max_crisis_prob)}`}
               />
-              <Stat label="권장 차입" value={won(result.risk_based_limit)} />
+              <Stat label="권장 대출금" value={won(result.risk_based_limit)} />
             </div>
           </Section>
 
           {alreadyOk ? (
             <Section title="결과">
               <Notice tone="info" title="지금 조건으로 가능합니다">
-                이 금액은 감내 기준 안에 들어와요. 조건을 바꾸지 않아도 됩니다.
+                이 금액은 위험 기준 안에 들어와요. 조건을 바꾸지 않아도 됩니다.
               </Notice>
             </Section>
           ) : (
@@ -194,8 +194,8 @@ export default function LeversPage() {
 
                 {reachable.length === 0 && (
                   <Notice tone="warn" title="이 금액은 현실 범위에서 어렵습니다">
-                    탐색한 범위 안에서는 감내 기준을 맞출 수 없었어요.
-                    권장 차입 <b>{won(result.risk_based_limit)}</b> 쪽을 먼저 보시는 편이 좋겠습니다.
+                    탐색한 범위 안에서는 위험 기준을 맞출 수 없었어요.
+                    권장 대출금 <b>{won(result.risk_based_limit)}</b> 쪽을 먼저 보시는 편이 좋겠습니다.
                   </Notice>
                 )}
               </div>

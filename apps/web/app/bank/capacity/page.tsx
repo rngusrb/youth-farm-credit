@@ -42,7 +42,7 @@ export default function CapacityPage() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="상환능력 분석" lead="차주 정보가 필요합니다." />
+        <PageTitle title="대출 갚을 능력 살펴보기" lead="차주 정보가 필요합니다." />
         <Empty title="차주 정보가 없습니다" body="농가 정보를 먼저 입력해 주세요."
                cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
       </>
@@ -52,36 +52,36 @@ export default function CapacityPage() {
   return (
     <>
       <PageTitle
-        title="상환능력 분석"
-        lead="작목별 계절성과 가격 변동성을 반영합니다. 연 단위 DSCR만으로는 수확기 편중에서 오는 유동성 위험이 보이지 않습니다."
+        title="대출 갚을 능력 살펴보기"
+        lead="농사로 번 돈 중 대출을 갚는 데 쓸 돈을 살펴봐요. 수확한 돈이 들어오기 전에 부족한 달이 있는지도 확인해요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 
       {diag && (
-        <Section title="상환여력 구성">
+        <Section title="갚는 데 쓸 돈 구성">
           <div className="grid gap-5 lg:grid-cols-2">
             <Panel>
               <SourceLegend className="mb-4" />
               <DefTable rows={[
-                ["연 총수입", <span key="a" className="tabular">{cf ? won(cf.annual.gross) : "—"}</span>,
-                  { src: "public", note: "공표 10a당 총수입 × 차주 신고 면적." }],
-                ["경영비", <span key="b" className="tabular">{cf ? `− ${won(cf.annual.operating_cost)}` : "—"}</span>,
-                  { src: "public", note: "같은 조사의 경영비입니다. 조사연도는 작목마다 다릅니다." }],
-                ["농업소득", <b key="c" className="tabular">{won(diag.income.annual)}</b>,
+                ["연 들어온 돈", <span key="a" className="tabular">{cf ? won(cf.annual.gross) : "—"}</span>,
+                  { src: "public", note: "공표 10a당 들어온 돈 × 차주 신고 면적." }],
+                ["농사 비용", <span key="b" className="tabular">{cf ? `− ${won(cf.annual.operating_cost)}` : "—"}</span>,
+                  { src: "public", note: "같은 조사의 농사 비용입니다. 조사연도는 작목마다 다릅니다." }],
+                ["농사로 번 돈", <b key="c" className="tabular">{won(diag.income.annual)}</b>,
                   { src: "public" }],
                 ["생활비", <span key="d" className="tabular">− {won(diag.input.living_cost)}</span>,
                   { src: "input", note: "차주가 적어 낸 값입니다. 검증 대상입니다." }],
-                ["기존 부채상환", <span key="e" className="tabular">
+                ["기존 대출에 갚는 돈", <span key="e" className="tabular">
                   {diag.input.other_debt_service ? `− ${won(diag.input.other_debt_service)}` : "없음"}
                 </span>, { src: "input", note: "차주 신고 기준입니다. 신용정보로 대조해야 합니다." }],
-                ["상환여력", <b key="f" className="tabular text-gov-head">{won(diag.income.capacity)}</b>],
+                ["갚는 데 쓸 돈", <b key="f" className="tabular text-gov-head">{won(diag.income.capacity)}</b>],
               ]} />
             </Panel>
             <Panel>
               <h3 className="mb-3 text-[14px] font-bold text-gov-ink">변동성 구성</h3>
               <DefTable rows={[
-                ["소득 변동성 σ", <span key="a" className="tabular">{diag.sigma.toFixed(3)}{" "}
+                ["소득이 흔들리는 정도 σ", <span key="a" className="tabular">{diag.sigma.toFixed(3)}{" "}
                   <Badge tone={diag.sigma_personalized ? "info" : "warn"}>
                     {diag.sigma_personalized ? "차주 실적" : "작목 평균"}
                   </Badge></span>,
@@ -102,7 +102,7 @@ export default function CapacityPage() {
                   {crop?.leverage ? `${crop.leverage.toFixed(2)}배` : "—"}
                 </span>, { src: "public" }],
                 ["주 변동요인", crop?.factors
-                  ? { price: "가격", quantity: "수확량", cost: "경영비" }[crop.factors.driver]
+                  ? { price: "가격", quantity: "수확량", cost: "농사 비용" }[crop.factors.driver]
                   : "—"],
               ]} />
               {!diag.sigma_personalized && (
@@ -117,7 +117,7 @@ export default function CapacityPage() {
       )}
 
       {cf && (
-        <Section title="계절성 — 상환 시점의 유동성">
+        <Section title="갚을 시기에 쓸 돈이 있을까요">
           <Panel>
             <div className="mb-4 grid gap-5 sm:grid-cols-3">
               <Stat label="출하월" value={cf.harvest_known ? `${cf.harvest_months.length}개월` : "미상"}
@@ -125,7 +125,7 @@ export default function CapacityPage() {
                     note={cf.harvest_known ? cf.harvest_months.map((m) => `${m}월`).join(", ") : "12개월 균등 배분"} />
               <Stat label="현금 최저 시점" value={`${cf.trough_month}월`}
                     tone={cf.working_capital_need > 0 ? "danger" : "plain"} />
-              <Stat label={cf.working_capital_need > 0 ? "운전자금 소요" : "최저 시점 잔고"}
+              <Stat label={cf.working_capital_need > 0 ? "미리 준비할 농사 비용" : "가장 빠듯할 때 남는 돈"}
                     value={won(cf.working_capital_need > 0 ? cf.working_capital_need : cf.trough_balance)}
                     tone={cf.working_capital_need > 0 ? "danger" : "ok"} />
             </div>

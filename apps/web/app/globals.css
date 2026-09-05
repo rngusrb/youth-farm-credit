@@ -99,3 +99,51 @@ body {
 /* 기본 삼각형 마커를 지운다 — 우리가 직접 그린다 (Fold.tsx). */
 .fold > summary::-webkit-details-marker { display: none; }
 .fold > summary::marker { content: ""; }
+
+/* Shared responsive rules: constrain content, never hide page overflow. */
+@layer base {
+  body { overflow-wrap: anywhere; }
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+  }
+  button, select, summary { min-height: 44px; }
+  summary { padding-block: 0.625rem; cursor: pointer; }
+  button { white-space: normal; }
+}
+@layer components {
+  .grid > *, .flex > * { min-width: 0; }
+  .stat-value { overflow-wrap: anywhere; }
+  .table-scroll { max-width: 100%; overscroll-behavior-inline: contain; }
+  .table-scroll::before {
+    content: "좌우로 밀어 전체 내용을 볼 수 있어요";
+    display: block;
+    margin-bottom: 0.5rem;
+    color: theme("colors.gov.ink3");
+    font-size: 12px;
+  }
+  .table-scroll table { line-height: 1.6; }
+  @media (min-width: 1024px) {
+    .table-scroll::before { display: none; }
+  }
+  @media (max-width: 639px) {
+    .definition-table, .definition-table tbody, .definition-table tr,
+    .definition-table th, .definition-table td { display: block; width: 100%; }
+    .definition-table th { padding: 0.75rem 0.75rem 0.25rem; background: transparent; }
+    .definition-table td { padding: 0.25rem 0.75rem 0.75rem; }
+    .figure { font-size: clamp(1.5rem, 6vw, 1.9rem); }
+    .hero-num { font-size: clamp(1.75rem, 8vw, 2.6rem); }
+    .sheet .report-section { margin-top: 2.5rem; }
+  }
+}
+@media print {
+  .table-scroll { overflow: visible; }
+  .table-scroll::before { display: none; }
+  .table-scroll table { min-width: 0; }
+}
+
+/* Keep mobile form text readable and prevent focus zoom on iOS. */
+@media screen and (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]), select, textarea { font-size: 16px; }
+}

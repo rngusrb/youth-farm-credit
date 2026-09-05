@@ -55,7 +55,7 @@ export default function CashflowChart({
         ))}
       </div>
       <figcaption className="mt-2 text-[12px] leading-relaxed text-gov-ink3">
-        막대는 연초를 0으로 둔 누적 현금 잔고입니다. 가장 낮은 달을 강조 표시했습니다.
+        연초에 가진 돈을 0원으로 놓고 계산했어요. 막대는 그달까지 쓰고 남은 돈이에요. 0 아래로 내려가면 돈이 부족해요.
       </figcaption>
     </figure>
   );

@@ -50,7 +50,7 @@ export default function Footer() {
             심사로 결정됩니다.
           </p>
           <p className="mt-2 text-white/50">
-            소득·경영비: 농촌진흥청 농산물소득조사(KOSIS) · 도매가격: KAMIS ·
+            소득·농사 비용: 농촌진흥청 농산물소득조사(KOSIS) · 도매가격: KAMIS ·
             제도: 농림축산식품부 2026년 시행지침
           </p>
         </div>

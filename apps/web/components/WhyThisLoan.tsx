@@ -79,7 +79,7 @@ export default function WhyThisLoan({
         받으면 무엇이 달라지는지 아래에 뒀어요 — 어느 쪽이 낫다고는 말하지 않아요.
       </p>
 
-      <div className="overflow-x-auto">
+      <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
         <table className="w-full min-w-[580px] border-t border-gov-ink/70 text-[14px]">
           <caption className="sr-only">
             같은 금액을 각 자금으로 받았을 때의 조건과 결과. 값은 모두 엔진 계산 결과입니다.
@@ -88,8 +88,8 @@ export default function WhyThisLoan({
             <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
               <th scope="col" className="border-b border-gov-line px-4 py-3 text-left">자금</th>
               <th scope="col" className="border-b border-gov-line px-4 py-3">한도</th>
-              <th scope="col" className="border-b border-gov-line px-4 py-3">거치·상환</th>
-              <th scope="col" className="border-b border-gov-line px-4 py-3">{grace + 1}년차 상환액</th>
+              <th scope="col" className="border-b border-gov-line px-4 py-3">이자만 내는 기간·갚는 기간</th>
+              <th scope="col" className="border-b border-gov-line px-4 py-3">{grace + 1}년차에 갚을 돈</th>
               <th scope="col" className="border-b border-gov-line px-4 py-3">2년 연속 위기</th>
             </tr>
           </thead>
@@ -148,7 +148,7 @@ export default function WhyThisLoan({
       <p className="text-[12px] leading-relaxed text-gov-ink3">
         신청 자격은 자금마다 달라요.{" "}
         <Link href="#자격" className="lnk inline-flex min-h-11 items-center">
-          아래 「신청 자격 스스로 대보기」
+          아래 「내가 신청할 수 있는지 확인하기」
         </Link>
         에서 조항과 함께 확인할 수 있어요.
       </p>

@@ -61,11 +61,11 @@ export default function FarmerHome() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="홈" lead="농가 정보를 넣으면 여기에 요약이 나와요." />
+        <PageTitle title="홈" lead="농장 정보를 넣으면 여기에 요약이 나와요." />
         <Empty
-          title="아직 농가 정보가 없어요"
+          title="아직 농장 정보가 없어요"
           body="작목과 면적, 생활비 세 가지면 시작해요. 문장으로 적으셔도 알아들어요."
-          cta={{ href: "/app/farm", label: "내 농가 정보 입력" }}
+          cta={{ href: "/app/farm", label: "내 농장정보 입력" }}
         />
       </>
     );
@@ -76,14 +76,14 @@ export default function FarmerHome() {
       <PageTitle
         title="홈"
         lead={diag ? `${diag.input.crop_name} · ${fmtPyeong(diag.input.pyeong)} · ${diag.product.name}` : "계산 중…"}
-        aside={<Btn href="/app/farm" variant="ghost">농가 정보 수정</Btn>}
+        aside={<Btn href="/app/farm" variant="ghost">농장 정보 수정</Btn>}
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 
       {diag && (
         <>
-          <Section title="지금 조건에서 빌릴 수 있는 금액" action={
+          <Section title="지금 조건으로 계산한 권장 대출금" action={
             <Link href={`/result/${diag.diagnosis_id}`} className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">
               전체 리포트 +
             </Link>
@@ -93,9 +93,9 @@ export default function FarmerHome() {
             <div className="overflow-hidden rounded-xl border border-gov-line bg-white shadow-card">
               <div className="border-b border-gov-line2 bg-gradient-to-b from-gov-soft/70 to-white px-6 py-8 sm:px-9 sm:py-10">
                 <p className="text-[13px] font-medium text-gov-ink3">
-                  2년 연속 상환이 밀릴 확률 {pct(diag.limits.max_crisis_prob)} 기준
+                  2년 연속 대출을 제때 갚지 못할 확률 {pct(diag.limits.max_crisis_prob)} 기준
                 </p>
-                <p className="tabular mt-2 text-[2.75rem] font-extrabold leading-[1.02] tracking-[-0.035em] text-gov-head sm:text-[3.4rem]">
+                <p className="tabular mt-2 text-[clamp(1.75rem,8vw,2.75rem)] font-extrabold leading-[1.02] tracking-[-0.035em] text-gov-head sm:text-[3.4rem]">
                   {won(headlineLimit(diag))}
                 </p>
                 <p className="mt-3.5 max-w-xl text-[14px] leading-[1.75] text-gov-ink2">
@@ -121,9 +121,9 @@ export default function FarmerHome() {
               {diag.limits.binding_constraint === "livelihood" && (
                 <div className="border-t border-gov-line2 px-6 py-5 sm:px-9">
                   {/* 규칙 9 예외 — 차입 조정으로 풀리지 않는 상태라 단정형을 유지한다. */}
-                  <Notice tone="danger" title="무차입 상태에서도 상환여력이 모자랍니다">
-                    대출을 0원으로 놓고 계산해도 생활비를 채우지 못합니다. 차입 규모를 줄여도
-                    이 부분은 달라지지 않습니다 — 재배 규모나 생활비 쪽을 먼저 보셔야 합니다.
+                  <Notice tone="danger" title="대출이 없어도 생활비가 부족해요">
+                    새 대출이 없어도 계산상 생활비가 부족해요.
+                    농장 규모와 생활비를 먼저 살펴봐야 해요.
                   </Notice>
                 </div>
               )}
@@ -131,14 +131,14 @@ export default function FarmerHome() {
           </Section>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <Section title="올해 현금 사정" action={
-              <Link href="/app/revenue" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">수익 전망 +</Link>
+            <Section title="올해 쓸 돈 살펴보기" action={
+              <Link href="/app/revenue" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">농사 수입과 지출 +</Link>
             }>
               <Panel>
                 {cf ? (
                   <>
-                    <div className="grid grid-cols-2 gap-5">
-                      <Stat label="연 순현금" value={won(cf.annual_net)}
+                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                      <Stat label="한 해 쓰고 남는 돈" value={won(cf.annual_net)}
                             tone={cf.annual_net >= 0 ? "ok" : "danger"}
                             note={`${cf.year}년차 기준 (상환 ${won(cf.annual.debt_payment)})`} />
                       <Stat label="가장 빠듯한 달" value={`${cf.trough_month}월`}
@@ -154,7 +154,7 @@ export default function FarmerHome() {
                     )}
                   </>
                 ) : (
-                  <p className="text-[13px] text-gov-ink3">현금흐름을 계산할 수 없어요.</p>
+                  <p className="text-[13px] text-gov-ink3">돈의 흐름을 계산할 수 없어요.</p>
                 )}
               </Panel>
             </Section>
@@ -179,7 +179,7 @@ export default function FarmerHome() {
                             {diag.sigma_personalized ? "내 이력 반영" : "작목 평균"}
                           </Badge>
                           <span className="mt-0.5 block text-[12px] text-gov-ink3">
-                            10년 중 8년이 이 사이 (소득 변동성 σ {diag.sigma.toFixed(3)})
+                            10년 중 8년이 이 사이 (소득이 흔들리는 정도 σ {diag.sigma.toFixed(3)})
                           </span>
                         </span>],
                       ["수입이 줄면 소득은 몇 배로 줄까", crop.leverage
@@ -196,7 +196,7 @@ export default function FarmerHome() {
                   <p className="text-[13px] text-gov-ink3">요인분해 자료가 없어요.</p>
                 )}
                 <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
-                  경영비는 매출이 줄어도 그대로 나가요. 그래서 총수입이 조금 빠져도
+                  농사 비용는 매출이 줄어도 그대로 나가요. 그래서 들어온 돈이 조금 빠져도
                   소득은 그보다 크게 빠져요.
                 </p>
               </Panel>
@@ -206,9 +206,9 @@ export default function FarmerHome() {
           <Section title="다음으로 해보실 것">
             <div className="grid gap-px bg-gov-line sm:grid-cols-3">
               {[
-                ["수익 전망 보기", "/app/revenue", "월별로 어느 달에 현금이 마르는지 확인"],
+                ["농사 수입과 지출 보기", "/app/revenue", "월별로 어느 달에 돈이 부족해지는지 확인"],
                 ["안전진단 받기", "/app/safety", "가격이 떨어져도 버티는지 시나리오별로 확인"],
-                ["구제제도 확인", "/app/relief", "위기 전에 쓸 수 있는 제도 미리 파악"],
+                ["어려울 때 받을 도움 확인", "/app/relief", "위기 전에 쓸 수 있는 제도 미리 파악"],
               ].map(([t, href, d]) => (
                 <Link key={href} href={href} className="group bg-white p-5 transition-colors hover:bg-gov-sunk">
                   <h3 className="text-[14px] font-bold text-gov-ink group-hover:text-gov-head">{t} →</h3>

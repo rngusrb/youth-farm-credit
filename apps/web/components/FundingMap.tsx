@@ -33,7 +33,7 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
   const risky = years.filter((p) => p.shortfall_prob >= 0.2).map((p) => p.year);
 
   return (
-    <figure className="overflow-x-auto">
+    <figure className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
       <svg
         viewBox={`0 0 ${W} ${H}`}
         role="img"
@@ -77,13 +77,13 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
             }
           >
             <title>
-              {p.year}년차 · 상환 {won(p.due)} · 상환여력 {won(p.capacity)} · 그 해 부족확률{" "}
+              {p.year}년차 · 상환 {won(p.due)} · 갚는 데 쓸 돈 {won(p.capacity)} · 그 해 부족확률{" "}
               {pct(p.shortfall_prob)}
             </title>
           </rect>
         ))}
 
-        {/* 거치 종료 경계 */}
+        {/* 원금도 갚기 시작 경계 */}
         <line
           x1={x(graceEnd)} y1={PAD.top} x2={x(graceEnd)} y2={PAD.top + plotH}
           strokeDasharray="3 3" className="stroke-gov-ink3"
@@ -110,10 +110,10 @@ export default function FundingMap({ data }: { data: FundingMapResult }) {
 
       <figcaption className="mt-2 space-y-1">
         <div className="flex flex-wrap gap-3 text-[12px] text-gov-ink2">
-          <span><span className="mr-1 inline-block h-2 w-3 bg-gov-line align-middle" />거치(이자만)</span>
+          <span><span className="mr-1 inline-block h-2 w-3 bg-gov-line align-middle" />이자만 내는 기간</span>
           <span><span className="mr-1 inline-block h-2 w-3 bg-gov-head align-middle" />원금+이자</span>
           <span><span className="mr-1 inline-block h-2 w-3 bg-gov-warn align-middle" />그 해 부족확률 20%↑</span>
-          <span><span className="mr-1 inline-block h-0.5 w-3 bg-gov-link align-middle" />상환여력(중앙값)</span>
+          <span><span className="mr-1 inline-block h-0.5 w-3 bg-gov-link align-middle" />갚는 데 쓸 돈(중앙값)</span>
         </div>
       </figcaption>
     </figure>

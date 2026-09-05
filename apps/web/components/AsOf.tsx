@@ -30,7 +30,7 @@ export function asOfParts(as_of?: AsOf): string[] {
   if (!as_of) return [];
   const out: string[] = [];
   if (as_of.income_survey_year) out.push(`소득조사 ${as_of.income_survey_year}년`);
-  if (as_of.cost_survey_year) out.push(`경영비 ${as_of.cost_survey_year}년`);
+  if (as_of.cost_survey_year) out.push(`농사 비용 ${as_of.cost_survey_year}년`);
   if (as_of.sigma_series) out.push(`변동성 ${as_of.sigma_series}년 계열`);
   if (as_of.market_window) out.push(`도매가 ${as_of.market_window[0]}~${as_of.market_window[1]}`);
   // 자료실 원문(2026년판)과 대출조건을 대조한 문서(2025년판)는 다르다.

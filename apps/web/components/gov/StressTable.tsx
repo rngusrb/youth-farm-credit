@@ -15,19 +15,19 @@ export default function StressTable({
   audience?: "farmer" | "bank";
 }) {
   return (
-    <div className="overflow-x-auto">
+    <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
       <table className="w-full min-w-[820px] border-t border-gov-ink/70 text-[13px]">
-        <caption className="sr-only">시나리오별 상환가능성</caption>
+        <caption className="sr-only">상황별로 대출을 갚을 수 있는지</caption>
         <thead>
           <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
             <th scope="col" className="border-b border-gov-line px-3 py-2.5 text-left">시나리오</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5">농업소득</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5">상환여력</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5">DSCR</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5">2년연속 위기</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5">상환연기율</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5">최초 위험</th>
-            <th scope="col" className="border-b border-gov-line px-3 py-2.5 text-center">판정</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5">농사로 번 돈</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5">갚는 데 쓸 돈</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5">갚을 돈의 여유 (DSCR)</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5">2년 연속 돈 부족</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5">갚는 날을 미룰 확률</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5">처음 부족할 해</th>
+            <th scope="col" className="border-b border-gov-line px-3 py-2.5 text-center">계산 결과</th>
           </tr>
         </thead>
         <tbody className="tabular text-right">
@@ -66,11 +66,10 @@ export default function StressTable({
         </tbody>
       </table>
       <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
-        판정 기준은 2년 연속 위기 확률 {pct(tolerance)} 이하입니다. 한 해 상환이 밀리는 것은
-        저축이나 유예로 넘길 수 있지만, 두 해가 연달아 밀리면 돌려막기가 시작되기 때문입니다.
-        <b className="text-gov-ink2"> ‘제도 의존’</b> 은 재해 상환연기 덕분에 수치가 좋아 보이는
-        경우입니다 — 제도가 구해준 것이지 {audience === "bank" ? "차주가" : "농가가"} 버틴 것이
-        아닙니다.
+        대출을 갚을 돈이 2년 연속 모자랄 확률을 {pct(tolerance)} 이하로 보는 기준이에요.
+        ‘제도 의존’은 재해 지원으로 갚는 날을 미룬 덕분에 위험이 낮아진 경우예요.
+        {audience === "bank" ? "신청자" : "농가"}의 소득이 늘어난 것은 아니에요.
+        DSCR은 갚는 데 쓸 돈을 갚아야 할 돈으로 나눈 값이에요. 1보다 작으면 모자라요.
       </p>
     </div>
   );

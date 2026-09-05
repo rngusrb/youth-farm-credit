@@ -76,15 +76,15 @@ export default function ReliefPage() {
   return (
     <>
       <PageTitle
-        title="구제제도"
-        lead="연체가 난 뒤에 알아보는 것과 미리 알아 두는 것은 다릅니다. 거치가 끝나기 전에 어떤 제도를 쓸 수 있는지 확인해 두세요."
+        title="어려울 때 받을 도움"
+        lead="대출 갚기가 어려워질 때 받을 수 있는 도움을 알아보세요. 갚는 날짜를 놓치기 전에 신청 조건과 문의할 곳을 확인해요."
       />
 
       {!profile && (
         <div className="mb-6">
           <Empty title="농가 정보를 넣으면 내 상황에 맞춰 안내해요"
                  body="지금은 제도 일반 안내만 표시돼요."
-                 cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
+                 cta={{ href: "/app/farm", label: "내 농장정보 입력" }} />
         </div>
       )}
 
@@ -92,18 +92,18 @@ export default function ReliefPage() {
         <Section title="내 상황">
           <Panel>
             <div className="grid gap-6 sm:grid-cols-3">
-              <Stat label="최초 위험 연차"
+              <Stat label="처음 돈이 부족할 수 있는 해"
                     value={s.first_risk_year ? `${s.first_risk_year}년차` : "없음"}
                     tone={nearCliff ? "danger" : atRisk ? "warn" : "ok"} />
               <Stat label="2년 연속 위기 확률" value={pct(s.crisis_prob)}
                     tone={s.crisis_prob > diag.limits.max_crisis_prob ? "danger" : "ok"} />
-              <Stat label="거치 종료" value={`${grace + 1}년차`}
-                    note={`상환액이 ${won(s.grace_payment)} → ${won(s.amort_payment)}`} />
+              <Stat label="원금도 갚기 시작" value={`${grace + 1}년차`}
+                    note={`갚을 돈이 ${won(s.grace_payment)} → ${won(s.amort_payment)}`} />
             </div>
             <div className="mt-4">
               {nearCliff ? (
-                <Notice tone="danger" title="거치 종료 직후가 고비예요">
-                  {s.first_risk_year}년차에 상환 부족 확률이 20%를 넘어요. 그 전에 아래
+                <Notice tone="danger" title="원금도 갚기 시작할 때 부담이 커져요">
+                  {s.first_risk_year}년차에 갚을 돈이 모자랄 확률이 20%를 넘어요. 그 전에 아래
                   제도의 요건과 신청 경로를 확인해 두시고, 상환이 밀리기 전에 취급 기관과
                   먼저 상담하시기 바라요. 연체가 시작된 뒤에는 선택지가 줄어들어요.
                 </Notice>
@@ -127,7 +127,7 @@ export default function ReliefPage() {
           <Panel className="mb-4">
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <Badge tone="ok">지침 수록</Badge>
-              <h3 className="text-[15px] font-bold text-gov-ink">재해 시 상환기한 연기</h3>
+              <h3 className="text-[15px] font-bold text-gov-ink">재해 때 갚는 날 미루기</h3>
             </div>
             <ul className="space-y-1.5 text-[14px] text-gov-ink2">
               {relief.map((r) => (
@@ -195,7 +195,7 @@ export default function ReliefPage() {
       </Notice>
 
       <div className="mt-6 flex gap-2">
-        <Btn href="/policy" variant="ghost">제도 근거 검색</Btn>
+        <Btn href="/policy" variant="ghost">지원 제도 찾아보기</Btn>
         <Btn href="/app/safety" variant="ghost">안전진단 다시 받기</Btn>
       </div>
     </>

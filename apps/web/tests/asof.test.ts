@@ -37,7 +37,7 @@ describe("asOfParts", () => {
   it("작목마다 다른 조사연도를 그대로 반영한다", () => {
     expect(asOfParts({ income_survey_year: 2024, cost_survey_year: 2022 })).toEqual([
       "소득조사 2024년",
-      "경영비 2022년",
+      "농사 비용 2022년",
     ]);
   });
 });

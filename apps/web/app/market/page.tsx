@@ -59,17 +59,17 @@ function Body() {
       {detail && !m && (
         <Empty
           title={`${detail.name}은 도매가 시계열을 아직 수집하지 않았어요`}
-          body="KAMIS 품목 매핑이 있는 작목부터 순차로 수집해요. 소득 변동성은 KOSIS 소득조사 실측값을 쓰므로 진단 결과에는 영향이 없어요."
+          body="KAMIS 품목 매핑이 있는 작목부터 순차로 수집해요. 소득이 흔들리는 정도은 KOSIS 소득조사 실측값을 쓰므로 진단 결과에는 영향이 없어요."
         />
       )}
 
       {detail && m && g && (
         <>
-          <Section title="현재 국면">
+          <Section title="요즘 가격 흐름">
             <Panel>
               {m.quote_is_carried && (
                 <div className="mb-4">
-                  <Notice tone="warn" title="국면 판정을 보류해요">
+                  <Notice tone="warn" title="요즘 가격 흐름은 아직 판단하기 어려워요">
                     이 품목은 가격이 실제로 움직인 날이{" "}
                     {m.price_movement_ratio != null
                       ? `${Math.round(m.price_movement_ratio * 100)}%`
@@ -94,7 +94,7 @@ function Body() {
                 <Stat label="관측" value={m.trading_days.toLocaleString("ko-KR")} unit="거래일" />
               </div>
               <div className="mt-4">
-                <Notice tone="info" title="국면은 한도 계산에 반영하지 않아요">
+                <Notice tone="info" title="요즘 가격 흐름은 대출금 계산에 넣지 않아요">
                   25년 상환에 본질적인 것은 장기 평균이에요. 조용한 시기라고 해서 더 빌려도
                   된다는 뜻이 아니므로, 이 값은 참고 지표로만 써요.
                 </Notice>
@@ -146,7 +146,7 @@ function Body() {
                 <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
                   {detail.harvest_months.length
                     ? "출하가 몇 달에 몰릴수록 그 시점의 시세 하나에 한 해 소득이 걸려요."
-                    : "이 작목은 출하월 정보를 아직 확보하지 못했어요. 월별 현금흐름은 12개월 균등으로 펼쳐 계산해요."}
+                    : "이 작목은 출하월 정보를 아직 확보하지 못했어요. 월별 들어오고 나가는 돈은 12개월 균등으로 펼쳐 계산해요."}
                 </p>
               </Panel>
             </div>
@@ -160,10 +160,10 @@ function Body() {
 export default function MarketPage() {
   return (
     <Page>
-      <Crumb trail={[{ label: "데이터" }, { label: "시세 · 국면" }]} />
+      <Crumb trail={[{ label: "데이터" }, { label: "가격과 시장 흐름" }]} />
       <PageTitle
-        title="시세 · 국면"
-        lead="KAMIS 일별 도매가에 GARCH(1,1)를 적합해 지금 시장이 평소보다 조용한지 요동치는지 봐요."
+        title="가격과 시장 흐름"
+        lead="농산물 도매가격이 평소보다 얼마나 흔들리는지 살펴봐요. 가격 변화가 큰 시기인지 확인할 수 있어요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>

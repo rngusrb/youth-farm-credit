@@ -19,7 +19,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
     <header className="report-cover">
       <div className="flex flex-wrap items-baseline justify-between gap-2 text-[12px]">
         <span className="font-semibold tracking-[0.02em] text-paper-accent">
-          상환여력 진단 리포트
+          갚는 데 쓸 돈 진단 리포트
         </span>
         <span className="tabular text-paper-ink3">
           발행 {issued} · 문서 {data.document_ref}
@@ -53,7 +53,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
               진단
             </p>
             <p className="mt-3 text-[1.7rem] font-bold leading-[1.35] text-paper-ink sm:text-[2.1rem]">
-              차입 규모를 조절해
+              빌리는 금액을 조절해
               <br />
               해결되는 상황이 아닙니다
             </p>
@@ -61,7 +61,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
         ) : (
           <>
             <p className="text-xs font-semibold tracking-[0.02em] text-paper-ink3">
-              2년 연속 상환이 밀릴 확률 {pct(data.limits.max_crisis_prob)} 기준
+              2년 연속 대출을 제때 갚지 못할 확률 {pct(data.limits.max_crisis_prob)} 기준
             </p>
             <p className="tabular mt-2 text-[3rem] font-bold leading-none text-paper-ink sm:text-[4rem]">
               {won(data.limits.risk_based)}
@@ -72,7 +72,7 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
         <p className="prose-w mt-5 text-[0.95rem] leading-[1.85] text-paper-ink2">
           {noCapacity ? (
             <>
-              연간 농업소득이 생활비를 넘지 못해 상환에 쓸 수 있는 돈이 남지 않습니다.
+              한 해 농사로 번 돈이 생활비를 넘지 못해 대출을 갚는 데 쓸 돈이 남지 않습니다.
               같은 작목으로 제도 한도까지 차입하려면 최소{" "}
               <b className="tabular font-semibold text-paper-ink">
                 {fmtPyeong(data.min_area_pyeong)}
@@ -86,14 +86,14 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
               <b className="tabular font-semibold text-paper-danger">
                 {pct(data.limits.livelihood_floor_prob)}
               </b>
-              입니다. 차입 규모를 줄여도 이 부분은 달라지지 않습니다 — 재배 규모나 생활비
+              입니다. 빌리는 금액을 줄여도 이 부분은 달라지지 않습니다 — 재배 규모나 생활비
               기준을 먼저 보셔야 합니다.
             </>
           ) : (
             <>
               제도상 <b className="tabular">{won(data.limits.available)}</b>, 은행 심사
               관행으로 <b className="tabular">{won(data.limits.recommended)}</b>까지 신청할
-              수 있습니다. 농업소득이 해마다 흔들리는 것까지 넣어 계산하면, 2년 연속 상환이
+              수 있습니다. 농사로 번 돈이 해마다 흔들리는 것까지 넣어 계산하면, 2년 연속 상환이
               밀릴 확률이 {pct(data.limits.max_crisis_prob)}를 넘지 않는 금액이 위 금액입니다.
             </>
           )}
@@ -109,15 +109,15 @@ export default function ReportCover({ data }: { data: Diagnosis }) {
       </div>
 
       {/* 계산의 출발점 */}
-      <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-4">
-        <Fact k="연 농업소득" v={won(data.income.annual)} />
+      <dl className="mt-6 grid grid-cols-1 gap-x-8 sm:grid-cols-2 gap-y-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Fact k="한 해 농사로 번 돈" v={won(data.income.annual)} />
         <Fact k="생활비" v={won(data.input.living_cost)} />
         <Fact
-          k="기존 부채 상환"
+          k="기존 대출에 갚는 돈"
           v={data.input.other_debt_service > 0 ? won(data.input.other_debt_service) : "없음"}
         />
         <Fact
-          k="상환에 쓸 수 있는 돈"
+          k="대출을 갚는 데 쓸 돈"
           v={won(data.income.capacity)}
           danger={data.income.capacity <= 0}
         />

@@ -45,7 +45,7 @@ export default function RevenuePage() {
       principal, year,
     })
       .then(setCf)
-      .catch((e) => setError(e instanceof Error ? e.message : "현금흐름 계산 실패"));
+      .catch((e) => setError(e instanceof Error ? e.message : "돈의 흐름 계산 실패"));
   }, [profile, year, principal]);
 
   // 25년 자금지도 — 연 단위 표로는 안 보이는 '언제부터 부담이 커지나' 를 한 장으로.
@@ -63,9 +63,9 @@ export default function RevenuePage() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="수익 전망" lead="농가 정보가 있어야 계산해요." />
+        <PageTitle title="농사 수입과 지출" lead="농가 정보가 있어야 계산해요." />
         <Empty title="농가 정보가 없어요" body="작목과 면적을 먼저 입력해 주세요."
-               cta={{ href: "/app/farm", label: "내 농가 정보 입력" }} />
+               cta={{ href: "/app/farm", label: "내 농장정보 입력" }} />
       </>
     );
   }
@@ -76,22 +76,22 @@ export default function RevenuePage() {
   return (
     <>
       <PageTitle
-        title="수익 전망"
-        lead="연 단위로는 보이지 않는 것이 있어요. 소득은 수확기에 몰려 들어오는데 경영비와 생활비는 매달 나가요. 연간으로 흑자여도 특정 달에는 현금이 마를 수 있어요."
+        title="농사 수입과 지출"
+        lead="수확한 돈이 들어오기 전에도 농사 비용과 생활비는 나가요. 월별로 들어올 돈과 나갈 돈을 확인해 보세요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 
       {diag && cf && (
         <>
-          <Section title="연간 수지">
+          <Section title="한 해 돈 정리">
             <Panel>
-              <div className="grid gap-5 sm:grid-cols-4">
-                <Stat label="총수입" value={won(cf.annual.gross)}
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <Stat label="들어올 돈" value={won(cf.annual.gross)}
                       note={`${cf.crop.cashflow_year}년 소득조사 기준`} />
-                <Stat label="경영비" value={won(cf.annual.operating_cost)} />
-                <Stat label="농업소득" value={won(cf.annual.income)} tone="ok" />
-                <Stat label="연 순현금" value={won(cf.annual_net)}
+                <Stat label="농사 비용" value={won(cf.annual.operating_cost)} />
+                <Stat label="농사로 번 돈" value={won(cf.annual.income)} tone="ok" />
+                <Stat label="한 해 쓰고 남는 돈" value={won(cf.annual_net)}
                       tone={cf.annual_net >= 0 ? "ok" : "danger"}
                       note="생활비·상환까지 뺀 뒤" />
               </div>
@@ -103,7 +103,7 @@ export default function RevenuePage() {
               <Panel>
                 <p className="mb-3 text-[13px] text-gov-ink2">
                   {won(map.principal)} 을 빌렸을 때 해마다 얼마를 갚는지 한 장으로 본 것이에요.
-                  분기점 설명과 연차별 조작은{" "}
+                  분기점 설명과 연도 선택은{" "}
                   <Link href="/app/map" className="text-gov-link underline">AI 농사 자금지도</Link>
                   에 있어요.
                 </p>
@@ -112,22 +112,22 @@ export default function RevenuePage() {
             </Section>
           )}
 
-          <Section title="월별 현금흐름">
+          <Section title="월별 들어오고 나가는 돈">
             <Panel>
               <div className="mb-5 flex flex-wrap items-center gap-4 border-b border-gov-line2 pb-4">
-                <div className="flex items-center gap-1.5">
+                <div className="flex flex-wrap items-center gap-1.5">
                   <span className="text-[13px] font-semibold text-gov-ink2">연차</span>
                   {years.map((y) => (
                     <button key={y} onClick={() => setYear(y)} aria-pressed={year === y}
                             className={`inline-flex min-h-11 items-center rounded-md border px-3 text-[12px] ${
                               year === y ? "border-gov-head bg-gov-soft font-semibold text-gov-head"
                                          : "border-gov-line text-gov-ink2 hover:border-gov-link"}`}>
-                      {y}년차{y === grace + 1 ? " (절벽)" : y <= grace ? " (거치)" : ""}
+                      {y}년차{y === grace + 1 ? " (원금도 갚기 시작)" : y <= grace ? " (이자만)" : ""}
                     </button>
                   ))}
                 </div>
                 <div className="ml-auto flex items-center gap-2">
-                  <label htmlFor="principal" className="text-[13px] font-semibold text-gov-ink2">차입 원금</label>
+                  <label htmlFor="principal" className="text-[13px] font-semibold text-gov-ink2">빌릴 금액</label>
                   <input id="principal" inputMode="numeric"
                          value={principal != null ? Math.round(principal / 10_000) : ""}
                          onChange={(e) => setPrincipal(Number(e.target.value.replace(/[^\d]/g, "")) * 10_000)}
@@ -141,37 +141,37 @@ export default function RevenuePage() {
               <div className="mt-5 grid gap-5 border-t border-gov-line2 pt-4 sm:grid-cols-3">
                 <Stat label="가장 빠듯한 달" value={`${cf.trough_month}월`}
                       tone={cf.working_capital_need > 0 ? "danger" : "plain"} />
-                <Stat label={cf.working_capital_need > 0 ? "필요한 운전자금" : "그때 남는 돈"}
+                <Stat label={cf.working_capital_need > 0 ? "미리 준비할 돈" : "그때 남는 돈"}
                       value={won(cf.working_capital_need > 0 ? cf.working_capital_need : cf.trough_balance)}
                       tone={cf.working_capital_need > 0 ? "danger" : "ok"} />
-                <Stat label="그 해 상환액" value={won(cf.annual.debt_payment)}
-                      note={cf.is_grace_year ? "거치기간 — 이자만" : "원금 + 이자"} />
+                <Stat label="그해 갚을 대출금과 이자" value={won(cf.annual.debt_payment)}
+                      note={cf.is_grace_year ? "이자만 내는 기간" : "원금 + 이자"} />
               </div>
 
               {cf.working_capital_need > 0 && (
                 <div className="mt-4">
-                  <Notice tone="danger" title={`${cf.trough_month}월에 현금이 마릅니다`}>
-                    연간으로는 {cf.annual_net >= 0 ? "흑자" : "적자"}지만, 수확 대금이 들어오기
-                    전까지 {won(cf.working_capital_need)}이 부족해요. 운전자금 대출이나 출하
-                    시기 분산을 미리 검토해 두시는 것이 좋아요.
+                  <Notice tone="danger" title={`${cf.trough_month}월에 돈이 부족할 수 있어요`}>
+                    수확한 돈이 들어오기 전까지 {won(cf.working_capital_need)}이 부족할 수 있어요.
+                    한 해 전체로는 돈이 {cf.annual_net >= 0 ? "남는" : "모자라는"} 계산이에요.
+                    미리 쓸 돈을 마련하거나 판매 시기를 나눌 수 있는지 살펴보세요.
                   </Notice>
                 </div>
               )}
             </Panel>
           </Section>
 
-          <Section title="월별 명세">
-            <div className="overflow-x-auto">
+          <Section title="월별 돈 내역">
+            <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
               <table className="w-full min-w-[680px] border-t border-gov-ink/70 text-[13px]">
                 <thead>
                   <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
                     <th scope="col" className="border-b border-gov-line px-3 py-2.5 text-left">월</th>
-                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">수입</th>
-                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">경영비</th>
+                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">들어올 돈</th>
+                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">농사 비용</th>
                     <th scope="col" className="border-b border-gov-line px-3 py-2.5">생활비</th>
-                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">상환</th>
-                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">순현금</th>
-                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">누적</th>
+                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">갚을 대출금·이자</th>
+                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">그달 쓰고 남는 돈</th>
+                    <th scope="col" className="border-b border-gov-line px-3 py-2.5">그달까지 남는 돈</th>
                   </tr>
                 </thead>
                 <tbody className="tabular text-right">
@@ -210,7 +210,7 @@ export default function RevenuePage() {
 
           <div className="flex gap-2">
             <Btn href="/app/safety">이 조건으로 안전진단 받기</Btn>
-            <Btn href="/app/finance" variant="ghost">적정 차입 규모 보기</Btn>
+            <Btn href="/app/finance" variant="ghost">대출 계획 보기</Btn>
           </div>
         </>
       )}

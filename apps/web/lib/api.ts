@@ -1,6 +1,35 @@
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "") ?? "http://localhost:8000";
 
+export type AuctionItem = {
+  market: string;
+  item: string;
+  price: number | null;
+  unit: string;
+  quantity?: string | number | null;
+  auction_at: string;
+};
+
+export type RealtimeAuction = {
+  status: "ok" | "empty" | "unavailable";
+  source?: string;
+  as_of?: string;
+  crop?: string | null;
+  match_level?: string;
+  average_price?: number | null;
+  average_label?: string | null;
+  message?: string;
+  items: AuctionItem[];
+};
+
+export async function fetchRealtimeAuction(cropId?: string, limit = 5): Promise<RealtimeAuction> {
+  const query = new URLSearchParams({ limit: String(limit) });
+  if (cropId) query.set("crop_id", cropId);
+  const res = await fetch(`${API_BASE}/api/v1/auction/realtime?${query}`, { cache: "no-store" });
+  if (!res.ok) throw new Error((await res.text()) || "경매가를 불러오지 못했습니다");
+  return res.json();
+}
+
 export type Scenario = {
   dscr_median: number;
   dscr_p10: number;

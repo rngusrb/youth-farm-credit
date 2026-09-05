@@ -15,11 +15,11 @@ function verdict(a: Applicant, d: Diagnosis) {
   const safe = headlineLimit(d);
   const s = headlineScenario(d);
   if (d.limits.binding_constraint === "livelihood")
-    return { tone: "danger" as const, label: "경영규모 부족", why: "무차입 상태에서도 생활비 충당이 어렵다" };
+    return { tone: "danger" as const, label: "생활비도 부족", why: "무차입 상태에서도 생활비 충당이 어렵다" };
   if (a.requested <= safe)
     return { tone: "ok" as const, label: "적정", why: `신청액이 감당 범위(${won(safe)}) 안` };
   if (a.requested <= d.limits.recommended)
-    return { tone: "warn" as const, label: "감액 권고", why: `${won(a.requested - safe)} 초과 — 변동성 반영 시 기준 초과` };
+    return { tone: "warn" as const, label: "금액 줄이기 검토", why: `${won(a.requested - safe)} 초과 — 변동성 반영 시 기준 초과` };
   return { tone: "danger" as const, label: "과다", why: `DSCR 기준(${ratio(s?.dscr_median ?? 0)})으로도 부족` };
 }
 
@@ -54,8 +54,8 @@ export default function ApplicantsPage() {
   return (
     <>
       <PageTitle
-        title="차주 목록"
-        lead="신청 건을 한 번에 훑고 감액이 필요한 건을 먼저 봅니다. 각 행의 판정은 그 차주의 조건을 엔진에 넣어 계산한 결과입니다."
+        title="대출 신청자 목록"
+        lead="신청자의 대출 계획을 한눈에 비교해요. 금액을 줄여 살펴볼 필요가 있는 경우도 확인할 수 있어요."
       />
 
       <div className="mb-5">
@@ -67,7 +67,7 @@ export default function ApplicantsPage() {
       </div>
 
       <Panel className="mb-5">
-        <div className="grid gap-6 sm:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
           <Stat label="접수" value={String(APPLICANTS.length)} unit="건" />
           <Stat label="검토 필요" value={busy ? "—" : String(flagged.length)} unit="건"
                 tone={flagged.length ? "warn" : "ok"} />
@@ -78,9 +78,9 @@ export default function ApplicantsPage() {
         </div>
       </Panel>
 
-      <div className="overflow-x-auto">
+      <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
         <table className="w-full min-w-[900px] border-t border-gov-ink/70 text-[13px]">
-          <caption className="sr-only">심사 대기 차주 목록</caption>
+          <caption className="sr-only">심사 대기 대출 신청자 목록</caption>
           <thead>
             <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
               <th scope="col" className="border-b border-gov-line px-3 py-2.5 text-left">접수 · 차주</th>
@@ -153,9 +153,9 @@ export default function ApplicantsPage() {
       </div>
 
       <p className="mt-4 text-[12px] leading-relaxed text-gov-ink3">
-        판정 기준 — <b>적정</b>: 신청액이 위험기반 한도 이내 / <b>감액 권고</b>: DSCR 기준은
+        판정 기준 — <b>적정</b>: 신청액이 위험기반 한도 이내 / <b>금액 줄이기 검토</b>: DSCR 기준은
         넘지만 변동성을 넣으면 초과 / <b>과다</b>: DSCR 기준으로도 부족 /
-        <b> 경영규모 부족</b>: 무차입 상태에서도 생활비 충당이 어려워 감액으로 풀리지 않음.
+        <b> 생활비도 부족</b>: 무차입 상태에서도 생활비 충당이 어려워 감액으로 풀리지 않음.
       </p>
     </>
   );

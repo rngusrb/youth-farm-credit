@@ -8,8 +8,17 @@ from __future__ import annotations
 
 import logging
 import os
+from datetime import datetime, timedelta, timezone
+from urllib.parse import unquote
 
-from fastapi import FastAPI, HTTPException
+import httpx
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+except ImportError:
+    pass
+
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from dataclasses import asdict
@@ -105,6 +114,118 @@ def list_crops() -> dict:
             }
             for c in crops().values()
         ],
+    }
+
+
+@app.get("/api/v1/auction/realtime")
+async def realtime_auction(
+    crop_id: str | None = Query(default=None),
+    limit: int = Query(default=5, ge=1, le=20),
+) -> dict:
+    """선택 작목과 같은 품목의 전국 공영도매시장 최근 경매가."""
+    key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
+    if not key:
+        return {"status": "unavailable", "items": [], "message": "시세 API 키가 설정되지 않았어요."}
+    crop = None
+    if crop_id:
+        try:
+            crop = get_crop(crop_id)
+        except KeyError:
+            raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+
+    # API는 코드·명칭 조건을 모두 지원한다. 작목 매핑에 코드가 없는 경우에도
+    # 별칭으로 중분류를 먼저 찾고, 결과가 없으면 대분류로 다시 찾는다.
+    aliases = [crop.name] if crop else []
+    if crop:
+        aliases.extend(crop.aliases)
+    aliases = list(dict.fromkeys(aliases))
+    endpoint = "https://apis.data.go.kr/B552845/katRealTime2/trades2"
+    rows: list[dict] = []
+    average_rows: list[dict] = []
+    matched_by = ""
+    latest = datetime.now().date()
+    date_params = {
+        # 실시간 경매 API는 최근 한 달만 제공하며, 날짜 조건이 없으면
+        # 운영 환경에서 빈 결과를 반환하는 경우가 있다.
+        "cond[scsbd_dt::GTE]": (latest - timedelta(days=30)).strftime("%Y-%m-%d"),
+        "cond[scsbd_dt::LTE]": latest.strftime("%Y-%m-%d"),
+    }
+    async with httpx.AsyncClient(timeout=8.0) as client:
+        for field, level in (("gds_mclsf_nm", "중분류"), ("gds_lclsf_nm", "대분류")):
+            if not aliases:
+                break
+            params = {
+                "serviceKey": unquote(key), "returnType": "json",
+                "pageNo": 1, "numOfRows": 100,
+                f"cond[{field}::LIKE]": aliases[0].replace("(시설,수경)", "").replace("(시설,토경)", ""),
+            }
+            params.update(date_params)
+            try:
+                response = await client.get(endpoint, params=params)
+                response.raise_for_status()
+                payload = response.json()
+            except (httpx.HTTPError, ValueError):
+                continue
+            body = payload.get("response", {}).get("body", {}) if isinstance(payload, dict) else {}
+            raw = body.get("items", {}).get("item", []) if isinstance(body, dict) else []
+            if isinstance(raw, dict):
+                raw = [raw]
+            if raw:
+                average_rows = raw
+                rows, matched_by = sorted(raw, key=lambda r: str(r.get("scsbd_dt") or r.get("trd_clcln_ymd") or ""), reverse=True)[:limit], level
+                break
+        # 명칭 LIKE 조건을 제공하지 않는 운영 버전도 있어 한 번 더 넓게 읽고
+        # 품목명으로 걸러낸다. 이 경우에도 전국 자료 안에서 같은 품목만 남긴다.
+        if not rows and aliases:
+            try:
+                response = await client.get(endpoint, params={
+                    "serviceKey": unquote(key), "returnType": "json",
+                    "pageNo": 1, "numOfRows": 100,
+                    **date_params,
+                })
+                response.raise_for_status()
+                payload = response.json()
+                body = payload.get("response", {}).get("body", {})
+                raw = body.get("items", {}).get("item", [])
+                if isinstance(raw, dict):
+                    raw = [raw]
+                needles = [a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases]
+                average_rows = [r for r in raw if any(n and n in " ".join(str(r.get(k, "")) for k in ("gds_lclsf_nm", "gds_mclsf_nm", "gds_sclsf_nm")) for n in needles)]
+                rows = sorted(average_rows, key=lambda r: str(r.get("scsbd_dt") or r.get("trd_clcln_ymd") or ""), reverse=True)[:limit]
+                if rows:
+                    matched_by = "품목명"
+            except (httpx.HTTPError, ValueError):
+                pass
+
+    def clean(row: dict) -> dict:
+        price = row.get("scsbd_prc")
+        try:
+            price = int(float(str(price).replace(",", "")))
+        except (TypeError, ValueError):
+            price = None
+        return {
+            "market": row.get("whsl_mrkt_nm") or row.get("whsl_mrkt_cd") or "도매시장",
+            "item": row.get("gds_sclsf_nm") or row.get("gds_mclsf_nm") or row.get("gds_lclsf_nm") or "",
+            "price": price,
+            "unit": row.get("unit_nm") or row.get("pkg_nm") or "",
+            "quantity": row.get("qty") or row.get("unit_qty"),
+            "auction_at": row.get("scsbd_dt") or row.get("trd_clcln_ymd") or "",
+        }
+
+    prices = []
+    for row in average_rows:
+        try:
+            value = float(str(row.get("scsbd_prc")).replace(",", ""))
+            if value > 0:
+                prices.append(value)
+        except (TypeError, ValueError):
+            continue
+    return {
+        "status": "ok" if rows else "empty", "source": "공공데이터포털 농산물 실시간 경매가",
+        "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name if crop else None,
+        "match_level": matched_by, "items": [clean(r) for r in rows],
+        "average_price": round(sum(prices) / len(prices)) if prices else None,
+        "average_label": "최근 30일 평균" if prices else None,
     }
 
 

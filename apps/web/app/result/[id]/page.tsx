@@ -133,7 +133,7 @@ export default function ResultPage() {
           <ReportSection
             n={next()}
             title={`${data.product.grace_years + 1}년차부터 왜 어려울까요`}
-            lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치가 끝나는 ${data.product.grace_years + 1}년차에 원금이 붙으면서 연 상환액이 최댓값을 찍고, 이후 매년 줄어듭니다. 즉 ${data.product.grace_years + 1}년차는 우연히 위험한 해가 아니라 구조적으로 가장 무거운 해입니다.`}
+            lead={`처음 ${data.product.grace_years}년은 이자만 냅니다. 거치가 끝나는 ${data.product.grace_years + 1}년차에 원금이 붙으면서 한 해 갚을 돈이 최댓값을 찍고, 이후 매년 줄어듭니다. 즉 ${data.product.grace_years + 1}년차는 우연히 위험한 해가 아니라 구조적으로 가장 무거운 해입니다.`}
             aside={
               <div className="inline-flex rounded-lg border border-paper-rule p-0.5">
                 {(
@@ -181,13 +181,13 @@ export default function ResultPage() {
                   {manwon(scenario.amort_payment_last)}
                 </span>{" "}
                 가 됩니다. 연리 {(data.product.rate * 100).toFixed(1)}% ·{" "}
-                {data.product.amort_years}년 원금 균등분할.
+                {data.product.amort_years}년 동안 원금을 같은 금액으로 나눠 갚기.
               </p>
             </div>
 
             <div className="mt-4 rounded-xl border border-paper-rule bg-paper-panel p-5">
               <h3 className="mb-4 flex items-center text-sm font-semibold text-paper-ink">
-                상환능력비율 (DSCR)
+                갚을 돈의 여유 (DSCR)
                 <AssumedBadge
                   source={data.sigma_source}
                   assumedShare={data.sigma_assumed_share}
@@ -242,7 +242,7 @@ export default function ResultPage() {
           lead={
             note?.actions.length
               ? undefined
-              : "차입 규모를 줄이거나, 재배 규모를 키우거나, 제도의 유예 장치를 미리 확인해 두는 세 갈래가 있습니다."
+              : "빌리는 금액을 줄이거나, 재배 규모를 키우거나, 제도의 유예 장치를 미리 확인해 두는 세 갈래가 있습니다."
           }
         >
           {note && (
@@ -291,7 +291,7 @@ export default function ResultPage() {
               </p>
             </div>
             <div>
-              <dt className="text-xs text-paper-ink3">재해 시 상환유예</dt>
+              <dt className="text-xs text-paper-ink3">재해 때 갚는 날 미루기</dt>
               <dd className="mt-1 text-sm leading-relaxed text-paper-ink2">
                 피해율 30~50% 1년, 50% 이상 2년 연기. 할부유예는 최대{" "}
                 {data.assumptions.installment_defer_max_count}회.
@@ -339,7 +339,7 @@ export default function ResultPage() {
                   {data.as_of?.income_survey_year ? ` ${data.as_of.income_survey_year}년` : ""} 10a당
                   소득에 면적을 비례 적용. 규모의 경제는 반영되어 있지 않습니다.
                 </Assumption>
-                <Assumption k="소득 변동성">
+                <Assumption k="소득이 흔들리는 정도">
                   σ={data.sigma.toFixed(2)} —{" "}
                   {data.sigma_source === "PERSONAL" ? (
                     <>입력하신 소득 이력에서 직접 계산했습니다.</>

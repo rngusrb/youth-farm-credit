@@ -4,7 +4,7 @@ import Link from "next/link";
 /** 정부 포털 공통 조각. 각진 모서리, 표 중심, 좌측 컬러바. */
 
 export function Page({ children }: { children: React.ReactNode }) {
-  return <main className="mx-auto max-w-6xl px-4 py-9 sm:px-6 lg:py-11">{children}</main>;
+  return <main className="mx-auto w-full min-w-0 max-w-6xl px-4 py-6 sm:px-6 sm:py-9 lg:py-11">{children}</main>;
 }
 
 export function Crumb({ trail }: { trail: { label: string; href?: string }[] }) {
@@ -26,7 +26,7 @@ export function PageTitle({ title, lead, aside }: { title: string; lead?: string
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b-2 border-gov-head pb-5">
       <div className="min-w-0">
-        <h1 className="text-[30px] font-extrabold leading-[1.15] tracking-[-0.025em] text-gov-ink">{title}</h1>
+        <h1 className="text-[25px] sm:text-[30px] font-extrabold leading-[1.15] tracking-[-0.025em] text-gov-ink">{title}</h1>
         {lead && <p className="mt-2.5 max-w-3xl text-[15px] leading-[1.75] text-gov-ink2">{lead}</p>}
       </div>
       {aside}
@@ -41,7 +41,7 @@ export function Section({ title, action, children, id }: {
 }) {
   return (
     <section id={id} className="mb-11 scroll-mt-24">
-      <div className="mb-4 flex items-baseline justify-between gap-3">
+      <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <h2 className="sec-title">{title}</h2>
         {action}
       </div>
@@ -51,7 +51,7 @@ export function Section({ title, action, children, id }: {
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-lg border border-gov-line bg-white p-6 shadow-card sm:p-7 ${className}`}>{children}</div>;
+  return <div className={`min-w-0 rounded-lg border border-gov-line bg-white p-4 shadow-card sm:p-6 lg:p-7 ${className}`}>{children}</div>;
 }
 
 /** 정의형 표 — 정부 사이트의 기본 정보 표시 단위 */
@@ -60,7 +60,7 @@ export type DefRow = [string, React.ReactNode, { src?: SourceKind; note?: string
 
 export function DefTable({ rows }: { rows: DefRow[] }) {
   return (
-    <table className="w-full border-t border-gov-ink/70 text-[14px]">
+    <table className="definition-table w-full border-t border-gov-ink/70 text-[14px]">
       <tbody>
         {rows.map(([k, v, meta]) => (
           <tr key={k} className="border-b border-gov-line2">
@@ -104,12 +104,12 @@ export function Stat({ label, value, unit, tone = "plain", note, src, srcNote }:
     warn: "text-gov-warn", danger: "text-gov-point",
   }[tone];
   return (
-    <div>
-      <div className="text-[12px] font-medium text-gov-ink3">
+    <div className="stat min-w-0">
+      <div className="text-[14px] font-medium text-gov-ink3">
         {label}
         {src && <SourceTag kind={src} note={srcNote} />}
       </div>
-      <div className={`tabular mt-1 text-[26px] font-extrabold leading-none ${color}`}>
+      <div className={`stat-value tabular mt-2 text-[24px] sm:text-[26px] font-extrabold leading-tight ${color}`}>
         {value}{unit && <span className="ml-1 text-[14px] font-semibold text-gov-ink3">{unit}</span>}
       </div>
       {note && <div className="mt-1.5 text-[12px] leading-snug text-gov-ink3">{note}</div>}
@@ -127,8 +127,8 @@ export function Notice({ tone = "info", title, children }: {
   }[tone];
   return (
     <div className={`rounded-r-lg border-l-4 ${cls} px-4 py-3`}>
-      {title && <p className="mb-1 text-[13px] font-bold text-gov-ink">{title}</p>}
-      <div className="text-[12px] leading-relaxed text-gov-ink2">{children}</div>
+      {title && <p className="mb-1 text-[14px] font-bold text-gov-ink">{title}</p>}
+      <div className="text-[14px] leading-relaxed text-gov-ink2">{children}</div>
     </div>
   );
 }
@@ -156,7 +156,7 @@ export function Btn({ href, onClick, variant = "primary", type = "button", disab
   const cls = variant === "primary"
     ? "bg-gov-head text-white shadow-sm hover:bg-gov-navy disabled:opacity-50"
     : "rounded-lg border border-gov-line bg-white text-gov-ink2 hover:border-gov-link hover:text-gov-head";
-  const base = `inline-flex min-h-11 items-center justify-center rounded-md px-4 text-[13px] font-semibold ${cls}`;
+  const base = `inline-flex min-h-12 max-w-full items-center justify-center rounded-md px-4 py-2.5 text-center text-[14px] font-semibold ${cls}`;
   return href
     ? <Link href={href} className={base}>{children}</Link>
     : <button type={type} onClick={onClick} disabled={disabled} className={base}>{children}</button>;

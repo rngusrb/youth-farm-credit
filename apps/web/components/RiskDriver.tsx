@@ -22,7 +22,7 @@ const PRESCRIPTION: Record<string, { label: string; what: string; moves: string[
     ],
   },
   cost: {
-    label: "경영비",
+    label: "농사 비용",
     what: "매출보다 비용 쪽 변동이 소득을 흔듭니다.",
     moves: [
       "난방·전기 등 에너지 계약 조건 점검하기",
@@ -47,7 +47,7 @@ export default function RiskDriver({
   const bars = [
     { key: "가격", value: factors.share_price, color: "bg-paper-danger" },
     { key: "수확량", value: factors.share_quantity, color: "bg-paper-accent" },
-    { key: "경영비", value: factors.share_cost, color: "bg-paper-ink3" },
+    { key: "농사 비용", value: factors.share_cost, color: "bg-paper-ink3" },
   ];
   const scale = Math.max(1, ...bars.map((b) => Math.abs(b.value)));
   const sum = factors.share_price + factors.share_quantity + factors.share_cost;
@@ -59,7 +59,7 @@ export default function RiskDriver({
     <section className="rounded-xl border border-paper-rule bg-paper-panel p-5">
       <p className="text-xs leading-relaxed text-paper-ink3">
         {cropName}의 {factors.years[0]}~{factors.years[1]}년 {factors.n}개년 실적을
-        가격·수확량·경영비로 분해했습니다.
+        가격·수확량·농사 비용로 분해했습니다.
       </p>
 
       <div className="mt-4 space-y-2.5">

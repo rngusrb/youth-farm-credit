@@ -47,7 +47,7 @@ export default function FarmPage() {
           );
         }
       })
-      .catch(() => setError("백엔드에 연결하지 못했어요."));
+      .catch(() => setError("서비스에 연결하지 못했어요. 잠시 후 다시 시도해 주세요."));
   }, []);
 
   const parsedHistory = history
@@ -102,8 +102,8 @@ export default function FarmPage() {
   return (
     <>
       <PageTitle
-        title="내 농장 정보 입력"
-        lead="한 번 넣어 두면 모든 화면이 이 값으로 계산해요. 로그인 계정과 무관하게 이 브라우저에만 저장되며 서버로 보내지 않아요."
+        title="내 농장정보 입력"
+        lead="농장 현황과 올해 계획을 알려 주세요. 이 브라우저에 저장해 두고, 분석할 때 필요한 정보를 서버로 보내 계산해요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -111,17 +111,17 @@ export default function FarmPage() {
       <Section title="말로 입력하기">
         <Panel>
           <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
-            항목을 하나씩 채우기 번거로우면 문장으로 적어 보세요. 알아들은 칸만 채우고,
-            못 알아들은 칸은 비워 둡니다 — 지어내지 않아요.
+            농장 상황을 한 문장으로 적어 보세요. 알아볼 수 있는 항목을 먼저 채워 드려요.
+            채워진 내용은 아래에서 확인해 주세요.
           </p>
-          <div className="flex gap-2">
-            <label htmlFor="sentence" className="sr-only">농가 상황 문장</label>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <label htmlFor="sentence" className="sr-only">농장 상황 한 문장</label>
             <input id="sentence" value={sentence} onChange={(e) => setSentence(e.target.value)}
                    placeholder="예: 딸기 수경 1200평 하고 있고 생활비는 한 해 3천만원쯤 써요"
                    className={field} />
             <button type="button" onClick={() => void readSentence()} disabled={reading}
                     className="shrink-0 rounded-md rounded-lg border border-gov-line bg-white px-4 text-[13px] font-semibold text-gov-ink2 hover:border-gov-link hover:text-gov-head disabled:opacity-50">
-              {reading ? "읽는 중" : "읽기"}
+              {reading ? "읽는 중" : "입력 도와주기"}
             </button>
           </div>
           {readNote && <p className="mt-2.5 text-[12px] text-gov-link">{readNote}</p>}
@@ -129,16 +129,16 @@ export default function FarmPage() {
       </Section>
 
       <form onSubmit={submit}>
-        <Section title="경영 정보">
+        <Section title="현재 농장 살림">
           <Panel>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label className={label} htmlFor="crop">
-                  작목 <span className="text-gov-point">*</span>
+                  키우는 작물 <span className="text-gov-point">*</span>
                 </label>
                 <select id="crop" value={cropId} onChange={(e) => setCropId(e.target.value)} className={field}>
                   {crops.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name} · 10a당 소득 {won(c.income_per_10a)}</option>
+                    <option key={c.id} value={c.id}>{c.name} · 10a당 번 돈 {won(c.income_per_10a)}</option>
                   ))}
                 </select>
               </div>
@@ -150,12 +150,12 @@ export default function FarmPage() {
                        onChange={(e) => setPyeong(e.target.value)} placeholder="1200" className={field} />
               </div>
               <div>
-                <label className={label} htmlFor="living">연 생활비 (만원)</label>
+                <label className={label} htmlFor="living">한 해 생활비 (만원)</label>
                 <input id="living" inputMode="numeric" value={living}
                        onChange={(e) => setLiving(e.target.value)} className={field} />
               </div>
               <div>
-                <label className={label} htmlFor="debt">기존 연 부채상환 (만원)</label>
+                <label className={label} htmlFor="debt">기존 대출에 한 해 갚는 돈 (만원)</label>
                 <input id="debt" inputMode="numeric" value={debt}
                        onChange={(e) => setDebt(e.target.value)} placeholder="없으면 비워 두세요" className={field} />
               </div>
@@ -164,7 +164,7 @@ export default function FarmPage() {
                 <select id="product" value={productId} onChange={(e) => setProductId(e.target.value)} className={field}>
                   {products.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.name} · {p.grace_years}년거치 {p.amort_years}년
+                      {p.name} · {p.grace_years}년 동안 이자만 · {p.amort_years}년
                     </option>
                   ))}
                 </select>
@@ -173,14 +173,14 @@ export default function FarmPage() {
           </Panel>
         </Section>
 
-        <Section title="소득 이력 (선택)">
+        <Section title="지난해까지 번 돈 (선택)">
           <Panel>
             <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
-              연도순 농업소득을 만원 단위로, 쉼표로 구분해 넣어 주세요. 3개년 이상이면 작목
+              연도순 농사로 번 돈을 만원 단위로, 쉼표로 구분해 넣어 주세요. 3개년 이상이면 작목
               평균 대신 <b className="text-gov-ink">내 농가의 실제 소득과 변동성</b>으로 계산해요
               — 평균보다 잘 벌면 한도가 올라가고, 못 벌면 내려가요.
             </p>
-            <label htmlFor="history" className="sr-only">연도순 농업소득</label>
+            <label htmlFor="history" className="sr-only">연도순 농사로 번 돈</label>
             <textarea id="history" rows={3} value={history} onChange={(e) => setHistory(e.target.value)}
                       placeholder="4200, 3800, 5100, 4400" className={`${field} resize-none`} />
             <div className="mt-3 flex flex-wrap items-center gap-2">

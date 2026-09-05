@@ -81,7 +81,8 @@ python3 scripts/ui_check.py all --all-viewports
   **상태 하나**로 쥔다. 사고 이력: 상단 메뉴를 `group-hover` 또는
   `group-focus-within` 으로 열었더니, 클릭해 포커스가 남은 메뉴와 hover 한 메뉴가
   **동시에 떠서 겹쳤다.** 버튼엔 클릭 핸들러조차 없었다. 닫는 길(Escape·바깥 클릭·
-  마우스 이탈·페이지 이동)도 같이 둔다 (`apps/web/tests/header-menu.test.tsx`).
+  마우스 이탈·페이지 이동)도 같이 둔다 (`apps/web/tests/header-menu.test.tsx
+apps/web/tests/mobile-menu.test.tsx`).
 - **상품을 추천하지 않는다.** 이 프로젝트가 하지 않기로 한 것이다 (CLAUDE.md —
   대출 알선·상품 추천 없음). 어느 자금이 유리하다는 판정도 하지 않는다. 조건과 숫자를
   나란히 놓는 데서 멈춘다 (`apps/web/tests/why-this-loan.test.ts`).
@@ -232,6 +233,7 @@ apps/web/tests/amount-compare.test.ts
 apps/web/tests/why-this-loan.test.ts
 apps/web/tests/report-diff.test.ts
 apps/web/tests/header-menu.test.tsx
+apps/web/tests/mobile-menu.test.tsx
 apps/web/tests/farmer-steps.test.ts
 ```
 | `app/app/levers/page.tsx` | 「얼마까지 받으려면」 — 반사실 탐색 결과와 **탐색 범위**를 함께 표시 |
@@ -239,3 +241,17 @@ apps/web/tests/farmer-steps.test.ts
 | `app/app/checkup/page.tsx` | 「AI 농가 건강검진」(2단계) — 소득 출처·평균 대비·작목 특성·계획 비교 |
 | `app/app/map/page.tsx` | 「AI 농사 자금지도」(3단계) — 25년 지도 + 월별 현금흐름 |
 | `components/IncomeSource.tsx` | 이 진단의 '내 소득'이 실적인지 추정인지 밝힌다 |
+
+
+## 2026-09-05 — 쉬운 문구와 반응형 화면
+
+사용자 요청으로 전체 화면은 일상어와 짧은 안내 문장을 우선한다. 기존 영역별 말투 규칙보다 이 요청을 우선한다. 정식 사업명과 인용 원문은 유지하며, 전문용어는 쉬운 설명을 함께 둔다. 데이터 처리·API·계산식은 이번 변경 범위 밖이다.
+
+- **뜻이 다른 돈을 같은 말로 바꾸지 않는다.** 농업소득은 수입에서 농사 비용을 뺀 돈이며, 상환여력은 통장 잔액이 아니다. 정책 대출을 갚지 않는 지원금으로 바꾸지 않는다.
+- **페이지 전체 가로 넘침을 숨기지 않는다.** 표·긴 차트만 포커스 가능한 내부 스크롤로 두고, 요약 숫자·입력·버튼은 화면 안에 배치한다.
+- **모바일 메뉴를 긴 한 줄로만 두지 않는다.** 공개·업무 메뉴는 펼침 버튼과 열린 상태 안내를 제공하며 이동 후 닫는다.
+
+점검 이력: 기존 모바일 업무 메뉴는 모든 상세 메뉴가 한 줄에 있었고, 수입·지출 화면의 연도 버튼은 줄바꿈 없이 배치돼 있었다. 문구 치환 중 ‘농사 비용를’ 같은 조사가 생겨 문장 단위 재검토로 바로잡았다. 다음 문구 작업도 단어 치환 후 반드시 문장을 다시 읽는다.
+
+검증 명령: `NODE_OPTIONS=--no-experimental-webstorage npm run test:harness` (apps/web), `NODE_OPTIONS=--no-experimental-webstorage apps/api/.venv/bin/python scripts/harness.py all` (루트), `apps/api/.venv/bin/python scripts/ui_check.py all --all-viewports`.
+Node 26의 내장 Web Storage가 jsdom 저장소와 충돌하는 로컬 환경에서는 위 옵션으로 테스트한다. 제품 저장 동작을 바꾸는 옵션은 아니다.

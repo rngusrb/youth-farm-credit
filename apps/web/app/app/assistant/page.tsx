@@ -30,8 +30,8 @@ const EXAMPLES = [
 
 const TOOL_LABEL: Record<string, string> = {
   get_crop: "작목 데이터 조회",
-  diagnose: "상환여력·한도 계산",
-  cashflow: "월별 현금흐름",
+  diagnose: "갚는 데 쓸 돈·한도 계산",
+  cashflow: "월별 들어오고 나가는 돈",
   stress: "스트레스 시나리오",
   solve_for: "조건 역산(반사실 탐색)",
   search_regulation: "시행지침 검색",
@@ -60,7 +60,7 @@ function TraceList({ trace, budget, method }: {
         ))}
       </ul>
       <p className="mt-2 text-[12px] text-gov-ink3">
-        계획 {method === "fallback" ? "규칙기반" : "AI"} · 언어모델 {budget.llm_calls}회 · 도구 {budget.tool_calls}회
+        계획 {method === "fallback" ? "기본 안내" : "AI"} · 언어모델 {budget.llm_calls}회 · 도구 {budget.tool_calls}회
       </p>
     </details>
   );
@@ -77,9 +77,9 @@ function Facts({ results }: { results: Record<string, any> }) {
       {d && (
         <div className="grid gap-3 sm:grid-cols-3">
           {[
-            ["권장 차입", won(d.limits.risk_based)],
-            ["상환 가용액", won(d.income.capacity)],
-            ["감내 기준", pct(d.limits.max_crisis_prob)],
+            ["권장 대출금", won(d.limits.risk_based)],
+            ["대출을 갚는 데 쓸 돈", won(d.income.capacity)],
+            ["위험 기준", pct(d.limits.max_crisis_prob)],
           ].map(([k, v]) => (
             <div key={k} className="rounded-lg border border-gov-line bg-gov-sunk px-3 py-2">
               <p className="text-[12px] text-gov-ink2">{k}</p>
@@ -145,7 +145,7 @@ export default function AssistantPage() {
               living_cost: p.livingCost,
               other_debt_service: p.otherDebtService,
               // 실적을 안 보내면 상담사만 작목 통계 추정치로 계산한다 —
-              // 건강검진·자금지도는 실적을 쓰는데 여기만 달라져서 상환 가용액이
+              // 건강검진·자금지도는 실적을 쓰는데 여기만 달라져서 대출을 갚을 가용액이
               // 1,833만원 / 3,304만원 두 값으로 갈렸다 (2026-09-02).
               ...(p.incomeHistory?.length ? { income_history: p.incomeHistory } : {}),
             }
@@ -163,7 +163,7 @@ export default function AssistantPage() {
     <>
       <PageTitle
         title="AI 농가 상담사"
-        lead="질문을 보고 필요한 계산 도구를 골라 실행합니다. 숫자는 계산 엔진이 만들고, 설명에 쓰인 수치는 엔진 값과 대조해 어긋나면 걸러냅니다."
+        lead="진단 결과에서 궁금한 점을 물어보세요. 빌릴 돈이나 농장 면적을 바꾸면 어떻게 달라질지도 함께 계산해요."
       />
 
       <div className="space-y-4">
@@ -187,17 +187,17 @@ export default function AssistantPage() {
         {turns.map((t, i) =>
           t.role === "user" ? (
             <div key={i} className="flex justify-end">
-              <p className="max-w-[80%] rounded-lg bg-gov-soft px-4 py-2.5 text-[14px] text-gov-ink">{t.text}</p>
+              <p className="max-w-full sm:max-w-[80%] rounded-lg bg-gov-soft px-4 py-2.5 text-[14px] text-gov-ink">{t.text}</p>
             </div>
           ) : t.role === "error" ? (
             <Notice key={i} tone="warn" title="처리하지 못했어요">{t.text}</Notice>
           ) : t.answer.kind === "ask" ? (
             <Panel key={i}>
-              <Badge tone="info">되묻기</Badge>
+              <Badge tone="info">조금 더 알려 주세요</Badge>
               <p className="mt-2 text-[15px] text-gov-head">{t.answer.question}</p>
               <p className="mt-1 text-[13px] text-gov-ink2">
                 답을 지어내지 않으려고 여쭤봐요.{" "}
-                <Link href="/app/farm" className="text-gov-link underline">내 농가 정보</Link>
+                <Link href="/app/farm" className="text-gov-link underline">내 농장정보</Link>
                 에 넣어 두시면 다음부터 안 물어봅니다.
               </p>
               <TraceList trace={t.answer.trace} budget={t.answer.budget} method={t.answer.method} />
@@ -206,11 +206,11 @@ export default function AssistantPage() {
             <Panel key={i}>
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <Badge tone={t.answer.method === "fallback" ? "plain" : "info"}>
-                  {t.answer.method === "fallback" ? "규칙기반" : "AI 상담"}
+                  {t.answer.method === "fallback" ? "기본 안내" : "AI 상담"}
                 </Badge>
                 {t.answer.numbers_used.length > 0 && (
                   <span className="text-[12px] text-gov-ink3">
-                    수치 {t.answer.numbers_used.length}개를 엔진 값과 대조했어요
+                    수치 {t.answer.numbers_used.length}개를 계산 결과와 확인했어요
                   </span>
                 )}
               </div>
@@ -223,7 +223,7 @@ export default function AssistantPage() {
 
               {t.answer.dropped.length > 0 && (
                 <p className="mt-3 text-[12px] text-gov-warn">
-                  숫자가 엔진 값과 맞지 않아 {t.answer.dropped.length}문장을 뺐어요.
+                  숫자가 계산 결과와 달라 {t.answer.dropped.length}문장을 뺐어요.
                 </p>
               )}
 
@@ -249,9 +249,9 @@ export default function AssistantPage() {
 
       <form
         onSubmit={(e) => { e.preventDefault(); void send(q); }}
-        className="mt-4 flex gap-2"
+        className="mt-4 flex flex-col gap-2 sm:flex-row"
       >
-        <label className="flex-1">
+        <label className="min-w-0 flex-1">
           <span className="sr-only">질문</span>
           <input
             value={q}

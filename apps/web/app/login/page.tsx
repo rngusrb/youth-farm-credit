@@ -97,10 +97,10 @@ function LoginForm() {
           <h2 className="sec-title mb-3">로그인하면 이런 걸 볼 수 있습니다</h2>
           <ul className="space-y-2.5 text-[13px] leading-relaxed text-gov-ink2">
             {[
-              ["수익 전망", "작목·면적을 넣으면 예상 매출과 월별 현금흐름, 운전자금이 부족해지는 달을 짚습니다."],
-              ["금융 안전진단", "가격이 20% 떨어지거나 생산량이 30% 줄면 상환이 가능한지 시나리오별로 계산합니다."],
-              ["맞춤 금융지원", "제도상 신청 가능한 한도가 아니라, 실제로 감당할 수 있는 차입 규모를 역산합니다."],
-              ["구제제도", "거치 후반기에 상환 위기가 예상되면 연체 전에 이용 가능한 제도를 안내합니다."],
+              ["농사 수입과 지출", "키우는 작물과 면적을 넣으면 들어올 돈과 나갈 돈을 월별로 볼 수 있어요."],
+              ["금융 안전진단", "가격이 20% 떨어지거나 수확량이 30% 줄어도 대출을 갚을 수 있을지 계산해요."],
+              ["맞춤 금융지원", "제도상 신청 가능한 한도가 아니라, 실제로 감당할 수 있는 빌리는 금액을 역산합니다."],
+              ["어려울 때 받을 도움", "대출 갚기가 어려워지기 전에 받을 수 있는 도움을 찾아봐요."],
             ].map(([k, v]) => (
               <li key={k} className="flex gap-2.5">
                 <span className="mt-[3px] h-1.5 w-1.5 shrink-0 bg-gov-head" aria-hidden />
@@ -115,10 +115,10 @@ function LoginForm() {
         <Panel>
           <h2 className="sec-title mb-3">로그인 없이도 이용할 수 있습니다</h2>
           <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
-            제도 근거 검색과 작목 데이터는 누구나 볼 수 있습니다.
+            지원 제도 찾아보기와 작목 데이터는 누구나 볼 수 있습니다.
           </p>
           <div className="flex flex-wrap gap-2">
-            <Btn href="/policy" variant="ghost">제도 근거 검색</Btn>
+            <Btn href="/policy" variant="ghost">지원 제도 찾아보기</Btn>
             <Btn href="/crops" variant="ghost">작목 데이터</Btn>
             <Btn href="/faq" variant="ghost">자주 묻는 질문</Btn>
           </div>
@@ -134,7 +134,7 @@ export default function LoginPage() {
       <Crumb trail={[{ label: "로그인" }]} />
       <PageTitle
         title="로그인"
-        lead="농가용과 금융기관용 화면을 이용하려면 로그인이 필요합니다."
+        lead="농가용 또는 금융기관용 체험 계정으로 시작해 보세요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>

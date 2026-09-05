@@ -17,7 +17,7 @@ export default function UtilBar() {
   return (
     <div className="no-print bg-gov-navy text-[12px] text-white/90">
       <div className="mx-auto flex min-h-11 max-w-6xl items-center gap-4 px-4">
-        <span className="hidden sm:inline">농림축산식품 정책자금 상환설계 서비스</span>
+        <span className="hidden sm:inline">농가의 대출 계획을 돕는 서비스</span>
         <div className="ml-auto flex items-center gap-3">
           <Link href="/sitemap"
                 className="inline-flex min-h-11 min-w-11 items-center justify-center px-1 hover:text-white">
