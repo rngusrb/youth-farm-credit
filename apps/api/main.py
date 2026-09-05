@@ -170,7 +170,7 @@ async def realtime_auction(
         recent = await market_recent(crop_id, 1)
         if recent.get("items"):
             r = recent["items"][0]
-            return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "서울가락", "date": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "month_price": r.get("month_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
+            return {"status": "ok", "crop": crop.name, "items": [{"item": crop.name, "market": "서울가락", "auction_at": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "month_price": r.get("month_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
         # recent 응답이 비어도 perDay 일별 가격으로 기간 비교를 계산한다.
         try:
             rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=500), date.today())
