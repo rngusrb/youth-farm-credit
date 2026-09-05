@@ -30,16 +30,33 @@ const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
   }));
 };
 
-export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string } = {}) {
+export function QuarterlyAuctionChart({ series }: { series?: RealtimeAuction["daily_series"] }) {
+  const quarterly = quarterSeries(series);
+  if (!quarterly.length) return <p className="text-[12px] text-gov-ink3">분기별 원천 가격 자료를 아직 모으고 있어요.</p>;
+  return (
+    <div className="h-44 w-full min-w-0">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={quarterly} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
+          <XAxis dataKey="quarter" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={18} />
+          <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
+          <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "분기 평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
+          <Line type="monotone" dataKey="price" stroke="#7a4e2d" strokeWidth={2.5} dot={{ r: 3, fill: "#7a4e2d" }} activeDot={{ r: 5 }} />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   useEffect(() => {
     const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
-    fetchRealtimeAuction(id, 5, !compact).then(setData).catch(() => setData({ status: "empty", items: [] }));
+    fetchRealtimeAuction(id, 5, !compact).then((d) => { setData(d); onData?.(d); }).catch(() => setData({ status: "empty", items: [] }));
     if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => setCompare({ status: "empty", items: [] }));
-    const timer = window.setInterval(() => { fetchRealtimeAuction(id, 5, !compact).then(setData).catch(() => {}); if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 300_000);
+    const timer = window.setInterval(() => { fetchRealtimeAuction(id, 5, !compact).then((d) => { setData(d); onData?.(d); }).catch(() => {}); if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 300_000);
     return () => window.clearInterval(timer);
   }, [cropIdOverride, showComparison]);
 
@@ -106,21 +123,12 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            {data.daily_series?.length ? (() => {
+            {showQuarterly && data.daily_series?.length ? (() => {
               const quarterly = quarterSeries(data.daily_series);
               return quarterly.length ? (
                 <div className="mt-5 border-t border-gov-line2 pt-4">
                   <p className="mb-2 text-[13px] font-semibold text-gov-ink">분기별 평균 낙찰가 흐름</p>
-                  <div className="h-44 w-full min-w-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={quarterly} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
-                        <XAxis dataKey="quarter" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={18} />
-                        <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
-                        <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "분기 평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
-                        <Line type="monotone" dataKey="price" stroke="#7a4e2d" strokeWidth={2.5} dot={{ r: 3, fill: "#7a4e2d" }} activeDot={{ r: 5 }} />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
+                  <QuarterlyAuctionChart series={data.daily_series} />
                   <p className="mt-1 text-[11px] text-gov-ink3">일별 자료가 있는 분기만 표시해요.</p>
                 </div>
               ) : null;
