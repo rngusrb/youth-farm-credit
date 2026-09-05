@@ -148,6 +148,16 @@ async def realtime_auction(
     latest = datetime.now().date()
     date_params = {"cond[trd_clcln_ymd::EQ]": latest.strftime("%Y-%m-%d")}
     async with httpx.AsyncClient(timeout=8.0) as client:
+        if not aliases:
+            try:
+                response = await client.get(endpoint, params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": limit, **date_params})
+                response.raise_for_status()
+                raw = response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+                if isinstance(raw, dict): raw = [raw]
+                average_rows = rows = raw[:limit]
+                matched_by = "전국"
+            except (httpx.HTTPError, ValueError):
+                pass
         for field, level in (("gds_mclsf_nm", "중분류"), ("gds_lclsf_nm", "대분류")):
             if not aliases:
                 break
