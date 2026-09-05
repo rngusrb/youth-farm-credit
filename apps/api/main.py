@@ -10,6 +10,7 @@ import logging
 import os
 import asyncio
 import csv
+import json
 from datetime import date, datetime, timedelta, timezone
 from urllib.parse import unquote
 
@@ -432,6 +433,29 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
 
 _quarterly_cache: dict[str, tuple[float, list[dict]]] = {}
 _volume_cache: dict[str, tuple[float, list[dict]]] = {}
+_market_cache_path = os.path.join(os.path.dirname(__file__), "data", "market_last_known.json")
+
+def _market_cache_read(crop_id: str) -> dict | None:
+    try:
+        with open(_market_cache_path, encoding="utf-8") as f:
+            value = json.load(f).get(crop_id)
+        return value if isinstance(value, dict) and value.get("items") else None
+    except (OSError, ValueError, TypeError):
+        return None
+
+def _market_cache_write(crop_id: str, value: dict) -> None:
+    if not value.get("items"):
+        return
+    try:
+        os.makedirs(os.path.dirname(_market_cache_path), exist_ok=True)
+        try:
+            with open(_market_cache_path, encoding="utf-8") as f: all_values = json.load(f)
+        except (OSError, ValueError):
+            all_values = {}
+        all_values[crop_id] = value
+        with open(_market_cache_path, "w", encoding="utf-8") as f: json.dump(all_values, f, ensure_ascii=False)
+    except OSError:
+        pass
 
 @app.get("/api/v1/market/recent")
 async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5, ge=1, le=20)) -> dict:
@@ -473,9 +497,12 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                     pass
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
                 items = [item] + [row for row in daily_items if row["auction_at"] != item["auction_at"]]
-                return {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": items[:5], "daily_series": series, "average_price": current, "average_label": "조사일 평균"}
+                result = {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": items[:5], "daily_series": series, "average_price": current, "average_label": "조사일 평균"}
+                _market_cache_write(crop_id, result)
+                return result
     except asyncio.TimeoutError:
-        return {"status": "unavailable", "crop": name, "items": [], "message": "최근 도매가 API 응답이 늦어 마지막 확인값을 표시합니다."}
+        cached = _market_cache_read(crop_id)
+        return cached or {"status": "unavailable", "crop": name, "items": [], "message": "최근 도매가 API 응답이 늦어 마지막 확인값을 표시합니다."}
     except KamisError:
         pass
     code = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
@@ -517,10 +544,14 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
     latest = dates[-1] if dates else ""
     items = [{"market": "서울가락", "item": name, "price": avg(latest), "unit": "자료 단위 기준", "quantity": None, "auction_at": latest, "previous_day_price": nearest(1), "seven_day_price": nearest(7), "year_price": nearest(365)}] if latest else []
     prices = [v for values in by_day.values() for v in values]
-    return {"status": "ok" if items else "empty", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보(recent)",
+    result = {"status": "ok" if items else "empty", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보(recent)",
             "crop": crop.name, "match_level": "품목코드", "items": items,
             "average_price": round(sum(prices) / len(prices)) if prices else None,
             "average_label": "최근 자료 평균" if prices else None}
+    if items: _market_cache_write(crop_id, result)
+    else:
+        result = _market_cache_read(crop_id) or result
+    return result
 
 @lru_cache(maxsize=1)
 def standard_codes() -> list[dict[str, str]]:
