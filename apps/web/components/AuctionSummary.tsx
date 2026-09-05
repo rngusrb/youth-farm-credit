@@ -52,7 +52,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
 }
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
-  const [data, setData] = useState<RealtimeAuction | null>({ status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 11846, unit: "2kg", auction_at: "20260430", previous_day_price: 11846, seven_day_price: 12192, year_price: 10206 }], average_price: 11846, average_label: "조사일 평균" });
+  const [data, setData] = useState<RealtimeAuction | null>({ status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], average_price: 5923, average_label: "조사일 평균" });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   useEffect(() => {
@@ -64,8 +64,8 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       // 최근일자 API는 비교 필드용 대표 행이고, 화면 목록·흐름은 perDay 일별 자료를 유지한다.
       const d = latest ? { ...base, ...latest, items: latest.items.length ? [latest.items[0], ...base.items] : base.items, average_price: latest.average_price ?? base.average_price, average_label: latest.average_label ?? base.average_label, daily_series: base.daily_series?.length ? base.daily_series : latest.daily_series } : base;
       if (!d.items.length && id === "strawberry_hydro") {
-        d.items = [{ market: "전국 일별 평균", item: "딸기", price: 11846, unit: "2kg", auction_at: "20260430", previous_day_price: 11846, seven_day_price: 12192, year_price: 10206 }];
-        d.average_price = 11846; d.average_label = "조사일 평균"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
+        d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
+        d.average_price = 5923; d.average_label = "조사일 평균"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
       }
       setData(d); onData?.(d);
     });
@@ -96,7 +96,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               <div className="flex flex-col gap-1"><p className="text-[12px] text-gov-ink2">최근 조사일 도매가</p><p className="text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p></div>
               {data.average_price != null && <div className={compact ? "flex flex-col gap-1 border-l border-gov-link/20 pl-3" : "flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"}><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
             </div>
-            <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market} · 상품(상) · {data.items[0].unit || "단위"}</p>
+            <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market || "전국 일별 평균"} · {data.items[0].unit || "kg"}</p>
             <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
           {showComparison && compare?.items[0] && (() => {

@@ -444,9 +444,9 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                 try: return round(float(str(v).replace(",", ""))) if v not in (None, "", "-1") else None
                 except (TypeError, ValueError): return None
             r = records[0]
-            current = num(r.get("exmn_dd_prc"));
+            current = num(r.get("exmn_dd_cnvs_prc"));
             if current is not None:
-                item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": f"{r.get('unit_sz','')}{r.get('unit','')}".strip(), "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_prc")), "seven_day_price": num(r.get("ww1_bfr_prc")), "month_price": num(r.get("mm1_bfr_prc")), "year_price": num(r.get("yy1_bfr_prc"))}
+                item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": "kg", "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_cnvs_prc")), "seven_day_price": num(r.get("ww1_bfr_cnvs_prc")), "month_price": num(r.get("mm1_bfr_cnvs_prc")), "year_price": num(r.get("yy1_bfr_cnvs_prc"))}
                 series = []
                 try:
                     rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today())
