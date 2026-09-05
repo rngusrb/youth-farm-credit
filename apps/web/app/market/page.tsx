@@ -7,6 +7,7 @@ import { fetchCrop, fetchCrops, fetchMarketQuarterly, fetchMarketVolume, type Cr
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
+import { RECENT_PRICE_CATEGORIES } from "@/lib/recentPriceCategories";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
   calm: { label: "가격 변화가 작아요", tone: "ok" },
@@ -17,7 +18,7 @@ const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> =
 function Body() {
   const params = useSearchParams();
   const [rows, setRows] = useState<CropRow[]>([]);
-  const [categories, setCategories] = useState<MarketCategory[]>(CSV_MARKET_CATEGORIES);
+  const [categories, setCategories] = useState<MarketCategory[]>(RECENT_PRICE_CATEGORIES);
   const [id, setId] = useState("");
   const [largeCode, setLargeCode] = useState("");
   const [middleCode, setMiddleCode] = useState("");
@@ -30,13 +31,13 @@ function Body() {
   useEffect(() => {
     fetchCrops().then((d) => {
         setRows(d.crops);
-        const available = CSV_MARKET_CATEGORIES;
+        const available = RECENT_PRICE_CATEGORIES;
         setCategories(available);
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
-        const category = available.find((x) => x.large_code === initial?.large_code || x.large_code.endsWith(initial?.large_code ?? "") || (initial?.large_code ?? "").endsWith(x.large_code));
-        const middle = available.find((x) => x.middle_code === initial?.middle_code || x.middle_code.endsWith(initial?.middle_code ?? ""));
+        const category = available.find((x) => x.large_code === initial?.price_category_code);
+        const middle = available.find((x) => x.middle_code === initial?.price_item_code);
         setId(initial?.id ?? ""); setLargeCode(category?.large_code ?? ""); setMiddleCode(middle?.middle_code ?? "");
       })
       .catch(() => setError("작목 목록을 불러오지 못했어요."));
@@ -51,7 +52,7 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
-  const categoryRows = categories.length ? categories : CSV_MARKET_CATEGORIES;
+  const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
   const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
 
@@ -66,7 +67,7 @@ function Body() {
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
           </select>
-          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((c) => c.middle_code === code); const found = rows.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "") || (!!selected && c.name.includes(selected.middle_name))); setId(found?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const found = rows.find((c) => c.price_item_code === code); setId(found?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
           </select>
           <span className="text-[12px] text-gov-ink3">

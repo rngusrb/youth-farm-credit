@@ -117,7 +117,10 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
           </div>}
           </>
         ) : (
-          <p className="mt-4 rounded-md bg-gov-sunk px-4 py-5 text-center text-[13px] text-gov-ink2">지금은 보여드릴 도매가 자료가 없어요. 잠시 후 다시 확인해 주세요.</p>
+          <div className="mt-4 rounded-md border border-gov-line2 bg-gov-sunk px-4 py-5 text-center text-[13px] text-gov-ink2">
+            <p className="font-semibold text-gov-ink">최근 도매가</p>
+            <p className="mt-1">전일자 가격 자료를 불러오고 있어요.</p>
+          </div>
         )}
           {!compact && data?.items.filter((item) => item.price != null).length ? (
           <div className="mt-5 border-t border-gov-line2 pt-4">

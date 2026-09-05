@@ -311,6 +311,8 @@ export async function fetchDiagnosis(id: string): Promise<Diagnosis> {
 export type CropRow = {
   id: string;
   name: string;
+  price_category_code?: string;
+  price_item_code?: string;
   large_code?: string;
   large_name?: string;
   middle_code?: string;

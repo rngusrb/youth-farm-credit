@@ -7,6 +7,7 @@ import { extractSlots, fetchCrops, fetchProducts, type CropRow, type ProductRow,
 import { clearProfile, loadProfile, saveProfile } from "@/lib/profile";
 import { won } from "@/lib/format";
 import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
+import { RECENT_PRICE_CATEGORIES } from "@/lib/recentPriceCategories";
 
 const MAN = 10_000;
 const field = "w-full min-h-11 rounded-md border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
@@ -15,7 +16,7 @@ const label = "mb-1.5 block text-[13px] font-semibold text-gov-ink2";
 export default function FarmPage() {
   const router = useRouter();
   const [crops, setCrops] = useState<CropRow[]>([]);
-  const [categories, setCategories] = useState<MarketCategory[]>(CSV_MARKET_CATEGORIES);
+  const [categories, setCategories] = useState<MarketCategory[]>(RECENT_PRICE_CATEGORIES);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [cropId, setCropId] = useState("");
   const [largeCode, setLargeCode] = useState("");
@@ -36,13 +37,13 @@ export default function FarmPage() {
     Promise.all([fetchCrops(), fetchProducts()])
       .then(([c, p]) => {
         setCrops(c.crops);
-        setCategories(CSV_MARKET_CATEGORIES);
+        setCategories(RECENT_PRICE_CATEGORIES);
         setProducts(p.products);
         const prev = loadProfile();
         setCropId(prev?.cropId ?? c.crops[0]?.id ?? "");
         const initial = c.crops.find((x) => x.id === (prev?.cropId ?? c.crops[0]?.id));
-        setLargeCode(initial?.large_code ?? "");
-        setMiddleCode(initial?.middle_code ?? "");
+        setLargeCode(initial?.price_category_code ?? "");
+        setMiddleCode(initial?.price_item_code ?? "");
         if (prev) {
           setProductId(prev.productId);
           setPyeong(String(prev.pyeong));
@@ -65,9 +66,9 @@ export default function FarmPage() {
     .map((v) => v * MAN);
 
   const crop = crops.find((c) => c.id === cropId);
-  const categoryRows = categories.length ? categories : CSV_MARKET_CATEGORIES;
+  const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
+  const middleGroups = categoryRows.filter((c) => c.large_code === largeCode);
 
   /** 대화형 인테이크 — 자연어를 슬롯으로 바꾼다. 채워진 칸만 알려 준다. */
   async function readSentence() {
@@ -151,7 +152,7 @@ export default function FarmPage() {
                   <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setCropId(""); }} className={field}>
                     <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
                   </select>
-                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((c) => c.middle_code === code); const found = crops.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "") || (!!selected && c.name.includes(selected.middle_name))); setCropId(found?.id ?? ""); }} className={field}>
+                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const found = crops.find((c) => c.price_item_code === code); setCropId(found?.id ?? ""); }} className={field}>
                     <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
                   </select>
                 </div>

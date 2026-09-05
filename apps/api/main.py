@@ -109,6 +109,8 @@ def list_crops() -> dict:
             {
                 "id": c.id,
                 "name": c.name,
+                "price_category_code": (c.kamis or {}).get("ctgry_cd", ""),
+                "price_item_code": (c.kamis or {}).get("item_cd", ""),
                 **category(c),
                 "income_per_10a": c.income_per_10a,
                 "sigma": c.sigma,
