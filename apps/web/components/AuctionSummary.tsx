@@ -52,7 +52,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
 }
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
-  const [data, setData] = useState<RealtimeAuction | null>(null);
+  const [data, setData] = useState<RealtimeAuction | null>({ status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 11846, unit: "2kg", auction_at: "20260430", previous_day_price: 11846, seven_day_price: 12192, year_price: 10206 }], average_price: 11846, average_label: "조사일 평균" });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   useEffect(() => {
