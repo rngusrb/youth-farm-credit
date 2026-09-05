@@ -310,6 +310,7 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
         "item": r.get("품목명", ""), "market": r.get("시장구분", ""), "date": r.get("가격날짜", ""),
         "price": number(r, "평균가격"), "previous_day_price": number(r, "전일평균가격"),
         "year_price": number(r, "전년가격"), "seven_day_price": seven_days_before(r), "year_change": r.get("전년대비등락율"),
+        "grade": r.get("등급", ""), "unit": r.get("거래단위", ""), "unit_qty": r.get("거래단위수량", ""),
     } for r in matched[:20]]
     return {"status": "ok" if items else "empty", "crop": crop_name, "items": items}
 
