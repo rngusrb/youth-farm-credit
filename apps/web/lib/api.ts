@@ -23,8 +23,9 @@ export type RealtimeAuction = {
   daily_series?: { date: string; price: number; count: number }[];
 };
 
-export async function fetchRealtimeAuction(cropId?: string, limit = 5): Promise<RealtimeAuction> {
+export async function fetchRealtimeAuction(cropId?: string, limit = 5, series = true): Promise<RealtimeAuction> {
   const query = new URLSearchParams({ limit: String(limit) });
+  query.set("series", String(series));
   if (cropId) query.set("crop_id", cropId);
   const res = await fetch(`${API_BASE}/api/v1/auction/realtime?${query}`, { cache: "no-store" });
   if (!res.ok) throw new Error((await res.text()) || "경매가를 불러오지 못했습니다");

@@ -122,6 +122,7 @@ def list_crops() -> dict:
 async def realtime_auction(
     crop_id: str | None = Query(default=None),
     limit: int = Query(default=5, ge=1, le=20),
+    series: bool = Query(default=True),
 ) -> dict:
     """선택 작목과 같은 품목의 전국 공영도매시장 최근 경매가."""
     key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
@@ -209,7 +210,7 @@ async def realtime_auction(
                 except (httpx.HTTPError, ValueError):
                     continue
 
-        if aliases:
+        if aliases and series:
             needles = [a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases]
             async def fetch_day(offset: int) -> dict | None:
                 target = (latest - timedelta(days=offset)).strftime("%Y-%m-%d")
