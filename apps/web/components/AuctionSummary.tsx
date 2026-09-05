@@ -30,7 +30,7 @@ const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
   }));
 };
 
-export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false }: { cropId?: string; showComparison?: boolean; compact?: boolean } = {}) {
+export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
@@ -44,7 +44,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
   }, [cropIdOverride, showComparison]);
 
   return (
-    <Section title="전국 경매가 요약" action={<Link href="/market" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 보기 +</Link>}>
+    <Section title={title ?? "전국 경매가 요약"} action={<Link href="/market" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 보기 +</Link>}>
       <Panel>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

@@ -58,7 +58,7 @@ function Body() {
         </div>
       </Panel>
 
-      {id && <AuctionSummary cropId={id} />}
+      {id && <AuctionSummary cropId={id} title="요즘 가격 흐름" />}
 
       {detail && !m && (
         <Empty
@@ -69,7 +69,7 @@ function Body() {
 
       {detail && m && g && (
         <>
-          <Section title="요즘 가격 흐름">
+          <Section title="가격 변화 정도">
             <Panel>
               {m.quote_is_carried && (
                 <div className="mb-4">
