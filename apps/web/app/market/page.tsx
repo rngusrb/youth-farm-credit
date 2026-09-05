@@ -137,6 +137,11 @@ function Body() {
                 </p>
               <p className="mt-1 text-[11px] text-gov-ink3">분석에 사용한 가격 자료 {m.trading_days.toLocaleString("ko-KR")}거래일 · {m.window?.join(" ~ ") ?? "기간 확인 중"}</p>
               </div>
+              <div className="mt-4 rounded-lg border border-gov-line2 bg-white p-4">
+                <h3 className="mb-2 text-[13px] font-bold text-gov-ink">비교 검증 자료</h3>
+                <p className="mb-2 text-[12px] text-gov-ink3">서로 다른 기관의 가격 자료가 비슷한 방향을 가리키는지 확인해요.</p>
+                <div className="grid grid-cols-3 gap-2 text-center text-[12px]"><div className="rounded bg-gov-sunk px-2 py-2"><b>KAMIS</b><br />{m.annual_price_sigma?.toFixed(3) ?? "—"}</div><div className="rounded bg-gov-sunk px-2 py-2"><b>KOSIS</b><br />{m.kosis_price_sigma?.toFixed(3) ?? "—"}</div><div className="rounded bg-gov-sunk px-2 py-2"><b>차이</b><br />{m.annual_price_sigma != null && m.kosis_price_sigma != null ? Math.abs(m.annual_price_sigma - m.kosis_price_sigma).toFixed(3) : "—"}</div></div>
+              </div>
               </Fold>
               <div className="mt-4">
                 <Notice tone="info" title="가격 그래프는 참고용이에요">
@@ -155,6 +160,14 @@ function Body() {
                   </table>
                 </div>
               </div>
+            </Panel>
+          </Section>
+
+          <Section title="3. 수확량">
+            <Panel>
+              <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
+              <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const active = detail.harvest_months.includes(month); return <div key={month} className="text-center"><div className={`h-10 rounded-sm ${active ? "bg-gov-link/75" : "bg-gov-line2"}`} style={{ opacity: active ? 0.9 : 0.35 }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
+              <p className="mt-3 text-[11px] text-gov-ink3">정산량 API 자료가 들어오면 월별 물량에 따라 색 농도를 자동으로 조정해요.</p>
             </Panel>
           </Section>
 
