@@ -144,12 +144,7 @@ async def realtime_auction(
     average_rows: list[dict] = []
     matched_by = ""
     latest = datetime.now().date()
-    date_params = {
-        # 실시간 경매 API는 최근 한 달만 제공하며, 날짜 조건이 없으면
-        # 운영 환경에서 빈 결과를 반환하는 경우가 있다.
-        "cond[scsbd_dt::GTE]": (latest - timedelta(days=30)).strftime("%Y-%m-%d"),
-        "cond[scsbd_dt::LTE]": latest.strftime("%Y-%m-%d"),
-    }
+    date_params = {"cond[trd_clcln_ymd::EQ]": latest.strftime("%Y-%m-%d")}
     async with httpx.AsyncClient(timeout=8.0) as client:
         for field, level in (("gds_mclsf_nm", "중분류"), ("gds_lclsf_nm", "대분류")):
             if not aliases:
@@ -177,25 +172,30 @@ async def realtime_auction(
         # 명칭 LIKE 조건을 제공하지 않는 운영 버전도 있어 한 번 더 넓게 읽고
         # 품목명으로 걸러낸다. 이 경우에도 전국 자료 안에서 같은 품목만 남긴다.
         if not rows and aliases:
-            try:
-                response = await client.get(endpoint, params={
-                    "serviceKey": unquote(key), "returnType": "json",
-                    "pageNo": 1, "numOfRows": 100,
-                    **date_params,
-                })
-                response.raise_for_status()
-                payload = response.json()
-                body = payload.get("response", {}).get("body", {})
-                raw = body.get("items", {}).get("item", [])
-                if isinstance(raw, dict):
-                    raw = [raw]
-                needles = [a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases]
-                average_rows = [r for r in raw if any(n and n in " ".join(str(r.get(k, "")) for k in ("gds_lclsf_nm", "gds_mclsf_nm", "gds_sclsf_nm")) for n in needles)]
-                rows = sorted(average_rows, key=lambda r: str(r.get("scsbd_dt") or r.get("trd_clcln_ymd") or ""), reverse=True)[:limit]
-                if rows:
-                    matched_by = "품목명"
-            except (httpx.HTTPError, ValueError):
-                pass
+            needles = [a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases]
+            # 정산일은 하루 단위로만 조회된다. 오늘 자료가 없으면 최근 30일을
+            # 거슬러 올라가며, 최대 1,000건씩 받아 품목명을 걸러낸다.
+            for offset in range(31):
+                try:
+                    target = (latest - timedelta(days=offset)).strftime("%Y-%m-%d")
+                    response = await client.get(endpoint, params={
+                        "serviceKey": unquote(key), "returnType": "json",
+                        "pageNo": 1, "numOfRows": 1000,
+                        "cond[trd_clcln_ymd::EQ]": target,
+                    })
+                    response.raise_for_status()
+                    payload = response.json()
+                    body = payload.get("response", {}).get("body", {})
+                    raw = body.get("items", {}).get("item", [])
+                    if isinstance(raw, dict):
+                        raw = [raw]
+                    average_rows = [r for r in raw if any(n and n in " ".join(str(r.get(k, "")) for k in ("corp_gds_item_nm", "corp_gds_vrty_nm", "gds_lclsf_nm", "gds_mclsf_nm", "gds_sclsf_nm")) for n in needles)]
+                    if average_rows:
+                        rows = sorted(average_rows, key=lambda r: str(r.get("scsbd_dt") or r.get("trd_clcln_ymd") or ""), reverse=True)[:limit]
+                        matched_by = "품목명"
+                        break
+                except (httpx.HTTPError, ValueError):
+                    continue
 
     def clean(row: dict) -> dict:
         price = row.get("scsbd_prc")

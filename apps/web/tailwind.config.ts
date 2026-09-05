@@ -11,27 +11,27 @@ const config: Config = {
     extend: {
       colors: {
         gov: {
-          navy:   "#0d2b52",  // 최상단 유틸바·푸터
-          head:   "#14477e",  // 헤더·주요 버튼
-          link:   "#1f66b5",  // 링크·활성
-          soft:   "#eaf1f9",  // 활성 배경
-          bg:     "#f4f6f9",  // 페이지 바탕
+          navy:   "#214a39",  // 최상단 유틸바·푸터
+          head:   "#2f6b4f",  // 헤더·주요 버튼 (눈이 편한 녹색)
+          link:   "#3d7a5b",  // 링크·활성
+          soft:   "#edf5ef",  // 활성 배경
+          bg:     "#ffffff",  // 페이지 바탕
           panel:  "#ffffff",
-          sunk:   "#f7f9fb",  // 표 머리·보조 영역
-          line:   "#d7dde5",
-          line2:  "#e8ecf1",
+          sunk:   "#fafbf9",  // 표 머리·보조 영역
+          line:   "#d9e2dc",
+          line2:  "#e9efeb",
           ink:    "#191d23",
           ink2:   "#4c545e",
           ink3:   "#636a73",  // 5.47:1 (흰 배경) — #7b838d 는 3.84:1 로 AA 미달이었다
-          point:  "#c8102e",  // 경고·필수 표시
-          ok:     "#0f7b6c",
-          warn:   "#9c5512",  // 5.64:1 — #b5651d 는 4.34:1 로 AA 미달이었다
+          point:  "#b44836",  // 경고·필수 표시
+          ok:     "#2f6b4f",
+          warn:   "#7a4e2d",  // 보조 강조·주의 (갈색)
           // 출처 배지용 옅은 배경 + 그 위에서 AA 를 넘는 전경.
           // 규칙: 전경색은 **그 색이 앉을 가장 어두운 배경**에서 재고 고른다.
-          okbg:   "#e4efec",  // 위에 ok2(#0c6a5d) 5.52:1  (ok 는 4.39:1 로 미달)
-          ok2:    "#0c6a5d",
-          warnbg: "#f5ebdf",  // 위에 warn2(#8f4d10) 5.51:1
-          warn2:  "#8f4d10",
+          okbg:   "#e5f0e8",
+          ok2:    "#285c43",
+          warnbg: "#f5eee8",
+          warn2:  "#6b4327",
         },
         // 리포트 전용 종이 색계 (건드리지 말 것)
         paper: {
@@ -46,8 +46,8 @@ const config: Config = {
       borderRadius: { DEFAULT: "8px", sm: "6px", md: "10px", lg: "14px", xl: "18px" },
       boxShadow: {
         // 아주 옅게. 그림자로 위계를 만들지 않는다 — 위계는 여백과 크기가 만든다.
-        card: "0 1px 2px rgb(13 43 82 / 0.04), 0 4px 12px -6px rgb(13 43 82 / 0.08)",
-        lift: "0 2px 4px rgb(13 43 82 / 0.05), 0 12px 24px -10px rgb(13 43 82 / 0.14)",
+        card: "0 1px 2px rgb(33 74 57 / 0.04), 0 4px 12px -6px rgb(33 74 57 / 0.08)",
+        lift: "0 2px 4px rgb(33 74 57 / 0.05), 0 12px 24px -10px rgb(33 74 57 / 0.14)",
       },
       fontSize: {
         // 핵심 숫자용. 한 화면에 하나만 쓴다.

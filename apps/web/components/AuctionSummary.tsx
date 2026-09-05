@@ -61,7 +61,7 @@ export default function AuctionSummary() {
                   <XAxis dataKey="auction_at" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={24} />
                   <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
                   <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "낙찰가"]} labelFormatter={(v) => `경매 ${v}`} />
-                  <Line type="monotone" dataKey="price" stroke="#1769aa" strokeWidth={2.5} dot={{ r: 3, fill: "#1769aa" }} activeDot={{ r: 5 }} />
+                  <Line type="monotone" dataKey="price" stroke="#2f6b4f" strokeWidth={2.5} dot={{ r: 3, fill: "#2f6b4f" }} activeDot={{ r: 5 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
