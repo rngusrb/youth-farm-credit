@@ -102,30 +102,33 @@ def list_crops() -> dict:
         row = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
         return {"large_code": row.get("대분류코드", ""), "large_name": row.get("대분류명", ""),
                 "middle_code": row.get("중분류코드", ""), "middle_name": row.get("중분류명(품목명)", name)}
+    rows = []
+    for c in crops().values():
+        row = {
+            "id": c.id, "name": c.name, "price_category_code": (c.kamis or {}).get("ctgry_cd", ""), "price_item_code": (c.kamis or {}).get("item_cd", ""),
+            **category(c), "income_per_10a": c.income_per_10a, "sigma": c.sigma, "sigma_source": c.sigma_source,
+            "sigma_common": c.sigma_common, "sigma_ci": c.sigma_ci, "sigma_n": (c.factors or {}).get("n"), "group": (c.kosis or {}).get("group"),
+            "driver": (c.factors or {}).get("driver"), "harvest_months": c.harvest_months, "has_market": bool(c.market), "income_year": c.income_year,
+        }
+        rows.append(row)
+    # 같은 공공 가격 품목코드를 쓰는 재배방식은 선택 목록에서 한 품목으로 묶는다.
+    grouped = {}
+    for row in rows:
+        key = (row["price_category_code"], row["price_item_code"])
+        if key == ("200", "226"):
+            bucket = grouped.setdefault(key, {**row, "id": "strawberry_hydro", "name": "딸기", "_rows": []})
+            bucket["_rows"].append(row)
+        else:
+            grouped.setdefault((row["id"], ""), row)
+    for row in grouped.values():
+        variants = row.pop("_rows", [])
+        if variants:
+            row["income_per_10a"] = round(sum(x["income_per_10a"] for x in variants) / len(variants))
+            row["sigma"] = round(sum(x["sigma"] for x in variants) / len(variants), 4)
     return {
         "source": crops_source(),
         "unit_area_pyeong": unit_area_pyeong(),
-        "crops": [
-            {
-                "id": c.id,
-                "name": c.name,
-                "price_category_code": (c.kamis or {}).get("ctgry_cd", ""),
-                "price_item_code": (c.kamis or {}).get("item_cd", ""),
-                **category(c),
-                "income_per_10a": c.income_per_10a,
-                "sigma": c.sigma,
-                "sigma_source": c.sigma_source,
-                "sigma_common": c.sigma_common,
-                "sigma_ci": c.sigma_ci,
-                "sigma_n": (c.factors or {}).get("n"),
-                "group": (c.kosis or {}).get("group"),
-                "driver": (c.factors or {}).get("driver"),
-                "harvest_months": c.harvest_months,
-                "has_market": bool(c.market),
-                "income_year": c.income_year,
-            }
-            for c in crops().values()
-        ],
+        "crops": list(grouped.values()),
     }
 
 
