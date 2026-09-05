@@ -204,11 +204,14 @@ async def realtime_auction(
             async def fetch_day(offset: int) -> dict | None:
                 target = (latest - timedelta(days=offset)).strftime("%Y-%m-%d")
                 try:
-                    response = await client.get(endpoint, params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "cond[trd_clcln_ymd::EQ]": target})
-                    response.raise_for_status()
-                    raw = response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
-                    if isinstance(raw, dict): raw = [raw]
-                    matched_day = [r for r in raw if any(n and n in " ".join(str(r.get(k, "")) for k in ("corp_gds_item_nm", "corp_gds_vrty_nm", "gds_mclsf_nm", "gds_sclsf_nm")) for n in needles)]
+                    matched_day = []
+                    for page in range(1, 11):
+                        response = await client.get(endpoint, params={"serviceKey": unquote(key), "returnType": "json", "pageNo": page, "numOfRows": 1000, "cond[trd_clcln_ymd::EQ]": target})
+                        response.raise_for_status()
+                        raw = response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+                        if isinstance(raw, dict): raw = [raw]
+                        matched_day.extend(r for r in raw if any(n and n in " ".join(str(r.get(k, "")) for k in ("corp_gds_item_nm", "corp_gds_vrty_nm", "gds_mclsf_nm", "gds_sclsf_nm")) for n in needles))
+                        if matched_day or len(raw) < 1000: break
                     prices = []
                     for r in matched_day:
                         try:

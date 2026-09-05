@@ -9,7 +9,7 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 
 const won = (value: number | null | undefined) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
 
-export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: string } = {}) {
+export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true }: { cropId?: string; showComparison?: boolean } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
@@ -17,10 +17,10 @@ export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: st
     const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
     fetchRealtimeAuction(id, 5).then(setData).catch(() => setData({ status: "empty", items: [] }));
-    fetchMarketCompare(id).then(setCompare).catch(() => setCompare({ status: "empty", items: [] }));
-    const timer = window.setInterval(() => { fetchRealtimeAuction(id, 5).then(setData).catch(() => {}); fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 120_000);
+    if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => setCompare({ status: "empty", items: [] }));
+    const timer = window.setInterval(() => { fetchRealtimeAuction(id, 5).then(setData).catch(() => {}); if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 120_000);
     return () => window.clearInterval(timer);
-  }, [cropIdOverride]);
+  }, [cropIdOverride, showComparison]);
 
   return (
     <Section title="전국 경매가 요약" action={<Link href="/market" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 보기 +</Link>}>
@@ -69,7 +69,7 @@ export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: st
             </div>
           </div>
         ) : null}
-        {(cropIdOverride || cropId) && compare?.items.length ? <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{compare.items.slice(0, 3).map((item, i) => <div key={`${item.item}-${item.market}-${i}`} className="rounded-md bg-gov-sunk px-3 py-3"><p className="truncate text-[12px] text-gov-ink2">{item.item} · 공판장 구분 {item.market || "—"}</p><p className="mt-1 text-[17px] font-bold tabular text-gov-ink">현재 {won(item.price)}</p><p className="mt-1 text-[11px] leading-relaxed text-gov-ink3">1일 전 {won(item.previous_day_price)}<br />7일 전 {won(item.seven_day_price)} · 1년 전 {won(item.year_price)}</p><p className="mt-1 truncate text-[11px] text-gov-ink3">{item.grade || "등급 정보 없음"} · {item.unit || "단위 정보 없음"}{item.unit_qty ? ` ${item.unit_qty}` : ""}</p></div>)}</div><p className="mt-2 text-[11px] leading-relaxed text-gov-ink3">같은 공판장도 등급·품종·포장 단위가 달라 가격이 달라질 수 있어요. 공판장 평균가 기준, 자료 날짜: {compare.items[0].date || "—"}</p></div> : null}
+        {showComparison && (cropIdOverride || cropId) && compare?.items.length ? <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{compare.items.slice(0, 3).map((item, i) => <div key={`${item.item}-${item.market}-${i}`} className="rounded-md bg-gov-sunk px-3 py-3"><p className="truncate text-[12px] text-gov-ink2">{item.item} · 공판장 구분 {item.market || "—"}</p><p className="mt-1 text-[17px] font-bold tabular text-gov-ink">현재 {won(item.price)}</p><p className="mt-1 text-[11px] leading-relaxed text-gov-ink3">1일 전 {won(item.previous_day_price)}<br />7일 전 {won(item.seven_day_price)} · 1년 전 {won(item.year_price)}</p><p className="mt-1 truncate text-[11px] text-gov-ink3">{item.grade || "등급 정보 없음"} · {item.unit || "단위 정보 없음"}{item.unit_qty ? ` ${item.unit_qty}` : ""}</p></div>)}</div><p className="mt-2 text-[11px] leading-relaxed text-gov-ink3">같은 공판장도 등급·품종·포장 단위가 달라 가격이 달라질 수 있어요. 공판장 평균가 기준, 자료 날짜: {compare.items[0].date || "—"}</p></div> : null}
         <p className="mt-3 text-[11px] text-gov-ink3">공공데이터포털 농산물 실시간 경매가 · 2분마다 새로 확인해요. 참고용으로만 봐 주세요.</p>
       </Panel>
     </Section>
