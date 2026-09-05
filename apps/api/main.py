@@ -97,6 +97,11 @@ def health() -> dict:
 
 @app.get("/api/v1/crops")
 def list_crops() -> dict:
+    def category(c):
+        name = c.name.split("(")[0].strip()
+        row = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
+        return {"large_code": row.get("대분류코드", ""), "large_name": row.get("대분류명", ""),
+                "middle_code": row.get("중분류코드", ""), "middle_name": row.get("중분류명(품목명)", name)}
     return {
         "source": crops_source(),
         "unit_area_pyeong": unit_area_pyeong(),
@@ -104,6 +109,7 @@ def list_crops() -> dict:
             {
                 "id": c.id,
                 "name": c.name,
+                **category(c),
                 "income_per_10a": c.income_per_10a,
                 "sigma": c.sigma,
                 "sigma_source": c.sigma_source,
@@ -288,6 +294,33 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
             aliases = [crop.name, *crop.aliases]
         except KeyError:
             raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
+    # 최근일자 도·소매 가격 API를 우선 사용한다. 같은 API의 날짜별 자료가
+    # 내려오면 전일·7일 전·전년 값도 여기서 계산해 화면과 기준을 통일한다.
+    if crop_id:
+        try:
+            recent_rows = await asyncio.to_thread(fetch_recent, crop_id)
+            by_day: dict[str, list[float]] = {}
+            for row in recent_rows:
+                if row.price > 0: by_day.setdefault(row.date, []).append(row.price)
+            dates = sorted(by_day)
+            if dates:
+                latest = dates[-1]
+                def avg(day):
+                    vals = by_day.get(day, [])
+                    return round(sum(vals) / len(vals)) if vals else None
+                latest_day = datetime.strptime(latest.replace("-", "")[:8], "%Y%m%d").date()
+                def nearest(days):
+                    target = latest_day - timedelta(days=days)
+                    candidates = [d for d in dates if datetime.strptime(d.replace("-", "")[:8], "%Y%m%d").date() <= target]
+                    return avg(max(candidates)) if candidates else None
+                return {"status": "ok", "crop": crop_name, "items": [{
+                    "item": crop_name, "market": "전국 평균", "date": latest,
+                    "price": avg(latest), "previous_day_price": nearest(1),
+                    "seven_day_price": nearest(7), "year_price": nearest(365),
+                    "grade": "상품(상) 기준", "unit": "자료 단위 기준", "unit_qty": "",
+                }]}
+        except (KamisError, ValueError, TypeError):
+            pass
     endpoint = "https://api.odcloud.kr/api/15134477/v1/uddi:f79ced3e-9e53-424e-8682-e2a294f81c58"
     query_name = next((a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases), "")
     try:
@@ -397,6 +430,9 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     if not key or not mapping.get("ctgry_cd"):
         return {"status": "unavailable", "items": []}
     endpoint = "https://apis.data.go.kr/B552845/katOrigin/trades"
+    # 전국 공영도매시장 전체를 조회한다. 한 시장에만 의존하면 시장별
+    # 미수집일 때문에 출하량이 통째로 비어 보일 수 있다.
+    market_codes = ["110001","110008","210001","210005","210009","220001","230001","230003","240001","240004","250001","250003","310101","310401","310901","311201","320101","320201","320301","330101","330201","340101","350101","350301","350402","360301","370101","370401","371501","380101","380201","380303","380401"]
     window = (crop.market or {}).get("window") or []
     date_start, date_end = "2025-01-01", "2025-12-31"
     # 표준코드 API에서 선택 작목의 대·중·소분류를 찾아 대치한다.
@@ -415,15 +451,29 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
             if match: code_map = match
     except (httpx.HTTPError, ValueError):
         pass
-    if "딸기" in crop.name:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_lclsf_cd::EQ]": "08", "cond[gds_mclsf_cd::EQ]": "04", "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
-    else:
-        params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_lclsf_cd::EQ]": code_map.get("gds_lclsf_cd") or "08", "cond[gds_mclsf_cd::EQ]": code_map.get("gds_mclsf_cd") or mapping["item_cd"], "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
+    large = str(code_map.get("gds_lclsf_cd") or "08").lstrip("0") or "0"
+    middle = str(code_map.get("gds_mclsf_cd") or mapping.get("item_cd") or "04")
+    middle_candidates = list(dict.fromkeys([middle, middle.lstrip("0") or "0", middle[-2:]]))
+    large_candidates = list(dict.fromkeys([large, large.zfill(2)]))
+    base_params = {"serviceKey": unquote(key), "returnType": "json", "numOfRows": 1000,
+                   "selectable": "trd_clcln_ymd,whsl_mrkt_cd,gds_lclsf_cd,gds_mclsf_cd,gds_sclsf_cd,qty,unit_tot_qty",
+                   "cond[trd_clcln_ymd::GTE]": date_start, "cond[trd_clcln_ymd::LTE]": date_end}
+    queries = [{**base_params, "pageNo": 1, "cond[gds_lclsf_cd::EQ]": lc,
+                "cond[gds_mclsf_cd::EQ]": mc, "cond[whsl_mrkt_cd::EQ]": market}
+               for market in market_codes for lc in large_candidates for mc in middle_candidates]
     try:
-        async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
-        raw = payload.get("response", {}).get("body", {}).get("items", {}).get("item", [])
-        if isinstance(raw, dict): raw = [raw]
+        async with httpx.AsyncClient(timeout=30) as client:
+            sem = asyncio.Semaphore(8)
+            async def request(params):
+                async with sem:
+                    try:
+                        response = await client.get(endpoint, params=params); response.raise_for_status()
+                        body = response.json().get("response", {}).get("body", {})
+                        raw = (body.get("items") or {}).get("item", [])
+                        return [raw] if isinstance(raw, dict) else raw
+                    except (httpx.HTTPError, ValueError): return []
+            batches = await asyncio.gather(*(request(q) for q in queries))
+        raw = [row for batch in batches for row in batch]
     except (httpx.HTTPError, ValueError):
         return {"status": "unavailable", "items": []}
     groups: dict[tuple[int, int], list[float]] = {}
@@ -485,6 +535,7 @@ def crop_detail(crop_id: str) -> dict:
     return {
         "id": c.id,
         "name": c.name,
+        "large_code": next((r.get("대분류코드", "") for r in standard_codes() if r.get("중분류명(품목명", "").strip() == c.name.split("(")[0].strip()), ""),
         "aliases": c.aliases,
         "group": (c.kosis or {}).get("group"),
         "income_per_10a": c.income_per_10a,

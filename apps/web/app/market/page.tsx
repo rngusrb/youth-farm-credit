@@ -54,7 +54,7 @@ function Body() {
           <select id="crop" value={id} onChange={(e) => setId(e.target.value)}
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             {rows.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}{c.has_market ? " (도매가 수집됨)" : ""}</option>
+              <option key={c.id} value={c.id}>{c.name}{c.middle_name ? ` · ${c.large_name} > ${c.middle_name}` : ""}{c.has_market ? " (도매가 수집됨)" : ""}</option>
             ))}
           </select>
           <span className="text-[12px] text-gov-ink3">
