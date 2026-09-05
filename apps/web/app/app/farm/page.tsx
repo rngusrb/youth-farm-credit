@@ -35,7 +35,7 @@ export default function FarmPage() {
     Promise.all([fetchCrops(), fetchProducts(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
       .then(([c, p, cat]) => {
         setCrops(c.crops);
-        setCategories(cat.items.length ? cat.items : c.crops.filter((x) => x.large_code && x.middle_code).map((x) => ({ large_code: x.large_code!, large_name: x.large_name ?? "", middle_code: x.middle_code!, middle_name: x.middle_name ?? x.name })));
+        setCategories(cat.items.length ? cat.items : DEFAULT_MARKET_CATEGORIES);
         setProducts(p.products);
         const prev = loadProfile();
         setCropId(prev?.cropId ?? c.crops[0]?.id ?? "");

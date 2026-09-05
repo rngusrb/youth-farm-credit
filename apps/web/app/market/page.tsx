@@ -30,7 +30,7 @@ function Body() {
     Promise.all([fetchCrops(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
       .then(([d, cat]) => {
         setRows(d.crops);
-        setCategories(cat.items.length ? cat.items : d.crops.filter((c) => c.large_code && c.middle_code).map((c) => ({ large_code: c.large_code!, large_name: c.large_name ?? "", middle_code: c.middle_code!, middle_name: c.middle_name ?? c.name })));
+        setCategories(cat.items.length ? cat.items : DEFAULT_MARKET_CATEGORIES);
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
