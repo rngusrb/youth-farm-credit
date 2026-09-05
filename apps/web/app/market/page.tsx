@@ -84,6 +84,11 @@ function Body() {
                   </Notice>
                 </div>
               )}
+              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">
+                위 경매가 요약에서 <b className="text-gov-ink">최근 낙찰가</b>와 <b className="text-gov-ink">최근 30일 평균</b>을 비교해 보세요.
+                아래 선 그래프는 날짜별 평균 가격을 이어서 보여줘요.
+              </p>
+              <Fold tone="gov" open={false} summary="가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}
                       value={g.regime ? (REGIME[g.regime]?.label ?? g.regime) : "판정 보류"}
@@ -120,12 +125,12 @@ function Body() {
                   지금 가격은 평소보다 <b className="tabular text-gov-ink">{g.current_over_longrun.toFixed(2)}배</b> 크게 오르내리고 있어요.
                   가격이 비싼지 싼지가 아니라, 최근 변화가 얼마나 큰지를 보여줘요.
                 </p>
-                <p className="mt-1 text-[11px] text-gov-ink3">분석에 사용한 가격 자료 {m.trading_days.toLocaleString("ko-KR")}거래일 · {m.window?.join(" ~ ") ?? "기간 확인 중"}</p>
+              <p className="mt-1 text-[11px] text-gov-ink3">분석에 사용한 가격 자료 {m.trading_days.toLocaleString("ko-KR")}거래일 · {m.window?.join(" ~ ") ?? "기간 확인 중"}</p>
               </div>
+              </Fold>
               <div className="mt-4">
-                <Notice tone="info" title="요즘 가격 흐름은 대출금 계산에 넣지 않아요">
-                  25년 상환에 본질적인 것은 장기 평균이에요. 조용한 시기라고 해서 더 빌려도
-                  된다는 뜻이 아니므로, 이 값은 참고 지표로만 써요.
+                <Notice tone="info" title="가격 그래프는 참고용이에요">
+                  최근 가격이 평균보다 높은지 낮은지, 그리고 앞으로 오르내리는 방향을 살펴보는 자료예요.
                 </Notice>
               </div>
             </Panel>
