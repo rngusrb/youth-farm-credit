@@ -8,9 +8,9 @@ import AuctionSummary from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
-  calm: { label: "평소보다 조용함", tone: "ok" },
+  calm: { label: "가격 변화가 작아요", tone: "ok" },
   normal: { label: "평상 수준", tone: "plain" },
-  turbulent: { label: "평소보다 요동침", tone: "warn" },
+  turbulent: { label: "가격 변화가 커요", tone: "warn" },
 };
 
 function Body() {
@@ -84,7 +84,7 @@ function Body() {
                   </Notice>
                 </div>
               )}
-              <div className="grid gap-6 sm:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}
                       value={g.regime ? (REGIME[g.regime]?.label ?? g.regime) : "판정 보류"}
                       tone={g.regime
@@ -93,13 +93,13 @@ function Body() {
                       note={g.regime
                         ? `현재 변동성이 장기 평균의 ${g.current_over_longrun.toFixed(2)}배`
                         : "이월 시세가 많아 판정할 수 없어요"} />
-                <Stat label="충격 반감기" value={g.half_life_days.toFixed(1)} unit="일"
-                      note={`지속성 ${g.persistence.toFixed(2)} — 가격 충격이 가라앉는 속도`} />
+                <Stat label="가격 변화가 가라앉는 시간" value={g.half_life_days.toFixed(1)} unit="일"
+                      note="가격이 크게 바뀐 뒤 평소 수준으로 돌아오는 데 걸리는 시간" />
               </div>
               <div className="mt-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-[13px] font-bold text-gov-ink">지금 가격 흐름의 위치</h3>
-                  <span className="text-[11px] text-gov-ink3">최근 변동성 ÷ 장기 평균</span>
+                  <h3 className="text-[13px] font-bold text-gov-ink">지금 가격 변화의 위치</h3>
+                  <span className="text-[11px] text-gov-ink3">최근 오르내림 ÷ 평소 오르내림</span>
                 </div>
                 <div className="relative mt-4 h-20 px-1">
                   <div className="flex h-14 items-end gap-1" aria-hidden>
@@ -112,13 +112,13 @@ function Body() {
                     style={{ left: `${Math.min(96, Math.max(4, (g.current_over_longrun / 2) * 100))}%` }}
                     aria-label={`현재 위치 ${g.current_over_longrun.toFixed(2)}배`}
                   />
-                  <div className="absolute bottom-0 left-0 text-[10px] text-gov-ink3">덜 흔들림</div>
+                  <div className="absolute bottom-0 left-0 text-[10px] text-gov-ink3">변화 작음</div>
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-gov-ink3">평소</div>
-                  <div className="absolute bottom-0 right-0 text-[10px] text-gov-ink3">더 흔들림</div>
+                  <div className="absolute bottom-0 right-0 text-[10px] text-gov-ink3">변화 큼</div>
                 </div>
                 <p className="mt-2 text-[12px] leading-relaxed text-gov-ink2">
-                  지금은 장기 평균의 <b className="tabular text-gov-ink">{g.current_over_longrun.toFixed(2)}배</b> 수준으로 흔들려요.
-                  이 표시는 가격의 높고 낮음이 아니라 가격 변화의 크기를 보여줘요.
+                  지금 가격은 평소보다 <b className="tabular text-gov-ink">{g.current_over_longrun.toFixed(2)}배</b> 크게 오르내리고 있어요.
+                  가격이 비싼지 싼지가 아니라, 최근 변화가 얼마나 큰지를 보여줘요.
                 </p>
                 <p className="mt-1 text-[11px] text-gov-ink3">분석에 사용한 가격 자료 {m.trading_days.toLocaleString("ko-KR")}거래일 · {m.window?.join(" ~ ") ?? "기간 확인 중"}</p>
               </div>
@@ -207,7 +207,7 @@ export default function MarketPage() {
       <Crumb trail={[{ label: "데이터" }, { label: "가격과 시장 흐름" }]} />
       <PageTitle
         title="가격과 시장 흐름"
-        lead="농산물 도매가격이 평소보다 얼마나 흔들리는지 살펴봐요. 가격 변화가 큰 시기인지 확인할 수 있어요."
+        lead="농산물 도매가격이 평소보다 얼마나 오르내리는지 살펴봐요. 가격 변화가 큰 시기인지 확인할 수 있어요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>
