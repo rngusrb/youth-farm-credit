@@ -675,18 +675,27 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
     def n(v):
         try: return round(float(str(v).replace(",", "")))
         except (TypeError, ValueError): return None
+    def ratio(v):
+        try:
+            value = float(str(v).replace(",", ""))
+            # 공공데이터가 %로 주는 경우(예: 25.4)는 비율로 변환한다.
+            return round(value / 100 if value > 1 else value, 4)
+        except (TypeError, ValueError): return None
     grouped: dict[tuple[int, int], list[dict[str, int | None]]] = {}
     for x in raw:
         ym=str(x.get("exmn_ym", x.get("exmn_ymd", ""))).replace("-", "")
         price = n(x.get("pmm_avgprc"))
         if len(ym) >= 6 and price is not None:
-            row = {"price": price, "high": n(x.get("pmm_hgprc")), "low": n(x.get("pmm_lwprc")), "stddev": n(x.get("pmm_stddvtn")), "cv": n(x.get("pmm_cfcntvrtn")), "range_cv": n(x.get("pmm_cfcntrng"))}
+            row = {"price": price, "high": n(x.get("pmm_hgprc")), "low": n(x.get("pmm_lwprc")), "stddev": n(x.get("pmm_stddvtn")), "cv": ratio(x.get("pmm_cfcntvrtn")), "range_cv": ratio(x.get("pmm_cfcntrng"))}
             grouped.setdefault((int(ym[:4]), int(ym[4:6])), []).append(row)
     items=[]
     for (year, month), rows in grouped.items():
         def avg(field):
-            values = [int(row[field]) for row in rows if row[field] is not None]
-            return round(sum(values) / len(values)) if values else None
+            values = [float(row[field]) for row in rows if row[field] is not None]
+            if not values:
+                return None
+            value = sum(values) / len(values)
+            return round(value, 4) if field in ("cv", "range_cv") else round(value)
         items.append({"year": year, "month": month, "price": avg("price"), "high": max((row["high"] for row in rows if row["high"] is not None), default=None), "low": min((row["low"] for row in rows if row["low"] is not None), default=None), "stddev": avg("stddev"), "cv": avg("cv"), "range_cv": avg("range_cv")})
     items = sorted(items, key=lambda x: (x["year"], x["month"]))[-36:]
     return {"status":"ok" if items else "empty","crop":crop.name,"from":three_years_ago.isoformat(),"to":today.isoformat(),"latest":items[-1] if items else None,"items":items}
