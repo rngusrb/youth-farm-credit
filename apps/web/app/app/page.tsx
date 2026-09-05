@@ -83,7 +83,7 @@ export default function FarmerHome() {
 
       {diag && (
         <>
-          <Section title="지금 조건으로 계산한 권장 대출금" action={
+          <Section title="안전하게 받아야 할 금액" action={
             <Link href={`/result/${diag.diagnosis_id}`} className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">
               전체 리포트 +
             </Link>
@@ -99,8 +99,7 @@ export default function FarmerHome() {
                   {won(headlineLimit(diag))}
                 </p>
                 <p className="mt-3.5 max-w-xl text-[14px] leading-[1.75] text-gov-ink2">
-                  제도상 <b className="text-gov-ink">{won(diag.limits.available)}</b>까지 신청할 수
-                  있어요. 소득이 해마다 흔들리는 것까지 넣어 계산하면 위 금액이에요.
+                  소득이 줄어드는 때에도 갚을 수 있도록 계산한 금액이에요.
                 </p>
                 {unsafeGap(diag) > 0 && (
                   <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-gov-ink3">
@@ -216,6 +215,18 @@ export default function FarmerHome() {
                 </Link>
               ))}
             </div>
+          </Section>
+
+          <Section title="Seed Money는 어떤 서비스인가요">
+            <Panel>
+              <p className="text-[17px] font-bold leading-relaxed text-gov-ink">
+                심은 대로 거두는 농사, <span className="text-gov-head">데이터대로 빌려주는 Seed Money.</span>
+              </p>
+              <p className="mt-2 text-[13px] leading-relaxed text-gov-ink2">
+                농가의 경영 데이터를 금융의 언어로 바꾸는 AI 금융 파트너예요.
+                농장에 들어오고 나가는 돈을 살펴보고, 꼭 필요한 만큼만 안전하게 빌릴 수 있도록 도와드려요.
+              </p>
+            </Panel>
           </Section>
         </>
       )}

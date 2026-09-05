@@ -37,9 +37,8 @@ export default function PortalHome() {
               <span className="text-gov-head">얼마까지 받아야 안전한가.</span>
             </h1>
             <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-gov-ink2">
-              농사로 번 돈은 수확기에 들어오지만, 쓸 돈은 매달 필요해요.
-              <b className="text-gov-ink">돈이 부족할 수 있는 시점</b>을 미리 살펴보세요.
-              빌릴 금액을 바꿔가며 내 농장에 맞는 대출 계획도 세울 수 있어요.
+              농장 정보를 넣으면 <b className="text-gov-ink">안전하게 받아야 할 금액</b>을 먼저 보여드려요.
+              필요한 기능만 골라서 바로 확인할 수 있어요.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Btn href={ready && session ? ROLE_HOME[session.role] : "/app"}>
@@ -60,19 +59,10 @@ export default function PortalHome() {
                 <p className="text-[13px] leading-relaxed text-gov-ink2">
                   {ROLE_LABEL[session.role]} 계정으로 로그인되어 있어요.
                   {session.role === "bank"
-                    ? " 업무 화면에서 접수된 신청 건의 상환능력과 적정 여신을 봅니다."
-                    : " 업무 화면에서 내 농가의 돈의 흐름과 권장 대출금을 볼 수 있어요."}
+                    ? " 접수된 신청 건의 상환 계획을 살펴볼 수 있어요."
+                    : " 내 농가의 돈 흐름과 안전한 대출 금액을 확인할 수 있어요."}
                 </p>
-                <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
-                  <div className="flex gap-3">
-                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">소속</dt>
-                    <dd className="text-gov-ink2">{session.org}</dd>
-                  </div>
-                  <div className="flex gap-3">
-                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">구분</dt>
-                    <dd className="text-gov-ink2">{ROLE_LABEL[session.role]}용 화면</dd>
-                  </div>
-                </dl>
+                <p className="mt-3 border-t border-gov-line2 pt-3 text-[12px] text-gov-ink3">{session.org}</p>
                 <Link
                   href={ROLE_HOME[session.role]}
                   className="mt-4 flex min-h-11 items-center justify-center rounded-md bg-gov-head text-[13px] font-bold text-white shadow-sm hover:bg-gov-navy"
@@ -98,18 +88,7 @@ export default function PortalHome() {
                   농가용과 금융기관용 화면이 따로 있어요. 같은 분석을 각자에게 필요한
                   형태로 보여 줍니다.
                 </p>
-                <dl className="mt-4 space-y-2 border-t border-gov-line2 pt-3 text-[13px]">
-                  <div className="flex gap-3">
-                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">농가</dt>
-                    <dd className="text-gov-ink2">“2.3억원 이하 차입을 권장합니다”</dd>
-                  </div>
-                  <div className="flex gap-3">
-                    <dt className="w-20 shrink-0 font-semibold text-gov-ink2">금융기관</dt>
-                    <dd className="text-gov-ink2">
-                      “3억원 대출 시 가격 하락 시나리오에서 갚는 데 쓸 돈 부족”
-                    </dd>
-                  </div>
-                </dl>
+                <p className="mt-3 border-t border-gov-line2 pt-3 text-[12px] text-gov-ink3">농장 살림을 바탕으로 안전한 대출 계획을 살펴봐요.</p>
                 <Link href="/login"
                       className="mt-4 flex min-h-11 items-center justify-center rounded-md bg-gov-head text-[13px] font-bold text-white shadow-sm hover:bg-gov-navy">
                   로그인
