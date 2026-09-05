@@ -87,6 +87,16 @@ function Body() {
 
       {id && <AuctionSummary key={id} cropId={id} showComparison showQuarterly={false} onData={setAuction} />}
 
+      {quarterly.length > 0 && !(detail && m && g) && (
+        <Section title="요즘 가격 흐름">
+          <Panel>
+            <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
+            <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
+            <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 보여드려요.</p>
+          </Panel>
+        </Section>
+      )}
+
       {detail && !m && (
         <Empty
           title={`${detail.name}은 도매가 시계열을 아직 수집하지 않았어요`}
