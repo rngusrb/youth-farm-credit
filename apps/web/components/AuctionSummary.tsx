@@ -9,16 +9,16 @@ import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "rec
 
 const won = (value: number | null) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
 
-export default function AuctionSummary() {
+export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: string } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   useEffect(() => {
-    const id = loadProfile()?.cropId;
+    const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
     fetchRealtimeAuction(id, 5).then(setData).catch(() => setData({ status: "empty", items: [] }));
     const timer = window.setInterval(() => fetchRealtimeAuction(id, 5).then(setData).catch(() => {}), 120_000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [cropIdOverride]);
 
   return (
     <Section title="전국 경매가 요약" action={<Link href="/market" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">자세히 보기 +</Link>}>

@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Badge, Crumb, DefTable, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchCrop, fetchCrops, type CropDetail, type CropRow } from "@/lib/api";
+import AuctionSummary from "@/components/AuctionSummary";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
   calm: { label: "평소보다 조용함", tone: "ok" },
@@ -55,6 +56,8 @@ function Body() {
           </span>
         </div>
       </Panel>
+
+      {id && <AuctionSummary cropId={id} />}
 
       {detail && !m && (
         <Empty
