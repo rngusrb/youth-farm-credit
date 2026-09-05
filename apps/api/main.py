@@ -364,7 +364,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     if not key or not mapping.get("item_cd"):
         return {"status": "unavailable", "items": []}
     endpoint = "https://apis.data.go.kr/B552845/katOrigin/trades"
-    params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_sclsf_cd,trd_qty", "cond[gds_sclsf_cd::EQ]": mapping["item_cd"]}
+    params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_sclsf_cd,qty,unit_tot_qty", "cond[gds_sclsf_cd::EQ]": mapping["item_cd"]}
     try:
         async with httpx.AsyncClient(timeout=20) as client:
             response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
@@ -378,7 +378,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
         digits = str(date_raw).replace("-", "")[:8]
         try: parsed = datetime.strptime(digits, "%Y%m%d")
         except ValueError: continue
-        value = next((row.get(k) for k in row if any(token in str(k).lower() for token in ("trd_qty", "qty", "거래량", "수량"))), None)
+        value = row.get("qty") or row.get("unit_tot_qty")
         try: number = float(str(value).replace(",", ""))
         except (TypeError, ValueError): continue
         if number > 0: groups.setdefault((parsed.year, parsed.month), []).append(number)
