@@ -6,6 +6,8 @@
 | --- | --- | --- | --- |
 | 한국농수산식품유통공사 전국 공영도매시장 실시간 경매정보 | `https://apis.data.go.kr/B552845/katRealTime2/trades2` | 최근 낙찰가·일별 경매 흐름 | `DATA_GO_KR_API_KEY` |
 | 한국농수산식품유통공사 일별 도·소매 가격정보 | `https://apis.data.go.kr/B552845/perDay/price` | 일별 가격·월별 평균 가격 | `DATA_GO_KR_SERVICE_KEY` 또는 `DATA_GO_KR_API_KEY` |
+| 한국농수산식품유통공사 연월별 도·소매 가격정보 | `https://apis.data.go.kr/B552845/perYearMonth` | 연도·월별 가격 비교 | `DATA_GO_KR_API_KEY` |
+| 한국농수산식품유통공사 최근일자 도·소매 가격정보 | `https://apis.data.go.kr/B552845/recent` | 최근 가격·전일·전년 비교 | `DATA_GO_KR_API_KEY` |
 | 한국농수산식품유통공사 전국 공영도매시장 경매원천정보 | `https://apis.data.go.kr/B552845/katOrigin/trades` | 거래정산일자·물량(`qty`)·낙찰 원자료 | `DATA_GO_KR_API_KEY` |
 | 한국농수산식품유통공사 농축수산물 표준코드 | `https://apis.data.go.kr/B552845/katCode/goods` | 작목의 대분류·중분류·소분류 코드 매핑 | `DATA_GO_KR_API_KEY` |
 

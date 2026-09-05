@@ -27,3 +27,5 @@
 | 상품 소분류 | `13` | 설향 |
 
 경매원천정보 조회 시 딸기는 `whsl_mrkt_cd=110001`, `gds_lclsf_cd=08`, `gds_mclsf_cd=04`로 대치합니다. 품종을 선택하면 `gds_sclsf_cd`도 함께 적용합니다.
+
+가격 화면은 연월별 가격에 `perYearMonth`, 최근 비교값에 `recent` API를 사용하고, 출하량은 `katOrigin/trades`의 `qty`를 사용합니다.
