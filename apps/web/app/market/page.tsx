@@ -8,6 +8,7 @@ import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSumma
 import Fold from "@/components/Fold";
 import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
 import { RECENT_PRICE_CATEGORIES } from "@/lib/recentPriceCategories";
+import { loadProfile } from "@/lib/profile";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
   calm: { label: "가격 변화가 작아요", tone: "ok" },
@@ -33,7 +34,7 @@ function Body() {
         setRows(d.crops);
         const available = RECENT_PRICE_CATEGORIES;
         setCategories(available);
-        const wanted = params.get("crop");
+        const wanted = params.get("crop") ?? loadProfile()?.cropId ?? "strawberry_hydro";
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
         const category = available.find((x) => x.large_code === initial?.price_category_code);
