@@ -16,6 +16,8 @@ export default function FarmPage() {
   const [crops, setCrops] = useState<CropRow[]>([]);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [cropId, setCropId] = useState("");
+  const [largeCode, setLargeCode] = useState("");
+  const [middleCode, setMiddleCode] = useState("");
   const [productId, setProductId] = useState("successor_farmer");
   const [pyeong, setPyeong] = useState("");
   const [living, setLiving] = useState("2400");
@@ -35,6 +37,9 @@ export default function FarmPage() {
         setProducts(p.products);
         const prev = loadProfile();
         setCropId(prev?.cropId ?? c.crops[0]?.id ?? "");
+        const initial = c.crops.find((x) => x.id === (prev?.cropId ?? c.crops[0]?.id));
+        setLargeCode(initial?.large_code ?? "");
+        setMiddleCode(initial?.middle_code ?? "");
         if (prev) {
           setProductId(prev.productId);
           setPyeong(String(prev.pyeong));
@@ -57,6 +62,8 @@ export default function FarmPage() {
     .map((v) => v * MAN);
 
   const crop = crops.find((c) => c.id === cropId);
+  const largeGroups = Array.from(new Map(crops.filter((c) => c.large_code).map((c) => [c.large_code, c.large_name])).entries());
+  const middleGroups = crops.filter((c) => c.large_code === largeCode).filter((c, i, a) => a.findIndex((x) => x.middle_code === c.middle_code) === i);
 
   /** 대화형 인테이크 — 자연어를 슬롯으로 바꾼다. 채워진 칸만 알려 준다. */
   async function readSentence() {
@@ -136,11 +143,15 @@ export default function FarmPage() {
                 <label className={label} htmlFor="crop">
                   키우는 작물 <span className="text-gov-point">*</span>
                 </label>
-                <select id="crop" value={cropId} onChange={(e) => setCropId(e.target.value)} className={field}>
-                  {crops.map((c) => (
-                    <option key={c.id} value={c.id}>{c.name} · 10a당 번 돈 {won(c.income_per_10a)}</option>
-                  ))}
-                </select>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setCropId(""); }} className={field}>
+                    <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
+                  </select>
+                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); setCropId(crops.find((c) => c.large_code === largeCode && c.middle_code === code)?.id ?? ""); }} className={field}>
+                    <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={c.middle_code} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
+                  </select>
+                </div>
+                {crop && <p className="mt-2 text-[12px] text-gov-ink3">선택한 작물: {crop.name} · 10a당 번 돈 {won(crop.income_per_10a)}</p>}
               </div>
               <div>
                 <label className={label} htmlFor="pyeong">

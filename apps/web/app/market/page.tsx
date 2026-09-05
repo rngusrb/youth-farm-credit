@@ -17,6 +17,8 @@ function Body() {
   const params = useSearchParams();
   const [rows, setRows] = useState<CropRow[]>([]);
   const [id, setId] = useState("");
+  const [largeCode, setLargeCode] = useState("");
+  const [middleCode, setMiddleCode] = useState("");
   const [detail, setDetail] = useState<CropDetail | null>(null);
   const [auction, setAuction] = useState<RealtimeAuction | null>(null);
   const [quarterly, setQuarterly] = useState<QuarterlyMarket["items"]>([]);
@@ -29,7 +31,8 @@ function Body() {
         setRows(d.crops);
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
-        setId((wanted && d.crops.some((c) => c.id === wanted) ? wanted : null) ?? withMarket?.id ?? d.crops[0]?.id ?? "");
+        const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
+        setId(initial?.id ?? ""); setLargeCode(initial?.large_code ?? ""); setMiddleCode(initial?.middle_code ?? "");
       })
       .catch(() => setError("작목 목록을 불러오지 못했어요."));
   }, [params]);
@@ -43,6 +46,8 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
+  const largeGroups = Array.from(new Map(rows.filter((c) => c.large_code).map((c) => [c.large_code, c.large_name])).entries());
+  const middleGroups = rows.filter((c) => c.large_code === largeCode).filter((c, i, a) => a.findIndex((x) => x.middle_code === c.middle_code) === i);
 
   return (
     <>
@@ -51,11 +56,12 @@ function Body() {
       <Panel className="mb-5">
         <div className="flex flex-wrap items-center gap-3">
           <label htmlFor="crop" className="text-[13px] font-semibold text-gov-ink2">작목 선택</label>
-          <select id="crop" value={id} onChange={(e) => setId(e.target.value)}
+          <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setId(""); }}
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
-            {rows.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}{c.middle_name ? ` · ${c.large_name} > ${c.middle_name}` : ""}{c.has_market ? " (도매가 수집됨)" : ""}</option>
-            ))}
+            <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
+          </select>
+          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); setId(rows.find((c) => c.large_code === largeCode && c.middle_code === code)?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+            <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={c.middle_code} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
           </select>
           <span className="text-[12px] text-gov-ink3">
             도매가 시계열 보유 {rows.filter((c) => c.has_market).length}종 / 전체 {rows.length}종
