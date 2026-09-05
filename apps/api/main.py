@@ -350,6 +350,41 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
 
 
 _quarterly_cache: dict[str, tuple[float, list[dict]]] = {}
+_volume_cache: dict[str, tuple[float, list[dict]]] = {}
+
+@app.get("/api/v1/market/volume")
+async def market_volume(crop_id: str = Query(...)) -> dict:
+    """katOrigin/trades 거래량을 월별 평균으로 묶는다."""
+    crop = get_crop(crop_id)
+    now = datetime.now().timestamp()
+    if crop_id in _volume_cache and now - _volume_cache[crop_id][0] < 900:
+        return {"status": "ok", "items": _volume_cache[crop_id][1]}
+    key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
+    mapping = crop.kamis or {}
+    if not key or not mapping.get("item_cd"):
+        return {"status": "unavailable", "items": []}
+    endpoint = "https://apis.data.go.kr/B552845/katOrigin/trades"
+    params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "cond[gds_mclsf_cd::EQ]": mapping["item_cd"]}
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
+        raw = payload.get("response", {}).get("body", {}).get("items", {}).get("item", [])
+        if isinstance(raw, dict): raw = [raw]
+    except (httpx.HTTPError, ValueError):
+        return {"status": "unavailable", "items": []}
+    groups: dict[tuple[int, int], list[float]] = {}
+    for row in raw:
+        date_raw = next((row.get(k) for k in ("trd_clcln_ymd", "trd_ymd", "scsbd_dt") if row.get(k)), "")
+        digits = str(date_raw).replace("-", "")[:8]
+        try: parsed = datetime.strptime(digits, "%Y%m%d")
+        except ValueError: continue
+        value = next((row.get(k) for k in row if any(token in str(k).lower() for token in ("trd_qty", "qty", "거래량", "수량"))), None)
+        try: number = float(str(value).replace(",", ""))
+        except (TypeError, ValueError): continue
+        if number > 0: groups.setdefault((parsed.year, parsed.month), []).append(number)
+    items = [{"year": y, "month": m, "quantity": round(sum(v) / len(v))} for (y, m), v in sorted(groups.items())]
+    _volume_cache[crop_id] = (now, items)
+    return {"status": "ok" if items else "empty", "items": items}
 
 
 @app.get("/api/v1/market/quarterly")

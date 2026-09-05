@@ -46,6 +46,12 @@ export async function fetchMarketQuarterly(cropId: string): Promise<QuarterlyMar
   if (!res.ok) throw new Error("분기별 가격을 불러오지 못했습니다");
   return res.json();
 }
+export type MarketVolume = { status: "ok" | "empty" | "unavailable"; items: { year: number; month: number; quantity: number }[] };
+export async function fetchMarketVolume(cropId: string): Promise<MarketVolume> {
+  const res = await fetch(`${API_BASE}/api/v1/market/volume?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("거래량을 불러오지 못했습니다");
+  return res.json();
+}
 
 export type Scenario = {
   dscr_median: number;

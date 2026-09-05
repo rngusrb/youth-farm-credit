@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Badge, Crumb, DefTable, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchCrop, fetchCrops, fetchMarketQuarterly, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket } from "@/lib/api";
+import { fetchCrop, fetchCrops, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 
@@ -20,6 +20,7 @@ function Body() {
   const [detail, setDetail] = useState<CropDetail | null>(null);
   const [auction, setAuction] = useState<RealtimeAuction | null>(null);
   const [quarterly, setQuarterly] = useState<QuarterlyMarket["items"]>([]);
+  const [volume, setVolume] = useState<{ year: number; month: number; quantity: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ function Body() {
     if (!id) return;
     fetchCrop(id).then(setDetail).catch(() => setError("작목 정보를 불러오지 못했어요."));
     fetchMarketQuarterly(id).then((d) => setQuarterly(d.items)).catch(() => setQuarterly([]));
+    fetchMarketVolume(id).then((d) => setVolume(d.items)).catch(() => setVolume([]));
   }, [id]);
 
   const m = detail?.market;
@@ -163,8 +165,8 @@ function Body() {
               <div className="mt-5 border-t border-gov-line2 pt-5">
                 <h3 className="mb-2 text-[15px] font-bold text-gov-ink">3. 수확량</h3>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
-                <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const active = detail.harvest_months.includes(month); return <div key={month} className="text-center"><div className={`h-10 rounded-sm ${active ? "bg-gov-link/75" : "bg-gov-line2"}`} style={{ opacity: active ? 0.9 : 0.35 }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
-                <p className="mt-3 text-[11px] text-gov-ink3">정산량 API 자료가 들어오면 월별 물량에 따라 색 농도를 자동으로 조정해요.</p>
+                <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const amount = volume.filter((x) => x.month === month).reduce((s, x) => s + x.quantity, 0); const max = Math.max(...volume.map((x) => x.quantity), 1); const opacity = amount ? 0.25 + (amount / max) * 0.75 : 0.15; return <div key={month} className="text-center"><div className="h-10 rounded-sm bg-gov-link" style={{ opacity }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
+                <p className="mt-3 text-[11px] text-gov-ink3">katOrigin 거래량 월평균 기준 · 거래량이 많을수록 색이 진해요.</p>
               </div>
             </Panel>
           </Section>
