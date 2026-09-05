@@ -56,9 +56,11 @@ export async function fetchMarketQuarterly(cropId: string): Promise<QuarterlyMar
   return res.json();
 }
 export async function fetchMarketMonthly(cropId: string): Promise<QuarterlyMarket> {
-  const res = await fetch(`${API_BASE}/api/v1/market/monthly?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
-  if (!res.ok) throw new Error("월별 가격을 불러오지 못했습니다");
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/market/monthly?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
+    if (res.ok) return res.json();
+  } catch { /* 일별 API로 대체 */ }
+  return fetchMarketQuarterly(cropId);
 }
 export type MarketVolume = { status: "ok" | "empty" | "unavailable"; items: { year: number; month: number; quantity: number }[] };
 export async function fetchMarketVolume(cropId: string): Promise<MarketVolume> {

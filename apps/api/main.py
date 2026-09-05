@@ -646,9 +646,14 @@ async def market_quarterly(crop_id: str = Query(...)) -> dict:
 async def market_monthly(crop_id: str = Query(...)) -> dict:
     crop = get_crop(crop_id); mapping = crop.kamis or {}; key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
     if not key or not mapping: return {"status": "unavailable", "items": []}
+    today = date.today()
+    try:
+        three_years_ago = today.replace(year=today.year - 3)
+    except ValueError:  # 2월 29일처럼 해당 날짜가 없는 해
+        three_years_ago = today.replace(year=today.year - 3, day=28)
     try:
         async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 1000, "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "cond[exmn_ym::GTE]": (date.today() - timedelta(days=365 * 3)).strftime("%Y%m"), "cond[exmn_ym::LTE]": date.today().strftime("%Y%m")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 36, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": three_years_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "cond[vrty_cd::EQ]": mapping.get("vrty_cd", "01"), "cond[grd_cd::EQ]": mapping.get("grd_cd", "04")}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
             raw = [raw] if isinstance(raw, dict) else raw
     except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
     def n(v):
@@ -658,7 +663,8 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
     for x in raw:
         ym=str(x.get("exmn_ym", x.get("exmn_ymd", ""))).replace("-", "")
         if len(ym)>=6 and n(x.get("pmm_avgprc")) is not None: items.append({"year":int(ym[:4]),"month":int(ym[4:6]),"price":n(x.get("pmm_avgprc")),"high":n(x.get("pmm_hgprc")),"low":n(x.get("pmm_lwprc")),"stddev":n(x.get("pmm_stddvtn")),"cv":n(x.get("pmm_cfcntvrtn")),"range_cv":n(x.get("pmm_cfcntrng"))})
-    return {"status":"ok" if items else "empty","crop":crop.name,"items":items[-36:]}
+    items = sorted(items, key=lambda x: (x["year"], x["month"]))[-36:]
+    return {"status":"ok" if items else "empty","crop":crop.name,"from":three_years_ago.isoformat(),"to":today.isoformat(),"latest":items[-1] if items else None,"items":items}
 
 @app.get("/api/v1/crops/{crop_id}")
 def crop_detail(crop_id: str) -> dict:

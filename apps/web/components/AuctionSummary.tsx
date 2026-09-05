@@ -43,7 +43,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
           <XAxis dataKey="month" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
           <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
-          <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "분기 평균 도매가"]} labelFormatter={(v) => `${v}`} />
+          <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "월별 평균 도매가"]} labelFormatter={(v) => `${v}`} />
           {years.map((year, i) => <Line key={year} type="monotone" dataKey={`y${year}`} name={`${year}년`} stroke={["#2f6b4f", "#7a4e2d", "#6b7280"][i % 3]} strokeWidth={2.5} dot={{ r: 2 }} activeDot={{ r: 5 }} />)}
         </LineChart>
       </ResponsiveContainer>
