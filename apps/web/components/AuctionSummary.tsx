@@ -68,7 +68,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       const base = live.status === "fulfilled" ? live.value : { status: "empty" as const, items: [] };
       const latest = recent.status === "fulfilled" && recent.value.items.length ? recent.value : null;
       // 최근일자 API는 비교 필드용 대표 행이고, 화면 목록·흐름은 perDay 일별 자료를 유지한다.
-      const d = latest ? { ...base, ...latest, items: latest.items.length ? [latest.items[0], ...base.items] : base.items, average_price: latest.average_price ?? base.average_price, average_label: latest.average_label ?? base.average_label, daily_series: (latest.daily_series?.length ?? 0) >= (base.daily_series?.length ?? 0) ? latest.daily_series : base.daily_series } : base;
+      const d = latest ? { ...base, ...latest, items: latest.items.length ? [latest.items[0], ...base.items] : base.items, average_price: latest.average_price ?? base.average_price, average_label: latest.average_label ?? base.average_label, daily_series: latest.daily_series?.length ? latest.daily_series : base.daily_series } : base;
       if (!d.items.length && id === "strawberry_hydro") {
         d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
         d.daily_series = [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }];
@@ -108,7 +108,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
             <table className="w-full min-w-[460px] table-fixed text-[13px]">
-              <thead className="bg-gov-sunk text-center text-[12px] text-gov-ink2"><tr><th className="px-2 py-2">시간</th><th className="px-2 py-2">품목</th><th className="px-2 py-2">도매가</th><th className="px-2 py-2">단위</th></tr></thead>
+              <thead className="bg-gov-sunk text-center text-[12px] text-gov-ink2"><tr><th className="px-2 py-2">날짜</th><th className="px-2 py-2">품목</th><th className="px-2 py-2">도매가</th><th className="px-2 py-2">단위</th></tr></thead>
               <tbody>{tableItems.slice(0, 5).map((item, i) => <tr key={`${item.auction_at}-${i}`} className="border-t border-gov-line2"><td className="px-2 py-2 text-center text-gov-ink3">{item.auction_at || "—"}</td><td className="px-2 py-2 text-center">{item.item || "—"}</td><td className="px-2 py-2 text-center font-semibold tabular">{won(item.price)}</td><td className="px-2 py-2 text-center">{item.unit || "kg"}</td></tr>)}</tbody>
             </table>
           </div>}
