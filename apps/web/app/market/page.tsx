@@ -77,7 +77,7 @@ function Body() {
         </div>
       </Panel>
 
-      {id && <AuctionSummary cropId={id} showComparison showQuarterly={false} onData={setAuction} />}
+      {id && <AuctionSummary key={id} cropId={id} showComparison showQuarterly={false} onData={setAuction} />}
 
       {detail && !m && (
         <Empty
