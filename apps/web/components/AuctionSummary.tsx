@@ -145,7 +145,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
           </div>
         ) : null}
         {showComparison && (cropIdOverride || cropId) && (() => { const item = compare?.items[0]; const cards = [["1일 전", item?.previous_day_price], ["7일 전", item?.seven_day_price], ["1년 전", item?.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">{item ? `${item.item} · 상품 등급 ‘상’ 기준 · ${item.unit || "거래 단위"}${item.unit_qty ? ` ${item.unit_qty}` : ""} 단위예요. 자료 날짜: ${item.date || "—"}` : "비교 자료를 불러오는 중이에요. 잠시 후 다시 확인해 주세요."}</p></div>; })()}
-        <p className="mt-3 text-[11px] text-gov-ink3">한국농수산식품유통공사 일별 도·소매 가격정보 · 5분마다 새로 확인해요. 참고용으로만 봐 주세요.</p>
+        <p className="mt-3 text-[11px] text-gov-ink3">한국농수산식품유통공사 일별 도·소매 가격정보 · 전일자까지 집계된 자료를 기준으로 보여드려요. 참고용으로만 봐 주세요.</p>
       </Panel>
     </Section>
   );

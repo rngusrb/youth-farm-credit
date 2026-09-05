@@ -148,6 +148,21 @@ async def realtime_auction(
         if recent.get("items"):
             r = recent["items"][0]
             return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "서울가락", "date": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
+        # recent 응답이 비어도 perDay 일별 가격으로 기간 비교를 계산한다.
+        try:
+            rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=500), date.today())
+        except KamisError:
+            rows = []
+        daily = dict(daily_national_average(rows, use_kg=False))
+        dates = sorted(daily)
+        if dates:
+            latest = dates[-1]
+            latest_day = datetime.strptime(latest, "%Y%m%d").date()
+            def nearest(days):
+                target = latest_day - timedelta(days=days)
+                candidates = [d for d in dates if datetime.strptime(d, "%Y%m%d").date() <= target]
+                return daily[max(candidates)] if candidates else None
+            return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "전국 평균", "date": latest, "price": round(daily[latest]), "previous_day_price": round(nearest(1)) if nearest(1) else None, "seven_day_price": round(nearest(7)) if nearest(7) else None, "year_price": round(nearest(365)) if nearest(365) else None, "grade": "상품(상) 기준", "unit": "자료 단위 기준", "unit_qty": ""}]}
 
     # API는 코드·명칭 조건을 모두 지원한다. 작목 매핑에 코드가 없는 경우에도
     # 별칭으로 중분류를 먼저 찾고, 결과가 없으면 대분류로 다시 찾는다.
