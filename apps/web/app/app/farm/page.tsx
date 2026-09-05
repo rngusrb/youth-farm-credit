@@ -70,7 +70,7 @@ export default function FarmPage() {
   const crop = crops.find((c) => c.id === cropId);
   const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
   const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
-  const middleGroups = categoryRows.filter((c) => c.large_code === largeCode);
+  const middleGroups = categoryRows.filter((c) => String(c.large_code) === String(largeCode));
 
   /** 대화형 인테이크 — 자연어를 슬롯으로 바꾼다. 채워진 칸만 알려 준다. */
   async function readSentence() {
@@ -160,7 +160,7 @@ export default function FarmPage() {
                   <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setCropId(""); }} className={field}>
                     <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
                   </select>
-                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => x.middle_code === code); const found = crops.find((c) => c.price_item_code === code || (!!selected && c.name.includes(selected.middle_name))); setCropId(found?.id ?? ""); setError(found ? null : "선택한 품목과 연결된 작목 정보가 없어요. 작목 목록을 다시 불러와 주세요."); }} className={field}>
+                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => String(x.middle_code) === String(code)); const found = crops.find((c) => String(c.price_item_code ?? "") === String(code) || (!!selected && c.name.includes(selected.middle_name))); setCropId(found?.id ?? ""); setError(found ? null : "선택한 품목과 연결된 작목 정보가 없어요. 작목 목록을 다시 불러와 주세요."); }} className={field}>
                     <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
                   </select>
                 </div>
