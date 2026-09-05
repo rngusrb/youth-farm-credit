@@ -461,11 +461,11 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                 if by_date:
                     series = [{"date": day, "price": round(sum(values) / len(values)), "count": len(values)} for day, values in sorted(by_date.items())[-5:]]
                 try:
-                    rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today())
+                    rows = await asyncio.wait_for(asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today()), timeout=8)
                     fetched = [{"date": d, "price": round(p), "count": 1} for d, p in daily_national_average(rows, use_kg=True)[-5:]]
                     if fetched:
                         series = fetched
-                except KamisError:
+                except (KamisError, asyncio.TimeoutError):
                     pass
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
                 items = [item] + [row for row in daily_items if row["auction_at"] != item["auction_at"]]
