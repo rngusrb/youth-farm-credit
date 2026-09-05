@@ -14,6 +14,21 @@ const trendSentence = (current: number | null | undefined, year: number | null |
   if (Math.abs(pct) < 3) return "지난해 같은 시기와 비슷한 가격이에요.";
   return `지난해 같은 시기보다 ${Math.abs(pct).toFixed(0)}% ${pct > 0 ? "비싸요" : "낮아요"}.`;
 };
+const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
+  const groups = new Map<string, number[]>();
+  for (const row of series ?? []) {
+    const date = new Date(row.date);
+    if (Number.isNaN(date.getTime()) || row.price == null) continue;
+    const key = `${date.getFullYear()}년 ${Math.floor(date.getMonth() / 3) + 1}분기`;
+    const values = groups.get(key) ?? [];
+    values.push(row.price);
+    groups.set(key, values);
+  }
+  return [...groups.entries()].map(([quarter, values]) => ({
+    quarter,
+    price: Math.round(values.reduce((sum, value) => sum + value, 0) / values.length),
+  }));
+};
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false }: { cropId?: string; showComparison?: boolean; compact?: boolean } = {}) {
   const [data, setData] = useState<RealtimeAuction | null>(null);
@@ -78,7 +93,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
         ) : (
           <p className="mt-4 rounded-md bg-gov-sunk px-4 py-5 text-center text-[13px] text-gov-ink2">지금은 보여드릴 경매 자료가 없어요. 잠시 후 다시 확인해 주세요.</p>
         )}
-        {!compact && data?.items.filter((item) => item.price != null).length ? (
+          {!compact && data?.items.filter((item) => item.price != null).length ? (
           <div className="mt-5 border-t border-gov-line2 pt-4">
             <p className="mb-2 text-[13px] font-semibold text-gov-ink">최근 30일 일평균 낙찰가 흐름</p>
             <div className="h-44 w-full min-w-0">
@@ -91,6 +106,25 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
                 </LineChart>
               </ResponsiveContainer>
             </div>
+            {data.daily_series?.length ? (() => {
+              const quarterly = quarterSeries(data.daily_series);
+              return quarterly.length ? (
+                <div className="mt-5 border-t border-gov-line2 pt-4">
+                  <p className="mb-2 text-[13px] font-semibold text-gov-ink">분기별 평균 낙찰가 흐름</p>
+                  <div className="h-44 w-full min-w-0">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={quarterly} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
+                        <XAxis dataKey="quarter" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={18} />
+                        <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
+                        <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "분기 평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
+                        <Line type="monotone" dataKey="price" stroke="#7a4e2d" strokeWidth={2.5} dot={{ r: 3, fill: "#7a4e2d" }} activeDot={{ r: 5 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <p className="mt-1 text-[11px] text-gov-ink3">일별 자료가 있는 분기만 표시해요.</p>
+                </div>
+              ) : null;
+            })() : null}
           </div>
         ) : null}
         {showComparison && (cropIdOverride || cropId) && compare?.items.length ? (() => { const item = compare.items[0]; const cards = [["1일 전", item.previous_day_price], ["7일 전", item.seven_day_price], ["1년 전", item.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">{item.item} · 상품 등급 ‘상’ 기준 · {item.unit || "거래 단위"}{item.unit_qty ? ` ${item.unit_qty}` : ""} 단위예요.<br />공판장 평균가 기준, 자료 날짜: {item.date || "—"}</p></div>; })() : null}
