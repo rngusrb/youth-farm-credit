@@ -59,7 +59,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   const tableItems = data && (data.daily_series?.length ?? 0) >= 2
-    ? data.daily_series.slice(-7).reverse().map((row) => ({ market: "전국 일별 평균", item: data.crop ?? "선택 품목", price: row.price, unit: "kg", auction_at: row.date }))
+    ? (data.daily_series ?? []).slice(-7).reverse().map((row) => ({ market: "전국 일별 평균", item: data.crop ?? "선택 품목", price: row.price, unit: "kg", auction_at: row.date }))
     : (data?.items ?? []).slice(0, 7);
   useEffect(() => {
     const id = cropIdOverride ?? loadProfile()?.cropId;
@@ -69,6 +69,9 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       const latest = recent.status === "fulfilled" && recent.value.items.length ? recent.value : null;
       // 최근일자 API는 비교 필드용 대표 행이고, 화면 목록·흐름은 perDay 일별 자료를 유지한다.
       const d = latest ? { ...base, ...latest, items: latest.items.length ? [latest.items[0], ...base.items] : base.items, average_price: latest.average_price ?? base.average_price, average_label: latest.average_label ?? base.average_label, daily_series: latest.daily_series?.length ? latest.daily_series : base.daily_series } : base;
+      // 대표 가격도 표와 같은 일별 kg 평균을 사용해 같은 날짜에 값이 달라지지 않게 한다.
+      const lastDaily = d.daily_series?.[d.daily_series.length - 1];
+      if (lastDaily && d.items.length) d.items[0] = { ...d.items[0], item: d.crop ?? d.items[0].item, price: lastDaily.price, auction_at: lastDaily.date, unit: "kg" };
       if (!d.items.length && id === "strawberry_hydro") {
         d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
         d.daily_series = [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }];
