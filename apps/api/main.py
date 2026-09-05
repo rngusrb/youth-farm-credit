@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import os
+import asyncio
 from datetime import datetime, timedelta, timezone
 from urllib.parse import unquote
 
@@ -142,6 +143,7 @@ async def realtime_auction(
     endpoint = "https://apis.data.go.kr/B552845/katRealTime2/trades2"
     rows: list[dict] = []
     average_rows: list[dict] = []
+    daily_series: list[dict] = []
     matched_by = ""
     latest = datetime.now().date()
     date_params = {"cond[trd_clcln_ymd::EQ]": latest.strftime("%Y-%m-%d")}
@@ -197,6 +199,27 @@ async def realtime_auction(
                 except (httpx.HTTPError, ValueError):
                     continue
 
+        if aliases:
+            needles = [a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases]
+            async def fetch_day(offset: int) -> dict | None:
+                target = (latest - timedelta(days=offset)).strftime("%Y-%m-%d")
+                try:
+                    response = await client.get(endpoint, params={"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "cond[trd_clcln_ymd::EQ]": target})
+                    response.raise_for_status()
+                    raw = response.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+                    if isinstance(raw, dict): raw = [raw]
+                    matched_day = [r for r in raw if any(n and n in " ".join(str(r.get(k, "")) for k in ("corp_gds_item_nm", "corp_gds_vrty_nm", "gds_mclsf_nm", "gds_sclsf_nm")) for n in needles)]
+                    prices = []
+                    for r in matched_day:
+                        try:
+                            p = float(str(r.get("scsbd_prc", "")).replace(",", ""))
+                            if p > 0: prices.append(p)
+                        except (TypeError, ValueError): pass
+                    return {"date": target, "price": round(sum(prices) / len(prices)), "count": len(prices)} if prices else None
+                except (httpx.HTTPError, ValueError): return None
+            daily_series = [x for x in await asyncio.gather(*(fetch_day(i) for i in range(30))) if x]
+            daily_series.sort(key=lambda x: x["date"])
+
     def clean(row: dict) -> dict:
         price = row.get("scsbd_prc")
         try:
@@ -223,7 +246,7 @@ async def realtime_auction(
     return {
         "status": "ok" if rows else "empty", "source": "공공데이터포털 농산물 실시간 경매가",
         "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name if crop else None,
-        "match_level": matched_by, "items": [clean(r) for r in rows],
+        "match_level": matched_by, "items": [clean(r) for r in rows], "daily_series": daily_series,
         "average_price": round(sum(prices) / len(prices)) if prices else None,
         "average_label": "최근 30일 평균" if prices else None,
     }

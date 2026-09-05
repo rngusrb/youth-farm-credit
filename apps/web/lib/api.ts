@@ -20,6 +20,7 @@ export type RealtimeAuction = {
   average_label?: string | null;
   message?: string;
   items: AuctionItem[];
+  daily_series?: { date: string; price: number; count: number }[];
 };
 
 export async function fetchRealtimeAuction(cropId?: string, limit = 5): Promise<RealtimeAuction> {

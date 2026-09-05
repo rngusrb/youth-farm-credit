@@ -56,13 +56,13 @@ export default function AuctionSummary({ cropId: cropIdOverride }: { cropId?: st
         )}
         {data?.items.filter((item) => item.price != null).length ? (
           <div className="mt-5 border-t border-gov-line2 pt-4">
-            <p className="mb-2 text-[13px] font-semibold text-gov-ink">최근 낙찰가 흐름</p>
+            <p className="mb-2 text-[13px] font-semibold text-gov-ink">최근 30일 일평균 낙찰가 흐름</p>
             <div className="h-44 w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={[...data.items].filter((item) => item.price != null).reverse()} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
-                  <XAxis dataKey="auction_at" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={24} />
+                <LineChart data={data.daily_series?.length ? data.daily_series.map((x) => ({ ...x, market: "", item: "", unit: "", auction_at: x.date })) : [...data.items].filter((item) => item.price != null).reverse()} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
+                  <XAxis dataKey={data.daily_series?.length ? "date" : "auction_at"} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={24} />
                   <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
-                  <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "낙찰가"]} labelFormatter={(v) => `경매 ${v}`} />
+                  <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "일평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
                   <Line type="monotone" dataKey="price" stroke="#2f6b4f" strokeWidth={2.5} dot={{ r: 3, fill: "#2f6b4f" }} activeDot={{ r: 5 }} />
                 </LineChart>
               </ResponsiveContainer>
