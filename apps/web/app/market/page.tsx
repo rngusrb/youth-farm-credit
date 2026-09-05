@@ -160,14 +160,12 @@ function Body() {
                   </table>
                 </div>
               </div>
-            </Panel>
-          </Section>
-
-          <Section title="3. 수확량">
-            <Panel>
-              <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
-              <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const active = detail.harvest_months.includes(month); return <div key={month} className="text-center"><div className={`h-10 rounded-sm ${active ? "bg-gov-link/75" : "bg-gov-line2"}`} style={{ opacity: active ? 0.9 : 0.35 }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
-              <p className="mt-3 text-[11px] text-gov-ink3">정산량 API 자료가 들어오면 월별 물량에 따라 색 농도를 자동으로 조정해요.</p>
+              <div className="mt-5 border-t border-gov-line2 pt-5">
+                <h3 className="mb-2 text-[15px] font-bold text-gov-ink">3. 수확량</h3>
+                <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
+                <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const active = detail.harvest_months.includes(month); return <div key={month} className="text-center"><div className={`h-10 rounded-sm ${active ? "bg-gov-link/75" : "bg-gov-line2"}`} style={{ opacity: active ? 0.9 : 0.35 }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
+                <p className="mt-3 text-[11px] text-gov-ink3">정산량 API 자료가 들어오면 월별 물량에 따라 색 농도를 자동으로 조정해요.</p>
+              </div>
             </Panel>
           </Section>
 
