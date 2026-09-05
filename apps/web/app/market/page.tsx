@@ -69,7 +69,7 @@ function Body() {
 
       {detail && m && g && (
         <>
-          <Section title="가격 변화 정도">
+          <Section title="요즘 가격 흐름">
             <Panel>
               {m.quote_is_carried && (
                 <div className="mb-4">
@@ -84,11 +84,13 @@ function Body() {
                   </Notice>
                 </div>
               )}
+              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 분기별 가격 비교</h3>
               <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">
                 위 경매가 요약에서 <b className="text-gov-ink">최근 낙찰가</b>와 <b className="text-gov-ink">최근 30일 평균</b>을 비교해 보세요.
-                아래 선 그래프는 날짜별 평균 가격을 이어서 보여줘요.
+                분기별 평균 낙찰가 그래프는 연도별 가격 수준을 비교할 때 참고해요.
               </p>
-              <Fold tone="gov" open={false} summary="가격이 얼마나 오르내리는지 보기" hint="보조 지표">
+              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
+              <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}
                       value={g.regime ? (REGIME[g.regime]?.label ?? g.regime) : "판정 보류"}
@@ -136,8 +138,8 @@ function Body() {
             </Panel>
           </Section>
 
-          <Section title="교차검증">
-            <Fold tone="gov" open={false} summary="자료를 다시 비교해 보기" hint="KAMIS · KOSIS">
+          <Section title="비교 지표">
+            <Fold tone="gov" open={false} summary="교차검증 자료 보기" hint="KAMIS · KOSIS">
             <div className="grid gap-5 lg:grid-cols-2">
               <Panel>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
