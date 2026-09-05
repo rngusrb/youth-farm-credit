@@ -365,8 +365,11 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
         return {"status": "unavailable", "items": []}
     endpoint = "https://apis.data.go.kr/B552845/katOrigin/trades"
     window = (crop.market or {}).get("window") or []
-    date_start = window[0] if len(window) > 0 else "2022-01-01"
-    date_end = window[1] if len(window) > 1 else "2026-12-31"
+    date_end = window[1] if len(window) > 1 else date.today().isoformat()
+    try:
+        date_start = (date.fromisoformat(date_end) - timedelta(days=365)).isoformat()
+    except ValueError:
+        date_start = "2025-01-01"
     # katOrigin 품목 코드는 KAMIS 코드와 다르다. 딸기는 상품 중분류 04,
     # 서울가락 도매시장 110001로 조회한다.
     if "딸기" in crop.name:
