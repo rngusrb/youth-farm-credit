@@ -57,7 +57,7 @@ function Body() {
   const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0);
   const avgMonthlyCv = monthlyCv.length ? monthlyCv.reduce((sum, value) => sum + value, 0) / monthlyCv.length : null;
   const latestMonthlyCv = monthlyCv.length ? monthlyCv[monthlyCv.length - 1] : null;
-  const recentCvs = monthlyCv.slice(-12);
+  const recentCvs = monthlyCv.slice(-36);
   const lowerCvCount = latestMonthlyCv != null ? recentCvs.filter((value) => value < latestMonthlyCv).length : 0;
   const cvRiskScore = recentCvs.length && latestMonthlyCv != null ? Math.round((lowerCvCount / recentCvs.length) * 100) : null;
   const cvRiskLabel = cvRiskScore == null ? "—" : cvRiskScore >= 75 ? "위험" : cvRiskScore >= 50 ? "주의" : cvRiskScore >= 25 ? "보통" : "안정";
@@ -121,8 +121,8 @@ function Body() {
                   <Stat label="최근 월 변동계수" value={latestMonthlyCv != null ? `${latestMonthlyCv.toFixed(3)}%` : "—"} note="월별 표준편차 ÷ 월별 평균가 × 100" />
                   <Stat label="자료 기간 평균 변동계수" value={avgMonthlyCv != null ? `${avgMonthlyCv.toFixed(3)}%` : "—"} note={`${monthlyCv.length}개월의 월별 CV 평균`} />
                 </div>
-                <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2 border-t border-gov-line2 pt-3 text-[13px] text-gov-ink2"><span><b className="text-gov-ink">이번 달 가격 위험도: {cvRiskLabel}</b>{cvRiskScore != null && ` · ${cvRiskScore}점`}</span><span className="text-[11px] text-gov-ink3">최근 12개월 중 나보다 CV가 낮은 달 {lowerCvCount}개</span></div>
-                <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">위험도 계산: (현재 월 CV보다 낮은 월의 수 ÷ 비교 가능한 최근 12개월 수) × 100. 월별 평균가가 아니라 해당 월의 일별 가격 표준편차와 평균으로 계산된 CV를 사용해요. 일별 관측이 충분하지 않은 달은 비교에서 빠질 수 있어요.</p>
+                <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2 border-t border-gov-line2 pt-3 text-[13px] text-gov-ink2"><span><b className="text-gov-ink">이번 달 가격 위험도: {cvRiskLabel}</b>{cvRiskScore != null && ` · ${cvRiskScore}점`}</span><span className="text-[11px] text-gov-ink3">최근 36개월 중 나보다 CV가 낮은 달 {lowerCvCount}개</span></div>
+                <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">위험도 계산: (현재 월 CV보다 낮은 월의 수 ÷ 비교 가능한 최근 36개월 수) × 100. 월별 평균가가 아니라 해당 월의 일별 가격 표준편차와 평균으로 계산된 CV를 사용해요. 일별 관측이 충분하지 않은 달은 비교에서 빠질 수 있어요.</p>
               </div>
               <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}
