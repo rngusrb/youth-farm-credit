@@ -160,10 +160,10 @@ async def realtime_auction(
                 # perDay의 시장코드가 별도 체계인 경우 시장 조건 없이 품목 전국 평균을 사용한다.
                 daily_rows = await asyncio.wait_for(asyncio.to_thread(fetch_prices, crop_id, start_day, end_day), timeout=8)
                 market_label = "전국 일별 평균(가락시장 우선 조회)"
-            daily = daily_national_average(daily_rows, use_kg=False)
+            daily = daily_national_average(daily_rows, use_kg=True)
             if daily:
                 recent = daily[-30:]
-                items = [{"market": "서울가락", "item": crop.name, "price": round(price), "unit": "일별 평균", "quantity": None, "auction_at": day} for day, price in daily[-limit:]]
+                items = [{"market": "서울가락", "item": crop.name, "price": round(price), "unit": "kg", "quantity": None, "auction_at": day} for day, price in daily[-limit:]]
                 return {"status": "ok", "source": f"한국농수산식품유통공사 perDay 일별 도·소매 가격정보 · {market_label}", "as_of": datetime.now(timezone.utc).isoformat(), "crop": crop.name, "match_level": "품목코드", "items": [{**x, "market": market_label} for x in list(reversed(items))], "daily_series": [{"date": d, "price": round(p), "count": 1} for d, p in recent], "average_price": round(sum(p for _, p in recent) / len(recent)), "average_label": "최근 30일 평균"}
         except (KamisError, asyncio.TimeoutError):
             pass
@@ -180,7 +180,7 @@ async def realtime_auction(
             rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=500), date.today())
         except KamisError:
             rows = []
-        daily = dict(daily_national_average(rows, use_kg=False))
+        daily = dict(daily_national_average(rows, use_kg=True))
         dates = sorted(daily)
         if dates:
             latest = dates[-1]
@@ -490,9 +490,12 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                     series = [{"date": day, "price": round(sum(values) / len(values)), "count": len(values)} for day, values in sorted(by_date.items())[-5:]]
                 try:
                     rows = await asyncio.wait_for(asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today()), timeout=8)
-                    fetched = [{"date": d, "price": round(p), "count": 1} for d, p in daily_national_average(rows, use_kg=True)[-5:]]
+                    all_daily = daily_national_average(rows, use_kg=True)
+                    fetched = [{"date": d, "price": round(p), "count": 1} for d, p in all_daily[-5:]]
                     if fetched:
                         series = fetched
+                        # 조사일(최신일)은 recent API의 대표값과 동일하게 맞춘다.
+                        series[-1]["price"] = current
                 except (KamisError, asyncio.TimeoutError):
                     pass
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
