@@ -374,7 +374,7 @@ async def market_volume(crop_id: str = Query(...)) -> dict:
     else:
         params = {"serviceKey": unquote(key), "returnType": "json", "pageNo": 1, "numOfRows": 1000, "selectable": "trd_clcln_ymd,gds_mclsf_cd,qty,unit_tot_qty", "cond[gds_mclsf_cd::EQ]": mapping["item_cd"]}
     try:
-        async with httpx.AsyncClient(timeout=20) as client:
+        async with httpx.AsyncClient(timeout=60) as client:
             response = await client.get(endpoint, params=params); response.raise_for_status(); payload = response.json()
         raw = payload.get("response", {}).get("body", {}).get("items", {}).get("item", [])
         if isinstance(raw, dict): raw = [raw]
