@@ -245,9 +245,14 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
         except KeyError:
             raise HTTPException(status_code=404, detail=f"없는 작목: {crop_id}") from None
     endpoint = "https://api.odcloud.kr/api/15134477/v1/uddi:f79ced3e-9e53-424e-8682-e2a294f81c58"
+    query_name = next((a.replace("(시설,수경)", "").replace("(시설,토경)", "") for a in aliases), "")
     try:
         async with httpx.AsyncClient(timeout=15.0) as client:
-            response = await client.get(endpoint, params={"serviceKey": unquote(key), "page": 1, "perPage": 1000})
+            response = await client.get(endpoint, params={
+                "serviceKey": unquote(key), "page": 1, "perPage": 1000,
+                # 공판장 API는 품목명 조건을 지원해 전체 9만 건을 내려받지 않아도 된다.
+                "cond[품목명::EQ]": query_name,
+            })
             response.raise_for_status()
             payload = response.json()
     except (httpx.HTTPError, ValueError):
