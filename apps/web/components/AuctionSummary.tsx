@@ -58,7 +58,9 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
   const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], average_price: 5923, average_label: "조사일 평균" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
-  const tableItems = data && data.items.length > 1 ? data.items.slice(0, 7) : (data?.daily_series ?? []).slice(-7).reverse().map((row) => ({ market: "전국 일별 평균", item: data?.crop ?? "선택 품목", price: row.price, unit: "kg", auction_at: row.date }));
+  const tableItems = data && (data.daily_series?.length ?? 0) >= 2
+    ? data.daily_series.slice(-7).reverse().map((row) => ({ market: "전국 일별 평균", item: data.crop ?? "선택 품목", price: row.price, unit: "kg", auction_at: row.date }))
+    : (data?.items ?? []).slice(0, 7);
   useEffect(() => {
     const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
