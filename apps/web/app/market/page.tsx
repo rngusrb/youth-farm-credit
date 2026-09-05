@@ -79,17 +79,6 @@ function Body() {
 
       {id && <AuctionSummary cropId={id} showComparison showQuarterly={false} onData={setAuction} />}
 
-      {id && (
-        <Section title="연도별 상품 도매가격 요약">
-          <Panel>
-            <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">최근 3년 동안 같은 달의 월별 평균 도매가를 비교해요. 가격이 있는 달만 표시합니다.</p>
-            <QuarterlyAuctionChart quarterly={quarterly} />
-            {quarterly.length ? <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2"><table className="w-full min-w-[560px] text-[12px]"><thead className="bg-gov-sunk text-left text-gov-ink2"><tr><th className="px-3 py-2">연도</th><th className="px-3 py-2">월</th><th className="px-3 py-2 text-right">월평균 도매가(kg)</th></tr></thead><tbody>{quarterly.map((x) => <tr key={`${x.year}-${x.month}`} className="border-t border-gov-line2"><td className="px-3 py-2">{x.year}</td><td className="px-3 py-2">{x.month}월</td><td className="px-3 py-2 text-right font-semibold tabular">{x.price.toLocaleString("ko-KR")}원</td></tr>)}</tbody></table></div> : <p className="text-[12px] text-gov-ink3">월별 가격 자료를 확인하고 있어요.</p>}
-            <p className="mt-3 text-[11px] text-gov-ink3">자료: 한국농수산식품유통공사 연월별 도·소매 가격정보(perYearMonth) · kg 환산가격 기준</p>
-          </Panel>
-        </Section>
-      )}
-
       {detail && !m && (
         <Empty
           title={`${detail.name}은 도매가 시계열을 아직 수집하지 않았어요`}
@@ -114,7 +103,7 @@ function Body() {
                   </Notice>
                 </div>
               )}
-              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 최근 3년 월별 평균 가격 비교</h3>
+              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
               <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
               <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">1월부터 12월까지 같은 달의 가격을 최근 3개 연도 선으로 비교해요.</p>
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
