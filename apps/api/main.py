@@ -179,7 +179,7 @@ async def realtime_auction(
                 raw = [raw]
             if raw:
                 average_rows = raw
-                rows, matched_by = sorted(raw, key=lambda r: str(r.get("scsbd_dt") or r.get("trd_clcln_ymd") or ""), reverse=True)[:limit], level
+                rows, matched_by = sorted(raw, key=lambda r: str(r.get("mdfcn_dt") or r.get("scsbd_dt") or r.get("trd_clcln_ymd") or ""), reverse=True)[:limit], level
                 break
         # 명칭 LIKE 조건을 제공하지 않는 운영 버전도 있어 한 번 더 넓게 읽고
         # 품목명으로 걸러낸다. 이 경우에도 전국 자료 안에서 같은 품목만 남긴다.
