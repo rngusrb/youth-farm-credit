@@ -118,8 +118,9 @@ def build_query(params: dict) -> str:
     return f"serviceKey={encoded}&{query}"
 
 
-def _request(params: dict) -> dict:
-    url = f"{BASE_URL}?{build_query(params)}"
+def _request(params: dict, endpoint: str | None = None) -> dict:
+    """공유 전역 URL을 바꾸지 않고 요청한다(동시 품목 조회 안전)."""
+    url = f"{endpoint or BASE_URL}?{build_query(params)}"
     try:
         with urllib.request.urlopen(url, timeout=30) as resp:
             raw = resp.read().decode("utf-8", "replace")
@@ -216,19 +217,14 @@ def fetch_recent(crop_id: str, max_pages: int = 20) -> list[PriceRow]:
     for key, param in (("se_cd", "cond[se_cd::EQ]"), ("vrty_cd", "cond[vrty_cd::EQ]"), ("grd_cd", "cond[grd_cd::EQ]")):
         if mapping.get(key): base[param] = mapping[key]
     rows: list[PriceRow] = []
-    original = globals()["BASE_URL"]
-    try:
-        globals()["BASE_URL"] = RECENT_URL
-        for page in range(1, max_pages + 1):
-            payload = _request({**base, "pageNo": page})
+    for page in range(1, max_pages + 1):
+            payload = _request({**base, "pageNo": page}, RECENT_URL)
             body = payload.get("response", {}).get("body", {}) or {}
             items = (body.get("items") or {}).get("item") or []
             if isinstance(items, dict): items = [items]
             rows.extend(parse_rows(items))
             total = int(body.get("totalCount") or 0)
             if page * MAX_ROWS >= total or not items: break
-    finally:
-        globals()["BASE_URL"] = original
     rows.sort(key=lambda r: r.date, reverse=True)
     return rows
 
@@ -238,12 +234,7 @@ def fetch_recent_records(crop_id: str) -> list[dict]:
     if not mapping: raise KamisError(f"crops.json 의 '{crop_id}' 에 매핑이 없습니다")
     base = {"serviceKey": service_key(), "returnType": "JSON", "pageNo": 1, "numOfRows": MAX_ROWS,
             "cond[se_cd::EQ]": mapping.get("se_cd", "02"), "cond[ctgry_cd::EQ]": mapping["ctgry_cd"], "cond[item_cd::EQ]": mapping["item_cd"]}
-    original = globals()["BASE_URL"]
-    try:
-        globals()["BASE_URL"] = RECENT_URL
-        payload = _request(base)
-    finally:
-        globals()["BASE_URL"] = original
+    payload = _request(base, RECENT_URL)
     body = payload.get("response", {}).get("body", {}) or {}; items = (body.get("items") or {}).get("item") or []
     return [items] if isinstance(items, dict) else items
 
