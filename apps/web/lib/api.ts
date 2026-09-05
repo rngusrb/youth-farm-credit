@@ -10,6 +10,7 @@ export type AuctionItem = {
   auction_at: string;
   previous_day_price?: number | null;
   seven_day_price?: number | null;
+  month_price?: number | null;
   year_price?: number | null;
 };
 
@@ -40,7 +41,7 @@ export async function fetchMarketRecent(cropId: string, limit = 5): Promise<Real
   return res.json();
 }
 
-export type MarketCompareItem = { item: string; market: string; date: string; price: number | null; previous_day_price: number | null; seven_day_price?: number | null; year_price: number | null; year_change?: string | number | null; grade?: string; unit?: string; unit_qty?: string };
+export type MarketCompareItem = { item: string; market: string; date: string; price: number | null; previous_day_price: number | null; seven_day_price?: number | null; month_price?: number | null; year_price: number | null; year_change?: string | number | null; grade?: string; unit?: string; unit_qty?: string };
 export type MarketCompare = { status: "ok" | "empty" | "unavailable"; crop?: string | null; items: MarketCompareItem[] };
 export async function fetchMarketCompare(cropId?: string): Promise<MarketCompare> {
   const query = cropId ? `?crop_id=${encodeURIComponent(cropId)}` : "";

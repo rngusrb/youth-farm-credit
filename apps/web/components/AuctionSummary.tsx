@@ -128,33 +128,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
             <p className="mt-1">가장 최근 가격 자료를 확인하고 있어요.</p>
           </div>
         )}
-          {!compact && data?.items.filter((item) => item.price != null).length ? (
-          <div className="mt-5 border-t border-gov-line2 pt-4">
-            <p className="mb-2 text-[13px] font-semibold text-gov-ink">최근 30일 일평균 도매가 흐름</p>
-            <div className="h-44 w-full min-w-0">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data.daily_series?.length ? data.daily_series.map((x) => ({ ...x, market: "", item: "", unit: "", auction_at: x.date })) : [...data.items].filter((item) => item.price != null).reverse()} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
-                  <XAxis dataKey={data.daily_series?.length ? "date" : "auction_at"} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} minTickGap={24} />
-                  <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
-                  <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "일평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
-                  <Line type="monotone" dataKey="price" stroke="#2f6b4f" strokeWidth={2.5} dot={{ r: 3, fill: "#2f6b4f" }} activeDot={{ r: 5 }} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            {data.daily_series?.length ? <details className="mt-3 rounded-md border border-gov-line2 bg-gov-sunk/40 px-3 py-2"><summary className="cursor-pointer text-[12px] font-semibold text-gov-ink2">일별 값 {data.daily_series.length}건 보기</summary><div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-[11px] text-gov-ink3 sm:grid-cols-3">{data.daily_series.map((x) => <div key={x.date} className="flex justify-between gap-2"><span>{x.date}</span><b className="tabular text-gov-ink">{won(x.price)}</b></div>)}</div></details> : null}
-            {showQuarterly && data.daily_series?.length ? (() => {
-              const monthly = monthlyFromDaily(data.daily_series);
-              return monthly.length ? (
-                <div className="mt-5 border-t border-gov-line2 pt-4">
-                  <p className="mb-2 text-[13px] font-semibold text-gov-ink">월별 평균 낙찰가 흐름</p>
-                  <QuarterlyAuctionChart series={data.daily_series} />
-                  <p className="mt-1 text-[11px] text-gov-ink3">일별 자료가 있는 분기만 표시해요.</p>
-                </div>
-              ) : null;
-            })() : null}
-          </div>
-        ) : null}
-        {showComparison && (cropIdOverride || cropId) && (() => { const item = compare?.items[0]; const latest = data?.items[0]; const cards = [["1일 전", item?.previous_day_price ?? latest?.previous_day_price], ["7일 전", item?.seven_day_price ?? latest?.seven_day_price], ["1년 전", item?.year_price ?? latest?.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid gap-2 sm:grid-cols-3">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">최근일자 도·소매 가격정보 기준으로 계산했어요.</p></div>; })()}
+        {showComparison && (cropIdOverride || cropId) && (() => { const item = compare?.items[0]; const latest = data?.items[0]; const cards = [["1일 전", item?.previous_day_price ?? latest?.previous_day_price], ["7일 전", item?.seven_day_price ?? latest?.seven_day_price], ["1개월 전", item?.month_price ?? latest?.month_price], ["1년 전", item?.year_price ?? latest?.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid grid-cols-2 gap-2">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">최근일자 도·소매 가격정보 기준으로 계산했어요.</p></div>; })()}
         <p className="mt-3 text-[11px] text-gov-ink3">한국농수산식품유통공사 일별 도·소매 가격정보 · 전일자까지 집계된 자료를 기준으로 보여드려요. 참고용으로만 봐 주세요.</p>
       </Panel>
     </Section>

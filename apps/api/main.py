@@ -167,7 +167,7 @@ async def realtime_auction(
         recent = await market_recent(crop_id, 1)
         if recent.get("items"):
             r = recent["items"][0]
-            return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "서울가락", "date": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
+            return {"status": "ok", "crop": crop_name, "items": [{"item": crop_name, "market": "서울가락", "date": r.get("auction_at", ""), "price": r.get("price"), "previous_day_price": r.get("previous_day_price"), "seven_day_price": r.get("seven_day_price"), "month_price": r.get("month_price"), "year_price": r.get("year_price"), "grade": "상품(상) 기준", "unit": r.get("unit", "자료 단위 기준"), "unit_qty": ""}]}
         # recent 응답이 비어도 perDay 일별 가격으로 기간 비교를 계산한다.
         try:
             rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=500), date.today())
@@ -446,7 +446,7 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
             r = records[0]
             current = num(r.get("exmn_dd_prc"));
             if current is not None:
-                item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": f"{r.get('unit_sz','')}{r.get('unit','')}".strip(), "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_prc")), "seven_day_price": num(r.get("ww1_bfr_prc")), "year_price": num(r.get("yy1_bfr_prc"))}
+                item = {"market": "전국 일별 평균", "item": r.get("item_nm") or name, "price": current, "unit": f"{r.get('unit_sz','')}{r.get('unit','')}".strip(), "quantity": None, "auction_at": r.get("exmn_ymd", ""), "previous_day_price": num(r.get("dd1_bfr_prc")), "seven_day_price": num(r.get("ww1_bfr_prc")), "month_price": num(r.get("mm1_bfr_prc")), "year_price": num(r.get("yy1_bfr_prc"))}
                 series = []
                 try:
                     rows = await asyncio.to_thread(fetch_prices, crop_id, date.today() - timedelta(days=400), date.today())
