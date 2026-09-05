@@ -440,7 +440,8 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
     key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
     name = crop.name.split("(")[0].strip()
     try:
-        records = await asyncio.to_thread(fetch_recent_records, crop_id)
+        # 외부 최근일자 API가 지연되더라도 화면 전체가 멈추지 않도록 제한한다.
+        records = await asyncio.wait_for(asyncio.to_thread(fetch_recent_records, crop_id), timeout=8)
         records = sorted(records, key=lambda r: str(r.get("exmn_ymd", "")), reverse=True)
         if records:
             def num(v):
@@ -470,7 +471,7 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
                 items = [item] + [row for row in daily_items if row["auction_at"] != item["auction_at"]]
                 return {"status": "ok", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보", "crop": name, "match_level": "품목코드", "items": items[:5], "daily_series": series, "average_price": current, "average_label": "조사일 평균"}
-    except KamisError:
+    except (KamisError, asyncio.TimeoutError):
         pass
     code = next((r for r in standard_codes() if r.get("중분류명(품목명)", "").strip() == name), {})
     large = str(code.get("대분류코드") or "08"); middle = str(code.get("중분류코드") or "04")
