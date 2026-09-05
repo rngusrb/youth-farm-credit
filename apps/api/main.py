@@ -115,8 +115,8 @@ def list_crops() -> dict:
     grouped = {}
     for row in rows:
         key = (row["price_category_code"], row["price_item_code"])
-        if key == ("200", "226"):
-            bucket = grouped.setdefault(key, {**row, "id": "strawberry_hydro", "name": "딸기", "_rows": []})
+        if key[0] and key[1]:
+            bucket = grouped.setdefault(key, {**row, "id": row["id"], "name": row["middle_name"], "_rows": []})
             bucket["_rows"].append(row)
         else:
             grouped.setdefault((row["id"], ""), row)
