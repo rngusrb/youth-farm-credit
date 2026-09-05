@@ -510,7 +510,7 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                 latest_daily_price = series[-1]["price"] if series else current
                 five_day_average = round(sum(row["price"] for row in series[-5:]) / min(5, len(series))) if series else current
                 items[0]["price"] = latest_daily_price
-                result = {"status": "ok", "source": "한국농수산식품유통공사 일별 중도매 가격정보", "crop": name, "match_level": "품목코드", "grade": "상품", "items": items[:5], "daily_series": series, "average_price": five_day_average, "average_label": "최근 5일 평균 도매가(상품·kg)"}
+                result = {"status": "ok", "source": "한국농수산식품유통공사 일별 중도매 가격정보", "crop": name, "match_level": "품목코드", "grade": "상", "items": items[:5], "daily_series": series, "average_price": five_day_average, "average_label": "최근 5일 평균 도매가(상·kg)"}
                 _market_cache_write(crop_id, result)
                 return result
     except asyncio.TimeoutError:

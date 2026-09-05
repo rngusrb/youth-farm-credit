@@ -55,7 +55,7 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
 }
 
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
-  const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], daily_series: [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }], average_price: 7845, average_label: "최근 5일 평균 도매가(상품·kg)" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
+  const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], daily_series: [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }], average_price: 7845, average_label: "최근 5일 평균 도매가(상·kg)" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   const tableItems = data && (data.daily_series?.length ?? 0) >= 2
@@ -75,7 +75,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       if (!d.items.length && id === "strawberry_hydro") {
         d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
         d.daily_series = [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }];
-        d.average_price = 7845; d.average_label = "최근 5일 평균 도매가(상품·kg)"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
+        d.average_price = 7845; d.average_label = "최근 5일 평균 도매가(상·kg)"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
       }
       setData(d); onData?.(d);
     });
@@ -106,7 +106,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               <div className="flex flex-col gap-1"><p className="text-[12px] text-gov-ink2">최근 조사일 도매가</p><p className="text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p></div>
               {data.average_price != null && <div className={compact ? "flex flex-col gap-1 border-l border-gov-link/20 pl-3" : "flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"}><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
             </div>
-            <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market || "전국 일별 평균"} · 상품 · {data.items[0].unit || "kg"}</p>
+            <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market || "전국 일별 평균"} · 상 · {data.items[0].unit || "kg"}</p>
             <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
