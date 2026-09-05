@@ -107,7 +107,7 @@ function Body() {
           </Section>
 
           <Section title="교차검증">
-            <Fold tone="gov" summary="자료를 다시 비교해 보기" hint="KAMIS · KOSIS">
+            <Fold tone="gov" open={false} summary="자료를 다시 비교해 보기" hint="KAMIS · KOSIS">
             <div className="grid gap-5 lg:grid-cols-2">
               <Panel>
                 <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
@@ -155,6 +155,19 @@ function Body() {
                 </p>
               </Panel>
             </div>
+            </Fold>
+          </Section>
+
+          <Section title="가격 예측과 신뢰구간">
+            <Fold tone="gov" open={false} summary="앞으로의 가격을 어떻게 계산하나요?" hint="예측 방식 안내">
+              <div className="space-y-3 text-[13px] leading-relaxed text-gov-ink2">
+                <p>작목마다 계절과 출하 시기가 달라요. 먼저 같은 작목·등급·단위의 일평균 가격으로 계절 흐름을 잡아요.</p>
+                <p>그다음 최근 가격의 흔들림을 반영해 예상 범위를 계산해요. 가운데 선은 예상값이고, 띠는 80% 신뢰구간이에요.</p>
+                <p className="text-gov-ink3">거래일이 충분하면 계절형 통계모델을 쓰고, 자료가 쌓인 작목만 시계열 학습모델을 비교해요. 검증 점수가 낮으면 예측을 표시하지 않아요.</p>
+                <div className="rounded-md bg-gov-sunk px-3 py-3 text-[12px] text-gov-ink3">
+                  현재 화면의 변동성 값은 장기 참고값이에요. 일별 예측과 신뢰구간은 원천 경매 시계열이 충분히 쌓인 뒤 별도로 검증해 표시해요.
+                </div>
+              </div>
             </Fold>
           </Section>
         </>
