@@ -497,7 +497,10 @@ async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5,
                         # 조사일(최신일)은 recent API의 대표값과 동일하게 맞춘다.
                         series[-1]["price"] = current
                 except (KamisError, asyncio.TimeoutError):
-                    pass
+                    cached = _market_cache_read(crop_id)
+                    if cached and len(cached.get("daily_series", [])) >= 2:
+                        series = cached["daily_series"]
+                        current = series[-1]["price"]
                 daily_items = [{"market": "전국 일별 평균", "item": name, "price": row["price"], "unit": "kg", "quantity": None, "auction_at": row["date"]} for row in reversed(series)]
                 items = [item] + [row for row in daily_items if row["auction_at"] != item["auction_at"]]
                 latest_daily_price = series[-1]["price"] if series else current
