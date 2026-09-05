@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Crumb, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchCrop, fetchCrops, fetchMarketCategories, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
+import { DEFAULT_MARKET_CATEGORIES, fetchCrop, fetchCrops, fetchMarketCategories, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
 
@@ -27,10 +27,10 @@ function Body() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchCrops(), fetchMarketCategories()])
+    Promise.all([fetchCrops(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
       .then(([d, cat]) => {
         setRows(d.crops);
-        setCategories(cat.items);
+        setCategories(cat.items.length ? cat.items : d.crops.filter((c) => c.large_code && c.middle_code).map((c) => ({ large_code: c.large_code!, large_name: c.large_name ?? "", middle_code: c.middle_code!, middle_name: c.middle_name ?? c.name })));
         const wanted = params.get("crop");
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
@@ -62,7 +62,7 @@ function Body() {
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
           </select>
-          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const found = rows.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "")); setId(found?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((c) => c.middle_code === code); const found = rows.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "") || (!!selected && c.name.includes(selected.middle_name))); setId(found?.id ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={c.middle_code} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
           </select>
           <span className="text-[12px] text-gov-ink3">

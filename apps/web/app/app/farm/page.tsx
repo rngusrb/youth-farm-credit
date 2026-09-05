@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Badge, Btn, Notice, PageTitle, Panel, Section } from "@/components/gov";
-import { extractSlots, fetchCrops, fetchMarketCategories, fetchProducts, type CropRow, type ProductRow, type MarketCategory } from "@/lib/api";
+import { DEFAULT_MARKET_CATEGORIES, extractSlots, fetchCrops, fetchMarketCategories, fetchProducts, type CropRow, type ProductRow, type MarketCategory } from "@/lib/api";
 import { clearProfile, loadProfile, saveProfile } from "@/lib/profile";
 import { won } from "@/lib/format";
 
@@ -32,10 +32,10 @@ export default function FarmPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([fetchCrops(), fetchProducts(), fetchMarketCategories()])
+    Promise.all([fetchCrops(), fetchProducts(), fetchMarketCategories().catch(() => ({ status: "fallback", items: DEFAULT_MARKET_CATEGORIES }))])
       .then(([c, p, cat]) => {
         setCrops(c.crops);
-        setCategories(cat.items);
+        setCategories(cat.items.length ? cat.items : c.crops.filter((x) => x.large_code && x.middle_code).map((x) => ({ large_code: x.large_code!, large_name: x.large_name ?? "", middle_code: x.middle_code!, middle_name: x.middle_name ?? x.name })));
         setProducts(p.products);
         const prev = loadProfile();
         setCropId(prev?.cropId ?? c.crops[0]?.id ?? "");
@@ -149,7 +149,7 @@ export default function FarmPage() {
                   <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setCropId(""); }} className={field}>
                     <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
                   </select>
-                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const found = crops.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "")); setCropId(found?.id ?? ""); }} className={field}>
+                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((c) => c.middle_code === code); const found = crops.find((c) => c.middle_code === code || c.middle_code?.endsWith(code) || code.endsWith(c.middle_code ?? "") || (!!selected && c.name.includes(selected.middle_name))); setCropId(found?.id ?? ""); }} className={field}>
                     <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={c.middle_code} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
                   </select>
                 </div>

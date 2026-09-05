@@ -366,6 +366,13 @@ export async function fetchCrops(): Promise<{
   return res.json();
 }
 export type MarketCategory = { large_code: string; large_name: string; middle_code: string; middle_name: string };
+export const DEFAULT_MARKET_CATEGORIES: MarketCategory[] = [
+  { large_code: "08", large_name: "과일과채류", middle_code: "04", middle_name: "딸기" },
+  { large_code: "08", large_name: "과일과채류", middle_code: "01", middle_name: "수박" },
+  { large_code: "08", large_name: "과일과채류", middle_code: "06", middle_name: "방울토마토" },
+  { large_code: "06", large_name: "엽경채류", middle_code: "01", middle_name: "배추" },
+  { large_code: "07", large_name: "근채류", middle_code: "01", middle_name: "무" },
+];
 export async function fetchMarketCategories(): Promise<{ status: string; items: MarketCategory[] }> {
   const res = await fetch(`${API_BASE}/api/v1/market/categories`, { cache: "no-store" });
   if (!res.ok) throw new Error("품목코드를 불러오지 못했습니다");
