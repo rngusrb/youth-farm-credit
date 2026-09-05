@@ -37,8 +37,8 @@ function Body() {
         const wanted = params.get("crop") ?? loadProfile()?.cropId ?? "strawberry_hydro";
         const withMarket = d.crops.find((c) => c.has_market);
         const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
-        const category = available.find((x) => x.large_code === initial?.price_category_code);
-        const middle = available.find((x) => x.middle_code === initial?.price_item_code);
+        const category = available.find((x) => x.large_code === initial?.price_category_code) ?? available.find((x) => initial?.name.includes(x.middle_name));
+        const middle = available.find((x) => x.middle_code === initial?.price_item_code) ?? available.find((x) => initial?.name.includes(x.middle_name));
         setId(initial?.id ?? ""); setLargeCode(category?.large_code ?? ""); setMiddleCode(middle?.middle_code ?? "");
       })
       .catch(() => setError("작목 목록을 불러오지 못했어요."));
