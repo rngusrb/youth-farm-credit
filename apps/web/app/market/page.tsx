@@ -95,7 +95,32 @@ function Body() {
                         : "이월 시세가 많아 판정할 수 없어요"} />
                 <Stat label="충격 반감기" value={g.half_life_days.toFixed(1)} unit="일"
                       note={`지속성 ${g.persistence.toFixed(2)} — 가격 충격이 가라앉는 속도`} />
-                <Stat label="관측" value={m.trading_days.toLocaleString("ko-KR")} unit="거래일" />
+              </div>
+              <div className="mt-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 className="text-[13px] font-bold text-gov-ink">지금 가격 흐름의 위치</h3>
+                  <span className="text-[11px] text-gov-ink3">최근 변동성 ÷ 장기 평균</span>
+                </div>
+                <div className="relative mt-4 h-20 px-1">
+                  <div className="flex h-14 items-end gap-1" aria-hidden>
+                    {[18, 27, 39, 54, 69, 82, 92, 86, 72, 56, 42, 30, 21].map((height, i) => (
+                      <div key={i} className="flex-1 rounded-t-sm bg-gov-link/25" style={{ height: `${height}%` }} />
+                    ))}
+                  </div>
+                  <div
+                    className="absolute bottom-5 top-0 w-0.5 bg-gov-warn"
+                    style={{ left: `${Math.min(96, Math.max(4, (g.current_over_longrun / 2) * 100))}%` }}
+                    aria-label={`현재 위치 ${g.current_over_longrun.toFixed(2)}배`}
+                  />
+                  <div className="absolute bottom-0 left-0 text-[10px] text-gov-ink3">덜 흔들림</div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-gov-ink3">평소</div>
+                  <div className="absolute bottom-0 right-0 text-[10px] text-gov-ink3">더 흔들림</div>
+                </div>
+                <p className="mt-2 text-[12px] leading-relaxed text-gov-ink2">
+                  지금은 장기 평균의 <b className="tabular text-gov-ink">{g.current_over_longrun.toFixed(2)}배</b> 수준으로 흔들려요.
+                  이 표시는 가격의 높고 낮음이 아니라 가격 변화의 크기를 보여줘요.
+                </p>
+                <p className="mt-1 text-[11px] text-gov-ink3">분석에 사용한 가격 자료 {m.trading_days.toLocaleString("ko-KR")}거래일 · {m.window?.join(" ~ ") ?? "기간 확인 중"}</p>
               </div>
               <div className="mt-4">
                 <Notice tone="info" title="요즘 가격 흐름은 대출금 계산에 넣지 않아요">
