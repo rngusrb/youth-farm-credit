@@ -719,7 +719,7 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
         three_years_ago = today.replace(year=today.year - 3, day=28)
     try:
         async with httpx.AsyncClient(timeout=60) as client:
-            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 500, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": three_years_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "selectable": "exmn_ym,ctgry_cd,item_cd,pmm_avgprc,pmm_hgprc,pmm_lwprc,pmm_stddvtn,pmm_cfcntvrtn,pmm_cfcntrng"}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
+            r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 500, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": three_years_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "selectable": "exmn_ym,ctgry_cd,item_cd,unit,unit_sz,grd_nm,vrty_nm,pmm_avgprc,pmm_hgprc,pmm_lwprc,pmm_stddvtn,pmm_cfcntvrtn,pmm_cfcntrng"}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
             raw = [raw] if isinstance(raw, dict) else raw
     except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
     def n(v):
@@ -736,7 +736,12 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
         ym=str(x.get("exmn_ym", x.get("exmn_ymd", ""))).replace("-", "")
         price = n(x.get("pmm_avgprc"))
         if len(ym) >= 6 and price is not None:
-            row = {"price": price, "high": n(x.get("pmm_hgprc")), "low": n(x.get("pmm_lwprc")), "stddev": n(x.get("pmm_stddvtn")), "cv": ratio(x.get("pmm_cfcntvrtn")), "range_cv": ratio(x.get("pmm_cfcntrng"))}
+            try: unit_size = float(str(x.get("unit_sz", "1")).replace(",", "")) or 1
+            except (TypeError, ValueError): unit_size = 1
+            # 월별 API 가격은 unit_sz 포장 단위 금액이므로 kg당으로 환산한다.
+            price /= unit_size
+            high = n(x.get("pmm_hgprc")); low = n(x.get("pmm_lwprc")); stddev = n(x.get("pmm_stddvtn"))
+            row = {"price": price, "high": round(high / unit_size) if high is not None else None, "low": round(low / unit_size) if low is not None else None, "stddev": round(stddev / unit_size) if stddev is not None else None, "cv": ratio(x.get("pmm_cfcntvrtn")), "range_cv": ratio(x.get("pmm_cfcntrng"))}
             grouped.setdefault((int(ym[:4]), int(ym[4:6])), []).append(row)
     items=[]
     for (year, month), rows in grouped.items():
