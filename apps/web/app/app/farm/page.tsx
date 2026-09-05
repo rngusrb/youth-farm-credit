@@ -87,7 +87,9 @@ export default function FarmPage() {
       }
       if (r.slots.pyeong) { setPyeong(String(r.slots.pyeong)); filled.push("면적"); }
       if (r.slots.living_cost) { setLiving(String(r.slots.living_cost / MAN)); filled.push("생활비"); }
-      setReadNote(filled.length ? `${filled.join(" · ")}을(를) 채웠어요. 나머지는 직접 확인해 주세요.`
+      if (r.slots.other_debt_service != null) { setDebt(String(r.slots.other_debt_service / MAN)); filled.push("기존 대출 상환액"); }
+      const missing = [!r.slots.crop_id && "작목", !r.slots.pyeong && "재배 면적", !r.slots.living_cost && "연 생활비"].filter(Boolean);
+      setReadNote(filled.length ? `${filled.join(" · ")}을(를) 채웠어요.${missing.length ? ` ${missing.join(" · ")}을 확인해 주세요.` : ""}`
                                 : "문장에서 알아볼 수 있는 값이 없었어요. 아래에 직접 넣어 주세요.");
     } catch {
       setReadNote("문장을 읽지 못했어요. 아래에 직접 넣어 주세요.");
