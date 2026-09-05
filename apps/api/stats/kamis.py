@@ -25,6 +25,7 @@ from engine.params import DATA_DIR, get_crop
 log = logging.getLogger(__name__)
 
 BASE_URL = "https://apis.data.go.kr/B552845/perDay/price"
+RECENT_URL = "https://apis.data.go.kr/B552845/recent/price"
 MAX_ROWS = 1000
 DATE_FMT = "%Y%m%d"
 
@@ -199,6 +200,36 @@ def fetch_prices(
         log.info("KAMIS %s: %d/%d", crop_id, len(rows), total)
 
     rows.sort(key=lambda r: r.date)
+    return rows
+
+
+def fetch_recent(crop_id: str, max_pages: int = 20) -> list[PriceRow]:
+    """최근일자 도·소매 가격정보(recent/price)를 가져온다."""
+    crop = get_crop(crop_id)
+    mapping = getattr(crop, "kamis", None)
+    if not mapping:
+        raise KamisError(f"crops.json 의 '{crop_id}' 에 kamis 매핑이 없습니다")
+    base = {
+        "serviceKey": service_key(), "returnType": "JSON", "numOfRows": MAX_ROWS,
+        "cond[ctgry_cd::EQ]": mapping["ctgry_cd"], "cond[item_cd::EQ]": mapping["item_cd"],
+    }
+    for key, param in (("se_cd", "cond[se_cd::EQ]"), ("vrty_cd", "cond[vrty_cd::EQ]"), ("grd_cd", "cond[grd_cd::EQ]")):
+        if mapping.get(key): base[param] = mapping[key]
+    rows: list[PriceRow] = []
+    original = globals()["BASE_URL"]
+    try:
+        globals()["BASE_URL"] = RECENT_URL
+        for page in range(1, max_pages + 1):
+            payload = _request({**base, "pageNo": page})
+            body = payload.get("response", {}).get("body", {}) or {}
+            items = (body.get("items") or {}).get("item") or []
+            if isinstance(items, dict): items = [items]
+            rows.extend(parse_rows(items))
+            total = int(body.get("totalCount") or 0)
+            if page * MAX_ROWS >= total or not items: break
+    finally:
+        globals()["BASE_URL"] = original
+    rows.sort(key=lambda r: r.date, reverse=True)
     return rows
 
 

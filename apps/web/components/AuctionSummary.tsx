@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge, Panel, Section } from "@/components/gov";
-import { fetchMarketCompare, fetchRealtimeAuction, type MarketCompare, type RealtimeAuction } from "@/lib/api";
+import { fetchMarketCompare, fetchMarketRecent, fetchRealtimeAuction, type MarketCompare, type RealtimeAuction } from "@/lib/api";
 import { loadProfile } from "@/lib/profile";
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
@@ -57,9 +57,15 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
   useEffect(() => {
     const id = cropIdOverride ?? loadProfile()?.cropId;
     setCropId(id);
-    fetchRealtimeAuction(id, 5, !compact).then((d) => { setData(d); onData?.(d); }).catch(() => setData({ status: "empty", items: [] }));
+    const load = () => Promise.allSettled([fetchRealtimeAuction(id, 5, !compact), id ? fetchMarketRecent(id, 5) : Promise.reject()]).then(([live, recent]) => {
+      const base = live.status === "fulfilled" ? live.value : { status: "empty" as const, items: [] };
+      const latest = recent.status === "fulfilled" && recent.value.items.length ? recent.value : null;
+      const d = latest ? { ...base, ...latest, daily_series: base.daily_series } : base;
+      setData(d); onData?.(d);
+    });
+    load().catch(() => setData({ status: "empty", items: [] }));
     if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => setCompare({ status: "empty", items: [] }));
-    const timer = window.setInterval(() => { fetchRealtimeAuction(id, 5, !compact).then((d) => { setData(d); onData?.(d); }).catch(() => {}); if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 300_000);
+    const timer = window.setInterval(() => { load(); if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 300_000);
     return () => window.clearInterval(timer);
   }, [cropIdOverride, showComparison]);
 

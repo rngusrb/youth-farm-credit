@@ -45,7 +45,7 @@ from engine.params import (
     products,
     unit_area_pyeong,
 )
-from stats.kamis import fetch_prices, daily_national_average, KamisError
+from stats.kamis import fetch_prices, fetch_recent, daily_national_average, KamisError
 from llm import extract as extract_mod
 from llm.client import available as llm_available
 from llm.narrate import narrate
@@ -353,6 +353,25 @@ async def market_compare(crop_id: str | None = Query(default=None)) -> dict:
 
 _quarterly_cache: dict[str, tuple[float, list[dict]]] = {}
 _volume_cache: dict[str, tuple[float, list[dict]]] = {}
+
+@app.get("/api/v1/market/recent")
+async def market_recent(crop_id: str = Query(...), limit: int = Query(default=5, ge=1, le=20)) -> dict:
+    """최근일자 도·소매 가격정보 API를 품목별로 제공한다."""
+    try:
+        crop = get_crop(crop_id)
+        rows = await asyncio.to_thread(fetch_recent, crop_id)
+    except (KeyError, KamisError) as exc:
+        return {"status": "unavailable", "items": [], "message": str(exc)}
+    def clean(row):
+        return {"market": row.market or "전국", "item": row.item_name or crop.name,
+                "price": round(row.price) if row.price else None, "unit": row.unit,
+                "quantity": None, "auction_at": row.date}
+    items = [clean(r) for r in rows[:limit]]
+    prices = [r.price for r in rows if r.price > 0]
+    return {"status": "ok" if items else "empty", "source": "한국농수산식품유통공사 최근일자 도·소매 가격정보(recent)",
+            "crop": crop.name, "match_level": "품목코드", "items": items,
+            "average_price": round(sum(prices) / len(prices)) if prices else None,
+            "average_label": "최근 자료 평균" if prices else None}
 
 @lru_cache(maxsize=1)
 def standard_codes() -> list[dict[str, str]]:

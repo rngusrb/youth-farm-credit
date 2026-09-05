@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Badge, Crumb, DefTable, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
+import { Crumb, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchCrop, fetchCrops, fetchMarketQuarterly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket } from "@/lib/api";
 import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
 import Fold from "@/components/Fold";
@@ -91,14 +91,7 @@ function Body() {
               )}
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 최근 3년 월별 평균 가격 비교</h3>
               <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
-              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">
-                위 경매가 요약에서 <b className="text-gov-ink">최근 낙찰가</b>와 <b className="text-gov-ink">최근 30일 평균</b>을 비교해 보세요.
-                1월부터 12월까지 같은 달의 가격을 최근 3개 연도 선으로 비교해요.
-              </p>
-              <p className="mb-4 text-[11px] text-gov-ink3">
-                가격 변화 분석에는 {m.window?.join(" ~ ") ?? "확인 중인 기간"}의 {m.trading_days.toLocaleString("ko-KR")}거래일 자료를 사용했어요.
-                분기별 그래프는 원천 일별 가격이 확보된 분기만 표시해요.
-              </p>
+              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">1월부터 12월까지 같은 달의 가격을 최근 3개 연도 선으로 비교해요.</p>
               <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
               <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
               <div className="grid gap-6 sm:grid-cols-2">
@@ -169,59 +162,6 @@ function Body() {
                 <p className="mt-3 text-[11px] text-gov-ink3">전국 공영도매시장 katOrigin `qty(물량)` 2025년 월평균 기준 · 출하량 색상은 4단계예요.</p>
               </div>
             </Panel>
-          </Section>
-
-          <Section title="비교 지표">
-            <Fold tone="gov" open={false} summary="교차검증 자료 보기" hint="KAMIS · KOSIS">
-            <div className="grid gap-5 lg:grid-cols-2">
-              <Panel>
-                <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
-                  소득조사와 완전히 다른 자료로 같은 값을 다시 잽니다. 두 기관의 조사가 비슷한
-                  값을 가리키면 변동성 추정이 독립적으로 뒷받침돼요.
-                </p>
-                <DefTable
-                  rows={[
-                    ["KAMIS 도매가 σ", <span key="a" className="tabular">{m.annual_price_sigma?.toFixed(3) ?? "—"}</span>],
-                    ["KOSIS 농가수취가 σ", <span key="b" className="tabular">{m.kosis_price_sigma?.toFixed(3) ?? "—"}</span>],
-                    ["차이", <span key="c" className="tabular">
-                      {m.annual_price_sigma != null && m.kosis_price_sigma != null
-                        ? Math.abs(m.annual_price_sigma - m.kosis_price_sigma).toFixed(3) : "—"}
-                    </span>],
-                  ]}
-                />
-                <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">
-                  {m.source}
-                  {m.window && (
-                    <>
-                      {" "}· 시계열 {m.window[0]}~{m.window[1]} ({m.trading_days.toLocaleString("ko-KR")}거래일)
-                    </>
-                  )}
-                </p>
-              </Panel>
-
-              <Panel>
-                <h3 className="mb-3 text-[14px] font-bold text-gov-ink">수확기</h3>
-                <div className="flex gap-1">
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((mm) => {
-                    const on = detail.harvest_months.includes(mm);
-                    return (
-                      <div key={mm} className="flex-1 text-center">
-                        <div className={`h-10 ${on ? "bg-gov-link/70" : "bg-gov-line2"}`}
-                             title={`${mm}월${on ? " 출하" : ""}`} />
-                        <div className={`mt-1 text-[12px] ${on ? "font-semibold text-gov-head" : "text-gov-ink3"}`}>{mm}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
-                  {detail.harvest_months.length
-                    ? "출하가 몇 달에 몰릴수록 그 시점의 시세 하나에 한 해 소득이 걸려요."
-                    : "이 작목은 출하월 정보를 아직 확보하지 못했어요. 월별 들어오고 나가는 돈은 12개월 균등으로 펼쳐 계산해요."}
-                </p>
-                <p className="mt-2 text-[11px] leading-relaxed text-gov-ink3">참고자료: 농촌진흥청 농사로 작목별 재배력·수확시기 안내와 농산물소득조사 작목 자료를 바탕으로 정리했어요.</p>
-              </Panel>
-            </div>
-            </Fold>
           </Section>
 
         </>
