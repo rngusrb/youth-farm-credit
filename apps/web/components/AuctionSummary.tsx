@@ -8,6 +8,7 @@ import { loadProfile } from "@/lib/profile";
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const won = (value: number | null | undefined) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
+const displayDate = (value: string | undefined) => value && /^\d{8}$/.test(value) ? `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)} 기준` : (value || "확인 중");
 const trendSentence = (current: number | null | undefined, year: number | null | undefined) => {
   if (current == null || year == null || year <= 0) return null;
   const pct = ((current - year) / year) * 100;
@@ -91,7 +92,7 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               {data.average_price != null && <div className={compact ? "flex flex-col gap-1 border-l border-gov-link/20 pl-3" : "flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"}><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
             </div>
             <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market} · 상품(상) · {data.items[0].unit || "단위"}</p>
-            <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {data.items[0].auction_at || "확인 중"}</p>
+            <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
           {showComparison && compare?.items[0] && (() => {
             const item = compare.items[0];
