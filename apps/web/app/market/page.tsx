@@ -87,7 +87,7 @@ function Body() {
                   </Notice>
                 </div>
               )}
-              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 최근 3년 월별 가격 비교</h3>
+              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 최근 3년 월별 평균 가격 비교</h3>
               <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
               <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">
                 위 경매가 요약에서 <b className="text-gov-ink">최근 낙찰가</b>와 <b className="text-gov-ink">최근 30일 평균</b>을 비교해 보세요.

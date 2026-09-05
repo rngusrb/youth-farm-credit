@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Badge, Panel, Section } from "@/components/gov";
 import { fetchMarketCompare, fetchRealtimeAuction, type MarketCompare, type RealtimeAuction } from "@/lib/api";
 import { loadProfile } from "@/lib/profile";
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 const won = (value: number | null | undefined) => value == null ? "—" : `${value.toLocaleString("ko-KR")}원`;
 const trendSentence = (current: number | null | undefined, year: number | null | undefined) => {
@@ -14,35 +14,32 @@ const trendSentence = (current: number | null | undefined, year: number | null |
   if (Math.abs(pct) < 3) return "지난해 같은 시기와 비슷한 가격이에요.";
   return `지난해 같은 시기보다 ${Math.abs(pct).toFixed(0)}% ${pct > 0 ? "비싸요" : "낮아요"}.`;
 };
-const quarterSeries = (series: RealtimeAuction["daily_series"]) => {
+const monthlyFromDaily = (series: RealtimeAuction["daily_series"]) => {
   const groups = new Map<string, number[]>();
   for (const row of series ?? []) {
     const date = new Date(row.date);
     if (Number.isNaN(date.getTime()) || row.price == null) continue;
-    const key = `${date.getFullYear()}년 ${Math.floor(date.getMonth() / 3) + 1}분기`;
-    const values = groups.get(key) ?? [];
-    values.push(row.price);
-    groups.set(key, values);
+    const key = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    groups.set(key, [...(groups.get(key) ?? []), row.price]);
   }
-  return [...groups.entries()].map(([quarter, values]) => ({
-    quarter,
-    price: Math.round(values.reduce((sum, value) => sum + value, 0) / values.length),
-  }));
+  return [...groups.entries()].map(([key, values]) => {
+    const [year, month] = key.split("-").map(Number);
+    return { year, month, price: Math.round(values.reduce((a, b) => a + b, 0) / values.length) };
+  });
 };
 
 export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?: RealtimeAuction["daily_series"]; quarterly?: { year: number; month: number; price: number; days?: number }[] }) {
-  const monthly = provided?.length
-    ? provided
-    : quarterSeries(series).map((x) => ({ year: Number(x.quarter.slice(0, 4)), month: 1, price: x.price }));
+  const monthly = provided?.length ? provided : monthlyFromDaily(series);
   if (!monthly.length) return <p className="text-[12px] text-gov-ink3">최근 3년 원천 가격 자료를 아직 모으고 있어요.</p>;
   const years = [...new Set(monthly.map((x) => x.year))].sort();
-  const chartData = Array.from({ length: 12 }, (_, i) => ({ month: `${i + 1}월`, ...Object.fromEntries(years.map((year) => [`y${year}`, monthly.find((x) => x.year === year && x.month === i + 1)?.price ?? null])) }));
+  const chartData = [...new Set(monthly.map((x) => x.month))].sort((a, b) => a - b).map((month) => ({ month: `${month}월`, ...Object.fromEntries(years.map((year) => [`y${year}`, monthly.find((x) => x.year === year && x.month === month)?.price ?? null])) }));
   return (
     <div className="h-44 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData} margin={{ top: 8, right: 8, left: 4, bottom: 0 }}>
           <XAxis dataKey="month" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
           <YAxis width={58} tick={{ fontSize: 10 }} tickLine={false} axisLine={false} tickFormatter={(v) => `${Math.round(v / 1000)}천`} />
+          <Legend wrapperStyle={{ fontSize: 11 }} />
           <Tooltip formatter={(v) => [`${Number(v).toLocaleString("ko-KR")}원`, "분기 평균 낙찰가"]} labelFormatter={(v) => `${v}`} />
           {years.map((year, i) => <Line key={year} type="monotone" dataKey={`y${year}`} name={`${year}년`} stroke={["#2f6b4f", "#7a4e2d", "#6b7280"][i % 3]} strokeWidth={2.5} dot={{ r: 2 }} activeDot={{ r: 5 }} />)}
         </LineChart>
@@ -128,10 +125,10 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               </ResponsiveContainer>
             </div>
             {showQuarterly && data.daily_series?.length ? (() => {
-              const quarterly = quarterSeries(data.daily_series);
-              return quarterly.length ? (
+              const monthly = monthlyFromDaily(data.daily_series);
+              return monthly.length ? (
                 <div className="mt-5 border-t border-gov-line2 pt-4">
-                  <p className="mb-2 text-[13px] font-semibold text-gov-ink">분기별 평균 낙찰가 흐름</p>
+                  <p className="mb-2 text-[13px] font-semibold text-gov-ink">월별 평균 낙찰가 흐름</p>
                   <QuarterlyAuctionChart series={data.daily_series} />
                   <p className="mt-1 text-[11px] text-gov-ink3">일별 자료가 있는 분기만 표시해요.</p>
                 </div>
