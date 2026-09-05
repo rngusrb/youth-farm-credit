@@ -54,7 +54,7 @@ function Body() {
 
   const m = detail?.market;
   const g = m?.garch;
-  const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0);
+  const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0).map((value) => value > 1 ? value / 100 : value);
   const avgMonthlyCv = monthlyCv.length ? monthlyCv.reduce((sum, value) => sum + value, 0) / monthlyCv.length : null;
   const latestMonthlyCv = monthlyCv.length ? monthlyCv[monthlyCv.length - 1] : null;
   const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
