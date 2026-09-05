@@ -8,6 +8,7 @@ import { clearProfile, loadProfile, saveProfile } from "@/lib/profile";
 import { won } from "@/lib/format";
 import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
 import { RECENT_PRICE_CATEGORIES } from "@/lib/recentPriceCategories";
+import { CROP_ID_BY_PRICE_CODE } from "@/lib/cropCodeMap";
 
 const MAN = 10_000;
 const field = "w-full min-h-11 rounded-md border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
@@ -160,7 +161,7 @@ export default function FarmPage() {
                   <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setCropId(""); }} className={field}>
                     <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
                   </select>
-                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => String(x.middle_code) === String(code)); const found = crops.find((c) => String(c.price_item_code ?? "") === String(code) || (!!selected && c.name.includes(selected.middle_name))); const resolved = found?.id ?? (String(code) === "226" ? "strawberry_hydro" : ""); setCropId(resolved); setError(resolved ? null : "선택한 품목과 연결된 작목 정보가 없어요. 작목 목록을 다시 불러와 주세요."); }} className={field}>
+                  <select id="crop" aria-label="작물 중분류" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => String(x.middle_code) === String(code)); const found = crops.find((c) => String(c.price_item_code ?? "") === String(code) || (!!selected && c.name.includes(selected.middle_name))); const resolved = found?.id ?? CROP_ID_BY_PRICE_CODE[`${largeCode}:${code}`] ?? ""; setCropId(resolved); setError(resolved ? null : "선택한 품목과 연결된 작목 정보가 없어요. 작목 목록을 다시 불러와 주세요."); }} className={field}>
                     <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
                   </select>
                 </div>

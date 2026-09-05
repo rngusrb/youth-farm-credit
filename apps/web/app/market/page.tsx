@@ -9,6 +9,7 @@ import Fold from "@/components/Fold";
 import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
 import { RECENT_PRICE_CATEGORIES } from "@/lib/recentPriceCategories";
 import { loadProfile } from "@/lib/profile";
+import { CROP_ID_BY_PRICE_CODE } from "@/lib/cropCodeMap";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
   calm: { label: "가격 변화가 작아요", tone: "ok" },
@@ -68,7 +69,7 @@ function Body() {
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
           </select>
-          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => String(x.middle_code) === String(code)); const found = rows.find((c) => String(c.price_item_code ?? "") === String(code) || (!!selected && c.name.includes(selected.middle_name))); setId(found?.id ?? (String(code) === "226" ? "strawberry_hydro" : "")); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => String(x.middle_code) === String(code)); const found = rows.find((c) => String(c.price_item_code ?? "") === String(code) || (!!selected && c.name.includes(selected.middle_name))); setId(found?.id ?? CROP_ID_BY_PRICE_CODE[`${largeCode}:${code}`] ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
             <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
           </select>
           <span className="text-[12px] text-gov-ink3">
