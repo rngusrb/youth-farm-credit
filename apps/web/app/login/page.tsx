@@ -49,12 +49,14 @@ function LoginForm() {
                   className="flex min-h-11 flex-col justify-center rounded-md border border-gov-line px-3 py-2 text-left transition hover:border-gov-link hover:bg-gov-soft"
                 >
                   <span className="text-[13px] font-bold text-gov-ink">{ROLE_LABEL[a.role]}</span>
-                  <span className="tabular text-[12px] text-gov-ink3">{a.id} / {a.pw}</span>
+                  {/* 아이디·비밀번호는 화면에 적지 않는다 — 제출 문서에만 둔다.
+                      버튼을 누르면 입력란에 자동으로 채워지므로 접속은 그대로 된다. */}
+                  <span className="text-[12px] text-gov-ink3">눌러서 체험하기</span>
                 </button>
               ))}
             </div>
             <p className="mt-2 text-[12px] text-gov-ink3">
-              눌러서 채운 뒤 로그인하세요. <b>계정이 역할을 정합니다</b> — 화면에서 고를 수 없습니다.
+              역할을 누르면 체험 계정이 채워집니다. <b>계정이 역할을 정합니다</b> — 화면에서 고를 수 없습니다.
             </p>
           </div>
 

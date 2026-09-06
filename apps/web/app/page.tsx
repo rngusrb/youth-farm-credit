@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Badge, Btn, Panel, Section, Stat } from "@/components/gov";
 import { NOTICES } from "@/lib/content";
 import { fetchCrops } from "@/lib/api";
-import { DEMO_HINT, ROLE_HOME, ROLE_LABEL } from "@/lib/auth";
+import { ROLE_HOME, ROLE_LABEL } from "@/lib/auth";
 import { useSession } from "@/lib/useSession";
 import AuctionSummary from "@/components/AuctionSummary";
 
@@ -93,7 +93,8 @@ export default function PortalHome() {
                       className="mt-4 flex min-h-11 items-center justify-center rounded-md bg-gov-head text-[13px] font-bold text-white shadow-sm hover:bg-gov-navy">
                   로그인
                 </Link>
-                <p className="mt-2 text-[12px] text-gov-ink3">{DEMO_HINT}</p>
+                {/* 데모 계정은 화면에 적지 않는다. 제출 문서(기능명세서 §5)에만 둔다.
+                    로그인 화면의 역할 버튼을 누르면 자동으로 채워지므로 접속에는 지장이 없다. */}
               </>
             )}
           </Panel>
