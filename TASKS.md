@@ -21,7 +21,7 @@
 
 ### UX-020: 수익 전망에서 25년 자금지도를 뺀다
 
-**상태**: todo
+**상태**: done
 **우선순위**: high
 **관련 파일**: `apps/web/app/app/revenue/page.tsx`
 
@@ -39,7 +39,7 @@
 
 ### RISK-010: 「버틸 수 있는 선」 — 고정 시나리오 대신 경계를 찾는다
 
-**상태**: todo
+**상태**: done
 **우선순위**: high
 **관련 파일**: `apps/api/engine/` (신규), `apps/web/app/app/safety/`
 
@@ -73,6 +73,44 @@
 - `engine/` 이므로 프롬프트·환경변수·네트워크 금지 (폴더 금지사항)
 - 외부 시세 API 에 **의존하지 않는다** — apis.data.go.kr 이 지금 504 이고
   캐시 파일도 아직 없다. 시세 연결은 있으면 좋은 한 줄이지 주인공이 아니다.
+
+---
+
+### UX-021: 제공기관 API 가 죽어도 화면이 빈칸으로 남지 않게
+
+**상태**: todo
+**우선순위**: high
+**관련 파일**: `apps/web/app/market/`, `apps/api/main.py`
+
+**확인한 사실** (2026-09-06, 재현 명령어 아래)
+- `apis.data.go.kr` 이 TLS 핸드셰이크에서 멈춘다. 8초·20초·45초 모두 실패 —
+  **상한 탓이 아니라 호스트가 죽어 있다.** `api.odcloud.kr` 은 200 으로 잘 온다.
+- 그래서 `market/recent` 가 items 0 을 돌려주고, **폴백 캐시가 채워질 기회가 없었다** —
+  `data/market_last_known.json` 이 한 번도 생긴 적이 없다(쓰기 조건이 `if items`).
+- 저장소에 가격 **원자료가 없다**. crops.json 에는 집계 통계만 있다
+  (annual_price_sigma, price_movement_ratio, window, trading_days).
+  → **지금 실제 가격을 보여줄 방법이 없다. 지어내지 않는다.**
+
+**그래서 하는 것**: 없는 값을 만들지 않고, **있는 것으로 화면을 채운다.**
+
+화면 전체가 비는 게 아니다. 「가격 변동성」 섹션은 저장된 통계로 이미 잘 돈다
+(2022-08-27~2026-08-26 · 396거래일). 비는 곳은 상단 두 곳이다 —
+「최근 도매가」와 「연도별 도매가격 요약」.
+
+**완료 기준**
+- 그 두 곳이 "자료를 모으고 있어요"(우리가 미완성인 것처럼 읽힌다) 대신
+  **왜 못 보여주는지**를 밝힌다 — 제공기관 응답 없음, 우리가 가진 것은 무엇인지.
+- 살아 있을 때 캐시가 실제로 채워지는지 확인할 수단을 남긴다(그래야 복구 시 폴백이 산다).
+- 심사위원이 이 화면을 열었을 때 **빈 상자를 보지 않는다.**
+
+**하지 않는 것**: 가격을 추정해 채우기. 근거가 없다.
+
+**재현**
+```
+curl -s -o /dev/null -w "%{http_code} %{time_total}s\n" --max-time 45 https://apis.data.go.kr
+curl -s "localhost:8000/api/v1/market/recent?crop_id=strawberry_hydro&limit=5"
+ls apps/api/data/market_last_known.json
+```
 
 ---
 

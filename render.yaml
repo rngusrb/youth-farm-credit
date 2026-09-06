@@ -1,8 +1,14 @@
+# Render 배포 설정 — API(FastAPI) 전용. 웹(Next.js)은 Vercel 이 맡는다.
+#
+# 자동 배포: Render 는 기본으로 main 푸시마다 재배포한다.
+# ⚠️ 심사 기간(2026-09-07 11:00 ~ 09-11 23:59)에는 대시보드에서 Auto-Deploy 를 끈다.
+#    그 기간에 URL 이 안 열리면 **결격**이다. 빌드가 깨지면 서비스가 죽을 수 있다.
+
 services:
   - type: web
     name: youth-farm-credit-api
     runtime: python
-    plan: free
+    plan: free            # ⚠️ 15분 유휴 후 잠든다. 깨는 데 ~50초. 아래 keep-alive 참고.
     region: singapore
     rootDir: apps/api
     buildCommand: pip install -r requirements.txt
@@ -11,7 +17,21 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.11
+
+      # 웹(Vercel) 도메인. 배포 후 채운다. 비우면 "*" 로 열린다.
       - key: CORS_ORIGINS
-        sync: false          # 배포 후 Vercel 도메인으로 채운다
+        sync: false
+
+      # LLM 경로(자연어 입력·해설·상담사·처방·제도 답변).
+      # 없어도 서비스는 뜬다 — 규칙기반 추출 + 템플릿 해설로 내려간다.
       - key: ANTHROPIC_API_KEY
-        sync: false          # 없으면 규칙기반·템플릿 경로로 동작
+        sync: false
+
+      # 공공데이터포털 — 도매가·출하량. 없으면 시세 화면이 통째로 빈다.
+      # 2026-09-06: render.yaml 에 이 키가 빠져 있어 배포하면 시세가 죽는 상태였다.
+      - key: DATA_GO_KR_API_KEY
+        sync: false
+
+      # 외부 시세 API 대기 상한(초). 제공기관이 느릴 때 화면이 매달리지 않게 한다.
+      - key: MARKET_TIMEOUT_S
+        value: "8"
