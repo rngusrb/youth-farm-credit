@@ -510,6 +510,26 @@ export type StressReport = {
   income_basis: IncomeBasis;
 };
 
+/** 이 농가가 총수입 하락을 어디까지 버티는가. 고정 시나리오가 아니라 **경계 탐색**. */
+export type BreakingPoint = {
+  label: string;
+  drop: number | null;
+  status: "found" | "unbreakable" | "already_over";
+  income_at_edge: number | null;
+  crisis_prob_now: number;
+  max_crisis_prob: number;
+  /** [하락폭, 위기확률] — 경계 다음이 얼마나 가파른지 */
+  ladder: [number, number][];
+  note: string;
+};
+
+export const fetchBreakingPoint = (p: {
+  crop_id: string; pyeong: number; living_cost: number;
+  other_debt_service?: number; principal?: number | null;
+  product_id?: string; max_crisis_prob?: number | null;
+  income_history?: number[];
+}) => post<BreakingPoint>("/api/v1/breaking-point", p);
+
 export const fetchStress = (p: {
   crop_id: string; pyeong: number; living_cost: number;
   other_debt_service?: number; principal?: number | null;

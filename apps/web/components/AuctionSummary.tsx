@@ -106,8 +106,8 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
               <div className="flex flex-col gap-1"><p className="text-[12px] text-gov-ink2">최근 조사일 도매가</p><p className="text-[24px] font-extrabold tabular text-gov-head">{won(data.items[0].price)}</p></div>
               {data.average_price != null && <div className={compact ? "flex flex-col gap-1 border-l border-gov-link/20 pl-3" : "flex items-baseline justify-between gap-3 border-t border-gov-link/15 pt-2"}><p className="text-[12px] text-gov-ink2">{data.average_label}</p><p className="text-[20px] font-bold tabular text-gov-ink">{won(data.average_price)}</p></div>}
             </div>
-            <p className="text-right text-[11px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market || "전국 일별 평균"} · 상 · {data.items[0].unit || "kg"}</p>
-            <p className="text-right text-[11px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
+            <p className="text-right text-[12px] text-gov-ink3">{data.items[0].item || "선택 품목"} · {data.items[0].market || "전국 일별 평균"} · 상 · {data.items[0].unit || "kg"}</p>
+            <p className="text-right text-[12px] text-gov-ink3">최근 조사일: {displayDate(data.items[0].auction_at)}</p>
           </div>
           {!compact && <div className="mt-4 overflow-x-auto rounded-md border border-gov-line2">
             <table className="w-full min-w-[460px] table-fixed text-[13px]">
@@ -122,8 +122,8 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
             <p className="mt-1">가장 최근 가격 자료를 확인하고 있어요.</p>
           </div>
         )}
-        {showComparison && (cropIdOverride || cropId) && (() => { const item = compare?.items[0]; const latest = data?.items[0]; const cards = [["1일 전", item?.previous_day_price ?? latest?.previous_day_price], ["7일 전", item?.seven_day_price ?? latest?.seven_day_price], ["1개월 전", item?.month_price ?? latest?.month_price], ["1년 전", item?.year_price ?? latest?.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid grid-cols-2 gap-2">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">최근일자 도·소매 가격정보 기준으로 계산했어요.</p></div>; })()}
-        <p className="mt-3 text-[11px] text-gov-ink3">한국농수산식품유통공사 일별 도·소매 가격정보 · 전일자까지 집계된 자료를 기준으로 보여드려요. 참고용으로만 봐 주세요.</p>
+        {showComparison && (cropIdOverride || cropId) && (() => { const item = compare?.items[0]; const latest = data?.items[0]; const cards = [["1일 전", item?.previous_day_price ?? latest?.previous_day_price], ["7일 전", item?.seven_day_price ?? latest?.seven_day_price], ["1개월 전", item?.month_price ?? latest?.month_price], ["1년 전", item?.year_price ?? latest?.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid grid-cols-2 gap-2">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">최근일자 도·소매 가격정보 기준으로 계산했어요.</p></div>; })()}
+        <p className="mt-3 text-[12px] text-gov-ink3">한국농수산식품유통공사 일별 도·소매 가격정보 · 전일자까지 집계된 자료를 기준으로 보여드려요. 참고용으로만 봐 주세요.</p>
       </Panel>
     </Section>
   );

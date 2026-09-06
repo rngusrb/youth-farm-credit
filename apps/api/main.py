@@ -61,6 +61,7 @@ from schemas import (
     RegulationRequest,
     RegulationResponse,
     StressRequest,
+    BreakingPointRequest,
     ConsultRequest,
     LeversRequest,
     BenchmarkRequest,
@@ -89,6 +90,38 @@ logging.getLogger("httpx").setLevel(
 # 적용이 안 돼 있었다. 자료 수집처럼 오래 걸려도 되는 상황이면 환경변수로 올린다.
 # (2026-09-06: /market 이 networkidle 에 30초 안에 못 닿아 ui_check 가 실패했다)
 MARKET_TIMEOUT_S = float(os.getenv("MARKET_TIMEOUT_S", "8"))
+
+# ── 외부 시세 호스트 차단기 ──────────────────────────────────────────────
+#
+# 제공기관이 죽어 있으면 요청마다 상한을 **끝까지** 소진한다. /market 화면은
+# 4개를 던지므로 8초씩만 잡아도 화면이 30초 넘게 매달렸다 (2026-09-06 실측:
+# volume 40초+, ui_check 가 networkidle 에 못 닿음).
+#
+# 8초 전에 죽어 있던 호스트를 또 8초 기다릴 이유가 없다. 실패를 기억했다가
+# 잠깐 동안은 즉시 포기한다. **조용히 넘어가지 않는다** — 로그를 남기고
+# 화면에는 평소와 같은 "자료를 가져오지 못했어요" 가 간다.
+_HOST_COOLDOWN_S = float(os.getenv("MARKET_HOST_COOLDOWN_S", "60"))
+_host_failed_at: dict[str, float] = {}
+
+
+def market_host_down(host: str) -> bool:
+    """이 호스트가 방금 실패했나. True 면 기다리지 말고 바로 포기한다."""
+    at = _host_failed_at.get(host)
+    if at is None:
+        return False
+    if datetime.now().timestamp() - at < _HOST_COOLDOWN_S:
+        return True
+    _host_failed_at.pop(host, None)      # 식었으면 다시 시도해 본다
+    return False
+
+
+def mark_market_host_down(host: str, exc: Exception | None = None) -> None:
+    first = host not in _host_failed_at
+    _host_failed_at[host] = datetime.now().timestamp()
+    if first:
+        log.warning("외부 시세 호스트 %s 응답 없음 — %.0f초 동안 건너뛴다 (%s)",
+                    host, _HOST_COOLDOWN_S, exc or "timeout")
+
 
 DISCLAIMER = (
     "이 결과는 공개 통계와 제도 파라미터로 계산한 참고자료이며, "
@@ -663,7 +696,26 @@ async def market_categories() -> dict:
 
 @app.get("/api/v1/market/volume")
 async def market_volume(crop_id: str = Query(...)) -> dict:
-    """katOrigin/trades 거래량을 월별 평균으로 묶는다."""
+    """katOrigin/trades 거래량을 월별 평균으로 묶는다.
+
+    **엔드포인트 전체에 예산을 건다.** 안에서 요청 블록이 두 번 돌아 개별 상한이
+    곱해진다 — 8초씩인데 실측 40초를 넘겼고, /market 화면이 로딩을 못 끝냈다.
+    동료가 recent 에 쓴 방식과 같다(asyncio.wait_for). (2026-09-06)
+    """
+    unavailable = {"status": "unavailable", "items": [],
+                   "message": "출하량 자료를 가져오지 못했어요. 잠시 뒤 다시 열어 주세요."}
+    if market_host_down("apis.data.go.kr"):
+        return unavailable
+    try:
+        return await asyncio.wait_for(_market_volume(crop_id),
+                                      timeout=MARKET_TIMEOUT_S * 2)
+    except (asyncio.TimeoutError, TimeoutError) as exc:
+        mark_market_host_down("apis.data.go.kr", exc)
+        log.warning("거래량 조회가 %.0f초를 넘겨 중단했다: %s", MARKET_TIMEOUT_S * 2, crop_id)
+        return unavailable
+
+
+async def _market_volume(crop_id: str) -> dict:
     crop = get_crop(crop_id)
     now = datetime.now().timestamp()
     if crop_id in _volume_cache and now - _volume_cache[crop_id][0] < 900:
@@ -771,6 +823,8 @@ async def market_quarterly(crop_id: str = Query(...)) -> dict:
 async def market_monthly(crop_id: str = Query(...)) -> dict:
     crop = get_crop(crop_id); mapping = crop.kamis or {}; key = os.getenv("DATA_GO_KR_API_KEY", "").strip()
     if not key or not mapping: return {"status": "unavailable", "items": []}
+    # 방금 죽어 있던 호스트를 또 끝까지 기다리지 않는다 (위 차단기 주석 참조).
+    if market_host_down("apis.data.go.kr"): return {"status": "unavailable", "items": []}
     today = date.today()
     try:
         three_years_ago = today.replace(year=today.year - 3)
@@ -780,7 +834,9 @@ async def market_monthly(crop_id: str = Query(...)) -> dict:
         async with httpx.AsyncClient(timeout=MARKET_TIMEOUT_S) as client:
             r = await client.get("https://apis.data.go.kr/B552845/perYearMonth/price", params={"serviceKey": unquote(key), "returnType": "JSON", "pageNo": 1, "numOfRows": 500, "cond[exmn_ym::LTE]": today.strftime("%Y%m"), "cond[exmn_ym::GTE]": three_years_ago.strftime("%Y%m"), "cond[se_cd::EQ]": "02", "cond[ctgry_cd::EQ]": mapping.get("ctgry_cd"), "cond[item_cd::EQ]": mapping.get("item_cd"), "selectable": "exmn_ym,ctgry_cd,item_cd,unit,unit_sz,grd_nm,vrty_nm,pmm_avgprc,pmm_hgprc,pmm_lwprc,pmm_stddvtn,pmm_cfcntvrtn,pmm_cfcntrng"}); r.raise_for_status(); raw = r.json().get("response", {}).get("body", {}).get("items", {}).get("item", [])
             raw = [raw] if isinstance(raw, dict) else raw
-    except (httpx.HTTPError, ValueError): return {"status": "unavailable", "items": []}
+    except (httpx.HTTPError, ValueError) as exc:
+        mark_market_host_down("apis.data.go.kr", exc)
+        return {"status": "unavailable", "items": []}
     def n(v):
         try: return round(float(str(v).replace(",", "")))
         except (TypeError, ValueError): return None
@@ -1059,6 +1115,35 @@ def levers(req: LeversRequest) -> dict:
         "note": ("각 값은 계산 엔진이 이분탐색으로 찾은 최소 변화량입니다. "
                  "탐색 범위(searched_from~searched_to)를 함께 표시합니다."),
     }
+
+
+@app.post("/api/v1/breaking-point")
+def breaking_point(req: BreakingPointRequest) -> dict:
+    """이 농가가 총수입 하락을 어디까지 버티는가.
+
+    고정 시나리오를 대입하는 게 아니라 **경계를 탐색한다**. 계산은 전부
+    engine.breaking_point 가 하고, 여기서는 도메인 예외를 상태코드로 옮기기만 한다.
+    """
+    from dataclasses import asdict
+
+    from engine.breaking_point import find_breaking_point
+
+    inp = req.to_diagnose_input()
+    try:
+        principal = req.principal
+        if principal is None:
+            principal = diagnose(inp)["limits"]["risk_based"]
+        if principal <= 0:
+            raise HTTPException(
+                status_code=409,
+                detail="상환여력 기준 권장 차입이 0이라 버티는 한계를 잴 수 없습니다. "
+                       "면적이나 생활비를 확인해 주세요.")
+        return asdict(find_breaking_point(inp, float(principal),
+                                          max_crisis_prob=req.max_crisis_prob))
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from None
+    except InsufficientCropData as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from None
 
 
 @app.post("/api/v1/consult")

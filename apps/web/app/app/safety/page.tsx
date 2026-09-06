@@ -4,7 +4,8 @@ import Fold from "@/components/Fold";
 import { useEffect, useState } from "react";
 import { Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import StressTable from "@/components/gov/StressTable";
-import { fetchStress, runDiagnose, type Diagnosis, type StressReport } from "@/lib/api";
+import { fetchBreakingPoint, fetchStress, runDiagnose,
+         type BreakingPoint, type Diagnosis, type StressReport } from "@/lib/api";
 import { headlineLimit } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
 import { pct, won } from "@/lib/format";
@@ -14,6 +15,7 @@ export default function SafetyPage() {
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [report, setReport] = useState<StressReport | null>(null);
   const [principal, setPrincipal] = useState<number | null>(null);
+  const [edge, setEdge] = useState<BreakingPoint | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** 가격 하락 시나리오. 설명 문구와 소득 감소율 모두 엔진이 낸 값을 그대로 쓴다. */
@@ -26,7 +28,13 @@ export default function SafetyPage() {
       other_debt_service: profile.otherDebtService, product_id: profile.productId,
       income_history: profile.incomeHistory,
     })
-      .then((d) => { setDiag(d); setPrincipal((p) => p ?? headlineLimit(d)); })
+      .then((d) => {
+        setDiag(d);
+        // 농가가 실제로 빌리려는 금액을 먼저 쓴다. 권장 차입을 기본으로 두면
+        // **정의상** 여유가 0이라 「버틸 수 있는 선」이 늘 0% 로 나온다 —
+        // 계산은 맞지만 화면이 아무것도 못 알려준다. (2026-09-06)
+        setPrincipal((prev) => prev ?? profile.targetPrincipal ?? headlineLimit(d));
+      })
       .catch(() => setError("계산에 실패했어요."));
   }, [profile]);
 
@@ -43,6 +51,16 @@ export default function SafetyPage() {
       .then(setReport)
       .catch((e) => setError(e instanceof Error ? e.message : "스트레스 테스트 실패"))
       .finally(() => setBusy(false));
+
+    // 「버틸 수 있는 선」은 보조가 아니라 이 화면의 답이다. 다만 실패해도
+    // 시나리오 표는 보여준다 — 한쪽이 죽는다고 화면 전체를 비우지 않는다.
+    fetchBreakingPoint({
+      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
+      other_debt_service: profile.otherDebtService, product_id: profile.productId, principal,
+      income_history: profile.incomeHistory,
+    })
+      .then(setEdge)
+      .catch(() => setEdge(null));
   }, [profile, principal]);
 
   if (!ready) return null;
@@ -119,6 +137,63 @@ export default function SafetyPage() {
                 기준을 넘어요. 빌리는 금액을 줄이거나, 아래 대응을 미리 준비해 두시기 바라요.
               </Notice>
             </div>
+          )}
+
+          {/* 이 화면의 답을 맨 위에 둔다. 시나리오 표는 "남의 가정" 이라 거의 다
+              '못 버팀' 으로 나오는데, 그것만 보면 농가는 "그래서 어쩌라고" 가 남는다.
+              경계는 **이 농가만의 숫자**다. (2026-09-06) */}
+          {edge && (
+            <Section title="내가 버틸 수 있는 선">
+              <Panel>
+                {edge.status === "found" && edge.drop !== null && edge.drop >= 0.01 ? (
+                  <>
+                    <p className="text-[15px] leading-relaxed text-gov-head">
+                      농사로 버는 돈이 지금보다{" "}
+                      <b className="text-[22px] tabular text-gov-link">{pct(edge.drop)}</b>{" "}
+                      줄어드는 데까지는 대출을 갚을 수 있어요.
+                    </p>
+                    {edge.ladder.length > 1 && (
+                      <>
+                        <p className="mt-4 text-[13px] font-semibold text-gov-ink2">
+                          그 아래로는 이렇게 가팔라져요
+                        </p>
+                        <ul className="mt-2 space-y-1.5">
+                          {edge.ladder.map(([drop, prob]) => (
+                            <li key={drop} className="flex items-center gap-3 text-[13px]">
+                              <span className="tabular w-24 shrink-0 text-gov-ink2">
+                                {pct(drop)} 줄면
+                              </span>
+                              <span className="h-2 max-w-[220px] flex-1 rounded-full bg-gov-line2">
+                                <span
+                                  className={`block h-2 rounded-full ${prob > edge.max_crisis_prob ? "bg-gov-warn" : "bg-gov-ok2"}`}
+                                  style={{ width: `${Math.min(100, prob * 100)}%` }}
+                                />
+                              </span>
+                              <span className="tabular w-16 shrink-0 text-right text-gov-head">
+                                {pct(prob)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                        <p className="mt-1.5 text-[12px] text-gov-ink3">
+                          막대는 2년 연속 갚기 어려울 확률이에요. 감내 기준은{" "}
+                          {pct(edge.max_crisis_prob)} 이고, 넘으면 주황색으로 표시해요.
+                        </p>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[15px] leading-relaxed text-gov-head">
+                    {edge.status === "already_over"
+                      ? "지금 빌리려는 금액은 값이 떨어지지 않아도 이미 부담이 커요."
+                      : edge.status === "unbreakable"
+                        ? "농사로 버는 돈이 크게 줄어도 이 금액은 갚을 수 있어요."
+                        : "지금 빌리려는 금액은 여유가 거의 없어요. 농사로 버는 돈이 조금만 줄어도 갚기 어려워져요."}
+                  </p>
+                )}
+                <Notice tone="info" title="이 숫자가 뜻하는 것">{edge.note}</Notice>
+              </Panel>
+            </Section>
           )}
 
           <Section title={busy ? "다시 계산 중…" : "상황별로 대출을 갚을 수 있는지"}>

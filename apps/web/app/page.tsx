@@ -112,7 +112,7 @@ export default function PortalHome() {
                   <div className="flex h-full flex-col rounded-md border border-gov-line2 bg-gov-soft px-2.5 py-2">
                     <span className="tabular text-[12px] font-extrabold text-gov-link">{n}</span>
                     <span className="mt-1 text-[12px] font-semibold leading-snug text-gov-ink">{t}</span>
-                    <span className="mt-1 text-[11px] leading-snug text-gov-ink2">{d}</span>
+                    <span className="mt-1 text-[12px] leading-snug text-gov-ink2">{d}</span>
                   </div>
                 </li>
               ))}

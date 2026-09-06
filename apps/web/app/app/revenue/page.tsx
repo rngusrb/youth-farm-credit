@@ -4,10 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Badge, Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import CashflowChart from "@/components/gov/CashflowChart";
-import FundingMap from "@/components/FundingMap";
 import { fetchCashflow, runDiagnose, type Cashflow, type Diagnosis,
-  fetchFundingMap,
-  type FundingMapResult,
 } from "@/lib/api";
 import { headlineLimit } from "@/lib/diagnosis";
 import { useFarm } from "@/lib/useFarm";
@@ -20,7 +17,6 @@ export default function RevenuePage() {
   const [year, setYear] = useState<number | null>(null);
   const [principal, setPrincipal] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [map, setMap] = useState<FundingMapResult | null>(null);
 
   useEffect(() => {
     if (!profile) return;
@@ -50,21 +46,6 @@ export default function RevenuePage() {
       .catch((e) => setError(e instanceof Error ? e.message : "돈의 흐름 계산 실패"));
   }, [profile, year, principal]);
 
-  // 25년 자금지도 — 연 단위 표로는 안 보이는 '언제부터 부담이 커지나' 를 한 장으로.
-  useEffect(() => {
-    if (!profile || principal == null || principal <= 0) return;
-    fetchFundingMap({
-      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
-      other_debt_service: profile.otherDebtService, principal,
-      // 실적을 안 보내면 이 화면의 진단은 실적, 자금지도는 작목평균이 된다
-      // (2026-09-06 병합 중 발견 — 같은 계열을 이미 세 번 고쳤다).
-      income_history: profile.incomeHistory,
-      product_id: profile.productId,
-    })
-      .then(setMap)
-      .catch(() => undefined);   // 지도는 보조 정보다. 실패해도 본문은 보여준다
-  }, [profile, principal]);
-
   if (!ready) return null;
   if (!profile) {
     return (
@@ -83,7 +64,7 @@ export default function RevenuePage() {
     <>
       <PageTitle
         title="농사 수입과 지출"
-        lead="수확한 돈이 들어오기 전에도 농사 비용과 생활비는 나가요. 월별로 들어올 돈과 나갈 돈을 확인해 보세요."
+        lead="이 농사가 한 해에 얼마를 남기는지 봐요. 수확한 돈이 들어오기 전에도 농사 비용과 생활비는 나가서, 연간으로 흑자여도 특정 달에는 현금이 마를 수 있어요. 대출을 갚는 25년 동안 부담이 어떻게 달라지는지는 「AI 농사 자금지도」에서 봐요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -104,19 +85,11 @@ export default function RevenuePage() {
             </Panel>
           </Section>
 
-          {map && (
-            <Section title="25년 자금지도">
-              <Panel>
-                <p className="mb-3 text-[13px] text-gov-ink2">
-                  {won(map.principal)} 을 빌렸을 때 해마다 얼마를 갚는지 한 장으로 본 것이에요.
-                  분기점 설명과 연도 선택은{" "}
-                  <Link href="/app/map" className="text-gov-link underline">AI 농사 자금지도</Link>
-                  에 있어요.
-                </p>
-                <FundingMap data={map} />
-              </Panel>
-            </Section>
-          )}
+          {/* 25년 자금지도는 여기서 그리지 않는다.
+              「AI 농사 자금지도」가 같은 그림을 빌릴 금액 조절·분기점 설명과 함께
+              보여준다 — 두 화면이 같은 것을 그리면 한쪽만 고치는 사고가 난다
+              (실제로 이 계열 버그를 2026-09-02 하루에 세 번 고쳤다).
+              이 화면은 **농사** 관점(얼마 벌고 쓰나), 자금지도는 **대출** 관점이다. */}
 
           <Section title="월별 들어오고 나가는 돈">
             <Panel>

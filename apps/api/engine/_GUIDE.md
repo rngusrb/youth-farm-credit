@@ -82,6 +82,7 @@ apps/api/tests/test_levers.py
 apps/api/tests/test_tools.py
 apps/api/tests/test_prescribe.py
 apps/api/tests/test_fundingmap.py
+apps/api/tests/test_breaking_point.py
 ```
 > `test_core_is_pure.py` = **불변식**. core 가 네트워크·DB·환경변수 없이 도는지 검사한다.
 

@@ -163,6 +163,18 @@ class StressRequest(FarmHistory):
     max_crisis_prob: float | None = Field(default=None, gt=0.005, le=0.5)
 
 
+class BreakingPointRequest(FarmHistory):
+    """이 농가가 총수입 하락을 어디까지 버티는가."""
+
+    crop_id: str
+    pyeong: float = Field(gt=0, le=1_000_000)
+    living_cost: float = Field(ge=0, le=1_000_000_000)
+    other_debt_service: float = Field(default=0.0, ge=0, le=1_000_000_000)
+    principal: float | None = Field(default=None, gt=0, le=10_000_000_000)
+    product_id: str = DEFAULT_PRODUCT_ID
+    max_crisis_prob: float | None = Field(default=None, gt=0.005, le=0.5)
+
+
 class ConsultRequest(BaseModel):
     """에이전트 상담. slots 는 이미 아는 값이고, 없으면 되묻는다."""
 

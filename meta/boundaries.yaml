@@ -102,6 +102,14 @@ features:
       web:      ["apps/web/app/app/map/**", "apps/web/components/FundingMap.tsx"]
     tests:      ["apps/api/tests/test_tools.py"]
 
+  - name: breaking_point
+    label: 버틸 수 있는 선 (경계 탐색)
+    paths:
+      core:     ["apps/api/engine/breaking_point.py"]
+      api:      ["apps/api/main.py"]
+      web:      ["apps/web/app/app/safety/**"]
+    tests:      ["apps/api/tests/test_breaking_point.py"]
+
   - name: prescribe
     label: AI 맞춤 처방 (평균비교·작목전환·신청서 초안)
     paths:
