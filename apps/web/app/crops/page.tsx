@@ -107,14 +107,14 @@ export default function CropsPage() {
           </div>
         </Panel>
 
-        <div className="overflow-x-auto">
+        <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
           <table className="w-full min-w-[780px] border-t border-gov-ink/70 text-[14px]">
-            <caption className="sr-only">작목별 소득과 소득 변동성</caption>
+            <caption className="sr-only">작목별 소득과 소득이 흔들리는 정도</caption>
             <thead>
               <tr className="bg-gov-sunk text-left text-[12px] font-semibold text-gov-ink2">
                 <th scope="col" className="border-b border-gov-line px-4 py-3">작목</th>
                 <th scope="col" className="border-b border-gov-line px-4 py-3">10a당 소득</th>
-                <th scope="col" className="border-b border-gov-line px-4 py-3">소득 변동성 σ</th>
+                <th scope="col" className="border-b border-gov-line px-4 py-3">소득이 흔들리는 정도 σ</th>
                 <th scope="col" className="border-b border-gov-line px-4 py-3">주 변동요인</th>
                 <th scope="col" className="border-b border-gov-line px-4 py-3">측정</th>
                 <th scope="col" className="border-b border-gov-line px-4 py-3">시세</th>
@@ -158,7 +158,7 @@ export default function CropsPage() {
                   </td>
                   <td className="px-4 py-3">
                     {c.has_market
-                      ? <Link href={`/market?crop=${c.id}`} className="lnk inline-flex min-h-11 items-center text-[13px]">국면 보기</Link>
+                      ? <Link href={`/market?crop=${c.id}`} className="lnk inline-flex min-h-11 items-center text-[13px]">가격 흐름 보기</Link>
                       : <span className="text-[12px] text-gov-ink3">미수집</span>}
                   </td>
                 </tr>

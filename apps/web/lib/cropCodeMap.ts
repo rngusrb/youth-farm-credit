@@ -1,0 +1,20 @@
+export const CROP_ID_BY_PRICE_CODE: Record<string, string> = {
+  "200:226": "strawberry_hydro",
+  "200:225": "tomato_hydro",
+  "200:251": "eggplant",
+  "300:353": "rose",
+  "200:213": "spinach",
+  "200:422": "greenhouse_cherrytomato",
+  "200:254": "greenhouse_chive",
+  "200:214": "greenhouse_lettuce",
+  "200:221": "greenhouse_watermelon",
+  "200:223": "greenhouse_cucumber",
+  "200:222": "greenhouse_koreanmelon",
+  "200:224": "greenhouse_squash",
+  "200:232": "field_carrot",
+  "200:247": "field_ginger",
+  "200:212": "field_cabbage",
+  "100:151": "sweetpotato",
+  "300:313": "perilla",
+  "300:312": "sesame"
+};

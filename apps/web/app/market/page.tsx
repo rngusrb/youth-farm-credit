@@ -2,29 +2,45 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Badge, Crumb, DefTable, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
-import { fetchCrop, fetchCrops, type CropDetail, type CropRow } from "@/lib/api";
+import { Crumb, Empty, Notice, Page, PageTitle, Panel, Section, Stat } from "@/components/gov";
+import { fetchCrop, fetchCrops, fetchMarketMonthly, fetchMarketVolume, type CropDetail, type CropRow, type RealtimeAuction, type QuarterlyMarket, type MarketCategory } from "@/lib/api";
+import AuctionSummary, { QuarterlyAuctionChart } from "@/components/AuctionSummary";
+import Fold from "@/components/Fold";
+import { CSV_MARKET_CATEGORIES } from "@/lib/productCategories";
+import { RECENT_PRICE_CATEGORIES } from "@/lib/recentPriceCategories";
+import { loadProfile } from "@/lib/profile";
+import { CROP_ID_BY_PRICE_CODE } from "@/lib/cropCodeMap";
 
 const REGIME: Record<string, { label: string; tone: "ok" | "plain" | "warn" }> = {
-  calm: { label: "평소보다 조용함", tone: "ok" },
+  calm: { label: "가격 변화가 작아요", tone: "ok" },
   normal: { label: "평상 수준", tone: "plain" },
-  turbulent: { label: "평소보다 요동침", tone: "warn" },
+  turbulent: { label: "가격 변화가 커요", tone: "warn" },
 };
 
 function Body() {
   const params = useSearchParams();
   const [rows, setRows] = useState<CropRow[]>([]);
-  const [id, setId] = useState("");
+  const [categories, setCategories] = useState<MarketCategory[]>(RECENT_PRICE_CATEGORIES);
+  const [id, setId] = useState("strawberry_hydro");
+  const [largeCode, setLargeCode] = useState("");
+  const [middleCode, setMiddleCode] = useState("");
   const [detail, setDetail] = useState<CropDetail | null>(null);
+  const [auction, setAuction] = useState<RealtimeAuction | null>(null);
+  const [quarterly, setQuarterly] = useState<QuarterlyMarket["items"]>([]);
+  const [volume, setVolume] = useState<{ year: number; month: number; quantity: number }[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchCrops()
-      .then((d) => {
+    fetchCrops().then((d) => {
         setRows(d.crops);
-        const wanted = params.get("crop");
+        const available = RECENT_PRICE_CATEGORIES;
+        setCategories(available);
+        const wanted = params.get("crop") ?? loadProfile()?.cropId ?? "strawberry_hydro";
         const withMarket = d.crops.find((c) => c.has_market);
-        setId((wanted && d.crops.some((c) => c.id === wanted) ? wanted : null) ?? withMarket?.id ?? d.crops[0]?.id ?? "");
+        const initial = d.crops.find((c) => c.id === wanted) ?? withMarket ?? d.crops[0];
+        const category = available.find((x) => x.large_code === initial?.price_category_code) ?? available.find((x) => initial?.name.includes(x.middle_name));
+        const middle = available.find((x) => x.middle_code === initial?.price_item_code) ?? available.find((x) => initial?.name.includes(x.middle_name));
+        setId(initial?.id ?? ""); setLargeCode(category?.large_code ?? ""); setMiddleCode(middle?.middle_code ?? "");
       })
       .catch(() => setError("작목 목록을 불러오지 못했어요."));
   }, [params]);
@@ -32,10 +48,22 @@ function Body() {
   useEffect(() => {
     if (!id) return;
     fetchCrop(id).then(setDetail).catch(() => setError("작목 정보를 불러오지 못했어요."));
+    fetchMarketMonthly(id).then((d) => setQuarterly(d.items)).catch(() => setQuarterly([]));
+    fetchMarketVolume(id).then((d) => setVolume(d.items)).catch(() => setVolume([]));
   }, [id]);
 
   const m = detail?.market;
   const g = m?.garch;
+  const monthlyCv = quarterly.map((row) => row.cv).filter((value): value is number => value != null && value >= 0);
+  const avgMonthlyCv = monthlyCv.length ? monthlyCv.reduce((sum, value) => sum + value, 0) / monthlyCv.length : null;
+  const latestMonthlyCv = monthlyCv.length ? monthlyCv[monthlyCv.length - 1] : null;
+  const recentCvs = monthlyCv.slice(-36);
+  const lowerCvCount = latestMonthlyCv != null ? recentCvs.filter((value) => value < latestMonthlyCv).length : 0;
+  const cvRiskScore = recentCvs.length && latestMonthlyCv != null ? Math.round((lowerCvCount / recentCvs.length) * 100) : null;
+  const cvRiskLabel = cvRiskScore == null ? "—" : cvRiskScore >= 75 ? "위험" : cvRiskScore >= 50 ? "주의" : cvRiskScore >= 25 ? "보통" : "안정";
+  const categoryRows = categories.length ? categories : RECENT_PRICE_CATEGORIES;
+  const largeGroups = Array.from(new Map(categoryRows.map((c) => [c.large_code, c.large_name])).entries());
+  const middleGroups = categoryRows.filter((c) => Number(c.large_code) === Number(largeCode));
 
   return (
     <>
@@ -44,11 +72,12 @@ function Body() {
       <Panel className="mb-5">
         <div className="flex flex-wrap items-center gap-3">
           <label htmlFor="crop" className="text-[13px] font-semibold text-gov-ink2">작목 선택</label>
-          <select id="crop" value={id} onChange={(e) => setId(e.target.value)}
+          <select aria-label="작물 대분류" value={largeCode} onChange={(e) => { setLargeCode(e.target.value); setMiddleCode(""); setId(""); }}
                   className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
-            {rows.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}{c.has_market ? " (도매가 수집됨)" : ""}</option>
-            ))}
+            <option value="">대분류를 선택하세요</option>{largeGroups.map(([code, name]) => <option key={code} value={code}>{name} ({code})</option>)}
+          </select>
+          <select id="crop" value={middleCode} disabled={!largeCode} onChange={(e) => { const code = e.target.value; setMiddleCode(code); const selected = middleGroups.find((x) => String(x.middle_code) === String(code)); const found = rows.find((c) => String(c.price_item_code ?? "") === String(code) || (!!selected && c.name.includes(selected.middle_name))); setId(found?.id ?? CROP_ID_BY_PRICE_CODE[`${largeCode}:${code}`] ?? ""); }} className="min-h-11 rounded-md border border-gov-line px-3 text-[13px] outline-none focus:border-gov-link">
+            <option value="">중분류를 선택하세요</option>{middleGroups.map((c) => <option key={`${c.large_code}-${c.middle_code}`} value={c.middle_code}>{c.middle_name} ({c.middle_code})</option>)}
           </select>
           <span className="text-[12px] text-gov-ink3">
             도매가 시계열 보유 {rows.filter((c) => c.has_market).length}종 / 전체 {rows.length}종
@@ -56,20 +85,32 @@ function Body() {
         </div>
       </Panel>
 
+      {id && <AuctionSummary key={id} cropId={id} showComparison showQuarterly={false} onData={setAuction} />}
+
+      {quarterly.length > 0 && !(detail && m && g) && (
+        <Section title="요즘 가격 흐름">
+          <Panel>
+            <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
+            <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
+            <p className="mt-3 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 kg당으로 보여드려요.</p>
+          </Panel>
+        </Section>
+      )}
+
       {detail && !m && (
         <Empty
           title={`${detail.name}은 도매가 시계열을 아직 수집하지 않았어요`}
-          body="KAMIS 품목 매핑이 있는 작목부터 순차로 수집해요. 소득 변동성은 KOSIS 소득조사 실측값을 쓰므로 진단 결과에는 영향이 없어요."
+          body="KAMIS 품목 매핑이 있는 작목부터 순차로 수집해요. 소득이 흔들리는 정도은 KOSIS 소득조사 실측값을 쓰므로 진단 결과에는 영향이 없어요."
         />
       )}
 
       {detail && m && g && (
         <>
-          <Section title="현재 국면">
+          <Section title="요즘 가격 흐름">
             <Panel>
               {m.quote_is_carried && (
                 <div className="mb-4">
-                  <Notice tone="warn" title="국면 판정을 보류해요">
+                  <Notice tone="warn" title="요즘 가격 흐름은 아직 판단하기 어려워요">
                     이 품목은 가격이 실제로 움직인 날이{" "}
                     {m.price_movement_ratio != null
                       ? `${Math.round(m.price_movement_ratio * 100)}%`
@@ -80,7 +121,20 @@ function Body() {
                   </Notice>
                 </div>
               )}
-              <div className="grid gap-6 sm:grid-cols-3">
+              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">1. 연도별 상품 도매가격 요약</h3>
+              <QuarterlyAuctionChart quarterly={quarterly} series={auction?.daily_series} />
+              <p className="mb-4 text-[13px] leading-relaxed text-gov-ink2">최근 3년의 월별 평균 가격을 kg당으로 보여드려요.</p>
+              <h3 className="mb-2 text-[15px] font-bold text-gov-ink">2. 가격 변동성</h3>
+              <Fold tone="gov" open={false} summary="지금 가격이 얼마나 오르내리는지 보기" hint="보조 지표">
+              <div className="mb-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Stat label="최근 월 변동계수" value={latestMonthlyCv != null ? `${latestMonthlyCv.toFixed(3)}%` : "—"} note="월별 표준편차 ÷ 월별 평균가 × 100" />
+                  <Stat label="자료 기간 평균 변동계수" value={avgMonthlyCv != null ? `${avgMonthlyCv.toFixed(3)}%` : "—"} note={`${monthlyCv.length}개월의 월별 CV 평균`} />
+                </div>
+                <div className="mt-3 flex flex-wrap items-baseline justify-between gap-2 border-t border-gov-line2 pt-3 text-[13px] text-gov-ink2"><span><b className="text-gov-ink">이번 달 가격 위험도: {cvRiskLabel}</b>{cvRiskScore != null && ` · ${cvRiskScore}점`}</span><span className="text-[11px] text-gov-ink3">최근 36개월 중 나보다 CV가 낮은 달 {lowerCvCount}개</span></div>
+                <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">위험도 계산: (현재 월 CV보다 낮은 월의 수 ÷ 비교 가능한 최근 36개월 수) × 100. 월별 평균가가 아니라 해당 월의 일별 가격 표준편차와 평균으로 계산된 CV를 사용해요. 일별 관측이 충분하지 않은 달은 비교에서 빠질 수 있어요.</p>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-2">
                 <Stat label={detail.name}
                       value={g.regime ? (REGIME[g.regime]?.label ?? g.regime) : "판정 보류"}
                       tone={g.regime
@@ -89,68 +143,67 @@ function Body() {
                       note={g.regime
                         ? `현재 변동성이 장기 평균의 ${g.current_over_longrun.toFixed(2)}배`
                         : "이월 시세가 많아 판정할 수 없어요"} />
-                <Stat label="충격 반감기" value={g.half_life_days.toFixed(1)} unit="일"
-                      note={`지속성 ${g.persistence.toFixed(2)} — 가격 충격이 가라앉는 속도`} />
-                <Stat label="관측" value={m.trading_days.toLocaleString("ko-KR")} unit="거래일" />
+                <Stat label="가격 변화가 가라앉는 시간" value={g.half_life_days.toFixed(1)} unit="일"
+                      note="가격이 크게 바뀐 뒤 평소 수준으로 돌아오는 데 걸리는 시간" />
               </div>
+              <div className="mt-5 rounded-lg border border-gov-line2 bg-gov-sunk/50 p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 className="text-[13px] font-bold text-gov-ink">지금 가격 변화의 위치</h3>
+                  <span className="text-[11px] text-gov-ink3">최근 오르내림 ÷ 평소 오르내림</span>
+                </div>
+                <div className="relative mt-4 h-20 px-1">
+                  <div className="flex h-14 items-end gap-1" aria-hidden>
+                    {[18, 27, 39, 54, 69, 82, 92, 86, 72, 56, 42, 30, 21].map((height, i) => (
+                      <div key={i} className="flex-1 rounded-t-sm bg-gov-link/25" style={{ height: `${height}%` }} />
+                    ))}
+                  </div>
+                  <div
+                    className="absolute bottom-5 top-0 w-0.5 bg-gov-warn"
+                    style={{ left: `${Math.min(96, Math.max(4, (g.current_over_longrun / 2) * 100))}%` }}
+                    aria-label={`현재 위치 ${g.current_over_longrun.toFixed(2)}배`}
+                  />
+                  <div className="absolute bottom-0 left-0 text-[10px] text-gov-ink3">변화 작음</div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-gov-ink3">평소</div>
+                  <div className="absolute bottom-0 right-0 text-[10px] text-gov-ink3">변화 큼</div>
+                </div>
+                <p className="mt-2 text-[12px] leading-relaxed text-gov-ink2">
+                  지금 가격은 평소보다 <b className="tabular text-gov-ink">{g.current_over_longrun.toFixed(2)}배</b> 크게 오르내리고 있어요.
+                  가격이 비싼지 싼지가 아니라, 최근 변화가 얼마나 큰지를 보여줘요.
+                </p>
+              </div>
+              <div className="mt-4 rounded-lg border border-gov-line2 bg-white p-4">
+                <h3 className="mb-2 text-[13px] font-bold text-gov-ink">비교 검증 자료</h3>
+                <p className="mb-2 text-[12px] text-gov-ink3">서로 다른 기관의 가격 자료가 비슷한 방향을 가리키는지 확인해요.</p>
+                <div className="grid grid-cols-3 gap-2 text-center text-[12px]"><div className="rounded bg-gov-sunk px-2 py-2"><b>KAMIS</b><br />{m.annual_price_sigma?.toFixed(3) ?? "—"}</div><div className="rounded bg-gov-sunk px-2 py-2"><b>KOSIS</b><br />{m.kosis_price_sigma?.toFixed(3) ?? "—"}</div><div className="rounded bg-gov-sunk px-2 py-2"><b>차이</b><br />{m.annual_price_sigma != null && m.kosis_price_sigma != null ? Math.abs(m.annual_price_sigma - m.kosis_price_sigma).toFixed(3) : "—"}</div></div>
+              </div>
+              <p className="mt-3 text-[11px] leading-relaxed text-gov-ink3">계산 방법: 월별 변동계수(CV = 월별 표준편차 ÷ 월별 평균가)를 구한 뒤, 로그(CV²)에 월별 계절효과와 전월·전년 동월 변동성을 반영해요. 월별 최고가·최저가 진폭도 보조 지표로 사용해요.</p>
+              </Fold>
               <div className="mt-4">
-                <Notice tone="info" title="국면은 한도 계산에 반영하지 않아요">
-                  25년 상환에 본질적인 것은 장기 평균이에요. 조용한 시기라고 해서 더 빌려도
-                  된다는 뜻이 아니므로, 이 값은 참고 지표로만 써요.
+                <Notice tone="info" title="가격 그래프는 참고용이에요">
+                  최근 가격이 평균보다 높은지 낮은지, 그리고 앞으로 오르내리는 방향을 살펴보는 자료예요.
                 </Notice>
+              </div>
+              <div className="mt-4 rounded-lg border border-gov-link/30 bg-gov-soft px-4 py-4">
+                <h3 className="mb-2 text-[13px] font-bold text-gov-head">비교 지표</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[420px] text-[12px]">
+                    <tbody>
+                      <tr className="border-b border-gov-link/15"><th className="w-1/3 py-2 text-left font-semibold text-gov-ink2">분석 기간</th><td className="py-2 text-gov-ink2">{m.window?.join(" ~ ") ?? "—"} · {m.trading_days.toLocaleString("ko-KR")}거래일</td></tr>
+                      <tr className="border-b border-gov-link/15"><th className="py-2 text-left font-semibold text-gov-ink2">가격 자료</th><td className="py-2 text-gov-ink2">한국농수산식품유통공사 일별 도·소매 가격정보 (perDay)</td></tr>
+                      <tr><th className="py-2 text-left font-semibold text-gov-ink2">수확기</th><td className="py-2 text-gov-ink2">{detail.harvest_months.length ? `${detail.harvest_months.join("·")}월` : "자료 없음"}</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="mt-5 border-t border-gov-line2 pt-5">
+                <h3 className="mb-2 text-[15px] font-bold text-gov-ink">3. 출하량</h3>
+                <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">정산된 출하량이 많은 달은 색을 진하게 표시해요. 출하가 몰리는 시기를 한눈에 볼 수 있어요.</p>
+                <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">{Array.from({ length: 12 }, (_, i) => { const month = i + 1; const amount = volume.filter((x) => x.month === month).reduce((s, x) => s + x.quantity, 0); const max = Math.max(...Array.from({ length: 12 }, (_, m) => volume.filter((x) => x.month === m + 1).reduce((s, x) => s + x.quantity, 0)), 1); const ratio = amount / max; const opacity = amount ? (ratio > 0.75 ? 1 : ratio > 0.5 ? 0.75 : ratio > 0.25 ? 0.5 : 0.25) : 0.1; return <div key={month} className="text-center"><div className="h-10 rounded-sm bg-gov-link" style={{ opacity }} /><div className="mt-1 text-[10px] text-gov-ink3">{month}월</div></div>; })}</div>
+                <p className="mt-3 text-[11px] text-gov-ink3">전국 공영도매시장 katOrigin `qty(물량)` 2025년 월평균 기준 · 출하량 색상은 4단계예요.</p>
               </div>
             </Panel>
           </Section>
 
-          <Section title="교차검증">
-            <div className="grid gap-5 lg:grid-cols-2">
-              <Panel>
-                <p className="mb-3 text-[13px] leading-relaxed text-gov-ink2">
-                  소득조사와 완전히 다른 자료로 같은 값을 다시 잽니다. 두 기관의 조사가 비슷한
-                  값을 가리키면 변동성 추정이 독립적으로 뒷받침돼요.
-                </p>
-                <DefTable
-                  rows={[
-                    ["KAMIS 도매가 σ", <span key="a" className="tabular">{m.annual_price_sigma?.toFixed(3) ?? "—"}</span>],
-                    ["KOSIS 농가수취가 σ", <span key="b" className="tabular">{m.kosis_price_sigma?.toFixed(3) ?? "—"}</span>],
-                    ["차이", <span key="c" className="tabular">
-                      {m.annual_price_sigma != null && m.kosis_price_sigma != null
-                        ? Math.abs(m.annual_price_sigma - m.kosis_price_sigma).toFixed(3) : "—"}
-                    </span>],
-                  ]}
-                />
-                <p className="mt-2.5 text-[12px] leading-relaxed text-gov-ink3">
-                  {m.source}
-                  {m.window && (
-                    <>
-                      {" "}· 시계열 {m.window[0]}~{m.window[1]} ({m.trading_days.toLocaleString("ko-KR")}거래일)
-                    </>
-                  )}
-                </p>
-              </Panel>
-
-              <Panel>
-                <h3 className="mb-3 text-[14px] font-bold text-gov-ink">수확기</h3>
-                <div className="flex gap-1">
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((mm) => {
-                    const on = detail.harvest_months.includes(mm);
-                    return (
-                      <div key={mm} className="flex-1 text-center">
-                        <div className={`h-10 ${on ? "bg-gov-link/70" : "bg-gov-line2"}`}
-                             title={`${mm}월${on ? " 출하" : ""}`} />
-                        <div className={`mt-1 text-[12px] ${on ? "font-semibold text-gov-head" : "text-gov-ink3"}`}>{mm}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <p className="mt-3 text-[12px] leading-relaxed text-gov-ink2">
-                  {detail.harvest_months.length
-                    ? "출하가 몇 달에 몰릴수록 그 시점의 시세 하나에 한 해 소득이 걸려요."
-                    : "이 작목은 출하월 정보를 아직 확보하지 못했어요. 월별 현금흐름은 12개월 균등으로 펼쳐 계산해요."}
-                </p>
-              </Panel>
-            </div>
-          </Section>
         </>
       )}
     </>
@@ -160,10 +213,10 @@ function Body() {
 export default function MarketPage() {
   return (
     <Page>
-      <Crumb trail={[{ label: "데이터" }, { label: "시세 · 국면" }]} />
+      <Crumb trail={[{ label: "데이터" }, { label: "가격과 시장 흐름" }]} />
       <PageTitle
-        title="시세 · 국면"
-        lead="KAMIS 일별 도매가에 GARCH(1,1)를 적합해 지금 시장이 평소보다 조용한지 요동치는지 봐요."
+        title="가격과 시장 흐름"
+        lead="농산물 도매가격이 평소보다 얼마나 오르내리는지 살펴봐요. 가격 변화가 큰 시기인지 확인할 수 있어요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>

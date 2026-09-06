@@ -126,7 +126,7 @@ export default function FaqPage() {
           </section>
         ))}
 
-        <Notice tone="warn" title="안내의 한계">
+        <Notice tone="warn" title="신청 전에 확인해 주세요">
           검색 결과는 지침 원문을 찾아 주는 것이지 유권해석이 아닙니다. 자격·의무·환수처럼
           불이익이 걸린 사항은 반드시 관할 시·군·구 담당자에게 확인하시기 바라요.
         </Notice>

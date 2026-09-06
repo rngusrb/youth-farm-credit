@@ -209,3 +209,36 @@ def test_zero_income_entries_are_not_counted_as_history():
     r = FundingMapRequest(crop_id="strawberry_hydro", pyeong=1300, living_cost=3e7,
                           actual_income=[0, 5e7, 0])
     assert r.to_diagnose_input().income_history == (5e7,)
+
+
+def test_latest_priced_date_skips_days_without_trading():
+    """'최근 가격' 은 **가격이 있는 날**이어야 한다.
+
+    사고 이력 2026-09-06 (동료 코드 확인 중 발견):
+    ① 공판장 API 를 1페이지(1000건)만 받아 그 안에서 max() 를 돌렸다.
+       딸기 실제 최신은 2024-08-29 인데 화면에는 **2024-06-11** 이 떴다.
+    ② 페이지를 끝까지 읽게 고쳤더니 이번엔 날짜만 최신이고 가격이 빈칸이 됐다 —
+       8월은 딸기 출하가 없어 그 날 8건이 전부 평균가격 0 이었다.
+
+    "최신 날짜" 와 "가격이 있는 최신 날짜" 는 다르다. 화면은 후자를 원한다.
+    """
+    from main import latest_priced_date
+
+    rows = [
+        {"가격날짜": "2024-07-22", "평균가격": "7,722"},
+        {"가격날짜": "2024-07-22", "평균가격": "5,100"},
+        {"가격날짜": "2024-08-29", "평균가격": 0},      # 비수기 — 거래 없음
+        {"가격날짜": "2024-08-29", "평균가격": "0"},
+        {"가격날짜": "2024-08-15", "평균가격": ""},     # 값 없음
+    ]
+    assert latest_priced_date(rows) == "2024-07-22"
+
+
+def test_latest_priced_date_falls_back_when_nothing_has_a_price():
+    """전부 0이면 최신 날짜라도 돌려준다 — 빈 문자열로 화면을 깨지 않는다."""
+    from main import latest_priced_date
+
+    rows = [{"가격날짜": "2024-08-29", "평균가격": 0},
+            {"가격날짜": "2024-08-30", "평균가격": 0}]
+    assert latest_priced_date(rows) == "2024-08-30"
+    assert latest_priced_date([]) == ""

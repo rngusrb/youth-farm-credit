@@ -1,5 +1,76 @@
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "") ?? "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "") ?? "http://127.0.0.1:8000";
+
+export type AuctionItem = {
+  market: string;
+  item: string;
+  price: number | null;
+  unit: string;
+  quantity?: string | number | null;
+  auction_at: string;
+  previous_day_price?: number | null;
+  seven_day_price?: number | null;
+  month_price?: number | null;
+  year_price?: number | null;
+};
+
+export type RealtimeAuction = {
+  status: "ok" | "empty" | "unavailable";
+  source?: string;
+  as_of?: string;
+  crop?: string | null;
+  match_level?: string;
+  average_price?: number | null;
+  average_label?: string | null;
+  message?: string;
+  items: AuctionItem[];
+  daily_series?: { date: string; price: number; count: number }[];
+};
+
+export async function fetchRealtimeAuction(cropId?: string, limit = 5, series = true): Promise<RealtimeAuction> {
+  const query = new URLSearchParams({ limit: String(limit) });
+  query.set("series", String(series));
+  if (cropId) query.set("crop_id", cropId);
+  const res = await fetch(`${API_BASE}/api/v1/auction/realtime?${query}`, { cache: "no-store" });
+  if (!res.ok) throw new Error((await res.text()) || "경매가를 불러오지 못했습니다");
+  return res.json();
+}
+export async function fetchMarketRecent(cropId: string, limit = 5): Promise<RealtimeAuction> {
+  const res = await fetch(`${API_BASE}/api/v1/market/recent?crop_id=${encodeURIComponent(cropId)}&limit=${limit}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("최근 도매가를 불러오지 못했습니다");
+  return res.json();
+}
+
+export type MarketCompareItem = { item: string; market: string; date: string; price: number | null; previous_day_price: number | null; seven_day_price?: number | null; month_price?: number | null; year_price: number | null; year_change?: string | number | null; grade?: string; unit?: string; unit_qty?: string };
+export type MarketCompare = { status: "ok" | "empty" | "unavailable"; crop?: string | null; items: MarketCompareItem[] };
+export async function fetchMarketCompare(cropId?: string): Promise<MarketCompare> {
+  const query = cropId ? `?crop_id=${encodeURIComponent(cropId)}` : "";
+  const res = await fetch(`${API_BASE}/api/v1/market/compare${query}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("공판장 가격을 불러오지 못했습니다");
+  return res.json();
+}
+export type QuarterlyMarket = { status: "ok" | "empty" | "unavailable"; crop?: string; items: { year: number; month: number; price: number; days?: number; high?: number | null; low?: number | null; stddev?: number | null; cv?: number | null; range_cv?: number | null }[]; message?: string };
+export async function fetchMarketQuarterly(cropId: string): Promise<QuarterlyMarket> {
+  const res = await fetch(`${API_BASE}/api/v1/market/quarterly?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("분기별 가격을 불러오지 못했습니다");
+  return res.json();
+}
+export async function fetchMarketMonthly(cropId: string): Promise<QuarterlyMarket> {
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/market/monthly?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
+    if (res.ok) {
+      const data = (await res.json()) as QuarterlyMarket;
+      if (data.items?.length) return data;
+    }
+  } catch { /* 일별 API로 대체 */ }
+  return fetchMarketQuarterly(cropId);
+}
+export type MarketVolume = { status: "ok" | "empty" | "unavailable"; items: { year: number; month: number; quantity: number }[] };
+export async function fetchMarketVolume(cropId: string): Promise<MarketVolume> {
+  const res = await fetch(`${API_BASE}/api/v1/market/volume?crop_id=${encodeURIComponent(cropId)}`, { cache: "no-store" });
+  if (!res.ok) throw new Error("거래량을 불러오지 못했습니다");
+  return res.json();
+}
 
 export type Scenario = {
   dscr_median: number;
@@ -254,6 +325,12 @@ export async function fetchDiagnosis(id: string): Promise<Diagnosis> {
 export type CropRow = {
   id: string;
   name: string;
+  price_category_code?: string;
+  price_item_code?: string;
+  large_code?: string;
+  large_name?: string;
+  middle_code?: string;
+  middle_name?: string;
   income_per_10a: number;
   sigma: number;
   sigma_source: string;
@@ -302,6 +379,19 @@ export async function fetchCrops(): Promise<{
 }> {
   const res = await fetch(`${API_BASE}/api/v1/crops`);
   if (!res.ok) throw new Error("작목 목록을 불러오지 못했습니다");
+  return res.json();
+}
+export type MarketCategory = { large_code: string; large_name: string; middle_code: string; middle_name: string };
+export const DEFAULT_MARKET_CATEGORIES: MarketCategory[] = [
+  { large_code: "08", large_name: "과일과채류", middle_code: "04", middle_name: "딸기" },
+  { large_code: "08", large_name: "과일과채류", middle_code: "01", middle_name: "수박" },
+  { large_code: "08", large_name: "과일과채류", middle_code: "06", middle_name: "방울토마토" },
+  { large_code: "06", large_name: "엽경채류", middle_code: "01", middle_name: "배추" },
+  { large_code: "07", large_name: "근채류", middle_code: "01", middle_name: "무" },
+];
+export async function fetchMarketCategories(): Promise<{ status: string; items: MarketCategory[] }> {
+  const res = await fetch(`${API_BASE}/api/v1/market/categories`, { cache: "no-store" });
+  if (!res.ok) throw new Error("품목코드를 불러오지 못했습니다");
   return res.json();
 }
 
@@ -664,7 +754,9 @@ export async function fetchFundingMap(body: {
   living_cost: number;
   other_debt_service?: number;
   principal?: number;
+  /** 실적. 두 이름 다 받는다 — 서버는 income_history 하나로 읽는다. */
   actual_income?: number[];
+  income_history?: number[];
   product_id?: string;
 }): Promise<FundingMapResult> {
   const res = await fetch(`${API_BASE}/api/v1/funding-map`, {

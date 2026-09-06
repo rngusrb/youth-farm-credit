@@ -22,7 +22,7 @@ export default function IncomeSource({ d }: { d: Diagnosis }) {
             actual ? "bg-gov-head text-white" : "bg-gov-line text-gov-ink2"
           }`}
         >
-          {actual ? `실적 ${d.income.history_years}개년` : "작목 통계 추정"}
+          {actual ? `실적 ${d.income.history_years}개년` : "작물 통계로 계산"}
         </span>
         <b className="text-[15px] tabular text-gov-ink">{won(d.income.annual)}</b>
         <span className="text-[12px] text-gov-ink3">
@@ -38,7 +38,7 @@ export default function IncomeSource({ d }: { d: Diagnosis }) {
             내 농가 정보
           </Link>
         )}
-        {!actual && "에서 연도별 농업소득을 넣을 수 있어요."}
+        {!actual && "에서 연도별 농사로 번 돈을 넣을 수 있어요."}
       </p>
     </div>
   );

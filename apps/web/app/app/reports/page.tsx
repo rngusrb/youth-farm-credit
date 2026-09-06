@@ -17,7 +17,7 @@ export default function ReportsPage() {
     <>
       <PageTitle
         title="내 리포트"
-        lead="진단 결과는 서버에 저장되지 않아요. 문서번호(URL)에 입력값이 들어 있어 링크만 있으면 언제든 같은 리포트가 다시 계산돼요. 이 목록은 이 브라우저의 기록이에요."
+        lead="저장한 진단 결과를 다시 볼 수 있어요. 목록은 이 브라우저에만 남아요. 결과 링크에는 계산에 쓴 정보가 담겨 있어요."
       />
 
       <ReportDiff rows={rows} />
@@ -25,15 +25,15 @@ export default function ReportsPage() {
       {rows.length === 0 ? (
         <Empty title="아직 저장된 리포트가 없어요"
                body="진단을 실행하면 여기에 남아요. 링크를 복사해 두면 다른 기기에서도 같은 리포트를 열 수 있어요."
-               cta={{ href: "/app/farm", label: "농가 정보 입력하고 진단" }} />
+               cta={{ href: "/app/farm", label: "농장 정보 입력하고 진단" }} />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full border-t border-gov-ink/70 text-[14px] sm:min-w-[680px]">
+        <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
+          <table className="w-full border-t border-gov-ink/70 text-[14px] min-w-[680px]">
             <thead>
               <tr className="bg-gov-sunk text-left text-[12px] font-semibold text-gov-ink2">
                 <th scope="col" className="border-b border-gov-line px-4 py-3">작목 · 면적</th>
                 <th scope="col" className="hidden border-b border-gov-line px-4 py-3 sm:table-cell">정책자금</th>
-                <th scope="col" className="border-b border-gov-line px-4 py-3">권장 차입</th>
+                <th scope="col" className="border-b border-gov-line px-4 py-3">권장 대출금</th>
                 <th scope="col" className="border-b border-gov-line px-4 py-3">위기 확률</th>
                 <th scope="col" className="hidden border-b border-gov-line px-4 py-3 sm:table-cell">저장일</th>
                 <th scope="col" className="border-b border-gov-line px-4 py-3"><span className="sr-only">관리</span></th>

@@ -14,9 +14,9 @@ export default function RiskSummary({
 }) {
   const items = [
     {
-      label: "연간 상환부족 확률",
+      label: "연간 갚을 돈이 모자랄 확률",
       value: pct(scenario.annual_short_prob),
-      hint: "상환기 한 해를 무작위로 뽑았을 때 상환액을 채우지 못할 확률",
+      hint: "상환기 한 해를 무작위로 뽑았을 때 갚을 돈을 채우지 못할 확률",
       danger: scenario.annual_short_prob > 0.2,
       volatile: true,
     },
@@ -28,7 +28,7 @@ export default function RiskSummary({
       volatile: true,
     },
     {
-      label: "최초 위험 연차",
+      label: "처음 돈이 부족할 수 있는 해",
       value: scenario.first_risk_year ? `${scenario.first_risk_year}년차` : "없음",
       hint: "연간 부족확률이 20%를 처음 넘는 시점",
       danger: scenario.first_risk_year !== null,

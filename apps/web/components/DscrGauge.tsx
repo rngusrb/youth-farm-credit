@@ -33,7 +33,7 @@ export default function DscrGauge({ median, p10, worst, worstYear, target }: Pro
           </div>
         </div>
         <div>
-          <div className="text-xs text-paper-ink3">상환기 중앙값</div>
+          <div className="text-xs text-paper-ink3">대출을 갚는 기간의 중간값</div>
           <div className="tabular text-xl font-medium text-paper-ink2">{ratio(median)}</div>
         </div>
         <div>
@@ -79,7 +79,7 @@ export default function DscrGauge({ median, p10, worst, worstYear, target }: Pro
       </div>
       <div className="mt-1 flex gap-4 text-[12px] text-paper-ink3">
         <span>
-          <b className="font-medium text-paper-ink">1.0</b> 상환 가능선
+          <b className="font-medium text-paper-ink">1.0</b> 대출을 갚을 가능선
         </span>
         <span>
           <b className="font-medium text-paper-accent">{target.toFixed(2)}</b> 은행 권장

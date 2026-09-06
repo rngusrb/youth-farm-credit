@@ -46,7 +46,7 @@ export default function BankHome() {
     {
       on: gap > 0,
       level: "주의",
-      text: `신청 가능 한도와 감당 가능 금액의 차이 ${won(gap)}. 한도까지 실행하면 2년연속 위기확률이 감내 기준을 넘습니다.`,
+      text: `신청 가능 한도와 감당 가능 금액의 차이 ${won(gap)}. 한도까지 실행하면 2년연속 위기확률이 위험 기준을 넘습니다.`,
     },
     {
       on: diag.limits.binding_constraint === "livelihood",
@@ -56,7 +56,7 @@ export default function BankHome() {
     {
       on: s.first_risk_year != null && s.first_risk_year <= diag.product.grace_years + 3,
       level: "주의",
-      text: `거치 종료 직후 ${s.first_risk_year}년차에 연간 부족확률이 20%를 넘습니다. 사후관리 시점을 앞당길 필요가 있습니다.`,
+      text: `원금도 갚기 시작 직후 ${s.first_risk_year}년차에 연간 부족확률이 20%를 넘습니다. 사후관리 시점을 앞당길 필요가 있습니다.`,
     },
     {
       on: !diag.sigma_personalized,
@@ -66,7 +66,7 @@ export default function BankHome() {
     {
       on: (crop?.leverage ?? 0) >= 2,
       level: "주의",
-      text: `영업레버리지 ${crop?.leverage?.toFixed(2)}배. 총수입이 조금만 빠져도 소득이 크게 훼손됩니다.`,
+      text: `영업레버리지 ${crop?.leverage?.toFixed(2)}배. 들어온 돈이 조금만 빠져도 소득이 크게 훼손됩니다.`,
     },
   ].filter((f) => f.on) : [];
 
@@ -74,7 +74,7 @@ export default function BankHome() {
     <>
       <PageTitle
         title="심사 대시보드"
-        lead="같은 분석을 여신 관점으로 봅니다. 농가 화면이 “얼마까지 안전한가”를 답한다면, 여기서는 “이 금액을 실행하면 무엇이 위험한가”를 봅니다."
+        lead="신청자의 농장 정보로 대출 계획을 살펴봐요. 빌려줄 금액에 따라 갚을 돈이 부족할 위험을 확인해요."
         aside={diag ? <Btn href={`/result/${diag.diagnosis_id}`} variant="ghost">심사 리포트</Btn> : undefined}
       />
 
@@ -104,23 +104,23 @@ export default function BankHome() {
 
       {diag && s && (
         <>
-          <Section title="차주 개요">
+          <Section title="신청자 정보">
             <Panel>
               <SourceLegend className="mb-5" />
-              <div className="grid gap-6 sm:grid-cols-4">
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
                 <Stat label="차주" value={applicant.name} src="input"
                       note={`${applicant.ref} · ${applicant.region} · ${diag.input.crop_name} ${fmtPyeong(diag.input.pyeong)}`} />
-                <Stat label="연 농업소득" value={won(diag.income.annual)}
+                <Stat label="한 해 농사로 번 돈" value={won(diag.income.annual)}
                       src="public"
                       srcNote="공표 10a당 소득에 차주가 신고한 면적을 비례 적용했습니다. 규모의 경제는 반영하지 않았습니다."
-                      note={`상환여력 ${won(diag.income.capacity)}`} />
-                <Stat label="소득 변동성 σ" value={diag.sigma.toFixed(3)}
+                      note={`갚는 데 쓸 돈 ${won(diag.income.capacity)}`} />
+                <Stat label="소득이 흔들리는 정도 σ" value={diag.sigma.toFixed(3)}
                       src={sigmaSourceKind(diag)} srcNote={sigmaSourceNote(diag)}
                       note={diag.sigma_personalized ? "차주 실적 반영" : "작목 평균 (실적 미제출)"} />
                 <Stat label="영업레버리지" value={crop?.leverage ? `${crop.leverage.toFixed(2)}배` : "—"}
                       tone={(crop?.leverage ?? 0) >= 2 ? "warn" : "plain"}
-                      src="public" srcNote="총수입·경영비 모두 공표 소득조사 값입니다."
-                      note="총수입 ÷ 소득" />
+                      src="public" srcNote="들어온 돈·농사 비용 모두 공표 소득조사 값입니다."
+                      note="들어온 돈 ÷ 소득" />
               </div>
             </Panel>
           </Section>
@@ -142,8 +142,8 @@ export default function BankHome() {
             )}
           </Section>
 
-          <Section title="여신 판단 요약">
-            <div className="overflow-x-auto">
+          <Section title="대출 검토 요약">
+            <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
               <table className="w-full min-w-[620px] border-t border-gov-ink/70 text-[14px]">
                 <thead>
                   <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
@@ -190,8 +190,8 @@ export default function BankHome() {
           <Section title="다음 단계">
             <div className="grid gap-px bg-gov-line sm:grid-cols-3">
               {[
-                ["상환능력 분석", "/bank/capacity", "계절성과 변동성을 반영한 상환여력"],
-                ["적정 여신 설계", "/bank/design", "실행 금액별 위험 곡선"],
+                ["대출 갚을 능력 살펴보기", "/bank/capacity", "계절성과 변동성을 반영한 갚는 데 쓸 돈"],
+                ["대출 금액 계획", "/bank/design", "실행 금액별 위험 곡선"],
                 ["Stress Test", "/bank/stress", "가격·생산량·금리·재해 시나리오"],
               ].map(([t, href, d]) => (
                 <Link key={href} href={href} className="group bg-white p-5 transition-colors hover:bg-gov-sunk">

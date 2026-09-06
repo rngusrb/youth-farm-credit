@@ -78,7 +78,7 @@ export default function PrescribePage() {
     <>
       <PageTitle
         title="AI 맞춤 처방"
-        lead="원하는 금액을 감당할 조건을 찾고, 작목 전환까지 견주고, 신청서 초안을 만들어 드립니다."
+        lead="내 농장에 맞는 개선 방법을 찾아보세요. 다른 작물과 비교하고, 지원 사업 신청서 초안도 준비할 수 있어요."
       />
 
       {error && <Notice tone="warn" title="처방을 만들지 못했어요">{error}</Notice>}
@@ -116,10 +116,10 @@ export default function PrescribePage() {
                 </p>
               </Panel>
             ) : (
-              <Notice tone="info" title="실적을 넣으면 견줘 드려요">
+              <Notice tone="info" title="지난 소득을 넣으면 평균과 비교해요">
                 {b?.message}{" "}
-                <Link href="/app/farm" className="text-gov-link underline">내 농장 정보 입력</Link>
-                에서 연도별 농업소득을 넣을 수 있어요.
+                <Link href="/app/farm" className="text-gov-link underline">내 농장정보 입력</Link>
+                에서 연도별 농사로 번 돈을 넣을 수 있어요.
               </Notice>
             )}
           </Section>
@@ -134,8 +134,8 @@ export default function PrescribePage() {
                 }}
                 className="flex flex-wrap items-end gap-3"
               >
-                <label className="flex-1 min-w-[220px]">
-                  <span className="mb-1 block text-[13px] font-medium text-gov-ink2">차입 희망 금액 (원)</span>
+                <label className="min-w-0 w-full flex-1 sm:min-w-[220px]">
+                  <span className="mb-1 block text-[13px] font-medium text-gov-ink2">빌리고 싶은 금액 (원)</span>
                   <input
                     inputMode="numeric"
                     value={target}
@@ -208,10 +208,10 @@ export default function PrescribePage() {
             <Panel>
               <div className="mb-2 flex flex-wrap items-center gap-2">
                 <Badge tone={data.draft.method === "template" ? "plain" : "info"}>
-                  {data.draft.method === "template" ? "규칙기반" : "AI 작성"}
+                  {data.draft.method === "template" ? "기본 안내" : "AI 작성"}
                 </Badge>
                 <span className="text-[12px] text-gov-ink3">
-                  수치 {data.draft.numbers_used.length}개를 엔진 값과 대조했어요
+                  수치 {data.draft.numbers_used.length}개를 계산 결과와 확인했어요
                 </span>
               </div>
 
@@ -219,7 +219,7 @@ export default function PrescribePage() {
 
               {data.draft.dropped.length > 0 && (
                 <p className="mt-3 text-[12px] text-gov-warn">
-                  숫자가 엔진 값과 맞지 않아 {data.draft.dropped.length}문장을 뺐어요.
+                  숫자가 계산 결과와 달라 {data.draft.dropped.length}문장을 뺐어요.
                 </p>
               )}
 

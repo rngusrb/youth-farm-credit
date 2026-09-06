@@ -39,7 +39,7 @@ export default function DesignPage() {
   if (!profile) {
     return (
       <>
-        <PageTitle title="적정 여신 설계" lead="차주 정보가 필요합니다." />
+        <PageTitle title="대출 금액 계획" lead="차주 정보가 필요합니다." />
         <Empty title="차주 정보가 없습니다" body="농가 정보를 먼저 입력해 주세요."
                cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
       </>
@@ -51,8 +51,8 @@ export default function DesignPage() {
   return (
     <>
       <PageTitle
-        title="적정 여신 설계"
-        lead="단순 대출 가능 한도가 아니라, 차주가 실제로 감당할 수 있는 적정 차입 원금을 역산합니다."
+        title="대출 금액 계획"
+        lead="빌려줄 금액에 따라 위험을 비교해요. 소득이 줄어드는 상황까지 반영한 권장 대출금도 확인할 수 있어요."
       />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
@@ -72,14 +72,14 @@ export default function DesignPage() {
                         {p.name}
                       </span>
                       <span className="block text-[12px] text-gov-ink3">
-                        한도 {won(p.limit)} · {p.grace_years}년거치 {p.amort_years}년 · 연 {(p.rate * 100).toFixed(1)}%
+                        한도 {won(p.limit)} · {p.grace_years}년 동안 이자만 · {p.amort_years}년 · 연 {(p.rate * 100).toFixed(1)}%
                       </span>
                     </button>
                   );
                 })}
               </div>
               <p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">
-                상환기간이 짧을수록 같은 원금의 연 상환액이 커집니다. 20년과 10년은 1억원당
+                상환기간이 짧을수록 같은 원금의 한 해 갚을 돈이 커집니다. 20년과 10년은 1억원당
                 연 650만원과 1,150만원으로 1.77배 차이가 납니다.
               </p>
             </Panel>
@@ -94,7 +94,7 @@ export default function DesignPage() {
                       note={`2년연속 위기확률 ${pct(diag.limits.max_crisis_prob)} 이하 유지`} />
                 <Stat label="과다 구간" value={won(unsafeGap(diag))}
                       tone={unsafeGap(diag) > 0 ? "danger" : "plain"}
-                      note="실행 시 감내 기준 초과" />
+                      note="실행 시 위험 기준 초과" />
               </div>
             </Panel>
           </Section>
@@ -127,13 +127,13 @@ export default function DesignPage() {
           </Section>
 
           <Section title="실행 금액별 위험">
-            <div className="overflow-x-auto">
+            <div className="table-scroll overflow-x-auto" tabIndex={0} role="region" aria-label="표 또는 차트 상세 · 좌우로 스크롤">
               <table className="w-full min-w-[680px] border-t border-gov-ink/70 text-[14px]">
                 <thead>
                   <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">
                     <th scope="col" className="border-b border-gov-line px-4 py-3 text-left">실행 금액</th>
-                    <th scope="col" className="border-b border-gov-line px-4 py-3">거치 중 연이자</th>
-                    <th scope="col" className="border-b border-gov-line px-4 py-3">절벽 연차 상환액</th>
+                    <th scope="col" className="border-b border-gov-line px-4 py-3">이자만 낼 때의 한 해 이자</th>
+                    <th scope="col" className="border-b border-gov-line px-4 py-3">절벽 연차 갚을 돈</th>
                     <th scope="col" className="border-b border-gov-line px-4 py-3">DSCR</th>
                     <th scope="col" className="border-b border-gov-line px-4 py-3">2년연속 위기</th>
                     <th scope="col" className="border-b border-gov-line px-4 py-3 text-center">판단</th>
@@ -192,7 +192,7 @@ export default function DesignPage() {
                         value={band.break_even_sigma ? band.break_even_sigma.toFixed(3) : "—"}
                         note="이 값을 넘으면 권장 금액에서도 기준 초과" />
                 </div>
-                <div className="mt-4 overflow-x-auto">
+                <div className="table-scroll mt-4 overflow-x-auto" tabIndex={0} role="region" aria-label="표 상세 · 좌우로 스크롤">
                   <table className="w-full min-w-[520px] border-t border-gov-line text-[13px]">
                     <thead>
                       <tr className="bg-gov-sunk text-right text-[12px] font-semibold text-gov-ink2">

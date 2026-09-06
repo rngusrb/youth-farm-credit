@@ -18,6 +18,8 @@ const PAIRS: [string, string[]][] = [
   ["app/bank/stress/page.tsx", ["runDiagnose", "fetchStress"]],
   ["app/app/map/page.tsx", ["fetchFundingMap", "fetchCashflow"]],
   ["app/app/revenue/page.tsx", ["runDiagnose", "fetchCashflow"]],
+  ["app/bank/capacity/page.tsx", ["runDiagnose", "fetchCashflow"]],
+  ["app/app/page.tsx", ["runDiagnose", "fetchCashflow"]],
 ];
 
 describe("한 화면 = 한 소득", () => {
@@ -27,7 +29,15 @@ describe("한 화면 = 한 소득", () => {
       const at = src.indexOf(`${call}(`);
       expect(at, `${file} 에 ${call} 호출이 없다`).toBeGreaterThan(-1);
       const body = src.slice(at, src.indexOf("})", at) + 2);
-      const ok = /income_history|actual_income/.test(body) || /\.\.\.base/.test(body);
+      // `runDiagnose(base)` 처럼 객체를 통째로 넘기는 형태도 인정한다 —
+      // 그 base 에 실적이 들어 있으면 통과다. 이걸 못 읽어서 2026-09-06 병합
+      // 확인 중에 **멀쩡한 화면 두 곳을 잘못 잡았다.** 오탐을 내는 검사는
+      // 곧 무시당하고, 무시당한 검사는 없는 검사다.
+      const passesBase =
+        /\.\.\.base/.test(body) ||
+        (/^\s*base[,)\s]/.test(src.slice(at + call.length + 1, at + call.length + 8)) &&
+          /const base = \{[\s\S]*?income_history[\s\S]*?\};/.test(src));
+      const ok = /income_history|actual_income/.test(body) || passesBase;
       expect(ok, `${file} 의 ${call} 이 실적을 안 보낸다`).toBe(true);
     }
   });

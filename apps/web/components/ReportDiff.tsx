@@ -43,7 +43,7 @@ export default function ReportDiff({ rows }: { rows: SavedReport[] }) {
       )}
 
       <dl className="mt-4 grid gap-4 border-t border-gov-line2 pt-4 sm:grid-cols-2">
-        <Pair label="권장 차입" before={won(before.riskLimit)} after={won(now.riskLimit)}
+        <Pair label="권장 대출금" before={won(before.riskLimit)} after={won(now.riskLimit)}
               dir={dir(before.riskLimit, now.riskLimit)} />
         <Pair label="2년 연속 위기 확률" before={pct(before.crisisProb)} after={pct(now.crisisProb)}
               dir={dir(before.crisisProb, now.crisisProb)} />

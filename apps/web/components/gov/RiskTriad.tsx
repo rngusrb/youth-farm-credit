@@ -14,27 +14,27 @@ export default function RiskTriad({ d }: { d: Diagnosis }) {
 
   const items = [
     {
-      label: "상환능력비율 (DSCR)",
+      label: "갚을 돈의 여유 (DSCR)",
       value: ratio(s.dscr_median),
       tone: (s.dscr_median >= d.target_dscr ? "ok" : s.dscr_median >= 1 ? "warn" : "danger") as
         "ok" | "warn" | "danger",
       state: s.dscr_median >= d.target_dscr ? "여유" : s.dscr_median >= 1 ? "빠듯" : "부족",
-      note: `상환기 중앙값 · 은행 권장 ${ratio(d.target_dscr)} 이상`,
+      note: `갚는 데 쓸 돈 ÷ 갚아야 할 돈. 1 미만이면 부족해요. 기간 중간값 · 비교 기준 ${ratio(d.target_dscr)}`,
     },
     {
-      label: "2년 연속 위기 확률",
+      label: "2년 연속 갚을 돈이 모자랄 확률",
       value: pct(s.crisis_prob),
       tone: (s.crisis_prob <= d.limits.max_crisis_prob / 2 ? "ok"
         : s.crisis_prob <= d.limits.max_crisis_prob ? "warn" : "danger") as "ok" | "warn" | "danger",
       state: s.crisis_prob <= d.limits.max_crisis_prob ? "기준 이내" : "기준 초과",
-      note: `감내 기준 ${pct(d.limits.max_crisis_prob)} 이하`,
+      note: `위험 기준 ${pct(d.limits.max_crisis_prob)} 이하`,
     },
     {
-      label: "최초 위험 연차",
+      label: "처음 돈이 부족할 수 있는 해",
       value: s.first_risk_year ? `${s.first_risk_year}년차` : "없음",
       tone: (s.first_risk_year ? (s.first_risk_year <= 8 ? "danger" : "warn") : "ok") as
         "ok" | "warn" | "danger",
-      state: s.first_risk_year ? "도래" : "해당 없음",
+      state: s.first_risk_year ? "미리 준비" : "해당 없음",
       note: "연간 부족확률이 20%를 처음 넘는 시점",
     },
   ];

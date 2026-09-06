@@ -58,7 +58,7 @@ export default function LimitLadder({
     {
       key: "recommended",
       label: "DSCR 기준 권장",
-      basis: `상환여력이 원리금의 ${targetDscr.toFixed(2)}배 (은행 심사 관행)`,
+      basis: `갚는 데 쓸 돈이 원금과 이자의 ${targetDscr.toFixed(2)}배 (은행 심사 관행)`,
       amount: recommended,
       crisis: crisisAtRecommended,
       tone: "warn",
@@ -67,8 +67,8 @@ export default function LimitLadder({
       key: "risk",
       label: "상환위험 기준",
       basis: livelihoodBound
-        ? "차입 규모로는 목표 위험을 맞출 수 없음"
-        : `2년 연속 상환부족 확률 ${pct(maxCrisisProb)} 이하`,
+        ? "빌리는 금액로는 목표 위험을 맞출 수 없음"
+        : `2년 연속 갚을 돈이 모자랄 확률 ${pct(maxCrisisProb)} 이하`,
       amount: riskBased,
       crisis: livelihoodBound ? null : crisisAtRiskBased,
       tone: livelihoodBound ? "danger" : "ok",
@@ -122,7 +122,7 @@ export default function LimitLadder({
 
       {!livelihoodBound && recommended > riskBased && (
         <p className="mt-6 border-t border-paper-rule pt-4 text-sm leading-relaxed text-paper-ink2">
-          은행 기준을 통과하는 금액({won(recommended)})에서도 2년 연속 상환이 밀릴
+          은행 기준을 통과하는 금액({won(recommended)})에서도 2년 연속 대출을 제때 갚지 못할
           확률은{" "}
           <span className="tabular font-semibold text-paper-accent">
             {pct(crisisAtRecommended)}

@@ -25,6 +25,7 @@ from engine.params import DATA_DIR, get_crop
 log = logging.getLogger(__name__)
 
 BASE_URL = "https://apis.data.go.kr/B552845/perDay/price"
+RECENT_URL = "https://apis.data.go.kr/B552845/recent/price"
 MAX_ROWS = 1000
 DATE_FMT = "%Y%m%d"
 
@@ -77,7 +78,8 @@ def codes() -> dict:
 
 
 def service_key() -> str:
-    key = os.getenv("DATA_GO_KR_SERVICE_KEY", "").strip()
+    # 같은 공공데이터포털 인증키를 운영 API에서도 사용할 수 있게 한다.
+    key = (os.getenv("DATA_GO_KR_SERVICE_KEY") or os.getenv("DATA_GO_KR_API_KEY") or "").strip()
     if not key:
         raise KamisError(
             "DATA_GO_KR_SERVICE_KEY 가 설정되지 않았습니다.\n"
@@ -116,10 +118,17 @@ def build_query(params: dict) -> str:
     return f"serviceKey={encoded}&{query}"
 
 
-def _request(params: dict) -> dict:
-    url = f"{BASE_URL}?{build_query(params)}"
+#: 외부 시세 API 대기 상한(초). api 레이어의 MARKET_TIMEOUT_S 와 같은 환경변수를 읽는다.
+_TIMEOUT_S = float(os.getenv("MARKET_TIMEOUT_S", "8"))
+
+
+def _request(params: dict, endpoint: str | None = None) -> dict:
+    """공유 전역 URL을 바꾸지 않고 요청한다(동시 품목 조회 안전)."""
+    url = f"{endpoint or BASE_URL}?{build_query(params)}"
     try:
-        with urllib.request.urlopen(url, timeout=30) as resp:
+        # 화면이 이 대기에 매달린다. main.MARKET_TIMEOUT_S 와 같은 값을 쓴다 —
+        # 여기만 30초로 남으면 quarterly 가 여전히 30초를 붙잡는다 (2026-09-06).
+        with urllib.request.urlopen(url, timeout=_TIMEOUT_S) as resp:
             raw = resp.read().decode("utf-8", "replace")
     except urllib.error.HTTPError as exc:
         # 인증 실패는 403 + 게이트웨이 봉투로 온다. 본문을 읽어야 이유를 알 수 있다.
@@ -199,6 +208,41 @@ def fetch_prices(
 
     rows.sort(key=lambda r: r.date)
     return rows
+
+
+def fetch_recent(crop_id: str, max_pages: int = 20) -> list[PriceRow]:
+    """최근일자 도·소매 가격정보(recent/price)를 가져온다."""
+    crop = get_crop(crop_id)
+    mapping = getattr(crop, "kamis", None)
+    if not mapping:
+        raise KamisError(f"crops.json 의 '{crop_id}' 에 kamis 매핑이 없습니다")
+    base = {
+        "serviceKey": service_key(), "returnType": "JSON", "numOfRows": MAX_ROWS,
+        "cond[ctgry_cd::EQ]": mapping["ctgry_cd"], "cond[item_cd::EQ]": mapping["item_cd"],
+    }
+    for key, param in (("se_cd", "cond[se_cd::EQ]"), ("vrty_cd", "cond[vrty_cd::EQ]"), ("grd_cd", "cond[grd_cd::EQ]")):
+        if mapping.get(key): base[param] = mapping[key]
+    rows: list[PriceRow] = []
+    for page in range(1, max_pages + 1):
+            payload = _request({**base, "pageNo": page}, RECENT_URL)
+            body = payload.get("response", {}).get("body", {}) or {}
+            items = (body.get("items") or {}).get("item") or []
+            if isinstance(items, dict): items = [items]
+            rows.extend(parse_rows(items))
+            total = int(body.get("totalCount") or 0)
+            if page * MAX_ROWS >= total or not items: break
+    rows.sort(key=lambda r: r.date, reverse=True)
+    return rows
+
+def fetch_recent_records(crop_id: str) -> list[dict]:
+    """최근일자 API 원문 행을 반환한다(전일·전주·전년 필드 포함)."""
+    crop = get_crop(crop_id); mapping = getattr(crop, "kamis", None)
+    if not mapping: raise KamisError(f"crops.json 의 '{crop_id}' 에 매핑이 없습니다")
+    base = {"serviceKey": service_key(), "returnType": "JSON", "pageNo": 1, "numOfRows": MAX_ROWS,
+            "cond[se_cd::EQ]": mapping.get("se_cd", "02"), "cond[ctgry_cd::EQ]": mapping["ctgry_cd"], "cond[item_cd::EQ]": mapping["item_cd"]}
+    payload = _request(base, RECENT_URL)
+    body = payload.get("response", {}).get("body", {}) or {}; items = (body.get("items") or {}).get("item") or []
+    return [items] if isinstance(items, dict) else items
 
 
 def parse_rows(items: list[dict]) -> list[PriceRow]:
