@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 import { Badge, Btn, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchProducts, runDiagnose, type Diagnosis, type ProductRow } from "@/lib/api";
 import { headlineLimit, unsafeGap } from "@/lib/diagnosis";
-import { useFarm } from "@/lib/useFarm";
+import { useBorrower } from "@/lib/useBorrower";
+import { cached } from "@/lib/analysisCache";
+import BorrowerBar from "@/components/BorrowerBar";
 import { pct, ratio, won } from "@/lib/format";
 
 /** 적정 여신 설계.
@@ -15,7 +17,8 @@ import { pct, ratio, won } from "@/lib/format";
  * 화면은 받은 값을 그릴 뿐이다 — 프런트에서 보간하면 리포트와 숫자가 갈린다.
  */
 export default function DesignPage() {
-  const { profile, ready } = useFarm();
+  // 농가 프로필이 아니라 **고른 차주**를 본다 (사고 이력: lib/borrower.ts).
+  const { borrower, ready } = useBorrower();
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [productId, setProductId] = useState<string | null>(null);
@@ -26,22 +29,21 @@ export default function DesignPage() {
   }, []);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!borrower) return;
     runDiagnose({
-      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
-      other_debt_service: profile.otherDebtService,
-      product_id: productId ?? profile.productId,
-      income_history: profile.incomeHistory,
+      crop_id: borrower.cropId, pyeong: borrower.pyeong, living_cost: borrower.livingCost,
+      other_debt_service: borrower.otherDebtService,
+      product_id: productId ?? borrower.productId,
+      income_history: borrower.incomeHistory,
     }).then(setDiag).catch(() => setError("계산에 실패했습니다."));
-  }, [profile, productId]);
+  }, [borrower, productId]);
 
   if (!ready) return null;
-  if (!profile) {
+  if (!borrower) {
     return (
       <>
-        <PageTitle title="대출 금액 계획" lead="차주 정보가 필요합니다." />
-        <Empty title="차주 정보가 없습니다" body="농가 정보를 먼저 입력해 주세요."
-               cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
+        <PageTitle title="대출 금액 계획" lead="심사할 차주를 먼저 고르세요." />
+        <BorrowerBar />
       </>
     );
   }
@@ -54,6 +56,7 @@ export default function DesignPage() {
         title="대출 금액 계획"
         lead="빌려줄 금액에 따라 위험을 비교해요. 소득이 줄어드는 상황까지 반영한 권장 대출금도 확인할 수 있어요."
       />
+      <BorrowerBar />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 
@@ -63,7 +66,7 @@ export default function DesignPage() {
             <Panel>
               <div className="flex flex-wrap gap-2">
                 {products.map((p) => {
-                  const on = (productId ?? profile.productId) === p.id;
+                  const on = (productId ?? borrower.productId) === p.id;
                   return (
                     <button key={p.id} onClick={() => setProductId(p.id)} aria-pressed={on}
                             className={`border px-4 py-2.5 text-left ${

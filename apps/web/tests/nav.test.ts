@@ -22,8 +22,16 @@ describe("사이트 구조", () => {
     expect(BANK.every((i) => i.href.startsWith("/bank"))).toBe(true);
   });
 
-  it("각 업무 메뉴의 첫 항목이 그 영역의 홈이다", () => {
+  it("농가 메뉴의 첫 항목은 그 영역의 홈이다", () => {
     expect(FARMER[0].href).toBe("/app");
-    expect(BANK[0].href).toBe("/bank");
+  });
+
+  it("금융기관 메뉴는 **차주 목록**으로 시작한다", () => {
+    // 2026-09-07 규칙을 바꿨다. 예전에는 "첫 항목 = 그 영역의 홈" 이었는데,
+    // 심사 화면 셋(capacity·design·stress)이 전부 "고른 차주" 를 보게 되면서
+    // **차주를 고르는 것이 시작점**이 됐다. 대시보드를 먼저 두면 차주를 안 고른 채
+    // 분석 화면에 들어가 "이 화면이 누구 걸 보여주나" 가 된다.
+    expect(BANK[0].href).toBe("/bank/applicants");
+    expect(BANK.some((i) => i.href === "/bank")).toBe(true);   // 대시보드는 남아 있다
   });
 });

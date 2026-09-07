@@ -7,44 +7,50 @@ import { Badge, DefTable, Empty, Notice, PageTitle, Panel, Section, Stat } from 
 import CashflowChart from "@/components/gov/CashflowChart";
 import { fetchCashflow, fetchCrop, runDiagnose, type Cashflow, type CropDetail, type Diagnosis } from "@/lib/api";
 import { headlineLimit } from "@/lib/diagnosis";
-import { useFarm } from "@/lib/useFarm";
+import { useBorrower } from "@/lib/useBorrower";
+import { cached } from "@/lib/analysisCache";
+import BorrowerBar from "@/components/BorrowerBar";
 import { won } from "@/lib/format";
 
 export default function CapacityPage() {
-  const { profile, ready } = useFarm();
+  // 농가 프로필이 아니라 **고른 차주**를 본다.
+  // 사고 이력 2026-09-07: 여기가 useFarm() 이라 심사 화면이 농가 계정의
+  // 저장소를 보고 있었다 — 차주 목록과 아무 관계가 없었다.
+  const { borrower, ready } = useBorrower();
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [crop, setCrop] = useState<CropDetail | null>(null);
   const [cf, setCf] = useState<Cashflow | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!borrower) return;
     const base = {
-      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
-      other_debt_service: profile.otherDebtService, product_id: profile.productId,
+      crop_id: borrower.cropId, pyeong: borrower.pyeong, living_cost: borrower.livingCost,
+      other_debt_service: borrower.otherDebtService, product_id: borrower.productId,
       // 실적을 base 에 둔다 — 진단에만 넣고 현금흐름에 안 넣으면 한 화면에서
       // 소득이 갈린다 (적대적 리뷰 F4, 2026-09-02).
-      income_history: profile.incomeHistory,
+      income_history: borrower.incomeHistory,
     };
-    runDiagnose(base)
-      .then((d) => {
-        setDiag(d);
-        return Promise.all([
-          fetchCrop(profile.cropId).then(setCrop),
-          fetchCashflow({ ...base, principal: headlineLimit(d), year: d.product.grace_years + 1 })
-            .then(setCf).catch(() => undefined),
-        ]);
-      })
+    // 같은 차주면 다시 계산하지 않는다. 화면을 옮겼다 돌아와도 즉시 뜬다.
+    cached(`capacity:${borrower.ref}`, async () => {
+      const d = await runDiagnose(base);
+      const [c, f] = await Promise.all([
+        fetchCrop(borrower.cropId),
+        fetchCashflow({ ...base, principal: headlineLimit(d), year: d.product.grace_years + 1 })
+          .catch(() => null),
+      ]);
+      return { d, c, f };
+    })
+      .then(({ d, c, f }) => { setDiag(d); setCrop(c); setCf(f); })
       .catch(() => setError("계산에 실패했습니다."));
-  }, [profile]);
+  }, [borrower]);
 
   if (!ready) return null;
-  if (!profile) {
+  if (!borrower) {
     return (
       <>
-        <PageTitle title="대출 갚을 능력 살펴보기" lead="차주 정보가 필요합니다." />
-        <Empty title="차주 정보가 없습니다" body="농가 정보를 먼저 입력해 주세요."
-               cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
+        <PageTitle title="대출 갚을 능력 살펴보기" lead="심사할 차주를 먼저 고르세요." />
+        <BorrowerBar />
       </>
     );
   }
@@ -58,6 +64,7 @@ export default function CapacityPage() {
         title="대출 갚을 능력 살펴보기"
         lead="농사로 번 돈 중 대출을 갚는 데 쓸 돈을 살펴봐요. 수확한 돈이 들어오기 전에 부족한 달이 있는지도 확인해요."
       />
+      <BorrowerBar />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 

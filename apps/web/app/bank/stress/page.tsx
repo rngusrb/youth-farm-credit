@@ -5,11 +5,14 @@ import { Btn, Empty, Notice, PageTitle, Panel, Section, Stat } from "@/component
 import StressTable from "@/components/gov/StressTable";
 import { fetchStress, runDiagnose, type Diagnosis, type StressReport } from "@/lib/api";
 import { headlineLimit } from "@/lib/diagnosis";
-import { useFarm } from "@/lib/useFarm";
+import { useBorrower } from "@/lib/useBorrower";
+import { cached } from "@/lib/analysisCache";
+import BorrowerBar from "@/components/BorrowerBar";
 import { pct, won } from "@/lib/format";
 
 export default function BankStressPage() {
-  const { profile, ready } = useFarm();
+  // 농가 프로필이 아니라 **고른 차주**를 본다 (사고 이력: lib/borrower.ts).
+  const { borrower, ready } = useBorrower();
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [report, setReport] = useState<StressReport | null>(null);
   const [principal, setPrincipal] = useState<number | null>(null);
@@ -17,38 +20,37 @@ export default function BankStressPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!profile) return;
+    if (!borrower) return;
     runDiagnose({
-      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
-      other_debt_service: profile.otherDebtService, product_id: profile.productId,
-      income_history: profile.incomeHistory,
+      crop_id: borrower.cropId, pyeong: borrower.pyeong, living_cost: borrower.livingCost,
+      other_debt_service: borrower.otherDebtService, product_id: borrower.productId,
+      income_history: borrower.incomeHistory,
     })
       .then((d) => { setDiag(d); setPrincipal((p) => p ?? d.limits.available); })
       .catch(() => setError("계산에 실패했습니다."));
-  }, [profile]);
+  }, [borrower]);
 
   useEffect(() => {
-    if (!profile || principal == null) return;
+    if (!borrower || principal == null) return;
     setBusy(true);
     fetchStress({
-      crop_id: profile.cropId, pyeong: profile.pyeong, living_cost: profile.livingCost,
-      other_debt_service: profile.otherDebtService, product_id: profile.productId, principal,
+      crop_id: borrower.cropId, pyeong: borrower.pyeong, living_cost: borrower.livingCost,
+      other_debt_service: borrower.otherDebtService, product_id: borrower.productId, principal,
       // 진단에만 실적을 보내고 여기 안 보내면 한 화면에서 소득이 갈린다
       // (적대적 리뷰 H1, 2026-09-02: 진단 9,100만원 / 시나리오 6,304만원).
-      income_history: profile.incomeHistory,
+      income_history: borrower.incomeHistory,
     })
       .then(setReport)
       .catch((e) => setError(e instanceof Error ? e.message : "스트레스 테스트 실패"))
       .finally(() => setBusy(false));
-  }, [profile, principal]);
+  }, [borrower, principal]);
 
   if (!ready) return null;
-  if (!profile) {
+  if (!borrower) {
     return (
       <>
-        <PageTitle title="대출 위험 점검" lead="차주 정보가 필요합니다." />
-        <Empty title="차주 정보가 없습니다" body="농가 정보를 먼저 입력해 주세요."
-               cta={{ href: "/app/farm", label: "차주 정보 입력" }} />
+        <PageTitle title="대출 위험 점검" lead="심사할 차주를 먼저 고르세요." />
+        <BorrowerBar />
       </>
     );
   }
@@ -62,6 +64,7 @@ export default function BankStressPage() {
         title="대출 위험 점검"
         lead="가격 하락이나 재해가 생겼을 때 대출을 갚을 수 있을지 계산해요. 금액이나 갚는 계획을 바꿔볼 근거로 활용하세요."
       />
+      <BorrowerBar />
 
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 

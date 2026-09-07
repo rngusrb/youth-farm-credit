@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge, Notice, PageTitle, Panel, Stat } from "@/components/gov";
 import { runDiagnose, type Diagnosis } from "@/lib/api";
 import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
 import { APPLICANTS, type Applicant } from "@/lib/applicants";
+import { selectBorrower } from "@/lib/borrower";
+import { clearAnalysisCache } from "@/lib/analysisCache";
 import { pct, pyeong as fmtPyeong, ratio, won } from "@/lib/format";
 
 type Row = { a: Applicant; d: Diagnosis | null; error?: string };
@@ -24,6 +27,7 @@ function verdict(a: Applicant, d: Diagnosis) {
 }
 
 export default function ApplicantsPage() {
+  const router = useRouter();
   const [rows, setRows] = useState<Row[]>(APPLICANTS.map((a) => ({ a, d: null })));
   const [busy, setBusy] = useState(true);
 
@@ -134,10 +138,24 @@ export default function ApplicantsPage() {
                       <>
                         <Badge tone={v.tone}>{v.label}</Badge>
                         <span className="mt-1 block text-[12px] text-gov-ink3">{v.why}</span>
+                        {/* 목록에서 고른 차주가 심사 화면 셋에 그대로 이어진다.
+                            사고 이력 2026-09-07: 예전에는 리포트 한 장으로 튀었고,
+                            나머지 화면은 그 선택을 몰랐다. */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            clearAnalysisCache();
+                            selectBorrower(a.ref);
+                            router.push("/bank/capacity");
+                          }}
+                          className="mt-1 inline-flex min-h-11 items-center rounded-md border border-gov-head bg-gov-soft px-2.5 text-[12px] font-bold text-gov-head hover:bg-gov-line2"
+                        >
+                          이 차주로 심사 →
+                        </button>
                         {d && (
                           <Link href={`/result/${d.diagnosis_id}`}
                                 className="lnk mt-1 inline-flex min-h-11 items-center text-[12px]">
-                            심사 리포트 →
+                            심사 리포트
                           </Link>
                         )}
                       </>

@@ -77,8 +77,11 @@ export const FARMER: Item[] = [
 
 /** 금융기관용 업무 메뉴 */
 export const BANK: Item[] = [
+  // **목록이 맨 위다.** 심사는 차주를 고르는 데서 시작하고, 아래 세 화면은
+  // 전부 "고른 차주" 를 본다 (2026-09-07). 대시보드를 먼저 두면 차주를 안 고른
+  // 채로 분석 화면에 들어가게 된다.
+  { href: "/bank/applicants", label: "대출 신청자 목록", desc: "여기서 심사할 차주를 고릅니다" },
   { href: "/bank", label: "심사 대시보드", desc: "신청 건 요약" },
-  { href: "/bank/applicants", label: "대출 신청자 목록", desc: "신청 건 일괄 검토" },
   { href: "/bank/capacity", label: "대출 갚을 능력 살펴보기", desc: "계절성·변동성 반영" },
   { href: "/bank/design", label: "대출 금액 계획", desc: "권장 대출금 역산" },
   { href: "/bank/stress", label: "대출 위험 점검", desc: "상황별로 대출을 갚을 수 있는지" },

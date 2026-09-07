@@ -44,10 +44,21 @@
 
 | 경로 | 화면 | 핵심기능 |
 |---|---|---|
+| `bank/applicants` | **대출 신청자 목록 — 여기서 심사할 차주를 고른다 (메뉴 맨 위)** | — |
 | `bank` | 심사 대시보드 — 차주 개요와 위험 신호 | — |
 | `bank/capacity` | 상환능력 분석 — 계절성·변동성 | ① |
 | `bank/design` | 적정 여신 설계 — 금액별 위험, σ 밴드 | ② |
 | `bank/stress` | 여신 Stress Test | ③ |
+
+> **심사 화면 셋은 `useFarm()` 을 쓰지 않는다.** 그건 농가 계정이 자기 농장정보를
+> 넣는 저장소다. 대신 `useBorrower()` 로 **고른 차주**를 본다.
+> 사고 이력 2026-09-07: 셋 다 `useFarm()` 이라 차주 목록과 아무 관계가 없었고,
+> 심사역이 "이 화면이 누구 걸 보여주나" 를 알 수 없었다. 목록에서 눌러도 리포트로
+> 갈 뿐이었다.
+>
+> 결과는 `lib/analysisCache.ts` 가 **차주별로** 캐시한다 — 화면을 옮겼다 돌아와도
+> 다시 계산하지 않는다. **캐시 키에 조건을 전부 넣는다**; 빠뜨리면 바뀐 조건에
+> 옛 결과를 보여주게 되고 그게 이 화면에서 제일 나쁜 실패다.
 
 ## 화면 검사
 
@@ -237,6 +248,7 @@ apps/web/tests/header-menu.test.tsx
 apps/web/tests/mobile-menu.test.tsx
 apps/web/tests/farmer-steps.test.ts
 apps/web/tests/income-basis-wiring.test.ts
+apps/web/tests/borrower.test.ts
 ```
 | `app/app/levers/page.tsx` | 「얼마까지 받으려면」 — 반사실 탐색 결과와 **탐색 범위**를 함께 표시 |
 | `app/app/prescribe/page.tsx` | 「AI 맞춤 처방」(5단계) — 조정안·작목전환·신청서 초안 |
