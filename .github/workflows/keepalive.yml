@@ -1,0 +1,32 @@
+# Render 무료 인스턴스는 15분 놀면 잠들고, 깨는 데 60초까지 걸린다.
+# (2026-09-07 실측: 잠든 상태에서 첫 /health 응답 61.3초)
+# 심사 기간(9/7~9/11) 동안 첫 방문자가 그 60초를 맞지 않게 5분마다 깨워 둔다.
+#
+# 심사가 끝나면 이 워크플로를 끄는 게 맞다 — Render 무료 750시간은
+# 계정 전체 합산이라, 서비스 하나를 24시간 띄워 두면 그 한 개가 거의 다 쓴다.
+# 끄는 법: GitHub > Actions > keepalive > "..." > Disable workflow
+name: keepalive
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping API health
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' \
+                   --max-time 120 --retry 2 --retry-all-errors \
+                   https://youth-farm-credit-api.onrender.com/health)
+          echo "health -> $code"
+          # 깨우는 게 목적이라 5xx 도 깨우기엔 성공이다. 다만 조용히 넘기지는 않는다.
+          if [ "$code" != "200" ]; then
+            echo "::warning::health returned $code"
+          fi
