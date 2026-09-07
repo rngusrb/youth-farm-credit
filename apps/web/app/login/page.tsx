@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Btn, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
@@ -15,9 +17,10 @@ function LoginForm() {
   const field =
     "w-full min-h-11 rounded-md border border-gov-line px-3.5 text-[14px] outline-none focus:border-gov-link";
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    const s = signIn(id, pw);
+    // signIn 은 비동기다 — 가입 계정은 비밀번호를 해시로 대조하기 때문이다.
+    const s = await signIn(id, pw);
     if (!s) {
       setError("아이디 또는 비밀번호가 맞지 않습니다.");
       return;
@@ -68,6 +71,12 @@ function LoginForm() {
             로그인
           </button>
         </form>
+
+        <p className="mt-4 text-[13px] text-gov-ink2">
+          계정이 없으면{" "}
+          <Link href="/signup" className="text-gov-link underline">가입</Link>
+          하세요. 아이디와 비밀번호만 정하면 바로 쓸 수 있어요.
+        </p>
 
         <div className="mt-5 border-t border-gov-line2 pt-4">
           <Notice tone="warn" title="실제 인증이 아닙니다">
@@ -120,7 +129,7 @@ export default function LoginPage() {
       <Crumb trail={[{ label: "로그인" }]} />
       <PageTitle
         title="로그인"
-        lead="농가용 또는 금융기관용 체험 계정으로 시작해 보세요."
+        lead="가입한 계정으로 로그인하세요. 계정이 없으면 아래에서 만들 수 있어요."
       />
       <div id="main">
         <Suspense fallback={<p className="text-[14px] text-gov-ink2">불러오는 중…</p>}>

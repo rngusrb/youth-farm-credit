@@ -25,6 +25,7 @@
 | `crops` | 38작목 σ·요인·측정등급 | `/api/v1/crops` |
 | `market` | KAMIS 국면·교차검증·수확기 | `/api/v1/crops/{id}` |
 | `result/[id]` | 리포트 (문서 화면, 크롬 없음) | `/api/v1/diagnose/{id}` |
+| `/signup` | 가입 — **브라우저 안에서만** 저장한다. 서버·DB 없음 (명세서 §4 와 일치). 비밀번호는 SHA-256+salt 로 두되 이건 보안이 아니라 위생이다 |
 
 ### 농가용 (`app/app/…`)
 

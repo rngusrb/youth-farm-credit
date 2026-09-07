@@ -84,6 +84,8 @@ maker-review-loop 스킬 사용 (Reviewer PASS 없이 sprint-close 금지)
 | 2026-08-28 | 농가가 읽기 쉽게 — 뜻이 앞·용어는 뒤, 내 조건 필터, 자격은 판정 대신 의견, 금액별 비교 (`docs/sprints/2026-08-28-readable-for-farmers.md`) |
 | 2026-08-28 | 남은 피드백과 검사 구멍 — ui_check 가 로그인 뒤 화면도 검사(숨어 있던 위반 24건), 자금 고른 근거, 지난 분석 대비 변화 (`docs/sprints/2026-08-28-remaining-feedback.md`) |
 
+| 2026-09-06 | 명세 반영·배포·정리 — 5단계 화면 재편, 「버틸 수 있는 선」(경계 탐색), 동료 시세 작업 병합, Vercel+Render 배포, 하드코딩 시세 제거 (`docs/sprints/2026-09-06-spec-and-deploy.md`) |
+
 > ⚠️ 여기에 상세 이력 bullet 을 쓰지 말 것. 한 줄, 상세는 아카이브에.
 
 ---
