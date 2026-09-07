@@ -18,34 +18,37 @@ export default function BorrowerBar() {
   if (!ready) return null;
 
   if (!borrower) {
-    // **여기서 바로 고를 수 있게 한다.** 목록으로 보내면 화면을 두 번 옮겨야 하고,
-    // 심사역은 이미 이 화면에 볼 게 있어서 온 것이다. (2026-09-07 유저 지적)
+    // **드롭다운으로 고른다.** 처음엔 카드 5장을 펼쳤는데, 차주가 늘면 화면을 다 먹는다 —
+    // 목록은 5명이지만 실제 서비스에서는 신청 DB 다. 고른 뒤의 표시줄과 같은 모양이라
+    // 화면이 바뀌어도 눈이 같은 자리를 본다. (2026-09-07 유저 지적)
     return (
-      <div className="mb-4 rounded-md border border-gov-line bg-gov-sunk px-4 py-4">
-        <p className="text-[14px] font-semibold text-gov-head">심사할 차주를 고르세요</p>
-        <p className="mt-1 text-[13px] text-gov-ink2">
-          고른 차주의 신청 조건으로 계산합니다. 다른 심사 화면으로 옮겨도 그대로 유지돼요.
-        </p>
-        <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-          {APPLICANTS.map((a) => (
-            <li key={a.ref}>
-              <button
-                type="button"
-                onClick={() => { clearAnalysisCache(); selectBorrower(a.ref); }}
-                className="flex min-h-11 w-full flex-col justify-center rounded-md border border-gov-line bg-white px-3 py-2 text-left transition hover:border-gov-head hover:bg-gov-soft"
-              >
-                <span className="text-[13px] font-bold text-gov-ink">
-                  {a.ref} · {a.name}
-                </span>
-                <span className="text-[12px] text-gov-ink2">
-                  {a.region} · {a.pyeong.toLocaleString()}평 · 신청 {won(a.requested)}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-3 text-[12px] text-gov-ink3">
-          판정까지 한눈에 보려면{" "}
+      <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md border border-gov-line bg-gov-sunk px-4 py-3">
+        <div className="min-w-0">
+          <p className="text-[12px] text-gov-ink3">심사 중인 차주</p>
+          <p className="text-[14px] font-bold text-gov-head">고르지 않음</p>
+        </div>
+        <label className="ml-auto flex items-center gap-2 text-[13px] text-gov-ink2">
+          차주 고르기
+          <select
+            defaultValue=""
+            onChange={(e) => {
+              if (!e.target.value) return;
+              clearAnalysisCache();
+              selectBorrower(e.target.value);
+            }}
+            className="min-h-11 rounded-md border border-gov-line bg-white px-2.5 text-[13px]"
+          >
+            <option value="">선택하세요</option>
+            {APPLICANTS.map((a) => (
+              <option key={a.ref} value={a.ref}>
+                {a.ref} · {a.name} · {a.pyeong.toLocaleString()}평
+              </option>
+            ))}
+          </select>
+        </label>
+        <p className="w-full text-[12px] text-gov-ink3">
+          고른 차주의 신청 조건으로 계산합니다. 다른 심사 화면으로 옮겨도 유지돼요. 판정을
+          한눈에 보려면{" "}
           <Link href="/bank/applicants" className="font-semibold text-gov-head underline">
             대출 신청자 목록
           </Link>
