@@ -33,20 +33,38 @@ export default function ApplicantsPage() {
 
   useEffect(() => {
     let alive = true;
-    Promise.all(
-      APPLICANTS.map(async (a): Promise<Row> => {
-        try {
-          const d = await runDiagnose({
-            crop_id: a.cropId, pyeong: a.pyeong, living_cost: a.livingCost,
-            other_debt_service: a.otherDebtService, product_id: a.productId,
-            income_history: a.incomeHistory,
-          });
-          return { a, d };
-        } catch (e) {
-          return { a, d: null, error: e instanceof Error ? e.message : "계산 실패" };
+
+    // **순차로 부른다.** 예전에는 Promise.all 로 5명을 동시에 던졌는데,
+    // API 가 Render 무료 플랜이라 15분 놀면 잠들고 첫 요청이 10초 넘게 걸린다.
+    // 그때 5개가 한꺼번에 몰리면 워커 하나가 다 못 받아 "Failed to fetch" 가
+    // 다섯 줄 전부에 떴다 (2026-09-07 실측: 첫 호출 10.3초, 이후 4.9초).
+    //
+    // 한 명씩 부르고 **끝나는 대로 그 줄만 채운다** — 전부 기다리지 않으므로
+    // 화면이 위에서부터 차례로 살아난다.
+    (async () => {
+      for (const a of APPLICANTS) {
+        if (!alive) return;
+        // 잠든 서버가 깨는 동안 한 번은 다시 시도한다. 한 번 깨면 나머지는 빠르다.
+        let row: Row = { a, d: null };
+        for (let attempt = 0; attempt < 2; attempt += 1) {
+          try {
+            const d = await runDiagnose({
+              crop_id: a.cropId, pyeong: a.pyeong, living_cost: a.livingCost,
+              other_debt_service: a.otherDebtService, product_id: a.productId,
+              income_history: a.incomeHistory,
+            });
+            row = { a, d };
+            break;
+          } catch (e) {
+            row = { a, d: null, error: e instanceof Error ? e.message : "계산 실패" };
+          }
         }
-      }),
-    ).then((r) => { if (alive) { setRows(r); setBusy(false); } });
+        if (!alive) return;
+        setRows((prev) => prev.map((r) => (r.a.ref === a.ref ? row : r)));
+      }
+      if (alive) setBusy(false);
+    })();
+
     return () => { alive = false; };
   }, []);
 

@@ -18,15 +18,38 @@ export default function BorrowerBar() {
   if (!ready) return null;
 
   if (!borrower) {
+    // **여기서 바로 고를 수 있게 한다.** 목록으로 보내면 화면을 두 번 옮겨야 하고,
+    // 심사역은 이미 이 화면에 볼 게 있어서 온 것이다. (2026-09-07 유저 지적)
     return (
-      <div className="mb-4 rounded-md border border-gov-warn2/40 bg-gov-warnbg px-4 py-3">
-        <p className="text-[14px] font-semibold text-gov-head">심사할 차주를 먼저 고르세요</p>
+      <div className="mb-4 rounded-md border border-gov-line bg-gov-sunk px-4 py-4">
+        <p className="text-[14px] font-semibold text-gov-head">심사할 차주를 고르세요</p>
         <p className="mt-1 text-[13px] text-gov-ink2">
-          이 화면은 고른 차주의 신청 조건으로 계산합니다.{" "}
+          고른 차주의 신청 조건으로 계산합니다. 다른 심사 화면으로 옮겨도 그대로 유지돼요.
+        </p>
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {APPLICANTS.map((a) => (
+            <li key={a.ref}>
+              <button
+                type="button"
+                onClick={() => { clearAnalysisCache(); selectBorrower(a.ref); }}
+                className="flex min-h-11 w-full flex-col justify-center rounded-md border border-gov-line bg-white px-3 py-2 text-left transition hover:border-gov-head hover:bg-gov-soft"
+              >
+                <span className="text-[13px] font-bold text-gov-ink">
+                  {a.ref} · {a.name}
+                </span>
+                <span className="text-[12px] text-gov-ink2">
+                  {a.region} · {a.pyeong.toLocaleString()}평 · 신청 {won(a.requested)}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 text-[12px] text-gov-ink3">
+          판정까지 한눈에 보려면{" "}
           <Link href="/bank/applicants" className="font-semibold text-gov-head underline">
             대출 신청자 목록
           </Link>
-          에서 고르시면 됩니다.
+          으로 가세요.
         </p>
       </div>
     );
