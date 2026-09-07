@@ -95,7 +95,8 @@ describe("계정마다 저장 칸이 다르다", () => {
 
   it("리포트도 계정별로 나뉜다", () => {
     const report = (id: string): SavedReport => ({
-      id, cropName: "딸기", pyeong: 1300, riskLimit: 1, crisisProb: 0.1, savedAt: 1,
+      id, cropName: "딸기", productName: "후계농업경영인 육성자금",
+      pyeong: 1300, riskLimit: 1, crisisProb: 0.1, savedAt: 1,
     });
     login("aaa");
     saveReport(report("r-a"));

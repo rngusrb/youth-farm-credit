@@ -27,7 +27,11 @@ harness:
   # 폴더별 테스트 러너. 없으면 pytest.
   # 새 앱은 여기에 자기 명령을 등록한다 — 그래야 harness all 이 그 앱도 돈다.
   runners:
-    apps/web: ["npx", "--prefix", "apps/web", "vitest", "run", "--root", "apps/web"]
+    # **타입 검사를 함께 돈다.** vitest 만 돌리면 타입 오류가 하네스를 통과한다 —
+    # 실제로 2026-09-07 테스트에 필드 하나(productName)를 빠뜨린 채 커밋했고,
+    # harness all 은 통과했는데 **Vercel 빌드가 두 번 깨져** 배포가 36분 뒤처졌다.
+    # next build 는 컴파일 뒤에 타입을 보므로 "Compiled successfully" 는 통과 신호가 아니다.
+    apps/web: ["sh", "-c", "npx --prefix apps/web tsc --noEmit -p apps/web/tsconfig.json && npx --prefix apps/web vitest run --root apps/web"]
 
   # 가이드가 언급해야 할 '모듈' 의 모양. 언어마다 다르다.
   # 웹은 컴포넌트가 아니라 **라우트**를 검사한다 — 제품 표면이고 제일 잘 썩는다.
