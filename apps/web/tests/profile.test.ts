@@ -63,3 +63,52 @@ describe("로컬 저장소", () => {
     expect(loadReports()).toEqual([]);
   });
 });
+
+describe("계정마다 저장 칸이 다르다", () => {
+  const login = (id: string) =>
+    localStorage.setItem("yfc.session.v1", JSON.stringify({ id, role: "farmer", name: id, org: "", at: 1 }));
+
+  beforeEach(() => localStorage.clear());
+
+  it("다른 계정으로 들어가면 앞사람 농가 정보가 보이지 않는다", () => {
+    // 사고 이력 2026-09-07: 저장 키가 하나뿐이라 새로 가입해 들어가도
+    // **앞사람이 넣은 작목·면적·생활비가 그대로 떠 있었다.**
+    login("000000");
+    saveProfile({ ...profile, pyeong: 1300 });
+    expect(loadProfile()?.pyeong).toBe(1300);
+
+    login("newbie01");
+    expect(loadProfile()).toBeNull();
+  });
+
+  it("각자 넣은 값이 서로 덮이지 않는다", () => {
+    login("aaa");
+    saveProfile({ ...profile, pyeong: 1000 });
+    login("bbb");
+    saveProfile({ ...profile, pyeong: 2000 });
+
+    login("aaa");
+    expect(loadProfile()?.pyeong).toBe(1000);
+    login("bbb");
+    expect(loadProfile()?.pyeong).toBe(2000);
+  });
+
+  it("리포트도 계정별로 나뉜다", () => {
+    const report = (id: string): SavedReport => ({
+      id, cropName: "딸기", pyeong: 1300, riskLimit: 1, crisisProb: 0.1, savedAt: 1,
+    });
+    login("aaa");
+    saveReport(report("r-a"));
+    login("bbb");
+    expect(loadReports()).toHaveLength(0);
+    saveReport(report("r-b"));
+
+    login("aaa");
+    expect(loadReports().map((r) => r.id)).toEqual(["r-a"]);
+  });
+
+  it("로그아웃 상태에서도 화면이 돈다 — 공용 칸을 쓴다", () => {
+    saveProfile({ ...profile, pyeong: 777 });
+    expect(loadProfile()?.pyeong).toBe(777);
+  });
+});

@@ -124,13 +124,6 @@ export default function SignUpPage() {
             </Btn>
           </form>
 
-          <div className="mt-5 border-t border-gov-line2 pt-4">
-            <Notice tone="warn" title="이 계정은 이 브라우저에만 저장돼요">
-              서버에 보내지 않습니다. 그래서 다른 기기나 다른 브라우저에서는 로그인되지
-              않고, 방문 기록을 지우면 계정도 함께 사라져요. 실제 인증이 아니므로
-              진짜 개인정보나 금융정보는 넣지 마세요.
-            </Notice>
-          </div>
 
           <p className="mt-3 text-[13px] text-gov-ink2">
             이미 계정이 있으면{" "}

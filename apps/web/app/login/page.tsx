@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Btn, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
+import { Btn, Crumb, Page, PageTitle, Panel } from "@/components/gov";
 import { signIn } from "@/lib/auth";
 
 function LoginForm() {
@@ -78,13 +78,6 @@ function LoginForm() {
           하세요. 아이디와 비밀번호만 정하면 바로 쓸 수 있어요.
         </p>
 
-        <div className="mt-5 border-t border-gov-line2 pt-4">
-          <Notice tone="warn" title="실제 인증이 아닙니다">
-            검증을 브라우저에서 하고 세션도 브라우저에만 남습니다. 화면 흐름을 보여주기
-            위한 데모 장치이며 이 상태로 운영에 쓸 수 없습니다. 실제 개인정보나 금융정보는
-            입력하지 마세요.
-          </Notice>
-        </div>
       </Panel>
 
       <div className="space-y-5">
