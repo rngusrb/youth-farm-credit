@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Btn, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
-import { DEMO_ACCOUNTS, ROLE_LABEL, signIn } from "@/lib/auth";
+import { signIn } from "@/lib/auth";
 
 function LoginForm() {
   const router = useRouter();
@@ -38,27 +38,10 @@ function LoginForm() {
       <Panel>
         <h2 className="sec-title mb-4">로그인</h2>
         <form onSubmit={submit} className="space-y-4">
-          <div>
-            <p className="mb-2 text-[13px] font-semibold text-gov-ink2">데모 계정</p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {DEMO_ACCOUNTS.map((a) => (
-                <button
-                  key={a.id}
-                  type="button"
-                  onClick={() => { setId(a.id); setPw(a.pw); setError(null); }}
-                  className="flex min-h-11 flex-col justify-center rounded-md border border-gov-line px-3 py-2 text-left transition hover:border-gov-link hover:bg-gov-soft"
-                >
-                  <span className="text-[13px] font-bold text-gov-ink">{ROLE_LABEL[a.role]}</span>
-                  {/* 아이디·비밀번호는 화면에 적지 않는다 — 제출 문서에만 둔다.
-                      버튼을 누르면 입력란에 자동으로 채워지므로 접속은 그대로 된다. */}
-                  <span className="text-[12px] text-gov-ink3">눌러서 체험하기</span>
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-[12px] text-gov-ink3">
-              역할을 누르면 체험 계정이 채워집니다. <b>계정이 역할을 정합니다</b> — 화면에서 고를 수 없습니다.
-            </p>
-          </div>
+          {/* 데모 계정 버튼을 화면에서 내렸다 (2026-09-07).
+              계정 자체는 lib/auth.ts 에 그대로 있어 **아이디를 입력하면 로그인된다.**
+              자격증명을 화면에 적어 두지 않기 위한 것이고, 계정 정보는 제출한
+              기능명세서 §5 에 있다. 보이지 않을 뿐 막힌 것이 아니다. */}
 
           <div>
             <label htmlFor="uid" className="mb-1.5 block text-[13px] font-semibold text-gov-ink2">
@@ -88,8 +71,9 @@ function LoginForm() {
 
         <div className="mt-5 border-t border-gov-line2 pt-4">
           <Notice tone="warn" title="실제 인증이 아닙니다">
-            아이디·비밀번호가 코드에 그대로 있고 검증도 브라우저에서 합니다. 화면 흐름을
-            보여주기 위한 데모 장치이며 이 상태로 운영에 쓸 수 없습니다.
+            검증을 브라우저에서 하고 세션도 브라우저에만 남습니다. 화면 흐름을 보여주기
+            위한 데모 장치이며 이 상태로 운영에 쓸 수 없습니다. 실제 개인정보나 금융정보는
+            입력하지 마세요.
           </Notice>
         </div>
       </Panel>

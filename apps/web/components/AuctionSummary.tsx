@@ -54,8 +54,24 @@ export function QuarterlyAuctionChart({ series, quarterly: provided }: { series?
   );
 }
 
+/* 시세를 코드에 박아 두지 않는다.
+ *
+ * 사고 이력 2026-09-06: 외부 API 가 실패하면 딸기 가격과 5일치 시계열을 코드에서
+ * 넣어 채우고 있었다(초기값 + 실패 시 재주입). 화면에는 "최근 자료" 배지와
+ * "최근 조사일" 이 붙어 실제 조회 결과처럼 보였고, API 가 죽어 있는 동안 **항상**
+ * 그 값이 떴다. 딸기일 때만 채워서 시연에서는 늘 그럴듯했다.
+ *
+ * 2026-09-07 제공기관이 복구된 뒤 실데이터와 비교하니 마지막 값이 어긋났다:
+ *   실데이터 8440, 8380, 8310, 8170, **8100**
+ *   하드코딩 8440, 8380, 8310, 8170, **5923**
+ * 한때 받아온 값을 붙여넣은 것으로 보이는데, 그 사이 **틀린 숫자를 보여주고 있었다.**
+ *
+ * 이 저장소는 "숫자는 지어내지 않는다" 를 계산 엔진에서 배선으로까지 강제한다
+ * (meta/boundaries.yaml 의 core: [] 와 deps_check). 화면 한 곳이 그걸 뚫고 있었다.
+ * 자료가 없으면 없다고 말한다. 비어 보이더라도 그렇게 한다.
+ */
 export default function AuctionSummary({ cropId: cropIdOverride, showComparison = true, compact = false, title, onData, showQuarterly = true }: { cropId?: string; showComparison?: boolean; compact?: boolean; title?: string; onData?: (data: RealtimeAuction) => void; showQuarterly?: boolean } = {}) {
-  const [data, setData] = useState<RealtimeAuction | null>(() => cropIdOverride === "strawberry_hydro" || !cropIdOverride ? { status: "ok", source: "최근일자 도·소매 가격정보", crop: "딸기", items: [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }], daily_series: [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }], average_price: 7845, average_label: "최근 5일 평균 도매가(상·kg)" } : { status: "empty", crop: cropLabel(cropIdOverride), items: [] });
+  const [data, setData] = useState<RealtimeAuction | null>(null);
   const [compare, setCompare] = useState<MarketCompare | null>(null);
   const [cropId, setCropId] = useState<string | undefined>();
   const tableItems = data && (data.daily_series?.length ?? 0) >= 2
@@ -72,14 +88,9 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
       // 대표 가격도 표와 같은 일별 kg 평균을 사용해 같은 날짜에 값이 달라지지 않게 한다.
       const lastDaily = d.daily_series?.[d.daily_series.length - 1];
       if (lastDaily && d.items.length) d.items[0] = { ...d.items[0], item: d.crop ?? d.items[0].item, price: lastDaily.price, auction_at: lastDaily.date, unit: "kg" };
-      if (!d.items.length && id === "strawberry_hydro") {
-        d.items = [{ market: "전국 일별 평균", item: "딸기", price: 5923, unit: "kg", auction_at: "20260430", previous_day_price: 5923, seven_day_price: 6096, month_price: 6960, year_price: 5103 }];
-        d.daily_series = [{ date: "20260424", price: 8440, count: 1 }, { date: "20260427", price: 8380, count: 1 }, { date: "20260428", price: 8310, count: 1 }, { date: "20260429", price: 8170, count: 1 }, { date: "20260430", price: 5923, count: 1 }];
-        d.average_price = 7845; d.average_label = "최근 5일 평균 도매가(상·kg)"; d.source = "최근일자 도·소매 가격정보 (마지막 확인값)";
-      }
       setData(d); onData?.(d);
     });
-    load().catch(() => setData({ status: "empty", items: [] }));
+    load().catch(() => setData({ status: "unavailable", items: [] }));
     if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => setCompare({ status: "empty", items: [] }));
     const timer = window.setInterval(() => { load(); if (showComparison) fetchMarketCompare(id).then(setCompare).catch(() => {}); }, 300_000);
     return () => window.clearInterval(timer);
@@ -117,9 +128,17 @@ export default function AuctionSummary({ cropId: cropIdOverride, showComparison 
           </div>}
           </>
         ) : (
-          <div className="mt-4 rounded-md border border-gov-line2 bg-gov-sunk px-4 py-5 text-center text-[13px] text-gov-ink2">
-            <p className="font-semibold text-gov-ink">최근 도매가</p>
-            <p className="mt-1">가장 최근 가격 자료를 확인하고 있어요.</p>
+          <div className="mt-4 rounded-md border border-gov-line2 bg-gov-sunk px-4 py-5 text-[13px] text-gov-ink2">
+            <p className="font-semibold text-gov-ink">최근 도매가를 불러오지 못했어요</p>
+            <p className="mt-1 leading-relaxed">
+              {data === null
+                ? "가격 자료를 확인하고 있어요."
+                : "공공데이터포털(한국농수산식품유통공사)이 응답하지 않아 최근 시세를 가져오지 못했어요. 잠시 뒤 다시 열어 주세요."}
+            </p>
+            <p className="mt-2 leading-relaxed text-gov-ink3">
+              가격이 얼마나 오르내리는지(변동성) 분석은 아래에서 계속 보실 수 있어요 —
+              그건 저장된 통계라 항상 나옵니다.
+            </p>
           </div>
         )}
         {showComparison && (cropIdOverride || cropId) && (() => { const item = compare?.items[0]; const latest = data?.items[0]; const cards = [["1일 전", item?.previous_day_price ?? latest?.previous_day_price], ["7일 전", item?.seven_day_price ?? latest?.seven_day_price], ["1개월 전", item?.month_price ?? latest?.month_price], ["1년 전", item?.year_price ?? latest?.year_price]] as const; return <div className="mt-5 border-t border-gov-line2 pt-4"><p className="mb-2 text-[13px] font-semibold text-gov-ink">기간별 가격 비교</p><div className="grid grid-cols-2 gap-2">{cards.map(([label, price]) => <div key={label} className="rounded-md bg-gov-sunk px-3 py-4"><p className="text-[13px] font-semibold text-gov-ink2">{label}</p><p className="mt-2 text-[21px] font-bold tabular text-gov-ink">{won(price)}</p></div>)}</div><p className="mt-3 text-[12px] leading-relaxed text-gov-ink3">최근일자 도·소매 가격정보 기준으로 계산했어요.</p></div>; })()}
