@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-import { Btn, Notice, PageTitle, Panel, Section } from "@/components/gov";
+import { Btn, Crumb, Notice, Page, PageTitle, Panel } from "@/components/gov";
 import { ROLE_LABEL, signIn, signUp, type Role } from "@/lib/auth";
 
 /** 가입 — **브라우저 안에서만** 저장한다.
@@ -57,10 +57,14 @@ export default function SignUpPage() {
   const label = "mb-1.5 block text-[13px] font-semibold text-gov-ink2";
 
   return (
-    <>
+    <Page>
+      <Crumb trail={[{ label: "가입" }]} />
       <PageTitle title="가입" lead="아이디와 비밀번호를 정하면 바로 쓸 수 있어요." />
-      <Section title="계정 만들기">
+      {/* 로그인 화면과 같은 2단 구성. 폼을 화면 폭 전체로 늘리면 입력란이
+          1,900px 짜리 줄이 되어 읽기 어렵다 (2026-09-07 확인). */}
+      <div id="main" className="grid gap-6 lg:grid-cols-[minmax(0,420px)_1fr]">
         <Panel>
+          <h2 className="sec-title mb-4">계정 만들기</h2>
           <form onSubmit={submit} className="space-y-4">
             <div>
               <span className={label}>어떤 화면을 쓰시나요</span>
@@ -134,7 +138,26 @@ export default function SignUpPage() {
             하세요.
           </p>
         </Panel>
-      </Section>
-    </>
+
+        <Panel>
+          <h2 className="sec-title mb-3">가입하면 이런 걸 볼 수 있어요</h2>
+          <ul className="space-y-2 text-[14px] leading-relaxed text-gov-ink2">
+            <li>· <b className="text-gov-ink">AI 농가 건강검진</b> — 내 소득이 같은 작목 전국 평균과 견줘 어디쯤인지</li>
+            <li>· <b className="text-gov-ink">AI 농사 자금지도</b> — 어느 달에 돈이 마르고, 몇 년차에 부담이 뛰는지</li>
+            <li>· <b className="text-gov-ink">금융 안전진단</b> — 값이 얼마나 떨어지는 데까지 버틸 수 있는지</li>
+            <li>· <b className="text-gov-ink">AI 농가 상담사</b> — 물어보면 필요한 계산을 골라 실행하고 답합니다</li>
+            <li>· <b className="text-gov-ink">AI 맞춤 처방</b> — 조건 조정안, 작목 전환, 신청서 초안</li>
+          </ul>
+          <p className="mt-4 text-[13px] leading-relaxed text-gov-ink3">
+            작목·면적·생활비 세 가지만 있으면 시작할 수 있어요. 로그인 없이도
+            제도 근거 검색과 작목 데이터는 볼 수 있습니다.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Btn href="/policy" variant="ghost">지원 제도 찾아보기</Btn>
+            <Btn href="/crops" variant="ghost">작목 데이터</Btn>
+          </div>
+        </Panel>
+      </div>
+    </Page>
   );
 }
