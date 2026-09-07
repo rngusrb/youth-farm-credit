@@ -7,24 +7,34 @@ import Link from "next/link";
 import { Badge, Btn, Notice, PageTitle, Panel, Section, Stat } from "@/components/gov";
 import { fetchCrop, runDiagnose, type CropDetail, type Diagnosis } from "@/lib/api";
 import { headlineLimit, headlineScenario, unsafeGap } from "@/lib/diagnosis";
-import { APPLICANTS, type Applicant } from "@/lib/applicants";
+import { APPLICANTS } from "@/lib/applicants";
+import { useBorrower } from "@/lib/useBorrower";
+import { cached } from "@/lib/analysisCache";
+import BorrowerBar from "@/components/BorrowerBar";
 import { pct, pyeong as fmtPyeong, ratio, won } from "@/lib/format";
 
 export default function BankHome() {
   // 심사역에게 '내 농가 정보' 를 요구하는 건 말이 안 된다. 접수된 건에서 고른다.
-  const [applicant, setApplicant] = useState<Applicant>(APPLICANTS[0]);
+  //
+  // **선택은 공용 저장소에 둔다.** 예전에는 이 화면만 useState 로 따로 들고 있어서
+  // 여기서 고른 차주가 상환능력·여신설계·Stress 화면에 이어지지 않았다.
+  // 심사역이 화면을 옮길 때마다 다시 골라야 했다. (2026-09-07)
+  const { borrower, ready } = useBorrower();
+  const applicant = borrower;
   const [diag, setDiag] = useState<Diagnosis | null>(null);
   const [crop, setCrop] = useState<CropDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!applicant) return;
     let alive = true;
     setDiag(null);
-    runDiagnose({
+    // 같은 차주면 다시 계산하지 않는다 — 화면을 옮겼다 돌아와도 즉시 뜬다.
+    cached(`bankhome:${applicant.ref}`, () => runDiagnose({
       crop_id: applicant.cropId, pyeong: applicant.pyeong, living_cost: applicant.livingCost,
       other_debt_service: applicant.otherDebtService, product_id: applicant.productId,
       income_history: applicant.incomeHistory,
-    })
+    }))
       .then((d) => {
         if (!alive) return;
         setDiag(d);
@@ -37,7 +47,7 @@ export default function BankHome() {
   const s = diag ? headlineScenario(diag) : undefined;
   const gap = diag ? unsafeGap(diag) : 0;
 
-  const flags = diag && s ? [
+  const flags = diag && s && applicant ? [
     {
       on: applicant.requested > headlineLimit(diag),
       level: "주의",
@@ -70,6 +80,8 @@ export default function BankHome() {
     },
   ].filter((f) => f.on) : [];
 
+  if (!ready) return null;
+
   return (
     <>
       <PageTitle
@@ -78,31 +90,15 @@ export default function BankHome() {
         aside={diag ? <Btn href={`/result/${diag.diagnosis_id}`} variant="ghost">심사 리포트</Btn> : undefined}
       />
 
+      <BorrowerBar />
+
       {error && <div className="mb-5"><Notice tone="danger">{error}</Notice></div>}
 
-      <Section title="심사 대상" action={
-        <Link href="/bank/applicants" className="inline-flex min-h-11 items-center text-[12px] text-gov-ink3 hover:text-gov-link">
-          전체 {APPLICANTS.length}건 +
-        </Link>
-      }>
-        <div className="flex flex-wrap gap-2">
-          {APPLICANTS.map((a) => {
-            const on = a.ref === applicant.ref;
-            return (
-              <button key={a.ref} onClick={() => setApplicant(a)} aria-pressed={on}
-                      className={`flex min-h-11 flex-col justify-center rounded-md border px-3 py-2 text-left transition ${
-                        on ? "border-gov-head bg-gov-soft" : "border-gov-line hover:border-gov-link"}`}>
-                <span className={`text-[13px] font-bold ${on ? "text-gov-head" : "text-gov-ink"}`}>
-                  {a.name}
-                </span>
-                <span className="tabular text-[12px] text-gov-ink3">{a.ref} · {won(a.requested)} 신청</span>
-              </button>
-            );
-          })}
-        </div>
-      </Section>
+      {applicant && !diag && !error && (
+        <Panel><p className="text-[14px] text-gov-ink2">계산하고 있어요. 몇 초 걸립니다.</p></Panel>
+      )}
 
-      {diag && s && (
+      {diag && s && applicant && (
         <>
           <Section title="신청자 정보">
             <Panel>
